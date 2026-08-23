@@ -10,20 +10,39 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="description"
+        content="پروفایل کاربری VEXON"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
     <title>VEXON | پروفایل</title>
+
 
     <link
         href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
 
 </head>
 
+
 <body>
 
-<div class="background-effects" aria-hidden="true">
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
 
     <div class="nebula nebula-purple"></div>
     <div class="nebula nebula-green"></div>
@@ -41,56 +60,98 @@
 
 <header class="navbar">
 
-    <a href="../index.html" class="logo">
+    <a
+        href="../index.html"
+        class="logo"
+    >
         VE<span class="logo-x">X</span>ON
     </a>
 
+
     <nav class="nav-links">
 
-        <a href="../index.html" class="nav-link">
+        <a
+            href="../index.html"
+            class="nav-link"
+        >
             <span class="desktop-v-icon">V</span>
             خانه
         </a>
 
-        <a href="games.html" class="nav-link">
+
+        <a
+            href="games.html"
+            class="nav-link"
+        >
             <span class="nav-icon">🎮</span>
             بازی‌ها
         </a>
 
-        <a href="leaderboard.html" class="nav-link">
+
+        <a
+            href="leaderboard.html"
+            class="nav-link"
+        >
             <span class="nav-icon">🏆</span>
             لیدربورد
         </a>
 
-        <a href="cafe.html" class="nav-link">
+
+        <a
+            href="cafe.html"
+            class="nav-link"
+        >
             <span class="nav-icon">☕</span>
             کافه بازی
         </a>
 
-        <a href="news.html" class="nav-link">
+
+        <a
+            href="news.html"
+            class="nav-link"
+        >
             <span class="nav-icon">📢</span>
             اخبار
         </a>
 
-        <a href="guide.html" class="nav-link">
+
+        <a
+            href="guide.html"
+            class="nav-link"
+        >
             <span class="nav-icon">?</span>
             راهنما
         </a>
 
     </nav>
 
-    <a href="profile.html" class="header-profile">
+
+    <a
+        href="profile.html"
+        class="header-profile"
+    >
 
         <div class="header-profile-icon">
             👤
         </div>
 
+
         <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
+
+            <strong>
+                پروفایل
+            </strong>
+
+            <span>
+                حساب کاربری
+            </span>
+
         </div>
 
-        <b>‹</b>
+
+        <b>
+            ‹
+        </b>
 
     </a>
 
@@ -101,16 +162,19 @@
 
 <section class="profile-section">
 
+
     <div class="profile-page-content">
 
         <span class="section-label">
             👤 VEXON PROFILE
         </span>
 
+
         <h1>
             پروفایل تو،
             <span>هویت تو در VEXON.</span>
         </h1>
+
 
         <p>
             پروفایل VEXON مرکز پیشرفت بازیکن خواهد بود؛
@@ -122,23 +186,43 @@
 
     <div class="profile-big-card">
 
+
         <div class="profile-big-avatar">
             👤
         </div>
 
-        <strong>_</strong>
 
-        <span>
-            LEVEL _
+        <strong id="profile-username">
+            در حال بارگذاری...
+        </strong>
+
+
+        <span id="profile-level">
+            LEVEL 1
         </span>
+
 
         <div class="big-level-bar">
             <i></i>
         </div>
 
-        <div class="profile-big-coins">
-            🪙 _
+
+        <div
+            class="profile-big-coins"
+            id="profile-coins"
+        >
+            🪙 0
         </div>
+
+
+        <button
+            type="button"
+            id="logout-button"
+            class="auth-secondary-button"
+            style="margin-top: 18px; cursor: pointer;"
+        >
+            خروج از حساب
+        </button>
 
     </div>
 
@@ -153,15 +237,18 @@
         VE<span>X</span>ON
     </div>
 
+
     <p>
         PLAY • COMPETE • LEVEL UP.
     </p>
+
 
     <div class="footer-socials">
         <span>✈️</span>
         <span>◎</span>
         <span>▶</span>
     </div>
+
 
     <span>
         ساخته شده با 💚 برای گیمرها
@@ -173,6 +260,106 @@
 
 
 <script src="../script.js"></script>
+
+
+<script>
+
+(async function loadProfile() {
+
+    const usernameElement =
+        document.getElementById(
+            "profile-username"
+        );
+
+    const logoutButton =
+        document.getElementById(
+            "logout-button"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    method: "GET",
+                    credentials: "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.loggedIn ||
+            !data.user
+        ) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        usernameElement.textContent =
+            data.user.username;
+
+
+        logoutButton.addEventListener(
+            "click",
+            async () => {
+
+                logoutButton.disabled = true;
+
+                try {
+
+                    await fetch(
+                        "/api/logout",
+                        {
+                            method: "POST",
+                            credentials: "same-origin"
+                        }
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "LOGOUT_ERROR",
+                        error
+                    );
+
+                } finally {
+
+                    window.location.href =
+                        "login.html";
+
+                }
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "PROFILE_ERROR",
+            error
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+})();
+
+</script>
+
 
 </body>
 </html>

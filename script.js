@@ -466,3 +466,96 @@ function initializeParallax() {
 ========================= */
 
 loadVexon();
+
+
+```js
+/* =========================================
+   VEXON AUTH HEADER
+========================================= */
+
+(async function updateAuthHeader() {
+    const headerProfile =
+        document.querySelector(".header-profile");
+
+    if (!headerProfile) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/me", {
+            method: "GET",
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.loggedIn && data.user) {
+
+            // Logged in
+            headerProfile.href = "profile.html";
+
+            const strong =
+                headerProfile.querySelector("strong");
+
+            const span =
+                headerProfile.querySelector("span");
+
+            if (strong) {
+                strong.textContent = "پروفایل";
+            }
+
+            if (span) {
+                span.textContent =
+                    data.user.username;
+            }
+
+        } else {
+
+            // Guest
+            headerProfile.href = "login.html";
+
+            const strong =
+                headerProfile.querySelector("strong");
+
+            const span =
+                headerProfile.querySelector("span");
+
+            if (strong) {
+                strong.textContent =
+                    "ورود / ثبت‌نام";
+            }
+
+            if (span) {
+                span.textContent =
+                    "ورود به حساب";
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "AUTH_HEADER_ERROR",
+            error
+        );
+
+        // Fallback for guests
+        headerProfile.href = "login.html";
+
+        const strong =
+            headerProfile.querySelector("strong");
+
+        const span =
+            headerProfile.querySelector("span");
+
+        if (strong) {
+            strong.textContent =
+                "ورود / ثبت‌نام";
+        }
+
+        if (span) {
+            span.textContent =
+                "ورود به حساب";
+        }
+    }
+})();
+```
