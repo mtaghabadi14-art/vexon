@@ -1,5 +1,11 @@
 const PASSWORD_ITERATIONS = 100000;
 const SESSION_DAYS = 7;
+const RUBIKA_CODE_MINUTES = 10;
+
+
+/* =========================================================
+   JSON RESPONSE
+========================================================= */
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -9,6 +15,11 @@ function json(data, status = 200) {
     }
   });
 }
+
+
+/* =========================================================
+   BASE64
+========================================================= */
 
 function toBase64(bytes) {
   let binary = "";
@@ -20,6 +31,7 @@ function toBase64(bytes) {
   return btoa(binary);
 }
 
+
 function fromBase64(value) {
   const binary = atob(value);
 
@@ -29,12 +41,20 @@ function fromBase64(value) {
   );
 }
 
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
 
-  const salt = crypto.getRandomValues(
-    new Uint8Array(16)
-  );
+/* =========================================================
+   PASSWORD HASH
+========================================================= */
+
+async function hashPassword(password) {
+
+  const encoder =
+    new TextEncoder();
+
+  const salt =
+    crypto.getRandomValues(
+      new Uint8Array(16)
+    );
 
   const keyMaterial =
     await crypto.subtle.importKey(
@@ -61,13 +81,22 @@ async function hashPassword(password) {
     "pbkdf2",
     PASSWORD_ITERATIONS,
     toBase64(salt),
-    toBase64(new Uint8Array(derivedBits))
+    toBase64(
+      new Uint8Array(derivedBits)
+    )
   ].join("$");
 }
 
-async function verifyPassword(password, storedHash) {
+
+async function verifyPassword(
+  password,
+  storedHash
+) {
+
   try {
-    const parts = storedHash.split("$");
+
+    const parts =
+      storedHash.split("$");
 
     if (
       parts.length !== 4 ||
@@ -76,9 +105,14 @@ async function verifyPassword(password, storedHash) {
       return false;
     }
 
-    const iterations = Number(parts[1]);
-    const salt = fromBase64(parts[2]);
-    const expected = fromBase64(parts[3]);
+    const iterations =
+      Number(parts[1]);
+
+    const salt =
+      fromBase64(parts[2]);
+
+    const expected =
+      fromBase64(parts[3]);
 
     const keyMaterial =
       await crypto.subtle.importKey(
@@ -101,83 +135,148 @@ async function verifyPassword(password, storedHash) {
         expected.length * 8
       );
 
-    const actual = new Uint8Array(derivedBits);
+    const actual =
+      new Uint8Array(
+        derivedBits
+      );
 
-    if (actual.length !== expected.length) {
+    if (
+      actual.length !==
+      expected.length
+    ) {
       return false;
     }
 
     let difference = 0;
 
-    for (let i = 0; i < actual.length; i++) {
-      difference |= actual[i] ^ expected[i];
+    for (
+      let i = 0;
+      i < actual.length;
+      i++
+    ) {
+      difference |=
+        actual[i] ^
+        expected[i];
     }
 
     return difference === 0;
 
   } catch {
+
     return false;
+
   }
 }
 
+
+/* =========================================================
+   SESSION
+========================================================= */
+
 function createSessionToken() {
-  const bytes = crypto.getRandomValues(
-    new Uint8Array(32)
-  );
+
+  const bytes =
+    crypto.getRandomValues(
+      new Uint8Array(32)
+    );
 
   return Array.from(bytes)
     .map(byte =>
-      byte.toString(16).padStart(2, "0")
+      byte
+        .toString(16)
+        .padStart(2, "0")
     )
     .join("");
 }
 
-async function hashSessionToken(token) {
+
+async function hashSessionToken(
+  token
+) {
+
   const digest =
     await crypto.subtle.digest(
       "SHA-256",
       new TextEncoder().encode(token)
     );
 
-  return Array.from(new Uint8Array(digest))
+  return Array.from(
+    new Uint8Array(digest)
+  )
     .map(byte =>
-      byte.toString(16).padStart(2, "0")
+      byte
+        .toString(16)
+        .padStart(2, "0")
     )
     .join("");
 }
 
-function getCookie(request, name) {
+
+function getCookie(
+  request,
+  name
+) {
+
   const cookieHeader =
-    request.headers.get("Cookie");
+    request.headers.get(
+      "Cookie"
+    );
 
   if (!cookieHeader) {
     return null;
   }
 
-  const cookies = cookieHeader.split(";");
+  const cookies =
+    cookieHeader.split(";");
 
-  for (const cookie of cookies) {
-    const [key, ...valueParts] =
-      cookie.trim().split("=");
+  for (
+    const cookie of cookies
+  ) {
+
+    const [
+      key,
+      ...valueParts
+    ] =
+      cookie
+        .trim()
+        .split("=");
 
     if (key === name) {
-      return valueParts.join("=") || null;
+
+      return (
+        valueParts.join("=") ||
+        null
+      );
     }
   }
 
   return null;
 }
 
-async function getCurrentUser(request, env) {
+
+/* =========================================================
+   CURRENT USER
+========================================================= */
+
+async function getCurrentUser(
+  request,
+  env
+) {
+
   const sessionToken =
-    getCookie(request, "vexon_session");
+    getCookie(
+      request,
+      "vexon_session"
+    );
 
   if (!sessionToken) {
     return null;
   }
 
   const tokenHash =
-    await hashSessionToken(sessionToken);
+    await hashSessionToken(
+      sessionToken
+    );
 
   const session =
     await env.DB
@@ -217,39 +316,225 @@ async function getCurrentUser(request, env) {
 }
 
 
+/* =========================================================
+   RANDOM RUBIKA LINK CODE
+========================================================= */
+
+function generateLinkCode() {
+
+  const bytes =
+    crypto.getRandomValues(
+      new Uint32Array(1)
+    );
+
+  return String(
+    100000 +
+    (bytes[0] % 900000)
+  );
+}
+
+
+/* =========================================================
+   RUBIKA SEND MESSAGE
+========================================================= */
+
+async function sendRubikaMessage(
+  env,
+  chatId,
+  text
+) {
+
+  if (
+    !env.RUBIKA_BOT_TOKEN
+  ) {
+    throw new Error(
+      "RUBIKA_BOT_TOKEN is not configured."
+    );
+  }
+
+  const response =
+    await fetch(
+      `https://botapi.rubika.ir/v3/${env.RUBIKA_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+          chat_id: String(chatId),
+          text: String(text)
+        })
+      }
+    );
+
+  if (!response.ok) {
+
+    throw new Error(
+      `Rubika API returned HTTP ${response.status}`
+    );
+  }
+
+  return response.json();
+}
+
+
+/* =========================================================
+   EXTRACT RUBIKA MESSAGE
+========================================================= */
+
+function extractRubikaMessage(
+  update
+) {
+
+  /*
+   * ReceiveUpdate examples can wrap
+   * the message in inline_message.
+   */
+
+  if (
+    update &&
+    update.inline_message
+  ) {
+
+    return {
+      senderId:
+        update.inline_message.sender_id,
+
+      chatId:
+        update.inline_message.chat_id,
+
+      text:
+        update.inline_message.text
+    };
+  }
+
+
+  /*
+   * Some clients/libraries expose
+   * new_message directly.
+   */
+
+  if (
+    update &&
+    update.new_message
+  ) {
+
+    return {
+      senderId:
+        update.new_message.sender_id,
+
+      chatId:
+        update.chat_id ||
+        update.new_message.chat_id,
+
+      text:
+        update.new_message.text
+    };
+  }
+
+
+  /*
+   * Another common structure:
+   * update.update.new_message
+   */
+
+  if (
+    update &&
+    update.update &&
+    update.update.new_message
+  ) {
+
+    return {
+      senderId:
+        update
+          .update
+          .new_message
+          .sender_id,
+
+      chatId:
+        update.update.chat_id ||
+        update
+          .update
+          .new_message
+          .chat_id,
+
+      text:
+        update
+          .update
+          .new_message
+          .text
+    };
+  }
+
+
+  /*
+   * Fallback
+   */
+
+  return {
+    senderId:
+      update?.sender_id,
+
+    chatId:
+      update?.chat_id,
+
+    text:
+      update?.text
+  };
+}
+
+
+/* =========================================================
+   MAIN WORKER
+========================================================= */
+
 export default {
 
-  async fetch(request, env) {
+  async fetch(
+    request,
+    env
+  ) {
 
-    const url = new URL(request.url);
+    const url =
+      new URL(request.url);
 
 
-    /*
-     * ========================================
-     * REGISTER
-     * ========================================
-     */
+    /* =====================================================
+       REGISTER
+    ===================================================== */
 
     if (
-      url.pathname === "/api/register" &&
+      url.pathname ===
+        "/api/register" &&
       request.method === "POST"
     ) {
 
       try {
 
-        const body = await request.json();
+        const body =
+          await request.json();
 
         const username =
-          typeof body.username === "string"
+          typeof body.username ===
+          "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password === "string"
+          typeof body.password ===
+          "string"
             ? body.password
             : "";
 
-        if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+
+        if (
+          !/^[A-Za-z0-9_]{3,20}$/
+            .test(username)
+        ) {
+
           return json(
             {
               success: false,
@@ -260,7 +545,11 @@ export default {
           );
         }
 
-        if (password.length < 8) {
+
+        if (
+          password.length < 8
+        ) {
+
           return json(
             {
               success: false,
@@ -271,15 +560,23 @@ export default {
           );
         }
 
+
         const existingUser =
           await env.DB
             .prepare(
-              "SELECT id FROM users WHERE username = ?1 LIMIT 1"
+              `
+              SELECT id
+              FROM users
+              WHERE username = ?1
+              LIMIT 1
+              `
             )
             .bind(username)
             .first();
 
+
         if (existingUser) {
+
           return json(
             {
               success: false,
@@ -290,15 +587,22 @@ export default {
           );
         }
 
+
         const passwordHash =
-          await hashPassword(password);
+          await hashPassword(
+            password
+          );
+
 
         const insertResult =
           await env.DB
             .prepare(
               `
               INSERT INTO users
-                (username, password_hash)
+                (
+                  username,
+                  password_hash
+                )
               VALUES
                 (?1, ?2)
               `
@@ -309,10 +613,13 @@ export default {
             )
             .run();
 
+
         const userId =
           insertResult.meta?.last_row_id;
 
+
         if (!userId) {
+
           return json(
             {
               success: false,
@@ -323,17 +630,24 @@ export default {
           );
         }
 
+
         await env.DB
           .prepare(
             `
             INSERT OR IGNORE INTO player_stats
-              (user_id, xp, level, coins)
+              (
+                user_id,
+                xp,
+                level,
+                coins
+              )
             VALUES
               (?1, 0, 1, 0)
             `
           )
           .bind(userId)
           .run();
+
 
         return json(
           {
@@ -363,32 +677,39 @@ export default {
     }
 
 
-    /*
-     * ========================================
-     * LOGIN
-     * ========================================
-     */
+    /* =====================================================
+       LOGIN
+    ===================================================== */
 
     if (
-      url.pathname === "/api/login" &&
+      url.pathname ===
+        "/api/login" &&
       request.method === "POST"
     ) {
 
       try {
 
-        const body = await request.json();
+        const body =
+          await request.json();
 
         const username =
-          typeof body.username === "string"
+          typeof body.username ===
+          "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password === "string"
+          typeof body.password ===
+          "string"
             ? body.password
             : "";
 
-        if (!username || !password) {
+
+        if (
+          !username ||
+          !password
+        ) {
+
           return json(
             {
               success: false,
@@ -398,6 +719,7 @@ export default {
             400
           );
         }
+
 
         const user =
           await env.DB
@@ -415,7 +737,9 @@ export default {
             .bind(username)
             .first();
 
+
         if (!user) {
+
           return json(
             {
               success: false,
@@ -425,6 +749,7 @@ export default {
             401
           );
         }
+
 
         const passwordCorrect =
           await verifyPassword(
@@ -432,7 +757,9 @@ export default {
             user.password_hash
           );
 
+
         if (!passwordCorrect) {
+
           return json(
             {
               success: false,
@@ -443,11 +770,17 @@ export default {
           );
         }
 
+
         await env.DB
           .prepare(
             `
             INSERT OR IGNORE INTO player_stats
-              (user_id, xp, level, coins)
+              (
+                user_id,
+                xp,
+                level,
+                coins
+              )
             VALUES
               (?1, 0, 1, 0)
             `
@@ -455,13 +788,16 @@ export default {
           .bind(user.id)
           .run();
 
+
         const sessionToken =
           createSessionToken();
+
 
         const tokenHash =
           await hashSessionToken(
             sessionToken
           );
+
 
         const expiresAt =
           new Date(
@@ -472,6 +808,7 @@ export default {
             60 *
             1000
           ).toISOString();
+
 
         await env.DB
           .prepare(
@@ -493,24 +830,35 @@ export default {
           )
           .run();
 
+
         return new Response(
           JSON.stringify({
             success: true,
-            message: "ورود موفق بود.",
-            username: user.username
+            message:
+              "ورود موفق بود.",
+            username:
+              user.username
           }),
           {
             status: 200,
+
             headers: {
               "Content-Type":
                 "application/json; charset=UTF-8",
+
               "Set-Cookie": [
-                "vexon_session=" + sessionToken,
+                "vexon_session=" +
+                  sessionToken,
                 "HttpOnly",
                 "Secure",
                 "SameSite=Lax",
                 "Path=/",
-                `Max-Age=${SESSION_DAYS * 24 * 60 * 60}`
+                `Max-Age=${
+                  SESSION_DAYS *
+                  24 *
+                  60 *
+                  60
+                }`
               ].join("; ")
             }
           }
@@ -535,14 +883,13 @@ export default {
     }
 
 
-    /*
-     * ========================================
-     * CURRENT USER
-     * ========================================
-     */
+    /* =====================================================
+       CURRENT USER
+    ===================================================== */
 
     if (
-      url.pathname === "/api/me" &&
+      url.pathname ===
+        "/api/me" &&
       request.method === "GET"
     ) {
 
@@ -554,7 +901,9 @@ export default {
             env
           );
 
+
         if (!user) {
+
           return json(
             {
               loggedIn: false
@@ -562,6 +911,7 @@ export default {
             401
           );
         }
+
 
         return json({
           loggedIn: true,
@@ -585,14 +935,13 @@ export default {
     }
 
 
-    /*
-     * ========================================
-     * LOGOUT
-     * ========================================
-     */
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
 
     if (
-      url.pathname === "/api/logout" &&
+      url.pathname ===
+        "/api/logout" &&
       request.method === "POST"
     ) {
 
@@ -604,12 +953,14 @@ export default {
             "vexon_session"
           );
 
+
         if (sessionToken) {
 
           const tokenHash =
             await hashSessionToken(
               sessionToken
             );
+
 
           await env.DB
             .prepare(
@@ -622,17 +973,28 @@ export default {
             .run();
         }
 
+
         return new Response(
           JSON.stringify({
             success: true
           }),
           {
             status: 200,
+
             headers: {
+
               "Content-Type":
                 "application/json; charset=UTF-8",
+
               "Set-Cookie":
-                "vexon_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
+                [
+                  "vexon_session=",
+                  "HttpOnly",
+                  "Secure",
+                  "SameSite=Lax",
+                  "Path=/",
+                  "Max-Age=0"
+                ].join("; ")
             }
           }
         );
@@ -654,14 +1016,405 @@ export default {
     }
 
 
-    /*
-     * ========================================
-     * API TEST
-     * ========================================
-     */
+    /* =====================================================
+       CREATE RUBIKA LINK CODE
+    ===================================================== */
 
     if (
-      url.pathname === "/api/test" &&
+      url.pathname ===
+        "/api/rubika/create-code" &&
+      request.method === "POST"
+    ) {
+
+      try {
+
+        const user =
+          await getCurrentUser(
+            request,
+            env
+          );
+
+
+        if (!user) {
+
+          return json(
+            {
+              success: false,
+              message:
+                "ابتدا وارد حساب VEXON شو."
+            },
+            401
+          );
+        }
+
+
+        const code =
+          generateLinkCode();
+
+
+        const expiresAt =
+          new Date(
+            Date.now() +
+            RUBIKA_CODE_MINUTES *
+            60 *
+            1000
+          ).toISOString();
+
+
+        await env.DB
+          .prepare(
+            `
+            INSERT INTO rubika_link_codes
+              (
+                user_id,
+                code,
+                expires_at
+              )
+            VALUES
+              (?1, ?2, ?3)
+            ON CONFLICT(user_id)
+            DO UPDATE SET
+              code = excluded.code,
+              expires_at = excluded.expires_at
+            `
+          )
+          .bind(
+            user.id,
+            code,
+            expiresAt
+          )
+          .run();
+
+
+        return json({
+          success: true,
+          code,
+          expires_at: expiresAt
+        });
+
+      } catch (error) {
+
+        console.error(
+          "RUBIKA_CODE_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            message:
+              "ساخت کد اتصال روبیکا انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       RUBIKA WEBHOOK
+    ===================================================== */
+
+    const webhookPath =
+      env.RUBIKA_WEBHOOK_KEY
+        ? `/api/rubika/webhook/${env.RUBIKA_WEBHOOK_KEY}`
+        : null;
+
+
+    if (
+      webhookPath &&
+      url.pathname === webhookPath &&
+      request.method === "POST"
+    ) {
+
+      try {
+
+        const update =
+          await request.json();
+
+
+        const message =
+          extractRubikaMessage(
+            update
+          );
+
+
+        const senderId =
+          message.senderId;
+
+        const chatId =
+          message.chatId;
+
+        const text =
+          typeof message.text ===
+          "string"
+            ? message.text.trim()
+            : "";
+
+
+        if (
+          !senderId ||
+          !chatId ||
+          !text
+        ) {
+
+          return json({
+            success: true
+          });
+        }
+
+
+        /*
+         * فقط کدهای ۶ رقمی اتصال
+         * را بررسی می‌کنیم.
+         */
+
+        if (
+          !/^\d{6}$/.test(text)
+        ) {
+
+          return json({
+            success: true
+          });
+        }
+
+
+        const linkCode =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                user_id,
+                code,
+                expires_at
+              FROM rubika_link_codes
+              WHERE code = ?1
+              LIMIT 1
+              `
+            )
+            .bind(text)
+            .first();
+
+
+        if (!linkCode) {
+
+          await sendRubikaMessage(
+            env,
+            chatId,
+            "❌ این کد اتصال معتبر نیست."
+          );
+
+          return json({
+            success: true
+          });
+        }
+
+
+        if (
+          new Date(
+            linkCode.expires_at
+          ).getTime() <= Date.now()
+        ) {
+
+          await env.DB
+            .prepare(
+              `
+              DELETE FROM rubika_link_codes
+              WHERE user_id = ?1
+              `
+            )
+            .bind(
+              linkCode.user_id
+            )
+            .run();
+
+
+          await sendRubikaMessage(
+            env,
+            chatId,
+            "⏰ این کد منقضی شده است. یک کد جدید از VEXON بگیر."
+          );
+
+
+          return json({
+            success: true
+          });
+        }
+
+
+        /*
+         * بررسی می‌کنیم حساب VEXON
+         * یا حساب روبیکا قبلاً متصل
+         * نباشد.
+         */
+
+        const existingLink =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                user_id,
+                rubika_sender_id
+              FROM rubika_links
+              WHERE
+                user_id = ?1
+                OR rubika_sender_id = ?2
+              LIMIT 1
+              `
+            )
+            .bind(
+              linkCode.user_id,
+              senderId
+            )
+            .first();
+
+
+        if (existingLink) {
+
+          await sendRubikaMessage(
+            env,
+            chatId,
+            "ℹ️ این حساب روبیکا یا حساب VEXON قبلاً متصل شده است."
+          );
+
+
+          return json({
+            success: true
+          });
+        }
+
+
+        /*
+         * ایجاد اتصال
+         */
+
+        await env.DB
+          .prepare(
+            `
+            INSERT INTO rubika_links
+              (
+                user_id,
+                rubika_sender_id,
+                rubika_chat_id
+              )
+            VALUES
+              (?1, ?2, ?3)
+            `
+          )
+          .bind(
+            linkCode.user_id,
+            String(senderId),
+            String(chatId)
+          )
+          .run();
+
+
+        /*
+         * حذف کد مصرف‌شده
+         */
+
+        await env.DB
+          .prepare(
+            `
+            DELETE FROM rubika_link_codes
+            WHERE user_id = ?1
+            `
+          )
+          .bind(
+            linkCode.user_id
+          )
+          .run();
+
+
+        /*
+         * دریافت اطلاعات بازیکن
+         */
+
+        const linkedUser =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                users.username,
+                player_stats.level,
+                player_stats.xp,
+                player_stats.coins
+              FROM users
+              LEFT JOIN player_stats
+                ON player_stats.user_id = users.id
+              WHERE users.id = ?1
+              LIMIT 1
+              `
+            )
+            .bind(
+              linkCode.user_id
+            )
+            .first();
+
+
+        const username =
+          linkedUser?.username ||
+          "VEXON Player";
+
+
+        const level =
+          linkedUser?.level ??
+          1;
+
+
+        const xp =
+          linkedUser?.xp ??
+          0;
+
+
+        const coins =
+          linkedUser?.coins ??
+          0;
+
+
+        await sendRubikaMessage(
+          env,
+          chatId,
+          [
+            "✅ حساب VEXON با موفقیت متصل شد!",
+            "",
+            `👤 ${username}`,
+            `⭐ Level: ${level}`,
+            `✨ XP: ${xp}`,
+            `🪙 Coins: ${coins}`
+          ].join("\n")
+        );
+
+
+        return json({
+          success: true
+        });
+
+      } catch (error) {
+
+        console.error(
+          "RUBIKA_WEBHOOK_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       API TEST
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/test" &&
       request.method === "GET"
     ) {
 
@@ -673,12 +1426,12 @@ export default {
     }
 
 
-    /*
-     * ========================================
-     * WEBSITE
-     * ========================================
-     */
+    /* =====================================================
+       STATIC WEBSITE
+    ===================================================== */
 
-    return env.ASSETS.fetch(request);
+    return env.ASSETS.fetch(
+      request
+    );
   }
 };
