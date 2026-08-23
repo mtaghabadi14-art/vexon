@@ -5,6 +5,17 @@
 const app = document.querySelector("#app");
 
 
+/* =========================
+   LIVE PLAYER UPDATE
+========================= */
+
+let vexonPlayerUpdateTimer = null;
+
+
+/* =========================
+   LOAD HTML SECTION
+========================= */
+
 async function loadSection(file) {
 
     try {
@@ -38,6 +49,10 @@ async function loadSection(file) {
 
 }
 
+
+/* =========================
+   LOAD ALL SECTIONS
+========================= */
 
 async function loadVexon() {
 
@@ -85,6 +100,10 @@ async function loadVexon() {
 }
 
 
+/* =========================
+   STANDALONE INITIALIZE
+========================= */
+
 function initializeStandaloneVexon() {
 
     initializeNavigation();
@@ -97,6 +116,10 @@ function initializeStandaloneVexon() {
 
 }
 
+
+/* =========================
+   INITIALIZE VEXON
+========================= */
 
 function initializeVexon() {
 
@@ -119,7 +142,7 @@ function initializeVexon() {
    AUTH HEADER
 ========================= */
 
-async function initializeAuthHeader() {
+async function updateAuthHeader() {
 
     const headerProfiles =
         document.querySelectorAll(
@@ -135,7 +158,8 @@ async function initializeAuthHeader() {
 
 
     /*
-     * حالت مهمان از اول
+     * حالت مهمان
+     * تا زمانی که وضعیت واقعی حساب مشخص شود.
      */
 
     setGuestHeader(
@@ -155,6 +179,11 @@ async function initializeAuthHeader() {
                 }
             );
 
+
+        /*
+         * اگر API جواب معتبر نداد،
+         * همان حالت مهمان باقی می‌ماند.
+         */
 
         if (!response.ok) {
 
@@ -203,7 +232,7 @@ async function initializeAuthHeader() {
         /*
          * XP مورد نیاز برای Level فعلی
          *
-         * این همان منطق ربات Bangame است.
+         * همان منطق Bangame
          */
 
         const xpNeededMap = {
@@ -222,8 +251,11 @@ async function initializeAuthHeader() {
 
 
         const nextXp =
-            xpNeededMap[level] ??
-            (level * 700);
+            Number(
+                user.next_xp ??
+                xpNeededMap[level] ??
+                (level * 700)
+            );
 
 
         const progress =
@@ -232,14 +264,25 @@ async function initializeAuthHeader() {
                     100,
                     Math.max(
                         0,
-                        (xp / nextXp) * 100
+                        (
+                            xp /
+                            nextXp
+                        ) * 100
                     )
                 )
                 : 0;
 
 
+        /*
+         * آپدیت همه Headerها
+         */
+
         headerProfiles.forEach(
             (headerProfile) => {
+
+                /*
+                 * کاربر وارد شده
+                 */
 
                 headerProfile.href =
                     "sections/profile.html";
@@ -269,6 +312,10 @@ async function initializeAuthHeader() {
                     );
 
 
+                /*
+                 * Username
+                 */
+
                 if (strong) {
 
                     strong.textContent =
@@ -278,10 +325,15 @@ async function initializeAuthHeader() {
                 }
 
 
+                /*
+                 * XP / Level / Coins
+                 */
+
                 if (span) {
 
                     span.textContent =
                         `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
+
 
                     span.classList.add(
                         "header-player-stats"
@@ -289,6 +341,10 @@ async function initializeAuthHeader() {
 
                 }
 
+
+                /*
+                 * XP Bar
+                 */
 
                 if (xpBar) {
 
@@ -301,23 +357,43 @@ async function initializeAuthHeader() {
                 if (xpFill) {
 
                     /*
-                     * با requestAnimationFrame
-                     * انیمیشن پر شدن نوار
-                     * واضح‌تر دیده می‌شود.
+                     * فقط وقتی مقدار تغییر کرده،
+                     * انیمیشن را اجرا کن.
                      */
 
-                    xpFill.style.width =
-                        "0%";
+                    const currentWidth =
+                        xpFill.style.width;
 
 
-                    requestAnimationFrame(
-                        () => {
+                    const targetWidth =
+                        `${progress}%`;
 
-                            xpFill.style.width =
-                                `${progress}%`;
 
-                        }
-                    );
+                    if (
+                        currentWidth !==
+                        targetWidth
+                    ) {
+
+                        xpFill.style.width =
+                            "0%";
+
+
+                        requestAnimationFrame(
+                            () => {
+
+                                requestAnimationFrame(
+                                    () => {
+
+                                        xpFill.style.width =
+                                            targetWidth;
+
+                                    }
+                                );
+
+                            }
+                        );
+
+                    }
 
                 }
 
@@ -333,11 +409,96 @@ async function initializeAuthHeader() {
         );
 
 
-        setGuestHeader(
-            headerProfiles
+        /*
+         * اگر ارتباط قطع شد،
+         * اطلاعات فعلی پاک نمی‌شود.
+         *
+         * فقط دفعه بعدی دوباره تلاش می‌کنیم.
+         */
+
+    }
+
+}
+
+
+/* =========================
+   INITIALIZE AUTH + LIVE UPDATE
+========================= */
+
+function initializeAuthHeader() {
+
+    /*
+     * اگر Timer قبلی وجود دارد،
+     * پاکش کن تا چند Timer همزمان ساخته نشود.
+     */
+
+    if (
+        vexonPlayerUpdateTimer
+    ) {
+
+        clearInterval(
+            vexonPlayerUpdateTimer
         );
 
     }
+
+
+    /*
+     * اولین بار فوراً اطلاعات را بگیر.
+     */
+
+    updateAuthHeader();
+
+
+    /*
+     * هر 10 ثانیه
+     */
+
+    vexonPlayerUpdateTimer =
+        setInterval(
+            () => {
+
+                updateAuthHeader();
+
+            },
+            10000
+        );
+
+
+    /*
+     * وقتی کاربر دوباره به تب برمی‌گردد،
+     * همان لحظه اطلاعات جدید را بگیر.
+     */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.visibilityState ===
+                "visible"
+            ) {
+
+                updateAuthHeader();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * وقتی Window دوباره Focus می‌شود.
+     */
+
+    window.addEventListener(
+        "focus",
+        () => {
+
+            updateAuthHeader();
+
+        }
+    );
 
 }
 
@@ -375,6 +536,12 @@ function setGuestHeader(
                 );
 
 
+            const xpFill =
+                headerProfile.querySelector(
+                    ".header-xp-fill"
+                );
+
+
             if (strong) {
 
                 strong.textContent =
@@ -388,6 +555,7 @@ function setGuestHeader(
                 span.textContent =
                     "ورود به حساب";
 
+
                 span.classList.remove(
                     "header-player-stats"
                 );
@@ -399,6 +567,14 @@ function setGuestHeader(
 
                 xpBar.style.display =
                     "none";
+
+            }
+
+
+            if (xpFill) {
+
+                xpFill.style.width =
+                    "0%";
 
             }
 
@@ -565,6 +741,7 @@ function initializeNavigation() {
             },
             {
                 threshold: 0.2,
+
                 rootMargin:
                     "-20% 0px -55% 0px"
             }
@@ -723,8 +900,13 @@ function initializeSmoothNavigation() {
 
 
                         target.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start"
+
+                            behavior:
+                                "smooth",
+
+                            block:
+                                "start"
+
                         });
 
                     }
