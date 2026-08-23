@@ -1409,6 +1409,194 @@ export default {
 
 
     /* =====================================================
+   RUBIKA LINK FROM RENDER
+===================================================== */
+
+if (
+  url.pathname === "/api/rubika/link" &&
+  request.method === "POST"
+) {
+  try {
+    const apiKey =
+      request.headers.get("X-VEXON-API-KEY");
+
+    if (
+      !env.VEXON_RUBIKA_API_KEY ||
+      apiKey !== env.VEXON_RUBIKA_API_KEY
+    ) {
+      return json(
+        {
+          success: false,
+          message: "Unauthorized"
+        },
+        401
+      );
+    }
+
+    const body =
+      await request.json();
+
+    const code =
+      typeof body.code === "string"
+        ? body.code.trim()
+        : "";
+
+    const rubikaUserId =
+      body.rubika_user_id !== undefined
+        ? String(body.rubika_user_id)
+        : "";
+
+    if (
+      !/^\d{6}$/.test(code) ||
+      !rubikaUserId
+    ) {
+      return json(
+        {
+          success: false,
+          message: "Invalid data"
+        },
+        400
+      );
+    }
+
+    const linkCode =
+      await env.DB
+        .prepare(
+          `
+          SELECT
+            user_id,
+            code,
+            expires_at
+          FROM rubika_link_codes
+          WHERE code = ?1
+          LIMIT 1
+          `
+        )
+        .bind(code)
+        .first();
+
+    if (!linkCode) {
+      return json(
+        {
+          success: false,
+          message: "کد اتصال معتبر نیست."
+        },
+        404
+      );
+    }
+
+    if (
+      new Date(
+        linkCode.expires_at
+      ).getTime() <= Date.now()
+    ) {
+      await env.DB
+        .prepare(
+          `
+          DELETE FROM rubika_link_codes
+          WHERE user_id = ?1
+          `
+        )
+        .bind(linkCode.user_id)
+        .run();
+
+      return json(
+        {
+          success: false,
+          message: "کد اتصال منقضی شده است."
+        },
+        410
+      );
+    }
+
+    const existingLink =
+      await env.DB
+        .prepare(
+          `
+          SELECT
+            id,
+            user_id,
+            rubika_sender_id
+          FROM rubika_links
+          WHERE
+            user_id = ?1
+            OR rubika_sender_id = ?2
+          LIMIT 1
+          `
+        )
+        .bind(
+          linkCode.user_id,
+          rubikaUserId
+        )
+        .first();
+
+    if (existingLink) {
+      return json(
+        {
+          success: false,
+          message:
+            "این حساب VEXON یا حساب روبیکا قبلاً متصل شده است."
+        },
+        409
+      );
+    }
+
+    await env.DB
+      .prepare(
+        `
+        INSERT INTO rubika_links
+          (
+            user_id,
+            rubika_sender_id,
+            rubika_chat_id
+          )
+        VALUES
+          (?1, ?2, ?3)
+        `
+      )
+      .bind(
+        linkCode.user_id,
+        rubikaUserId,
+        rubikaUserId
+      )
+      .run();
+
+    await env.DB
+      .prepare(
+        `
+        DELETE FROM rubika_link_codes
+        WHERE user_id = ?1
+        `
+      )
+      .bind(linkCode.user_id)
+      .run();
+
+    return json({
+      success: true,
+      message:
+        "حساب روبیکا با موفقیت متصل شد."
+    });
+
+  } catch (error) {
+
+    console.error(
+      "RUBIKA_LINK_ERROR",
+      error
+    );
+
+    return json(
+      {
+        success: false,
+        message:
+          "خطایی هنگام اتصال حساب رخ داد."
+      },
+      500
+    );
+  }
+}
+
+
+    /* =====================================================
        API TEST
     ===================================================== */
 
