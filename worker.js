@@ -2,15 +2,13 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // API
-    if (url.pathname === "/api/test") {
+    if (url.pathname.startsWith("/api/")) {
       return Response.json({
         success: true,
-        message: "VEXON API is working!",
+        message: "VEXON API is online!"
       });
     }
 
-    // Website
     return env.ASSETS.fetch(request);
-  },
+  }
 };
