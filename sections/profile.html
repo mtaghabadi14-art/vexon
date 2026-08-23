@@ -12,7 +12,7 @@
 
     <meta
         name="description"
-        content="پروفایل کاربری VEXON"
+        content="تنظیمات حساب VEXON"
     >
 
     <meta
@@ -20,7 +20,7 @@
         content="#03040a"
     >
 
-    <title>VEXON | پروفایل</title>
+    <title>VEXON | تنظیمات حساب</title>
 
 
     <link
@@ -138,11 +138,11 @@
 
         <div>
 
-            <strong id="header-profile-name">
-                پروفایل
+            <strong>
+                تنظیمات حساب
             </strong>
 
-            <span id="header-profile-stats">
+            <span>
                 حساب کاربری
             </span>
 
@@ -166,71 +166,126 @@
     <div class="profile-page-content">
 
         <span class="section-label">
-            👤 VEXON PROFILE
+            ⚙️ VEXON ACCOUNT
         </span>
 
 
         <h1>
-            پروفایل تو،
-            <span>هویت تو در VEXON.</span>
+            تنظیمات حساب،
+            <span>حساب VEXON تو.</span>
         </h1>
 
 
         <p>
-            پروفایل VEXON مرکز پیشرفت بازیکن خواهد بود؛
-            جایی برای Level، XP، سکه‌ها، آمار بازی‌ها و دستاوردها.
+            اینجا می‌توانی تنظیمات حساب و اتصال‌های VEXON
+            را مدیریت کنی. اطلاعات Level، XP و سکه‌ها
+            مستقیماً در کارت بالای سایت نمایش داده می‌شوند.
         </p>
 
     </div>
 
 
-    <div class="profile-big-card">
-
+    <div
+        class="profile-big-card"
+        id="settings-card"
+    >
 
         <div class="profile-big-avatar">
-            👤
+            ⚙️
         </div>
 
 
-        <strong id="profile-username">
+        <strong
+            id="settings-username"
+        >
             در حال بارگذاری...
         </strong>
 
 
-        <span id="profile-level">
-            LEVEL 1
+        <span
+            id="settings-status"
+        >
+            حساب VEXON
         </span>
 
 
-        <div class="big-level-bar">
-            <i
-                id="profile-level-fill"
-                style="width: 0%;"
-            ></i>
-        </div>
-
+        <!-- =========================
+             ACCOUNT INFO
+        ========================== -->
 
         <div
-            class="profile-big-coins"
-            id="profile-coins"
+            style="
+                width: 100%;
+                margin-top: 22px;
+                padding: 18px;
+                border-radius: 18px;
+                border: 1px solid rgba(0, 255, 157, 0.15);
+                background: rgba(0, 255, 157, 0.035);
+                box-sizing: border-box;
+            "
         >
-            🪙 0
+
+            <div
+                style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    margin-bottom: 12px;
+                "
+            >
+
+                <span>
+                    👤 نام کاربری
+                </span>
+
+                <strong
+                    id="account-username"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
+            <div
+                style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                "
+            >
+
+                <span>
+                    🔐 وضعیت حساب
+                </span>
+
+                <strong
+                    style="
+                        color: #00ff9d;
+                    "
+                >
+                    فعال
+                </strong>
+
+            </div>
+
         </div>
 
 
         <!-- =========================
-             RUBIKA CONNECTION
+             RUBIKA
         ========================== -->
 
         <div
-            id="rubika-connect-box"
             style="
                 width: 100%;
-                margin-top: 24px;
-                padding: 20px;
+                margin-top: 16px;
+                padding: 18px;
                 border-radius: 18px;
-                border: 1px solid rgba(0, 255, 157, 0.18);
-                background: rgba(0, 255, 157, 0.04);
+                border: 1px solid rgba(0, 255, 157, 0.15);
+                background: rgba(0, 255, 157, 0.035);
                 box-sizing: border-box;
             "
         >
@@ -239,10 +294,9 @@
                 style="
                     display: block;
                     margin-bottom: 8px;
-                    font-size: 16px;
                 "
             >
-                🤖 اتصال به روبیکا
+                🤖 اتصال روبیکا
             </strong>
 
 
@@ -256,7 +310,7 @@
             >
                 حساب VEXON خودت را به
                 <strong>@bangame56bot</strong>
-                وصل کن.
+                وصل یا مدیریت کن.
             </p>
 
 
@@ -269,7 +323,7 @@
                     cursor: pointer;
                 "
             >
-                🤖 دریافت کد اتصال
+                🤖 اتصال به روبیکا
             </button>
 
 
@@ -289,7 +343,9 @@
                         margin-bottom: 8px;
                     "
                 >
-                    این کد را برای ربات بفرست:
+                    این کد را برای
+                    <strong>@bangame56bot</strong>
+                    بفرست:
                 </div>
 
 
@@ -298,11 +354,13 @@
                     dir="ltr"
                     style="
                         font-family: monospace;
-                        font-size: 32px;
+                        font-size: 30px;
                         font-weight: 900;
-                        letter-spacing: 8px;
+                        letter-spacing: 7px;
                         color: #00ff9d;
-                        text-shadow: 0 0 15px rgba(0, 255, 157, 0.45);
+                        text-shadow:
+                            0 0 15px
+                            rgba(0, 255, 157, 0.45);
                         margin: 10px 0;
                     "
                 >
@@ -318,10 +376,6 @@
                     "
                 >
                     ⏱ اعتبار کد: ۱۰ دقیقه
-                    <br>
-                    سپس در روبیکا پیام را برای
-                    <strong>@bangame56bot</strong>
-                    ارسال کن.
                 </div>
 
             </div>
@@ -342,16 +396,21 @@
         </div>
 
 
+        <!-- =========================
+             LOGOUT
+        ========================== -->
+
         <button
             type="button"
             id="logout-button"
             class="auth-secondary-button"
             style="
+                width: 100%;
                 margin-top: 18px;
                 cursor: pointer;
             "
         >
-            خروج از حساب
+            🚪 خروج از حساب
         </button>
 
     </div>
@@ -402,31 +461,21 @@
 
 <script>
 
-(async function loadProfile() {
+(async function loadAccountSettings() {
 
     const usernameElement =
         document.getElementById(
-            "profile-username"
+            "settings-username"
         );
 
-    const levelElement =
+    const accountUsername =
         document.getElementById(
-            "profile-level"
+            "account-username"
         );
 
-    const coinsElement =
+    const statusElement =
         document.getElementById(
-            "profile-coins"
-        );
-
-    const levelFill =
-        document.getElementById(
-            "profile-level-fill"
-        );
-
-    const logoutButton =
-        document.getElementById(
-            "logout-button"
+            "settings-status"
         );
 
     const rubikaButton =
@@ -447,6 +496,11 @@
     const rubikaMessage =
         document.getElementById(
             "rubika-message"
+        );
+
+    const logoutButton =
+        document.getElementById(
+            "logout-button"
         );
 
 
@@ -487,44 +541,17 @@
             user.username;
 
 
-        levelElement.textContent =
-            `LEVEL ${user.level}`;
+        accountUsername.textContent =
+            user.username;
 
 
-        coinsElement.textContent =
-            `🪙 ${user.coins}`;
-
-
-        /*
-         * یک نمایش ساده برای نوار XP:
-         * هر Level فعلاً 1000 XP در نظر گرفته می‌شود.
-         */
-
-        const xpInsideLevel =
-            user.xp % 1000;
-
-
-        const xpPercent =
-            Math.min(
-                100,
-                Math.max(
-                    0,
-                    (xpInsideLevel / 1000) * 100
-                )
-            );
-
-
-        if (levelFill) {
-
-            levelFill.style.width =
-                `${xpPercent}%`;
-
-        }
+        statusElement.textContent =
+            "حساب VEXON فعال ✅";
 
 
         /*
          * ==============================
-         * RUBIKA CONNECT
+         * RUBIKA LINK
          * ==============================
          */
 
@@ -583,10 +610,12 @@
 
 
                     rubikaMessage.textContent =
-                        "✅ کد ساخته شد. حالا آن را برای @bangame56bot بفرست.";
+                        "✅ کد ساخته شد. آن را برای @bangame56bot بفرست.";
+
 
                     rubikaMessage.style.display =
                         "block";
+
 
                 } catch (error) {
 
@@ -595,6 +624,7 @@
                         error
                     );
 
+
                     rubikaMessage.textContent =
                         "❌ " +
                         (
@@ -602,8 +632,10 @@
                             "خطایی هنگام ساخت کد رخ داد."
                         );
 
+
                     rubikaMessage.style.display =
                         "block";
+
 
                 } finally {
 
@@ -611,7 +643,7 @@
                         false;
 
                     rubikaButton.textContent =
-                        "🤖 دریافت کد اتصال";
+                        "🤖 اتصال به روبیکا";
 
                 }
 
@@ -631,6 +663,7 @@
 
                 logoutButton.disabled =
                     true;
+
 
                 try {
 
@@ -664,9 +697,10 @@
     } catch (error) {
 
         console.error(
-            "PROFILE_ERROR",
+            "SETTINGS_ERROR",
             error
         );
+
 
         window.location.href =
             "login.html";

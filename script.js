@@ -47,23 +47,33 @@ async function loadSection(file) {
 
 async function loadVexon() {
 
+    if (!app) {
+        console.error(
+            "VEXON: #app پیدا نشد."
+        );
+
+        return;
+    }
+
+
     const sections = [
-    "home",
-    "games",
-    "news",
-    "cafe",
-    "leaderboard",
-    "guide",
-    "creators",
-    "profile"
-];
+        "home",
+        "games",
+        "news",
+        "cafe",
+        "leaderboard",
+        "guide",
+        "creators",
+        "profile"
+    ];
 
 
-    const loadedSections = await Promise.all(
-        sections.map(section =>
-            loadSection(section)
-        )
-    );
+    const loadedSections =
+        await Promise.all(
+            sections.map(section =>
+                loadSection(section)
+            )
+        );
 
 
     app.innerHTML =
@@ -97,6 +107,246 @@ function initializeVexon() {
 
     initializeParallax();
 
+    /*
+     * مهم:
+     * هدر بعد از loadVexon ساخته شده،
+     * بنابراین Auth باید اینجا اجرا شود.
+     */
+    initializeAuthHeader();
+
+}
+
+
+/* =========================
+   AUTH HEADER
+========================= */
+
+async function initializeAuthHeader() {
+
+    const headerProfiles =
+        document.querySelectorAll(
+            ".header-profile"
+        );
+
+
+    /*
+     * اگر چند بخش شامل هدر بودند،
+     * همه را آپدیت می‌کنیم.
+     */
+
+    if (!headerProfiles.length) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    method: "GET",
+                    credentials:
+                        "same-origin",
+                    cache: "no-store"
+                }
+            );
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            data = null;
+
+        }
+
+
+        /*
+         * =========================
+         * USER LOGGED IN
+         * =========================
+         */
+
+        if (
+            response.ok &&
+            data?.loggedIn &&
+            data?.user
+        ) {
+
+            const user =
+                data.user;
+
+
+            headerProfiles.forEach(
+                (headerProfile) => {
+
+                    /*
+                     * چون این Header
+                     * داخل sections قرار دارد،
+                     * از همان فایل فعلی استفاده می‌کنیم.
+                     */
+
+                    headerProfile.href =
+                        "profile.html";
+
+
+                    const strong =
+                        headerProfile.querySelector(
+                            "strong"
+                        );
+
+
+                    const span =
+                        headerProfile.querySelector(
+                            "span"
+                        );
+
+
+                    /*
+                     * نام کاربری
+                     */
+
+                    if (strong) {
+
+                        strong.textContent =
+                            user.username ||
+                            "بازیکن VEXON";
+
+                    }
+
+
+                    /*
+                     * آمار بازیکن
+                     *
+                     * اگر API اطلاعات واقعی
+                     * Render/Supabase را برگرداند،
+                     * همین‌جا نمایش داده می‌شود.
+                     */
+
+                    if (span) {
+
+                        const level =
+                            Number(
+                                user.level ?? 1
+                            );
+
+
+                        const xp =
+                            Number(
+                                user.xp ?? 0
+                            );
+
+
+                        const coins =
+                            Number(
+                                user.coins ?? 0
+                            );
+
+
+                        span.textContent =
+                            `LV ${level} • XP ${xp} • 🪙 ${coins}`;
+
+
+                        span.classList.add(
+                            "header-player-stats"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            return;
+
+        }
+
+
+        /*
+         * =========================
+         * GUEST
+         * =========================
+         */
+
+        setGuestHeader(
+            headerProfiles
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "AUTH_HEADER_ERROR:",
+            error
+        );
+
+
+        setGuestHeader(
+            headerProfiles
+        );
+
+    }
+
+}
+
+
+/* =========================
+   GUEST HEADER
+========================= */
+
+function setGuestHeader(
+    headerProfiles
+) {
+
+    headerProfiles.forEach(
+        (headerProfile) => {
+
+            headerProfile.href =
+                "login.html";
+
+
+            const strong =
+                headerProfile.querySelector(
+                    "strong"
+                );
+
+
+            const span =
+                headerProfile.querySelector(
+                    "span"
+                );
+
+
+            if (strong) {
+
+                strong.textContent =
+                    "ورود / ثبت‌نام";
+
+            }
+
+
+            if (span) {
+
+                span.textContent =
+                    "ورود به حساب";
+
+
+                span.classList.remove(
+                    "header-player-stats"
+                );
+
+            }
+
+        }
+    );
+
 }
 
 
@@ -107,40 +357,73 @@ function initializeVexon() {
 function initializeNavigation() {
 
     const desktopNavLinks =
-        document.querySelectorAll(".nav-link");
+        document.querySelectorAll(
+            ".nav-link"
+        );
+
 
     const mobileNavItems =
-        document.querySelectorAll(".mobile-nav-item");
+        document.querySelectorAll(
+            ".mobile-nav-item"
+        );
 
 
-    mobileNavItems.forEach((item) => {
+    mobileNavItems.forEach(
+        (item) => {
 
-        item.addEventListener("click", () => {
+            item.addEventListener(
+                "click",
+                () => {
 
-            mobileNavItems.forEach((nav) => {
-                nav.classList.remove("active");
-            });
+                    mobileNavItems.forEach(
+                        (nav) => {
 
-            item.classList.add("active");
+                            nav.classList.remove(
+                                "active"
+                            );
 
-        });
+                        }
+                    );
 
-    });
+
+                    item.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
-    desktopNavLinks.forEach((link) => {
+    desktopNavLinks.forEach(
+        (link) => {
 
-        link.addEventListener("click", () => {
+            link.addEventListener(
+                "click",
+                () => {
 
-            desktopNavLinks.forEach((nav) => {
-                nav.classList.remove("active");
-            });
+                    desktopNavLinks.forEach(
+                        (nav) => {
 
-            link.classList.add("active");
+                            nav.classList.remove(
+                                "active"
+                            );
 
-        });
+                        }
+                    );
 
-    });
+
+                    link.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
     const sections =
@@ -149,51 +432,75 @@ function initializeNavigation() {
         );
 
 
+    if (!sections.length) {
+        return;
+    }
+
+
     const sectionObserver =
         new IntersectionObserver(
             (entries) => {
 
-                entries.forEach((entry) => {
+                entries.forEach(
+                    (entry) => {
 
-                    if (!entry.isIntersecting) {
-                        return;
+                        if (
+                            !entry.isIntersecting
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const id =
+                            entry.target.id;
+
+
+                        desktopNavLinks.forEach(
+                            (link) => {
+
+                                const href =
+                                    link.getAttribute(
+                                        "href"
+                                    );
+
+
+                                link.classList.toggle(
+                                    "active",
+                                    href === `#${id}`
+                                );
+
+                            }
+                        );
+
+
+                        mobileNavItems.forEach(
+                            (item) => {
+
+                                const href =
+                                    item.getAttribute(
+                                        "href"
+                                    );
+
+
+                                item.classList.toggle(
+                                    "active",
+
+                                    href === `#${id}` ||
+
+                                    (
+                                        id ===
+                                        "games-all" &&
+                                        href === "#games"
+                                    )
+                                );
+
+                            }
+                        );
+
                     }
-
-
-                    const id =
-                        entry.target.id;
-
-
-                    desktopNavLinks.forEach((link) => {
-
-                        const href =
-                            link.getAttribute("href");
-
-                        link.classList.toggle(
-                            "active",
-                            href === `#${id}`
-                        );
-
-                    });
-
-
-                    mobileNavItems.forEach((item) => {
-
-                        const href =
-                            item.getAttribute("href");
-
-                        item.classList.toggle(
-                            "active",
-                            href === `#${id}` ||
-                            (
-                                id === "games-all" &&
-                                href === "#games"
-                            )
-                        );
-
-                    });
-
-                });
+                );
 
             },
             {
@@ -204,11 +511,15 @@ function initializeNavigation() {
         );
 
 
-    sections.forEach((section) => {
+    sections.forEach(
+        (section) => {
 
-        sectionObserver.observe(section);
+            sectionObserver.observe(
+                section
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -236,32 +547,49 @@ function initializeScrollReveal() {
         );
 
 
-    revealElements.forEach((element) => {
+    revealElements.forEach(
+        (element) => {
 
-        element.classList.add("reveal");
+            element.classList.add(
+                "reveal"
+            );
 
-    });
+        }
+    );
+
+
+    if (!revealElements.length) {
+        return;
+    }
 
 
     const revealObserver =
         new IntersectionObserver(
             (entries, observer) => {
 
-                entries.forEach((entry) => {
+                entries.forEach(
+                    (entry) => {
 
-                    if (!entry.isIntersecting) {
-                        return;
+                        if (
+                            !entry.isIntersecting
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        entry.target.classList.add(
+                            "visible"
+                        );
+
+
+                        observer.unobserve(
+                            entry.target
+                        );
+
                     }
-
-                    entry.target.classList.add(
-                        "visible"
-                    );
-
-                    observer.unobserve(
-                        entry.target
-                    );
-
-                });
+                );
 
             },
             {
@@ -270,11 +598,15 @@ function initializeScrollReveal() {
         );
 
 
-    revealElements.forEach((element) => {
+    revealElements.forEach(
+        (element) => {
 
-        revealObserver.observe(element);
+            revealObserver.observe(
+                element
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -289,49 +621,55 @@ function initializeSmoothNavigation() {
         .querySelectorAll(
             'a[href^="#"]'
         )
-        .forEach((link) => {
+        .forEach(
+            (link) => {
 
-            link.addEventListener(
-                "click",
-                (event) => {
+                link.addEventListener(
+                    "click",
+                    (event) => {
 
-                    const targetId =
-                        link.getAttribute(
-                            "href"
-                        );
+                        const targetId =
+                            link.getAttribute(
+                                "href"
+                            );
 
 
-                    if (
-                        !targetId ||
-                        targetId === "#"
-                    ) {
-                        return;
+                        if (
+                            !targetId ||
+                            targetId === "#"
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const target =
+                            document.querySelector(
+                                targetId
+                            );
+
+
+                        if (!target) {
+
+                            return;
+
+                        }
+
+
+                        event.preventDefault();
+
+
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
                     }
+                );
 
-
-                    const target =
-                        document.querySelector(
-                            targetId
-                        );
-
-
-                    if (!target) {
-                        return;
-                    }
-
-
-                    event.preventDefault();
-
-
-                    target.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
-
-                }
-            );
-
-        });
+            }
+        );
 
 }
 
@@ -351,39 +689,43 @@ function initializeButtonPress() {
             .card-button
             `
         )
-        .forEach((button) => {
+        .forEach(
+            (button) => {
 
-            button.addEventListener(
-                "mousedown",
-                () => {
+                button.addEventListener(
+                    "mousedown",
+                    () => {
 
-                    button.style.transform =
-                        "scale(0.97)";
+                        button.style.transform =
+                            "scale(0.97)";
 
-                }
-            );
-
-
-            button.addEventListener(
-                "mouseup",
-                () => {
-
-                    button.style.transform = "";
-
-                }
-            );
+                    }
+                );
 
 
-            button.addEventListener(
-                "mouseleave",
-                () => {
+                button.addEventListener(
+                    "mouseup",
+                    () => {
 
-                    button.style.transform = "";
+                        button.style.transform =
+                            "";
 
-                }
-            );
+                    }
+                );
 
-        });
+
+                button.addEventListener(
+                    "mouseleave",
+                    () => {
+
+                        button.style.transform =
+                            "";
+
+                    }
+                );
+
+            }
+        );
 
 }
 
@@ -399,14 +741,20 @@ function initializeParallax() {
             ".hero-visual"
         );
 
+
     const heroV =
         document.querySelector(
             ".hero-v"
         );
 
 
-    if (!heroVisual || !heroV) {
+    if (
+        !heroVisual ||
+        !heroV
+    ) {
+
         return;
+
     }
 
 
@@ -414,8 +762,12 @@ function initializeParallax() {
         "mousemove",
         (event) => {
 
-            if (window.innerWidth <= 850) {
+            if (
+                window.innerWidth <= 850
+            ) {
+
                 return;
+
             }
 
 
@@ -447,11 +799,13 @@ function initializeParallax() {
         () => {
 
             if (
-                window.innerWidth <= 850 &&
+                window.innerWidth <= 850
+                &&
                 heroV
             ) {
 
-                heroV.style.transform = "";
+                heroV.style.transform =
+                    "";
 
             }
 
@@ -466,179 +820,3 @@ function initializeParallax() {
 ========================= */
 
 loadVexon();
-
-
-```js
-/* =========================================
-   VEXON AUTH HEADER
-========================================= */
-
-(async function updateAuthHeader() {
-    const headerProfile =
-        document.querySelector(".header-profile");
-
-    if (!headerProfile) {
-        return;
-    }
-
-    try {
-        const response = await fetch("/api/me", {
-            method: "GET",
-            credentials: "same-origin"
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.loggedIn && data.user) {
-
-            // Logged in
-            headerProfile.href = "profile.html";
-
-            const strong =
-                headerProfile.querySelector("strong");
-
-            const span =
-                headerProfile.querySelector("span");
-
-            if (strong) {
-                strong.textContent = "پروفایل";
-            }
-
-            if (span) {
-                span.textContent =
-                    data.user.username;
-            }
-
-        } else {
-
-            // Guest
-            headerProfile.href = "login.html";
-
-            const strong =
-                headerProfile.querySelector("strong");
-
-            const span =
-                headerProfile.querySelector("span");
-
-            if (strong) {
-                strong.textContent =
-                    "ورود / ثبت‌نام";
-            }
-
-            if (span) {
-                span.textContent =
-                    "ورود به حساب";
-            }
-        }
-
-    } catch (error) {
-
-        console.error(
-            "AUTH_HEADER_ERROR",
-            error
-        );
-
-        // Fallback for guests
-        headerProfile.href = "login.html";
-
-        const strong =
-            headerProfile.querySelector("strong");
-
-        const span =
-            headerProfile.querySelector("span");
-
-        if (strong) {
-            strong.textContent =
-                "ورود / ثبت‌نام";
-        }
-
-        if (span) {
-            span.textContent =
-                "ورود به حساب";
-        }
-    }
-})();
-```
-
-
-/* =========================================
-   VEXON HEADER PLAYER STATS
-========================================= */
-
-(async function updateHeaderPlayerStats() {
-    const headerProfile =
-        document.querySelector(".header-profile");
-
-    if (!headerProfile) {
-        return;
-    }
-
-    const strong =
-        headerProfile.querySelector("strong");
-
-    const span =
-        headerProfile.querySelector("span");
-
-    try {
-        const response = await fetch("/api/me", {
-            method: "GET",
-            credentials: "same-origin"
-        });
-
-        const data = await response.json();
-
-        if (
-            response.ok &&
-            data.loggedIn &&
-            data.user
-        ) {
-            const user = data.user;
-
-            headerProfile.href = "profile.html";
-
-            if (strong) {
-                strong.textContent =
-                    user.username;
-            }
-
-            if (span) {
-                span.textContent =
-                    `LV ${user.level} • XP ${user.xp} • 🪙 ${user.coins}`;
-
-                span.classList.add(
-                    "header-player-stats"
-                );
-            }
-
-        } else {
-            setGuestHeader();
-        }
-
-    } catch (error) {
-        console.error(
-            "HEADER_STATS_ERROR:",
-            error
-        );
-
-        setGuestHeader();
-    }
-
-
-    function setGuestHeader() {
-        headerProfile.href = "login.html";
-
-        if (strong) {
-            strong.textContent =
-                "ورود / ثبت‌نام";
-        }
-
-        if (span) {
-            span.textContent =
-                "ورود به حساب";
-
-            span.classList.remove(
-                "header-player-stats"
-            );
-        }
-    }
-})();
