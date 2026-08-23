@@ -47,14 +47,11 @@ function fromBase64(value) {
 ========================================================= */
 
 async function hashPassword(password) {
+  const encoder = new TextEncoder();
 
-  const encoder =
-    new TextEncoder();
-
-  const salt =
-    crypto.getRandomValues(
-      new Uint8Array(16)
-    );
+  const salt = crypto.getRandomValues(
+    new Uint8Array(16)
+  );
 
   const keyMaterial =
     await crypto.subtle.importKey(
@@ -81,22 +78,14 @@ async function hashPassword(password) {
     "pbkdf2",
     PASSWORD_ITERATIONS,
     toBase64(salt),
-    toBase64(
-      new Uint8Array(derivedBits)
-    )
+    toBase64(new Uint8Array(derivedBits))
   ].join("$");
 }
 
 
-async function verifyPassword(
-  password,
-  storedHash
-) {
-
+async function verifyPassword(password, storedHash) {
   try {
-
-    const parts =
-      storedHash.split("$");
+    const parts = storedHash.split("$");
 
     if (
       parts.length !== 4 ||
@@ -105,14 +94,9 @@ async function verifyPassword(
       return false;
     }
 
-    const iterations =
-      Number(parts[1]);
-
-    const salt =
-      fromBase64(parts[2]);
-
-    const expected =
-      fromBase64(parts[3]);
+    const iterations = Number(parts[1]);
+    const salt = fromBase64(parts[2]);
+    const expected = fromBase64(parts[3]);
 
     const keyMaterial =
       await crypto.subtle.importKey(
@@ -135,36 +119,22 @@ async function verifyPassword(
         expected.length * 8
       );
 
-    const actual =
-      new Uint8Array(
-        derivedBits
-      );
+    const actual = new Uint8Array(derivedBits);
 
-    if (
-      actual.length !==
-      expected.length
-    ) {
+    if (actual.length !== expected.length) {
       return false;
     }
 
     let difference = 0;
 
-    for (
-      let i = 0;
-      i < actual.length;
-      i++
-    ) {
-      difference |=
-        actual[i] ^
-        expected[i];
+    for (let i = 0; i < actual.length; i++) {
+      difference |= actual[i] ^ expected[i];
     }
 
     return difference === 0;
 
   } catch {
-
     return false;
-
   }
 }
 
@@ -174,79 +144,49 @@ async function verifyPassword(
 ========================================================= */
 
 function createSessionToken() {
-
-  const bytes =
-    crypto.getRandomValues(
-      new Uint8Array(32)
-    );
+  const bytes = crypto.getRandomValues(
+    new Uint8Array(32)
+  );
 
   return Array.from(bytes)
     .map(byte =>
-      byte
-        .toString(16)
-        .padStart(2, "0")
+      byte.toString(16).padStart(2, "0")
     )
     .join("");
 }
 
 
-async function hashSessionToken(
-  token
-) {
-
+async function hashSessionToken(token) {
   const digest =
     await crypto.subtle.digest(
       "SHA-256",
       new TextEncoder().encode(token)
     );
 
-  return Array.from(
-    new Uint8Array(digest)
-  )
+  return Array.from(new Uint8Array(digest))
     .map(byte =>
-      byte
-        .toString(16)
-        .padStart(2, "0")
+      byte.toString(16).padStart(2, "0")
     )
     .join("");
 }
 
 
-function getCookie(
-  request,
-  name
-) {
-
+function getCookie(request, name) {
   const cookieHeader =
-    request.headers.get(
-      "Cookie"
-    );
+    request.headers.get("Cookie");
 
   if (!cookieHeader) {
     return null;
   }
 
-  const cookies =
-    cookieHeader.split(";");
+  const cookies = cookieHeader.split(";");
 
-  for (
-    const cookie of cookies
-  ) {
-
-    const [
-      key,
-      ...valueParts
-    ] =
-      cookie
-        .trim()
-        .split("=");
+  for (const cookie of cookies) {
+    const [key, ...valueParts] =
+      cookie.trim().split("=");
 
     if (key === name) {
-
-      return (
-        valueParts.join("=") ||
-        null
-      );
+      return valueParts.join("=") || null;
     }
   }
 
@@ -258,25 +198,16 @@ function getCookie(
    CURRENT USER
 ========================================================= */
 
-async function getCurrentUser(
-  request,
-  env
-) {
-
+async function getCurrentUser(request, env) {
   const sessionToken =
-    getCookie(
-      request,
-      "vexon_session"
-    );
+    getCookie(request, "vexon_session");
 
   if (!sessionToken) {
     return null;
   }
 
   const tokenHash =
-    await hashSessionToken(
-      sessionToken
-    );
+    await hashSessionToken(sessionToken);
 
   const session =
     await env.DB
@@ -321,7 +252,6 @@ async function getCurrentUser(
 ========================================================= */
 
 function generateLinkCode() {
-
   const bytes =
     crypto.getRandomValues(
       new Uint32Array(1)
@@ -343,10 +273,7 @@ async function sendRubikaMessage(
   chatId,
   text
 ) {
-
-  if (
-    !env.RUBIKA_BOT_TOKEN
-  ) {
+  if (!env.RUBIKA_BOT_TOKEN) {
     throw new Error(
       "RUBIKA_BOT_TOKEN is not configured."
     );
@@ -357,12 +284,9 @@ async function sendRubikaMessage(
       `https://botapi.rubika.ir/v3/${env.RUBIKA_BOT_TOKEN}/sendMessage`,
       {
         method: "POST",
-
         headers: {
-          "Content-Type":
-            "application/json"
+          "Content-Type": "application/json"
         },
-
         body: JSON.stringify({
           chat_id: String(chatId),
           text: String(text)
@@ -371,7 +295,6 @@ async function sendRubikaMessage(
     );
 
   if (!response.ok) {
-
     throw new Error(
       `Rubika API returned HTTP ${response.status}`
     );
@@ -382,124 +305,13 @@ async function sendRubikaMessage(
 
 
 /* =========================================================
-   EXTRACT RUBIKA MESSAGE
-========================================================= */
-
-function extractRubikaMessage(
-  update
-) {
-
-  /*
-   * ReceiveUpdate examples can wrap
-   * the message in inline_message.
-   */
-
-  if (
-    update &&
-    update.inline_message
-  ) {
-
-    return {
-      senderId:
-        update.inline_message.sender_id,
-
-      chatId:
-        update.inline_message.chat_id,
-
-      text:
-        update.inline_message.text
-    };
-  }
-
-
-  /*
-   * Some clients/libraries expose
-   * new_message directly.
-   */
-
-  if (
-    update &&
-    update.new_message
-  ) {
-
-    return {
-      senderId:
-        update.new_message.sender_id,
-
-      chatId:
-        update.chat_id ||
-        update.new_message.chat_id,
-
-      text:
-        update.new_message.text
-    };
-  }
-
-
-  /*
-   * Another common structure:
-   * update.update.new_message
-   */
-
-  if (
-    update &&
-    update.update &&
-    update.update.new_message
-  ) {
-
-    return {
-      senderId:
-        update
-          .update
-          .new_message
-          .sender_id,
-
-      chatId:
-        update.update.chat_id ||
-        update
-          .update
-          .new_message
-          .chat_id,
-
-      text:
-        update
-          .update
-          .new_message
-          .text
-    };
-  }
-
-
-  /*
-   * Fallback
-   */
-
-  return {
-    senderId:
-      update?.sender_id,
-
-    chatId:
-      update?.chat_id,
-
-    text:
-      update?.text
-  };
-}
-
-
-/* =========================================================
    MAIN WORKER
 ========================================================= */
 
 export default {
+  async fetch(request, env) {
 
-  async fetch(
-    request,
-    env
-  ) {
-
-    const url =
-      new URL(request.url);
+    const url = new URL(request.url);
 
 
     /* =====================================================
@@ -507,34 +319,25 @@ export default {
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/register" &&
+      url.pathname === "/api/register" &&
       request.method === "POST"
     ) {
-
       try {
 
-        const body =
-          await request.json();
+        const body = await request.json();
 
         const username =
-          typeof body.username ===
-          "string"
+          typeof body.username === "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password ===
-          "string"
+          typeof body.password === "string"
             ? body.password
             : "";
 
 
-        if (
-          !/^[A-Za-z0-9_]{3,20}$/
-            .test(username)
-        ) {
-
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
           return json(
             {
               success: false,
@@ -546,10 +349,7 @@ export default {
         }
 
 
-        if (
-          password.length < 8
-        ) {
-
+        if (password.length < 8) {
           return json(
             {
               success: false,
@@ -576,7 +376,6 @@ export default {
 
 
         if (existingUser) {
-
           return json(
             {
               success: false,
@@ -589,9 +388,7 @@ export default {
 
 
         const passwordHash =
-          await hashPassword(
-            password
-          );
+          await hashPassword(password);
 
 
         const insertResult =
@@ -619,7 +416,6 @@ export default {
 
 
         if (!userId) {
-
           return json(
             {
               success: false,
@@ -682,34 +478,25 @@ export default {
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/login" &&
+      url.pathname === "/api/login" &&
       request.method === "POST"
     ) {
-
       try {
 
-        const body =
-          await request.json();
+        const body = await request.json();
 
         const username =
-          typeof body.username ===
-          "string"
+          typeof body.username === "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password ===
-          "string"
+          typeof body.password === "string"
             ? body.password
             : "";
 
 
-        if (
-          !username ||
-          !password
-        ) {
-
+        if (!username || !password) {
           return json(
             {
               success: false,
@@ -739,7 +526,6 @@ export default {
 
 
         if (!user) {
-
           return json(
             {
               success: false,
@@ -759,7 +545,6 @@ export default {
 
 
         if (!passwordCorrect) {
-
           return json(
             {
               success: false,
@@ -792,12 +577,10 @@ export default {
         const sessionToken =
           createSessionToken();
 
-
         const tokenHash =
           await hashSessionToken(
             sessionToken
           );
-
 
         const expiresAt =
           new Date(
@@ -841,14 +624,12 @@ export default {
           }),
           {
             status: 200,
-
             headers: {
               "Content-Type":
                 "application/json; charset=UTF-8",
 
               "Set-Cookie": [
-                "vexon_session=" +
-                  sessionToken,
+                "vexon_session=" + sessionToken,
                 "HttpOnly",
                 "Secure",
                 "SameSite=Lax",
@@ -888,11 +669,9 @@ export default {
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/me" &&
+      url.pathname === "/api/me" &&
       request.method === "GET"
     ) {
-
       try {
 
         const user =
@@ -903,7 +682,6 @@ export default {
 
 
         if (!user) {
-
           return json(
             {
               loggedIn: false
@@ -940,11 +718,9 @@ export default {
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/logout" &&
+      url.pathname === "/api/logout" &&
       request.method === "POST"
     ) {
-
       try {
 
         const sessionToken =
@@ -980,9 +756,7 @@ export default {
           }),
           {
             status: 200,
-
             headers: {
-
               "Content-Type":
                 "application/json; charset=UTF-8",
 
@@ -1021,11 +795,9 @@ export default {
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/rubika/create-code" &&
+      url.pathname === "/api/rubika/create-code" &&
       request.method === "POST"
     ) {
-
       try {
 
         const user =
@@ -1036,7 +808,6 @@ export default {
 
 
         if (!user) {
-
           return json(
             {
               success: false,
@@ -1112,70 +883,75 @@ export default {
 
 
     /* =====================================================
-       RUBIKA WEBHOOK
+       LINK RUBIKA FROM RENDER
     ===================================================== */
 
-    const webhookPath =
-      env.RUBIKA_WEBHOOK_KEY
-        ? `/api/rubika/webhook/${env.RUBIKA_WEBHOOK_KEY}`
-        : null;
-
-
     if (
-      webhookPath &&
-      url.pathname === webhookPath &&
+      url.pathname === "/api/rubika/link" &&
       request.method === "POST"
     ) {
-
       try {
 
-        const update =
-          await request.json();
-
-
-        const message =
-          extractRubikaMessage(
-            update
+        const receivedKey =
+          request.headers.get(
+            "X-VEXON-API-KEY"
           );
 
+        const normalizedReceivedKey =
+          typeof receivedKey === "string"
+            ? receivedKey.trim()
+            : "";
 
-        const senderId =
-          message.senderId;
-
-        const chatId =
-          message.chatId;
-
-        const text =
-          typeof message.text ===
-          "string"
-            ? message.text.trim()
+        const storedKey =
+          typeof env.VEXON_RUBIKA_API_KEY === "string"
+            ? env.VEXON_RUBIKA_API_KEY.trim()
             : "";
 
 
         if (
-          !senderId ||
-          !chatId ||
-          !text
+          !storedKey ||
+          !normalizedReceivedKey ||
+          normalizedReceivedKey !== storedKey
         ) {
-
-          return json({
-            success: true
-          });
+          return json(
+            {
+              success: false,
+              message:
+                "Unauthorized"
+            },
+            401
+          );
         }
 
 
-        /*
-         * فقط کدهای ۶ رقمی اتصال
-         * را بررسی می‌کنیم.
-         */
+        const body =
+          await request.json();
+
+
+        const code =
+          typeof body.code === "string"
+            ? body.code.trim()
+            : "";
+
+
+        const rubikaUserId =
+          body.rubika_user_id !== undefined
+            ? String(body.rubika_user_id).trim()
+            : "";
+
 
         if (
-          !/^\d{6}$/.test(text)
+          !/^\d{6}$/.test(code) ||
+          !rubikaUserId
         ) {
-
-          return json({
-            success: true
-          });
+          return json(
+            {
+              success: false,
+              message:
+                "Invalid data"
+            },
+            400
+          );
         }
 
 
@@ -1192,21 +968,19 @@ export default {
               LIMIT 1
               `
             )
-            .bind(text)
+            .bind(code)
             .first();
 
 
         if (!linkCode) {
-
-          await sendRubikaMessage(
-            env,
-            chatId,
-            "❌ این کد اتصال معتبر نیست."
+          return json(
+            {
+              success: false,
+              message:
+                "کد اتصال معتبر نیست."
+            },
+            404
           );
-
-          return json({
-            success: true
-          });
         }
 
 
@@ -1223,30 +997,20 @@ export default {
               WHERE user_id = ?1
               `
             )
-            .bind(
-              linkCode.user_id
-            )
+            .bind(linkCode.user_id)
             .run();
 
 
-          await sendRubikaMessage(
-            env,
-            chatId,
-            "⏰ این کد منقضی شده است. یک کد جدید از VEXON بگیر."
+          return json(
+            {
+              success: false,
+              message:
+                "کد اتصال منقضی شده است."
+            },
+            410
           );
-
-
-          return json({
-            success: true
-          });
         }
 
-
-        /*
-         * بررسی می‌کنیم حساب VEXON
-         * یا حساب روبیکا قبلاً متصل
-         * نباشد.
-         */
 
         const existingLink =
           await env.DB
@@ -1265,29 +1029,22 @@ export default {
             )
             .bind(
               linkCode.user_id,
-              senderId
+              rubikaUserId
             )
             .first();
 
 
         if (existingLink) {
-
-          await sendRubikaMessage(
-            env,
-            chatId,
-            "ℹ️ این حساب روبیکا یا حساب VEXON قبلاً متصل شده است."
+          return json(
+            {
+              success: false,
+              message:
+                "این حساب VEXON یا حساب روبیکا قبلاً متصل شده است."
+            },
+            409
           );
-
-
-          return json({
-            success: true
-          });
         }
 
-
-        /*
-         * ایجاد اتصال
-         */
 
         await env.DB
           .prepare(
@@ -1304,15 +1061,11 @@ export default {
           )
           .bind(
             linkCode.user_id,
-            String(senderId),
-            String(chatId)
+            rubikaUserId,
+            rubikaUserId
           )
           .run();
 
-
-        /*
-         * حذف کد مصرف‌شده
-         */
 
         await env.DB
           .prepare(
@@ -1321,86 +1074,29 @@ export default {
             WHERE user_id = ?1
             `
           )
-          .bind(
-            linkCode.user_id
-          )
+          .bind(linkCode.user_id)
           .run();
 
 
-        /*
-         * دریافت اطلاعات بازیکن
-         */
-
-        const linkedUser =
-          await env.DB
-            .prepare(
-              `
-              SELECT
-                users.username,
-                player_stats.level,
-                player_stats.xp,
-                player_stats.coins
-              FROM users
-              LEFT JOIN player_stats
-                ON player_stats.user_id = users.id
-              WHERE users.id = ?1
-              LIMIT 1
-              `
-            )
-            .bind(
-              linkCode.user_id
-            )
-            .first();
-
-
-        const username =
-          linkedUser?.username ||
-          "VEXON Player";
-
-
-        const level =
-          linkedUser?.level ??
-          1;
-
-
-        const xp =
-          linkedUser?.xp ??
-          0;
-
-
-        const coins =
-          linkedUser?.coins ??
-          0;
-
-
-        await sendRubikaMessage(
-          env,
-          chatId,
-          [
-            "✅ حساب VEXON با موفقیت متصل شد!",
-            "",
-            `👤 ${username}`,
-            `⭐ Level: ${level}`,
-            `✨ XP: ${xp}`,
-            `🪙 Coins: ${coins}`
-          ].join("\n")
-        );
-
-
         return json({
-          success: true
+          success: true,
+          message:
+            "حساب روبیکا با موفقیت متصل شد."
         });
+
 
       } catch (error) {
 
         console.error(
-          "RUBIKA_WEBHOOK_ERROR",
+          "RUBIKA_LINK_ERROR",
           error
         );
 
         return json(
           {
-            success: false
+            success: false,
+            message:
+              "خطایی هنگام اتصال حساب رخ داد."
           },
           500
         );
@@ -1409,203 +1105,13 @@ export default {
 
 
     /* =====================================================
-   RUBIKA LINK FROM RENDER
-===================================================== */
-
-if (
-  url.pathname === "/api/rubika/link" &&
-  request.method === "POST"
-) {
-  try {
-    const apiKey =
-      request.headers.get("X-VEXON-API-KEY");
-
-    if (
-      !env.VEXON_RUBIKA_API_KEY ||
-      apiKey !== env.VEXON_RUBIKA_API_KEY
-    ) {
-      return json(
-        {
-          success: false,
-          message: "Unauthorized"
-        },
-        401
-      );
-    }
-
-    const body =
-      await request.json();
-
-    const code =
-      typeof body.code === "string"
-        ? body.code.trim()
-        : "";
-
-    const rubikaUserId =
-      body.rubika_user_id !== undefined
-        ? String(body.rubika_user_id)
-        : "";
-
-    if (
-      !/^\d{6}$/.test(code) ||
-      !rubikaUserId
-    ) {
-      return json(
-        {
-          success: false,
-          message: "Invalid data"
-        },
-        400
-      );
-    }
-
-    const linkCode =
-      await env.DB
-        .prepare(
-          `
-          SELECT
-            user_id,
-            code,
-            expires_at
-          FROM rubika_link_codes
-          WHERE code = ?1
-          LIMIT 1
-          `
-        )
-        .bind(code)
-        .first();
-
-    if (!linkCode) {
-      return json(
-        {
-          success: false,
-          message: "کد اتصال معتبر نیست."
-        },
-        404
-      );
-    }
-
-    if (
-      new Date(
-        linkCode.expires_at
-      ).getTime() <= Date.now()
-    ) {
-      await env.DB
-        .prepare(
-          `
-          DELETE FROM rubika_link_codes
-          WHERE user_id = ?1
-          `
-        )
-        .bind(linkCode.user_id)
-        .run();
-
-      return json(
-        {
-          success: false,
-          message: "کد اتصال منقضی شده است."
-        },
-        410
-      );
-    }
-
-    const existingLink =
-      await env.DB
-        .prepare(
-          `
-          SELECT
-            id,
-            user_id,
-            rubika_sender_id
-          FROM rubika_links
-          WHERE
-            user_id = ?1
-            OR rubika_sender_id = ?2
-          LIMIT 1
-          `
-        )
-        .bind(
-          linkCode.user_id,
-          rubikaUserId
-        )
-        .first();
-
-    if (existingLink) {
-      return json(
-        {
-          success: false,
-          message:
-            "این حساب VEXON یا حساب روبیکا قبلاً متصل شده است."
-        },
-        409
-      );
-    }
-
-    await env.DB
-      .prepare(
-        `
-        INSERT INTO rubika_links
-          (
-            user_id,
-            rubika_sender_id,
-            rubika_chat_id
-          )
-        VALUES
-          (?1, ?2, ?3)
-        `
-      )
-      .bind(
-        linkCode.user_id,
-        rubikaUserId,
-        rubikaUserId
-      )
-      .run();
-
-    await env.DB
-      .prepare(
-        `
-        DELETE FROM rubika_link_codes
-        WHERE user_id = ?1
-        `
-      )
-      .bind(linkCode.user_id)
-      .run();
-
-    return json({
-      success: true,
-      message:
-        "حساب روبیکا با موفقیت متصل شد."
-    });
-
-  } catch (error) {
-
-    console.error(
-      "RUBIKA_LINK_ERROR",
-      error
-    );
-
-    return json(
-      {
-        success: false,
-        message:
-          "خطایی هنگام اتصال حساب رخ داد."
-      },
-      500
-    );
-  }
-}
-
-
-    /* =====================================================
        API TEST
     ===================================================== */
 
     if (
-      url.pathname ===
-        "/api/test" &&
+      url.pathname === "/api/test" &&
       request.method === "GET"
     ) {
-
       return json({
         success: true,
         message:
@@ -1618,8 +1124,6 @@ if (
        STATIC WEBSITE
     ===================================================== */
 
-    return env.ASSETS.fetch(
-      request
-    );
+    return env.ASSETS.fetch(request);
   }
 };
