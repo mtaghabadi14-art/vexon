@@ -32,10 +32,9 @@ function fromBase64(value) {
 async function hashPassword(password) {
   const encoder = new TextEncoder();
 
-  const salt =
-    crypto.getRandomValues(
-      new Uint8Array(16)
-    );
+  const salt = crypto.getRandomValues(
+    new Uint8Array(16)
+  );
 
   const keyMaterial =
     await crypto.subtle.importKey(
@@ -62,16 +61,11 @@ async function hashPassword(password) {
     "pbkdf2",
     PASSWORD_ITERATIONS,
     toBase64(salt),
-    toBase64(
-      new Uint8Array(derivedBits)
-    )
+    toBase64(new Uint8Array(derivedBits))
   ].join("$");
 }
 
-async function verifyPassword(
-  password,
-  storedHash
-) {
+async function verifyPassword(password, storedHash) {
   try {
     const parts = storedHash.split("$");
 
@@ -82,14 +76,9 @@ async function verifyPassword(
       return false;
     }
 
-    const iterations =
-      Number(parts[1]);
-
-    const salt =
-      fromBase64(parts[2]);
-
-    const expected =
-      fromBase64(parts[3]);
+    const iterations = Number(parts[1]);
+    const salt = fromBase64(parts[2]);
+    const expected = fromBase64(parts[3]);
 
     const keyMaterial =
       await crypto.subtle.importKey(
@@ -112,8 +101,7 @@ async function verifyPassword(
         expected.length * 8
       );
 
-    const actual =
-      new Uint8Array(derivedBits);
+    const actual = new Uint8Array(derivedBits);
 
     if (actual.length !== expected.length) {
       return false;
@@ -122,8 +110,7 @@ async function verifyPassword(
     let difference = 0;
 
     for (let i = 0; i < actual.length; i++) {
-      difference |=
-        actual[i] ^ expected[i];
+      difference |= actual[i] ^ expected[i];
     }
 
     return difference === 0;
@@ -134,16 +121,13 @@ async function verifyPassword(
 }
 
 function createSessionToken() {
-  const bytes =
-    crypto.getRandomValues(
-      new Uint8Array(32)
-    );
+  const bytes = crypto.getRandomValues(
+    new Uint8Array(32)
+  );
 
   return Array.from(bytes)
     .map(byte =>
-      byte
-        .toString(16)
-        .padStart(2, "0")
+      byte.toString(16).padStart(2, "0")
     )
     .join("");
 }
@@ -155,13 +139,9 @@ async function hashSessionToken(token) {
       new TextEncoder().encode(token)
     );
 
-  return Array.from(
-    new Uint8Array(digest)
-  )
+  return Array.from(new Uint8Array(digest))
     .map(byte =>
-      byte
-        .toString(16)
-        .padStart(2, "0")
+      byte.toString(16).padStart(2, "0")
     )
     .join("");
 }
@@ -174,8 +154,7 @@ function getCookie(request, name) {
     return null;
   }
 
-  const cookies =
-    cookieHeader.split(";");
+  const cookies = cookieHeader.split(";");
 
   for (const cookie of cookies) {
     const [key, ...valueParts] =
@@ -189,24 +168,16 @@ function getCookie(request, name) {
   return null;
 }
 
-async function getCurrentUser(
-  request,
-  env
-) {
+async function getCurrentUser(request, env) {
   const sessionToken =
-    getCookie(
-      request,
-      "vexon_session"
-    );
+    getCookie(request, "vexon_session");
 
   if (!sessionToken) {
     return null;
   }
 
   const tokenHash =
-    await hashSessionToken(
-      sessionToken
-    );
+    await hashSessionToken(sessionToken);
 
   const session =
     await env.DB
@@ -214,11 +185,15 @@ async function getCurrentUser(
         `
         SELECT
           sessions.user_id,
-          sessions.expires_at,
-          users.username
+          users.username,
+          player_stats.xp,
+          player_stats.level,
+          player_stats.coins
         FROM sessions
         INNER JOIN users
           ON users.id = sessions.user_id
+        LEFT JOIN player_stats
+          ON player_stats.user_id = users.id
         WHERE
           sessions.token_hash = ?1
           AND sessions.expires_at > datetime('now')
@@ -234,7 +209,10 @@ async function getCurrentUser(
 
   return {
     id: session.user_id,
-    username: session.username
+    username: session.username,
+    xp: session.xp ?? 0,
+    level: session.level ?? 1,
+    coins: session.coins ?? 0
   };
 }
 
@@ -243,8 +221,7 @@ export default {
 
   async fetch(request, env) {
 
-    const url =
-      new URL(request.url);
+    const url = new URL(request.url);
 
 
     /*
@@ -254,15 +231,13 @@ export default {
      */
 
     if (
-      url.pathname ===
-        "/api/register" &&
+      url.pathname === "/api/register" &&
       request.method === "POST"
     ) {
 
       try {
 
-        const body =
-          await request.json();
+        const body = await request.json();
 
         const username =
           typeof body.username === "string"
@@ -274,11 +249,7 @@ export default {
             ? body.password
             : "";
 
-        if (
-          !/^[A-Za-z0-9_]{3,20}$/
-            .test(username)
-        ) {
-
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
           return json(
             {
               success: false,
@@ -287,13 +258,9 @@ export default {
             },
             400
           );
-
         }
 
-        if (
-          password.length < 8
-        ) {
-
+        if (password.length < 8) {
           return json(
             {
               success: false,
@@ -302,24 +269,17 @@ export default {
             },
             400
           );
-
         }
 
         const existingUser =
           await env.DB
             .prepare(
-              `
-              SELECT id
-              FROM users
-              WHERE username = ?1
-              LIMIT 1
-              `
+              "SELECT id FROM users WHERE username = ?1 LIMIT 1"
             )
             .bind(username)
             .first();
 
         if (existingUser) {
-
           return json(
             {
               success: false,
@@ -328,27 +288,51 @@ export default {
             },
             409
           );
-
         }
 
         const passwordHash =
-          await hashPassword(
-            password
+          await hashPassword(password);
+
+        const insertResult =
+          await env.DB
+            .prepare(
+              `
+              INSERT INTO users
+                (username, password_hash)
+              VALUES
+                (?1, ?2)
+              `
+            )
+            .bind(
+              username,
+              passwordHash
+            )
+            .run();
+
+        const userId =
+          insertResult.meta?.last_row_id;
+
+        if (!userId) {
+          return json(
+            {
+              success: false,
+              message:
+                "حساب ساخته نشد."
+            },
+            500
           );
+        }
 
         await env.DB
           .prepare(
             `
-            INSERT INTO users
-              (username, password_hash)
+            INSERT OR IGNORE INTO player_stats
+              (user_id, xp, level, coins)
             VALUES
-              (?1, ?2)
+              (?1, 0, 1, 0)
             `
           )
-          .bind(
-            username,
-            passwordHash
-          )
+          .bind(userId)
           .run();
 
         return json(
@@ -386,15 +370,13 @@ export default {
      */
 
     if (
-      url.pathname ===
-        "/api/login" &&
+      url.pathname === "/api/login" &&
       request.method === "POST"
     ) {
 
       try {
 
-        const body =
-          await request.json();
+        const body = await request.json();
 
         const username =
           typeof body.username === "string"
@@ -406,11 +388,7 @@ export default {
             ? body.password
             : "";
 
-        if (
-          !username ||
-          !password
-        ) {
-
+        if (!username || !password) {
           return json(
             {
               success: false,
@@ -419,7 +397,6 @@ export default {
             },
             400
           );
-
         }
 
         const user =
@@ -439,7 +416,6 @@ export default {
             .first();
 
         if (!user) {
-
           return json(
             {
               success: false,
@@ -448,7 +424,6 @@ export default {
             },
             401
           );
-
         }
 
         const passwordCorrect =
@@ -458,7 +433,6 @@ export default {
           );
 
         if (!passwordCorrect) {
-
           return json(
             {
               success: false,
@@ -467,8 +441,19 @@ export default {
             },
             401
           );
-
         }
+
+        await env.DB
+          .prepare(
+            `
+            INSERT OR IGNORE INTO player_stats
+              (user_id, xp, level, coins)
+            VALUES
+              (?1, 0, 1, 0)
+            `
+          )
+          .bind(user.id)
+          .run();
 
         const sessionToken =
           createSessionToken();
@@ -481,11 +466,11 @@ export default {
         const expiresAt =
           new Date(
             Date.now() +
-              SESSION_DAYS *
-                24 *
-                60 *
-                60 *
-                1000
+            SESSION_DAYS *
+            24 *
+            60 *
+            60 *
+            1000
           ).toISOString();
 
         await env.DB
@@ -511,27 +496,22 @@ export default {
         return new Response(
           JSON.stringify({
             success: true,
-            message:
-              "ورود موفق بود.",
-            username:
-              user.username
+            message: "ورود موفق بود.",
+            username: user.username
           }),
           {
             status: 200,
             headers: {
               "Content-Type":
                 "application/json; charset=UTF-8",
-
-              "Set-Cookie":
-                [
-                  "vexon_session=" +
-                    sessionToken,
-                  "HttpOnly",
-                  "Secure",
-                  "SameSite=Lax",
-                  "Path=/",
-                  `Max-Age=${SESSION_DAYS * 24 * 60 * 60}`
-                ].join("; ")
+              "Set-Cookie": [
+                "vexon_session=" + sessionToken,
+                "HttpOnly",
+                "Secure",
+                "SameSite=Lax",
+                "Path=/",
+                `Max-Age=${SESSION_DAYS * 24 * 60 * 60}`
+              ].join("; ")
             }
           }
         );
@@ -562,8 +542,7 @@ export default {
      */
 
     if (
-      url.pathname ===
-        "/api/me" &&
+      url.pathname === "/api/me" &&
       request.method === "GET"
     ) {
 
@@ -576,7 +555,6 @@ export default {
           );
 
         if (!user) {
-
           return json(
             {
               loggedIn: false
@@ -614,8 +592,7 @@ export default {
      */
 
     if (
-      url.pathname ===
-        "/api/logout" &&
+      url.pathname === "/api/logout" &&
       request.method === "POST"
     ) {
 
@@ -654,7 +631,6 @@ export default {
             headers: {
               "Content-Type":
                 "application/json; charset=UTF-8",
-
               "Set-Cookie":
                 "vexon_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
             }
@@ -703,8 +679,6 @@ export default {
      * ========================================
      */
 
-    return env.ASSETS.fetch(
-      request
-    );
+    return env.ASSETS.fetch(request);
   }
 };
