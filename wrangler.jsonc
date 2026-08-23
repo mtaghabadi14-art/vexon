@@ -1,0 +1,17 @@
+{
+  "name": "vexon",
+  "main": "worker.js",
+  "compatibility_date": "2026-08-23",
+
+  "assets": {
+    "directory": "."
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vexon-db",
+      "database_id": "31a9c12b-c3c9-42d4-8671-ae8342c2b212"
+    }
+  ]
+}
