@@ -157,17 +157,11 @@ async function updateAuthHeader() {
     }
 
 
-    /*
-     * حالت مهمان
-     * تا زمانی که وضعیت واقعی حساب مشخص شود.
-     */
-
-    setGuestHeader(
-        headerProfiles
-    );
-
-
     try {
+
+        /*
+         * بررسی وضعیت حساب
+         */
 
         const response =
             await fetch(
@@ -181,11 +175,15 @@ async function updateAuthHeader() {
 
 
         /*
-         * اگر API جواب معتبر نداد،
-         * همان حالت مهمان باقی می‌ماند.
+         * اگر API جواب نداد،
+         * حالت مهمان را نمایش بده.
          */
 
         if (!response.ok) {
+
+            setGuestHeader(
+                headerProfiles
+            );
 
             return;
 
@@ -196,16 +194,28 @@ async function updateAuthHeader() {
             await response.json();
 
 
+        /*
+         * کاربر وارد نشده
+         */
+
         if (
             !data ||
             !data.loggedIn ||
             !data.user
         ) {
 
+            setGuestHeader(
+                headerProfiles
+            );
+
             return;
 
         }
 
+
+        /*
+         * کاربر وارد شده
+         */
 
         const user =
             data.user;
@@ -231,8 +241,6 @@ async function updateAuthHeader() {
 
         /*
          * XP مورد نیاز برای Level فعلی
-         *
-         * همان منطق Bangame
          */
 
         const xpNeededMap = {
@@ -274,14 +282,14 @@ async function updateAuthHeader() {
 
 
         /*
-         * آپدیت همه Headerها
+         * آپدیت Headerها
          */
 
         headerProfiles.forEach(
             (headerProfile) => {
 
                 /*
-                 * کاربر وارد شده
+                 * لینک تنظیمات
                  */
 
                 headerProfile.href =
@@ -326,7 +334,7 @@ async function updateAuthHeader() {
 
 
                 /*
-                 * XP / Level / Coins
+                 * Level / XP / Coins
                  */
 
                 if (span) {
@@ -356,11 +364,6 @@ async function updateAuthHeader() {
 
                 if (xpFill) {
 
-                    /*
-                     * فقط وقتی مقدار تغییر کرده،
-                     * انیمیشن را اجرا کن.
-                     */
-
                     const currentWidth =
                         xpFill.style.width;
 
@@ -374,24 +377,46 @@ async function updateAuthHeader() {
                         targetWidth
                     ) {
 
-                        xpFill.style.width =
-                            "0%";
+                        /*
+                         * اگر اولین بار است،
+                         * سریع و نرم پر شود.
+                         */
+
+                        if (
+                            !currentWidth ||
+                            currentWidth === "0%"
+                        ) {
+
+                            xpFill.style.width =
+                                "0%";
 
 
-                        requestAnimationFrame(
-                            () => {
+                            requestAnimationFrame(
+                                () => {
 
-                                requestAnimationFrame(
-                                    () => {
+                                    requestAnimationFrame(
+                                        () => {
 
-                                        xpFill.style.width =
-                                            targetWidth;
+                                            xpFill.style.width =
+                                                targetWidth;
 
-                                    }
-                                );
+                                        }
+                                    );
 
-                            }
-                        );
+                                }
+                            );
+
+                        } else {
+
+                            /*
+                             * آپدیت‌های بعدی
+                             * بدون پرش
+                             */
+
+                            xpFill.style.width =
+                                targetWidth;
+
+                        }
 
                     }
 
@@ -410,11 +435,13 @@ async function updateAuthHeader() {
 
 
         /*
-         * اگر ارتباط قطع شد،
-         * اطلاعات فعلی پاک نمی‌شود.
-         *
-         * فقط دفعه بعدی دوباره تلاش می‌کنیم.
+         * فقط وقتی واقعاً خطا رخ داد
+         * حالت مهمان را نشان بده.
          */
+
+        setGuestHeader(
+            headerProfiles
+        );
 
     }
 
@@ -428,8 +455,7 @@ async function updateAuthHeader() {
 function initializeAuthHeader() {
 
     /*
-     * اگر Timer قبلی وجود دارد،
-     * پاکش کن تا چند Timer همزمان ساخته نشود.
+     * جلوگیری از چند Timer
      */
 
     if (
@@ -444,7 +470,7 @@ function initializeAuthHeader() {
 
 
     /*
-     * اولین بار فوراً اطلاعات را بگیر.
+     * اولین بررسی
      */
 
     updateAuthHeader();
@@ -466,8 +492,7 @@ function initializeAuthHeader() {
 
 
     /*
-     * وقتی کاربر دوباره به تب برمی‌گردد،
-     * همان لحظه اطلاعات جدید را بگیر.
+     * وقتی کاربر به تب برمی‌گردد
      */
 
     document.addEventListener(
@@ -488,7 +513,7 @@ function initializeAuthHeader() {
 
 
     /*
-     * وقتی Window دوباره Focus می‌شود.
+     * وقتی پنجره دوباره Focus می‌شود
      */
 
     window.addEventListener(
@@ -554,7 +579,6 @@ function setGuestHeader(
 
                 span.textContent =
                     "ورود به حساب";
-
 
                 span.classList.remove(
                     "header-player-stats"
