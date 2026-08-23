@@ -309,7 +309,7 @@ function setGuestHeader(
         (headerProfile) => {
 
             headerProfile.href =
-                "login.html";
+                "sections/login.html";
 
 
             const strong =
