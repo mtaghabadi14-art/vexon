@@ -5,10 +5,6 @@
 const app = document.querySelector("#app");
 
 
-/* =========================
-   LOAD HTML SECTION
-========================= */
-
 async function loadSection(file) {
 
     try {
@@ -18,9 +14,11 @@ async function loadSection(file) {
         );
 
         if (!response.ok) {
+
             throw new Error(
                 `Failed to load ${file}.html`
             );
+
         }
 
         return await response.text();
@@ -41,18 +39,20 @@ async function loadSection(file) {
 }
 
 
-/* =========================
-   LOAD ALL SECTIONS
-========================= */
-
 async function loadVexon() {
 
+    /*
+     * index.html اصلی #app ندارد.
+     * بنابراین اگر روی index هستیم،
+     * فقط Header را آپدیت می‌کنیم.
+     */
+
     if (!app) {
-        console.error(
-            "VEXON: #app پیدا نشد."
-        );
+
+        initializeStandaloneVexon();
 
         return;
+
     }
 
 
@@ -80,20 +80,23 @@ async function loadVexon() {
         loadedSections.join("\n");
 
 
-    /*
-        News is currently inside
-        the games section.
-    */
-
-
     initializeVexon();
 
 }
 
 
-/* =========================
-   INITIALIZE VEXON
-========================= */
+function initializeStandaloneVexon() {
+
+    initializeNavigation();
+
+    initializeButtonPress();
+
+    initializeParallax();
+
+    initializeAuthHeader();
+
+}
+
 
 function initializeVexon() {
 
@@ -107,11 +110,6 @@ function initializeVexon() {
 
     initializeParallax();
 
-    /*
-     * مهم:
-     * هدر بعد از loadVexon ساخته شده،
-     * بنابراین Auth باید اینجا اجرا شود.
-     */
     initializeAuthHeader();
 
 }
@@ -129,14 +127,20 @@ async function initializeAuthHeader() {
         );
 
 
+    if (!headerProfiles.length) {
+
+        return;
+
+    }
+
+
     /*
-     * اگر چند بخش شامل هدر بودند،
-     * همه را آپدیت می‌کنیم.
+     * حالت مهمان از اول
      */
 
-    if (!headerProfiles.length) {
-        return;
-    }
+    setGuestHeader(
+        headerProfiles
+    );
 
 
     try {
@@ -146,137 +150,178 @@ async function initializeAuthHeader() {
                 "/api/me",
                 {
                     method: "GET",
-                    credentials:
-                        "same-origin",
+                    credentials: "same-origin",
                     cache: "no-store"
                 }
             );
 
 
-        let data = null;
-
-
-        try {
-
-            data =
-                await response.json();
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        /*
-         * =========================
-         * USER LOGGED IN
-         * =========================
-         */
-
-        if (
-            response.ok &&
-            data?.loggedIn &&
-            data?.user
-        ) {
-
-            const user =
-                data.user;
-
-
-            headerProfiles.forEach(
-                (headerProfile) => {
-
-                    /*
-                     * چون این Header
-                     * داخل sections قرار دارد،
-                     * از همان فایل فعلی استفاده می‌کنیم.
-                     */
-
-                    headerProfile.href =
-                        "profile.html";
-
-
-                    const strong =
-                        headerProfile.querySelector(
-                            "strong"
-                        );
-
-
-                    const span =
-                        headerProfile.querySelector(
-                            "span"
-                        );
-
-
-                    /*
-                     * نام کاربری
-                     */
-
-                    if (strong) {
-
-                        strong.textContent =
-                            user.username ||
-                            "بازیکن VEXON";
-
-                    }
-
-
-                    /*
-                     * آمار بازیکن
-                     *
-                     * اگر API اطلاعات واقعی
-                     * Render/Supabase را برگرداند،
-                     * همین‌جا نمایش داده می‌شود.
-                     */
-
-                    if (span) {
-
-                        const level =
-                            Number(
-                                user.level ?? 1
-                            );
-
-
-                        const xp =
-                            Number(
-                                user.xp ?? 0
-                            );
-
-
-                        const coins =
-                            Number(
-                                user.coins ?? 0
-                            );
-
-
-                        span.textContent =
-                            `LV ${level} • XP ${xp} • 🪙 ${coins}`;
-
-
-                        span.classList.add(
-                            "header-player-stats"
-                        );
-
-                    }
-
-                }
-            );
-
+        if (!response.ok) {
 
             return;
 
         }
 
 
+        const data =
+            await response.json();
+
+
+        if (
+            !data ||
+            !data.loggedIn ||
+            !data.user
+        ) {
+
+            return;
+
+        }
+
+
+        const user =
+            data.user;
+
+
+        const level =
+            Number(
+                user.level ?? 1
+            );
+
+
+        const xp =
+            Number(
+                user.xp ?? 0
+            );
+
+
+        const coins =
+            Number(
+                user.coins ?? 0
+            );
+
+
         /*
-         * =========================
-         * GUEST
-         * =========================
+         * XP مورد نیاز برای Level فعلی
+         *
+         * این همان منطق ربات Bangame است.
          */
 
-        setGuestHeader(
-            headerProfiles
+        const xpNeededMap = {
+
+            1: 100,
+            2: 250,
+            3: 500,
+            4: 800,
+            5: 1200,
+            6: 1700,
+            7: 2500,
+            8: 3500,
+            9: 5000
+
+        };
+
+
+        const nextXp =
+            xpNeededMap[level] ??
+            (level * 700);
+
+
+        const progress =
+            nextXp > 0
+                ? Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        (xp / nextXp) * 100
+                    )
+                )
+                : 0;
+
+
+        headerProfiles.forEach(
+            (headerProfile) => {
+
+                headerProfile.href =
+                    "sections/profile.html";
+
+
+                const strong =
+                    headerProfile.querySelector(
+                        "strong"
+                    );
+
+
+                const span =
+                    headerProfile.querySelector(
+                        "span"
+                    );
+
+
+                const xpBar =
+                    headerProfile.querySelector(
+                        ".header-xp-bar"
+                    );
+
+
+                const xpFill =
+                    headerProfile.querySelector(
+                        ".header-xp-fill"
+                    );
+
+
+                if (strong) {
+
+                    strong.textContent =
+                        user.username ||
+                        "بازیکن VEXON";
+
+                }
+
+
+                if (span) {
+
+                    span.textContent =
+                        `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
+
+                    span.classList.add(
+                        "header-player-stats"
+                    );
+
+                }
+
+
+                if (xpBar) {
+
+                    xpBar.style.display =
+                        "block";
+
+                }
+
+
+                if (xpFill) {
+
+                    /*
+                     * با requestAnimationFrame
+                     * انیمیشن پر شدن نوار
+                     * واضح‌تر دیده می‌شود.
+                     */
+
+                    xpFill.style.width =
+                        "0%";
+
+
+                    requestAnimationFrame(
+                        () => {
+
+                            xpFill.style.width =
+                                `${progress}%`;
+
+                        }
+                    );
+
+                }
+
+            }
         );
 
 
@@ -324,6 +369,12 @@ function setGuestHeader(
                 );
 
 
+            const xpBar =
+                headerProfile.querySelector(
+                    ".header-xp-bar"
+                );
+
+
             if (strong) {
 
                 strong.textContent =
@@ -337,10 +388,17 @@ function setGuestHeader(
                 span.textContent =
                     "ورود به حساب";
 
-
                 span.classList.remove(
                     "header-player-stats"
                 );
+
+            }
+
+
+            if (xpBar) {
+
+                xpBar.style.display =
+                    "none";
 
             }
 
@@ -433,7 +491,9 @@ function initializeNavigation() {
 
 
     if (!sections.length) {
+
         return;
+
     }
 
 
@@ -559,7 +619,9 @@ function initializeScrollReveal() {
 
 
     if (!revealElements.length) {
+
         return;
+
     }
 
 
@@ -675,7 +737,7 @@ function initializeSmoothNavigation() {
 
 
 /* =========================
-   BUTTON PRESS EFFECT
+   BUTTON PRESS
 ========================= */
 
 function initializeButtonPress() {
@@ -800,8 +862,6 @@ function initializeParallax() {
 
             if (
                 window.innerWidth <= 850
-                &&
-                heroV
             ) {
 
                 heroV.style.transform =
