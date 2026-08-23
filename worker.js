@@ -11,15 +11,12 @@ function json(data, status = 200) {
 
 function toBase64(bytes) {
   let binary = "";
+
   for (const byte of bytes) {
     binary += String.fromCharCode(byte);
   }
-  return btoa(binary);
-}
 
-function fromBase64(value) {
-  const binary = atob(value);
-  return Uint8Array.from(binary, char => char.charCodeAt(0));
+  return btoa(binary);
 }
 
 async function hashPassword(password) {
@@ -54,33 +51,42 @@ async function hashPassword(password) {
   ].join("$");
 }
 
+
 export default {
+
   async fetch(request, env) {
+
     const url = new URL(request.url);
 
-    /*
-     * =========================
-     * REGISTER
-     * =========================
-     */
+
+    /* =========================================
+       REGISTER API
+    ========================================= */
+
     if (
       url.pathname === "/api/register" &&
       request.method === "POST"
     ) {
+
       try {
+
         const body = await request.json();
+
 
         const username =
           typeof body.username === "string"
             ? body.username.trim()
             : "";
 
+
         const password =
           typeof body.password === "string"
             ? body.password
             : "";
 
+
         if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+
           return json(
             {
               success: false,
@@ -89,17 +95,23 @@ export default {
             },
             400
           );
+
         }
 
+
         if (password.length < 8) {
+
           return json(
             {
               success: false,
-              message: "رمز عبور باید حداقل ۸ کاراکتر باشد."
+              message:
+                "رمز عبور باید حداقل ۸ کاراکتر باشد."
             },
             400
           );
+
         }
+
 
         const existingUser = await env.DB
           .prepare(
@@ -108,17 +120,24 @@ export default {
           .bind(username)
           .first();
 
+
         if (existingUser) {
+
           return json(
             {
               success: false,
-              message: "این نام کاربری قبلاً ثبت شده است."
+              message:
+                "این نام کاربری قبلاً ثبت شده است."
             },
             409
           );
+
         }
 
-        const passwordHash = await hashPassword(password);
+
+        const passwordHash =
+          await hashPassword(password);
+
 
         await env.DB
           .prepare(
@@ -128,49 +147,66 @@ export default {
             VALUES (?1, ?2)
             `
           )
-          .bind(username, passwordHash)
+          .bind(
+            username,
+            passwordHash
+          )
           .run();
+
 
         return json(
           {
             success: true,
-            message: "حساب VEXON با موفقیت ساخته شد."
+            message:
+              "حساب VEXON با موفقیت ساخته شد."
           },
           201
         );
+
       } catch (error) {
-        console.error("REGISTER_ERROR", error);
+
+        console.error(
+          "REGISTER_ERROR",
+          error
+        );
 
         return json(
           {
             success: false,
-            message: "خطایی در ساخت حساب رخ داد."
+            message:
+              "خطایی در ساخت حساب رخ داد."
           },
           500
         );
+
       }
+
     }
 
-    /*
-     * =========================
-     * API TEST
-     * =========================
-     */
+
+    /* =========================================
+       API TEST
+    ========================================= */
+
     if (
       url.pathname === "/api/test" &&
       request.method === "GET"
     ) {
+
       return json({
         success: true,
         message: "VEXON API is online!"
       });
+
     }
 
-    /*
-     * =========================
-     * STATIC WEBSITE
-     * =========================
-     */
+
+    /* =========================================
+       WEBSITE
+    ========================================= */
+
     return env.ASSETS.fetch(request);
+
   }
+
 };
