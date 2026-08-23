@@ -4099,3 +4099,29 @@ footer > p {
         font-size: 9px;
     }
 }
+
+/* =========================================
+   HEADER PLAYER STATS
+========================================= */
+
+.header-profile .header-player-stats {
+    font-size: 8px;
+    line-height: 1.7;
+    white-space: nowrap;
+
+    color: #00ff9d;
+
+    text-shadow:
+        0 0 7px rgba(0, 255, 157, 0.35);
+}
+
+.header-profile strong {
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+
+    .header-profile .header-player-stats {
+        font-size: 7px;
+    }
+}

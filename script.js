@@ -559,3 +559,86 @@ loadVexon();
     }
 })();
 ```
+
+
+/* =========================================
+   VEXON HEADER PLAYER STATS
+========================================= */
+
+(async function updateHeaderPlayerStats() {
+    const headerProfile =
+        document.querySelector(".header-profile");
+
+    if (!headerProfile) {
+        return;
+    }
+
+    const strong =
+        headerProfile.querySelector("strong");
+
+    const span =
+        headerProfile.querySelector("span");
+
+    try {
+        const response = await fetch("/api/me", {
+            method: "GET",
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (
+            response.ok &&
+            data.loggedIn &&
+            data.user
+        ) {
+            const user = data.user;
+
+            headerProfile.href = "profile.html";
+
+            if (strong) {
+                strong.textContent =
+                    user.username;
+            }
+
+            if (span) {
+                span.textContent =
+                    `LV ${user.level} • XP ${user.xp} • 🪙 ${user.coins}`;
+
+                span.classList.add(
+                    "header-player-stats"
+                );
+            }
+
+        } else {
+            setGuestHeader();
+        }
+
+    } catch (error) {
+        console.error(
+            "HEADER_STATS_ERROR:",
+            error
+        );
+
+        setGuestHeader();
+    }
+
+
+    function setGuestHeader() {
+        headerProfile.href = "login.html";
+
+        if (strong) {
+            strong.textContent =
+                "ورود / ثبت‌نام";
+        }
+
+        if (span) {
+            span.textContent =
+                "ورود به حساب";
+
+            span.classList.remove(
+                "header-player-stats"
+            );
+        }
+    }
+})();
