@@ -4578,3 +4578,353 @@ footer > p {
     }
 
 }
+
+/* =========================================================
+   VEXON MOBILE HEADER FINAL OVERRIDE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .navbar {
+        position: relative;
+        min-height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding:
+            8px 175px 8px 60px !important;
+    }
+
+
+    /* لوگو کنار دکمه سه خط */
+
+    .navbar > .logo {
+
+        position: absolute !important;
+
+        left: 61px;
+        top: 50%;
+
+        transform:
+            translateY(-50%);
+
+        margin: 0 !important;
+
+        font-size: 20px;
+        letter-spacing: 2px;
+
+        z-index: 5;
+    }
+
+
+    .navbar > .logo:hover {
+
+        transform:
+            translateY(-50%)
+            scale(1.04);
+    }
+
+
+    /* دکمه سه خط */
+
+    .vexon-global-menu-trigger {
+
+        position: absolute !important;
+
+        left: 10px;
+        top: 50%;
+
+        transform:
+            translateY(-50%);
+
+        width: 40px;
+        height: 40px;
+
+        z-index: 10;
+    }
+
+
+    /* کارت پروفایل */
+
+    .navbar .header-profile {
+
+        position: absolute !important;
+
+        right: 8px;
+        top: 50%;
+
+        transform:
+            translateY(-50%);
+
+        width: 160px;
+        min-width: 160px;
+
+        padding:
+            8px 10px !important;
+
+        gap: 8px;
+
+        z-index: 10;
+    }
+
+
+    .navbar .header-profile:hover {
+
+        transform:
+            translateY(
+                calc(
+                    -50% - 2px
+                )
+            );
+    }
+
+
+    .navbar .header-profile-icon {
+
+        width: 35px !important;
+        height: 35px !important;
+
+        flex:
+            0 0 35px !important;
+
+        font-size: 18px !important;
+    }
+
+
+    .navbar .header-profile > div:nth-child(2) {
+
+        display: flex !important;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        justify-content: center;
+
+        min-width: 0;
+
+        gap: 3px;
+    }
+
+
+    .navbar .header-profile strong {
+
+        max-width: 105px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+        font-size: 11px !important;
+    }
+
+
+    .navbar .header-profile .header-player-stats {
+
+        display: block !important;
+
+        max-width: 125px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+        font-size: 9px !important;
+
+        line-height: 1.5;
+
+        color: #00ff9d;
+
+        text-shadow:
+            0 0 7px
+            rgba(
+                0,
+                255,
+                157,
+                0.35
+            );
+    }
+
+
+    .navbar .header-profile .header-xp-bar {
+
+        display: block !important;
+
+        width: 120px !important;
+
+        height: 5px !important;
+    }
+
+
+    .navbar .header-profile > b {
+
+        display: none !important;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .navbar {
+
+        width: 96%;
+
+        padding:
+            7px 142px 7px 56px !important;
+    }
+
+
+    .navbar > .logo {
+
+        left: 56px;
+
+        font-size: 17px;
+    }
+
+
+    .vexon-global-menu-trigger {
+
+        left: 8px;
+
+        width: 38px;
+        height: 38px;
+
+        font-size: 17px;
+    }
+
+
+    .navbar .header-profile {
+
+        right: 7px;
+
+        width: 132px;
+        min-width: 132px;
+
+        padding:
+            7px 8px !important;
+
+        gap: 6px;
+    }
+
+
+    .navbar .header-profile-icon {
+
+        width: 31px !important;
+        height: 31px !important;
+
+        flex-basis: 31px !important;
+
+        font-size: 16px !important;
+    }
+
+
+    .navbar .header-profile strong {
+
+        max-width: 82px;
+
+        font-size: 10px !important;
+    }
+
+
+    .navbar .header-profile .header-player-stats {
+
+        max-width: 94px;
+
+        font-size: 8px !important;
+    }
+
+
+    .navbar .header-profile .header-xp-bar {
+
+        width: 92px !important;
+
+        height: 4px !important;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .navbar {
+
+        padding:
+            6px 122px 6px 52px !important;
+    }
+
+
+    .navbar > .logo {
+
+        left: 52px;
+
+        font-size: 15px;
+    }
+
+
+    .vexon-global-menu-trigger {
+
+        left: 7px;
+
+        width: 36px;
+        height: 36px;
+
+        font-size: 16px;
+    }
+
+
+    .navbar .header-profile {
+
+        right: 6px;
+
+        width: 114px;
+        min-width: 114px;
+
+        padding:
+            6px 7px !important;
+
+        gap: 5px;
+    }
+
+
+    .navbar .header-profile-icon {
+
+        width: 28px !important;
+        height: 28px !important;
+
+        flex-basis: 28px !important;
+
+        font-size: 14px !important;
+    }
+
+
+    .navbar .header-profile strong {
+
+        max-width: 72px;
+
+        font-size: 9px !important;
+    }
+
+
+    .navbar .header-profile .header-player-stats {
+
+        max-width: 80px;
+
+        font-size: 7px !important;
+    }
+
+
+    .navbar .header-profile .header-xp-bar {
+
+        width: 78px !important;
+
+        height: 3px !important;
+    }
+
+}

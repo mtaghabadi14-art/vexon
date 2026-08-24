@@ -30,6 +30,10 @@
     </title>
 
 
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
+
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -42,9 +46,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
+
+
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -54,73 +63,138 @@
 
     <style>
 
+        /* =================================================
+           NEWS
+        ================================================= */
+
+        .news-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+        /* =================================================
+           REMOVE OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           NEWS LIST
+        ================================================= */
+
         .news-list {
-            display: grid;
-            gap: 18px;
+
+            display:
+                grid;
+
+            gap:
+                18px;
+
         }
 
 
         .news-item {
-            position: relative;
-            overflow: hidden;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
         }
 
 
         .news-clickable {
-            display: block;
 
-            color: inherit;
+            display:
+                block;
 
-            text-decoration: none;
+            color:
+                inherit;
 
-            cursor: pointer;
+            text-decoration:
+                none;
+
+            cursor:
+                pointer;
 
             transition:
-                transform 0.2s ease,
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+
         }
 
 
         .news-clickable:hover {
+
             transform:
                 translateY(-3px);
+
         }
 
 
         .news-clickable:active {
+
             transform:
-                scale(0.99);
+                scale(.99);
+
         }
 
 
         .news-item-image {
-            width: 100%;
 
-            max-height: 260px;
+            width:
+                100%;
 
-            object-fit: cover;
+            max-height:
+                260px;
 
-            display: block;
+            object-fit:
+                cover;
 
-            margin-bottom: 16px;
+            display:
+                block;
 
-            border-radius: 16px;
+            margin-bottom:
+                16px;
+
+            border-radius:
+                16px;
+
         }
 
 
         .news-item-content {
-            min-width: 0;
+
+            min-width:
+                0;
+
         }
 
 
         .news-item-title {
+
             margin:
                 0 0 8px;
+
         }
 
 
         .news-item-text {
+
             white-space:
                 pre-line;
 
@@ -128,11 +202,13 @@
                 2;
 
             opacity:
-                0.82;
+                .82;
+
         }
 
 
         .news-item-meta {
+
             display:
                 flex;
 
@@ -149,12 +225,14 @@
                 11px;
 
             opacity:
-                0.5;
+                .5;
+
         }
 
 
         .news-empty,
         .news-loading {
+
             text-align:
                 center;
 
@@ -162,11 +240,13 @@
                 40px 20px;
 
             opacity:
-                0.6;
+                .6;
+
         }
 
 
         .news-error {
+
             text-align:
                 center;
 
@@ -181,7 +261,7 @@
                     255,
                     60,
                     90,
-                    0.06
+                    .06
                 );
 
             border:
@@ -190,15 +270,17 @@
                     255,
                     60,
                     90,
-                    0.12
+                    .12
                 );
 
             border-radius:
                 18px;
+
         }
 
 
         .news-image-placeholder {
+
             min-height:
                 100px;
 
@@ -224,13 +306,13 @@
                         0,
                         255,
                         157,
-                        0.05
+                        .05
                     ),
                     rgba(
                         110,
                         70,
                         255,
-                        0.08
+                        .08
                     )
                 );
 
@@ -240,22 +322,24 @@
                     255,
                     255,
                     255,
-                    0.05
+                    .05
                 );
 
             font-size:
                 34px;
 
             opacity:
-                0.7;
+                .7;
+
         }
 
 
-        /* =========================================
+        /* =================================================
            REACTIONS
-        ========================================= */
+        ================================================= */
 
         .news-reactions {
+
             display:
                 flex;
 
@@ -277,12 +361,14 @@
                     255,
                     255,
                     255,
-                    0.06
+                    .06
                 );
+
         }
 
 
         .news-reaction {
+
             display:
                 inline-flex;
 
@@ -310,7 +396,7 @@
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
 
             background:
@@ -318,7 +404,7 @@
                     255,
                     255,
                     255,
-                    0.035
+                    .035
                 );
 
             color:
@@ -334,14 +420,16 @@
                 pointer;
 
             transition:
-                transform 0.18s ease,
-                background 0.18s ease,
-                border-color 0.18s ease,
-                box-shadow 0.18s ease;
+                transform .18s ease,
+                background .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease;
+
         }
 
 
         .news-reaction:hover {
+
             transform:
                 translateY(-2px);
 
@@ -350,18 +438,20 @@
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
+
         }
 
 
         .news-reaction.active {
+
             border-color:
                 rgba(
                     0,
                     255,
                     157,
-                    0.36
+                    .36
                 );
 
             background:
@@ -369,7 +459,7 @@
                     0,
                     255,
                     157,
-                    0.09
+                    .09
                 );
 
             box-shadow:
@@ -378,24 +468,28 @@
                     0,
                     255,
                     157,
-                    0.08
+                    .08
                 );
+
         }
 
 
         .news-reaction:disabled {
+
             opacity:
-                0.55;
+                .55;
 
             cursor:
                 not-allowed;
 
             transform:
                 none;
+
         }
 
 
         .news-reaction-count {
+
             min-width:
                 12px;
 
@@ -403,11 +497,13 @@
                 center;
 
             opacity:
-                0.8;
+                .8;
+
         }
 
 
         .news-reaction-login {
+
             margin-top:
                 8px;
 
@@ -418,9 +514,28 @@
                 10px;
 
             opacity:
-                0.48;
+                .48;
 
         }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .news-page .section {
+
+                margin-top:
+                    35px;
+
+            }
+
+        }
+
 
     </style>
 
@@ -430,712 +545,979 @@
 <body>
 
 
-    <!-- =========================
-         BACKGROUND
-    ========================== -->
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
-    <div
-        class="background-effects"
-        aria-hidden="true"
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+    <div class="planet planet-blue"></div>
+
+
+    <div class="city">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
     >
 
-        <div class="nebula nebula-purple"></div>
-        <div class="nebula nebula-green"></div>
-        <div class="nebula nebula-blue"></div>
+        VE<span class="logo-x">X</span>ON
 
-        <div class="stars stars-one"></div>
-        <div class="stars stars-two"></div>
-        <div class="stars stars-three"></div>
-
-        <div class="planet planet-purple"></div>
-        <div class="planet planet-blue"></div>
+    </a>
 
 
-        <div class="city">
+    <!--
+        OLD NAV INTENTIONALLY EMPTY.
+        vexon-nav.js creates the new global menu.
+    -->
 
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+    <nav
+        class="nav-links"
+    ></nav>
+
+
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
+
+    <a
+        href="login.html"
+        class="header-profile"
+    >
+
+        <div
+            class="header-profile-icon"
+        >
+            👤
+        </div>
+
+
+        <div
+            class="header-player-info"
+        >
+
+            <strong>
+                ...
+            </strong>
+
+
+            <div
+                class="header-xp-bar"
+                style="
+                    display:none;
+                "
+            >
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
+            </div>
+
+
+            <span>
+                در حال بررسی حساب...
+            </span>
 
         </div>
+
+
+        <b>
+            ‹
+        </b>
+
+    </a>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main
+    class="news-page"
+>
+
+    <section
+        class="section"
+    >
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
+
+        <div
+            class="section-title"
+        >
+
+            <span>
+                📢 VEXON NEWS
+            </span>
+
+
+            <h1>
+                آخرین اخبار
+            </h1>
+
+
+            <p>
+                آخرین اتفاقات، بازی‌ها و قابلیت‌های جدید VEXON.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             NEWS LIST
+        ================================================== -->
+
+        <div
+            id="news-list"
+            class="news-list"
+        >
+
+            <div
+                class="news-loading"
+            >
+                ⏳ در حال دریافت آخرین اخبار VEXON...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div
+        class="footer-logo"
+    >
+        VE<span>X</span>ON
+    </div>
+
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
 
     </div>
 
 
-    <!-- =========================
-         HEADER
-    ========================== -->
-
-    <header class="navbar">
-
-        <a
-            href="../index.html"
-            class="logo"
-        >
-            VE<span class="logo-x">X</span>ON
-        </a>
-
-
-        <nav class="nav-links">
+    <span>
 
-            <a
-                href="../index.html"
-                class="nav-link"
-            >
-                <span class="desktop-v-icon">
-                    V
-                </span>
-                خانه
-            </a>
+        ساخته شده با 💚 برای گیمرها
 
+        <br>
 
-            <a
-                href="games.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🎮
-                </span>
-                بازی‌ها
-            </a>
+        © 2026 VEXON — همه حقوق محفوظ است.
 
+    </span>
 
-            <a
-                href="leaderboard.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🏆
-                </span>
-                لیدربورد
-            </a>
+</footer>
 
 
-            <a
-                href="cafe.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ☕
-                </span>
-                کافه بازی
-            </a>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
 
+<script
+    src="../script.js"
+></script>
 
-            <a
-                href="news.html"
-                class="nav-link active"
-            >
-                <span class="nav-icon">
-                    📢
-                </span>
-                اخبار
-            </a>
 
+<script
+    src="../vexon-nav.js"
+></script>
 
-            <a
-                href="guide.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ?
-                </span>
-                راهنما
-            </a>
 
-        </nav>
+<script>
 
+(function () {
 
-        <!-- ACCOUNT -->
+    "use strict";
 
-        <a
-            href="login.html"
-            class="header-profile"
-        >
 
-            <div class="header-profile-icon">
-                👤
-            </div>
+    const newsList =
+        document.getElementById(
+            "news-list"
+        );
 
 
-            <div class="header-player-info">
+    if (
+        !newsList
+    ) {
 
-                <strong>
-                    ...
-                </strong>
+        return;
 
+    }
 
-                <div
-                    class="header-xp-bar"
-                    style="display: none;"
-                >
 
-                    <div
-                        class="header-xp-fill"
-                    ></div>
+    let lastNewsSignature =
+        "";
 
-                </div>
 
+    let newsUpdateTimer =
+        null;
 
-                <span>
-                    در حال بررسی حساب...
-                </span>
 
-            </div>
+    /* =====================================================
+       LOGIN STATE
+    ===================================================== */
 
+    let loggedIn =
+        false;
 
-            <b>
-                ‹
-            </b>
 
-        </a>
+    let myReactions =
+        {};
 
-    </header>
 
+    /* =====================================================
+       REACTIONS
+    ===================================================== */
 
-    <!-- =========================
-         MAIN
-    ========================== -->
+    const reactions = [
 
-    <main>
+        {
+            key:
+                "love",
 
-        <section class="section">
+            emoji:
+                "❤️",
 
+            title:
+                "عاشقش شدم"
+        },
 
-            <div class="section-title">
 
-                <span>
-                    📢 VEXON NEWS
-                </span>
+        {
+            key:
+                "like",
 
-                <h1>
-                    آخرین اخبار
-                </h1>
+            emoji:
+                "👍",
 
-                <p>
-                    آخرین اتفاقات، بازی‌ها و قابلیت‌های جدید VEXON.
-                </p>
+            title:
+                "پسندیدم"
+        },
 
-            </div>
 
+        {
+            key:
+                "laugh",
 
-            <div
-                id="news-list"
-                class="news-list"
-            >
+            emoji:
+                "😂",
 
-                <div
-                    class="news-loading"
-                >
-                    ⏳ در حال دریافت آخرین اخبار VEXON...
-                </div>
+            title:
+                "خنده‌دار"
+        },
 
-            </div>
 
-        </section>
+        {
+            key:
+                "wow",
 
-    </main>
+            emoji:
+                "😮",
 
+            title:
+                "واو"
+        },
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
 
-    <footer>
+        {
+            key:
+                "angry",
 
-        <div class="footer-logo">
-            VE<span>X</span>ON
-        </div>
+            emoji:
+                "😡",
 
-        <p>
-            PLAY • COMPETE • LEVEL UP.
-        </p>
+            title:
+                "عصبانی"
+        },
 
-        <div class="footer-socials">
-            <span>✈️</span>
-            <span>◎</span>
-            <span>▶</span>
-        </div>
 
-        <span>
-            ساخته شده با 💚 برای گیمرها
-            <br>
-            © 2026 VEXON — همه حقوق محفوظ است.
-        </span>
+        {
+            key:
+                "dislike",
 
-    </footer>
+            emoji:
+                "👎",
 
-
-    <!-- =========================
-         MOBILE NAV
-    ========================== -->
-
-    <nav class="mobile-bottom-nav">
-
-        <a
-            href="games.html"
-            class="mobile-nav-item"
-        >
-            <span>🎮</span>
-            <small>بازی‌ها</small>
-        </a>
-
-
-        <a
-            href="cafe.html"
-            class="mobile-nav-item"
-        >
-            <span>☕</span>
-            <small>کافه</small>
-        </a>
-
-
-        <a
-            href="../index.html"
-            class="mobile-nav-item"
-        >
-            <span class="home-v-icon">
-                V
-            </span>
-            <small>خانه</small>
-        </a>
-
-
-        <a
-            href="news.html"
-            class="mobile-nav-item mobile-home active"
-        >
-            <span>📢</span>
-            <small>اخبار</small>
-        </a>
-
-
-        <a
-            href="profile.html"
-            class="mobile-nav-item"
-        >
-            <span>⚙️</span>
-            <small>تنظیمات</small>
-        </a>
-
-    </nav>
-
-
-    <script src="../script.js"></script>
-
-
-    <script>
-
-    (function () {
-
-        "use strict";
-
-
-        const newsList =
-            document.getElementById(
-                "news-list"
-            );
-
-
-        if (!newsList) {
-            return;
+            title:
+                "نپسندیدم"
         }
 
-
-        let lastNewsSignature =
-            "";
+    ];
 
 
-        let newsUpdateTimer =
-            null;
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
 
+    function escapeHtml(
+        value
+    ) {
 
-        /*
-         * وضعیت ورود کاربر
-         */
+        return String(
+            value ?? ""
+        )
 
-        let loggedIn =
-            false;
-
-
-        let myReactions =
-            {};
-
-
-        /* =========================================
-           REACTION DEFINITIONS
-        ========================================= */
-
-        const reactions = [
-
-            {
-                key: "love",
-                emoji: "❤️",
-                title: "عاشقش شدم"
-            },
-
-            {
-                key: "like",
-                emoji: "👍",
-                title: "پسندیدم"
-            },
-
-            {
-                key: "laugh",
-                emoji: "😂",
-                title: "خنده‌دار"
-            },
-
-            {
-                key: "wow",
-                emoji: "😮",
-                title: "واو"
-            },
-
-            {
-                key: "angry",
-                emoji: "😡",
-                title: "عصبانی"
-            },
-
-            {
-                key: "dislike",
-                emoji: "👎",
-                title: "نپسندیدم"
-            }
-
-        ];
-
-
-        /* =========================================
-           ESCAPE HTML
-        ========================================= */
-
-        function escapeHtml(
-            value
-        ) {
-
-            return String(
-                value ?? ""
+            .replace(
+                /&/g,
+                "&amp;"
             )
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
 
-        }
+            .replace(
+                /</g,
+                "&lt;"
+            )
 
+            .replace(
+                />/g,
+                "&gt;"
+            )
 
-        /* =========================================
-           DATE
-        ========================================= */
+            .replace(
+                /"/g,
+                "&quot;"
+            )
 
-        function formatDate(
-            value
-        ) {
-
-            if (!value) {
-                return "";
-            }
-
-
-            try {
-
-                return new Intl.DateTimeFormat(
-                    "fa-IR",
-                    {
-                        dateStyle:
-                            "medium"
-                    }
-                ).format(
-                    new Date(value)
-                );
-
-            } catch {
-
-                return "";
-
-            }
-
-        }
-
-
-        /* =========================================
-           CATEGORY ICON
-        ========================================= */
-
-        function categoryIcon(
-            category
-        ) {
-
-            const icons = {
-
-                general:
-                    "📢",
-
-                game:
-                    "🎮",
-
-                update:
-                    "🔄",
-
-                event:
-                    "🏆",
-
-                announcement:
-                    "📣"
-
-            };
-
-
-            return (
-                icons[category] ||
-                "📢"
+            .replace(
+                /'/g,
+                "&#039;"
             );
 
-        }
+    }
 
 
-        /* =========================================
-           CATEGORY COLOR
-        ========================================= */
+    /* =====================================================
+       DATE
+    ===================================================== */
 
-        function categoryClass(
-            category
+    function formatDate(
+        value
+    ) {
+
+        if (
+            !value
         ) {
 
-            const classes = {
-
-                general:
-                    "red",
-
-                game:
-                    "purple",
-
-                update:
-                    "green",
-
-                event:
-                    "gold",
-
-                announcement:
-                    "blue"
-
-            };
-
-
-            return (
-                classes[category] ||
-                "red"
-            );
+            return "";
 
         }
 
 
-        /* =========================================
-           CHECK LOGIN
-        ========================================= */
+        try {
 
-        async function checkLogin() {
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/me",
-                        {
-                            method:
-                                "GET",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-
-                if (
-                    !response.ok
-                ) {
-
-                    loggedIn =
-                        false;
-
-                    return;
-
+            return new Intl.DateTimeFormat(
+                "fa-IR",
+                {
+                    dateStyle:
+                        "medium"
                 }
+            ).format(
+                new Date(
+                    value
+                )
+            );
+
+        } catch {
+
+            return "";
+
+        }
+
+    }
 
 
-                const data =
-                    await response.json();
+    /* =====================================================
+       CATEGORY ICON
+    ===================================================== */
+
+    function categoryIcon(
+        category
+    ) {
+
+        const icons = {
+
+            general:
+                "📢",
+
+            game:
+                "🎮",
+
+            update:
+                "🔄",
+
+            event:
+                "🏆",
+
+            announcement:
+                "📣"
+
+        };
 
 
-                loggedIn =
-                    Boolean(
-                        data &&
-                        data.loggedIn &&
-                        data.user
-                    );
+        return (
+            icons[category] ||
+            "📢"
+        );
 
-            } catch {
+    }
+
+
+    /* =====================================================
+       CATEGORY COLOR
+    ===================================================== */
+
+    function categoryClass(
+        category
+    ) {
+
+        const classes = {
+
+            general:
+                "red",
+
+            game:
+                "purple",
+
+            update:
+                "green",
+
+            event:
+                "gold",
+
+            announcement:
+                "blue"
+
+        };
+
+
+        return (
+            classes[category] ||
+            "red"
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+    ===================================================== */
+
+    async function checkLogin() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/me",
+                    {
+                        method:
+                            "GET",
+
+                        credentials:
+                            "same-origin",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            if (
+                !response.ok
+            ) {
 
                 loggedIn =
                     false;
 
+                return;
+
             }
 
+
+            const data =
+                await response.json();
+
+
+            loggedIn =
+                Boolean(
+                    data &&
+                    data.loggedIn &&
+                    data.user
+                );
+
+        } catch {
+
+            loggedIn =
+                false;
+
         }
 
+    }
 
-        /* =========================================
-           NEWS SIGNATURE
-        ========================================= */
 
-        function createSignature(
-            news
-        ) {
+    /* =====================================================
+       NEWS SIGNATURE
+    ===================================================== */
 
-            return news
+    function createSignature(
+        news
+    ) {
+
+        return news
+            .map(
+                item =>
+                    [
+                        item.id,
+                        item.updated_at,
+                        item.published_at,
+                        JSON.stringify(
+                            item.reactions ||
+                            {}
+                        )
+
+                    ].join(":")
+            )
+            .join("|");
+
+    }
+
+
+    /* =====================================================
+       REACTION BUTTONS
+    ===================================================== */
+
+    function renderReactionButtons(
+        item
+    ) {
+
+        const reactionCounts =
+            item.reactions ||
+            {};
+
+
+        const currentReaction =
+            myReactions[item.id] ||
+            null;
+
+
+        const buttons =
+            reactions
                 .map(
-                    item =>
-                        [
-                            item.id,
-                            item.updated_at,
-                            item.published_at,
-                            JSON.stringify(
-                                item.reactions ||
-                                {}
-                            )
-                        ].join(":")
-                )
-                .join("|");
+                    reaction => {
 
-        }
+                        const count =
+                            Number(
+                                reactionCounts[
+                                    reaction.key
+                                ] ||
+                                0
+                            );
 
 
-        /* =========================================
-           REACTION BUTTONS
-        ========================================= */
-
-        function renderReactionButtons(
-            item
-        ) {
-
-            const reactionCounts =
-                item.reactions ||
-                {};
+                        const active =
+                            currentReaction ===
+                            reaction.key;
 
 
-            const currentReaction =
-                myReactions[item.id] ||
-                null;
+                        return `
 
-
-            const buttons =
-                reactions
-                    .map(
-                        reaction => {
-
-                            const count =
-                                Number(
-                                    reactionCounts[
-                                        reaction.key
-                                    ] ||
-                                    0
-                                );
-
-
-                            const active =
-                                currentReaction ===
-                                reaction.key;
-
-
-                            return `
-
-                                <button
-                                    type="button"
-                                    class="news-reaction ${
+                            <button
+                                type="button"
+                                class="
+                                    news-reaction
+                                    ${
                                         active
                                             ? "active"
                                             : ""
-                                    }"
-                                    data-reaction="${reaction.key}"
-                                    data-news-id="${item.id}"
-                                    title="${reaction.title}"
-                                    ${
-                                        !loggedIn
-                                            ? "disabled"
-                                            : ""
                                     }
+                                "
+                                data-reaction="${
+                                    reaction.key
+                                }"
+                                data-news-id="${
+                                    item.id
+                                }"
+                                title="${
+                                    reaction.title
+                                }"
+                                ${
+                                    !loggedIn
+                                        ? "disabled"
+                                        : ""
+                                }
+                            >
+
+                                <span>
+                                    ${reaction.emoji}
+                                </span>
+
+
+                                <span
+                                    class="news-reaction-count"
                                 >
+                                    ${count}
+                                </span>
 
-                                    <span>
-                                        ${reaction.emoji}
-                                    </span>
+                            </button>
 
-                                    <span
-                                        class="news-reaction-count"
-                                    >
-                                        ${count}
-                                    </span>
+                        `;
 
-                                </button>
-
-                            `;
-
-                        }
-                    )
-                    .join("");
+                    }
+                )
+                .join("");
 
 
-            return `
+        return `
+
+            <div
+                class="news-reactions"
+                data-reactions-for="${item.id}"
+            >
+
+                ${buttons}
+
+
+                ${
+                    !loggedIn
+
+                        ? `
+
+                            <div
+                                class="news-reaction-login"
+                            >
+
+                                برای ثبت واکنش،
+                                وارد حساب VEXON شو.
+
+                            </div>
+
+                          `
+
+                        : ""
+
+                }
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       RENDER NEWS
+    ===================================================== */
+
+    function renderNews(
+        news
+    ) {
+
+        if (
+            !news.length
+        ) {
+
+            newsList.innerHTML = `
 
                 <div
-                    class="news-reactions"
-                    data-reactions-for="${item.id}"
+                    class="news-empty"
                 >
 
-                    ${buttons}
+                    📰
+                    هنوز خبری منتشر نشده است.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
 
 
-                    ${
-                        !loggedIn
-                            ? `
-                                <div
-                                    class="news-reaction-login"
+        newsList.innerHTML =
+            news
+                .map(
+                    item => {
+
+                        const category =
+                            item.category ||
+                            "general";
+
+
+                        const icon =
+                            categoryIcon(
+                                category
+                            );
+
+
+                        const colorClass =
+                            categoryClass(
+                                category
+                            );
+
+
+                        const image =
+                            item.image_url
+
+                                ? `
+
+                                    <img
+                                        class="news-item-image"
+                                        src="${escapeHtml(
+                                            item.image_url
+                                        )}"
+                                        alt="${escapeHtml(
+                                            item.title
+                                        )}"
+                                        loading="lazy"
+                                        onerror="
+                                            this.outerHTML =
+                                            '<div class=&quot;news-image-placeholder&quot;>📢</div>';
+                                        "
+                                    >
+
+                                  `
+
+                                : `
+
+                                    <div
+                                        class="
+                                            news-image-placeholder
+                                        "
+                                    >
+                                        ${icon}
+                                    </div>
+
+                                  `;
+
+
+                        const date =
+                            formatDate(
+                                item.published_at ||
+                                item.created_at
+                            );
+
+
+                        return `
+
+                            <article
+                                class="news-item"
+                            >
+
+                                <a
+                                    class="news-clickable"
+                                    href="
+                                        news-detail.html?id=${
+                                            encodeURIComponent(
+                                                item.id
+                                            )
+                                        }
+                                    "
                                 >
-                                    برای ثبت واکنش،
-                                    وارد حساب VEXON شو.
-                                </div>
-                              `
-                            : ""
+
+                                    ${image}
+
+
+                                    <div
+                                        class="
+                                            news-icon
+                                            ${colorClass}
+                                        "
+                                    >
+                                        ${icon}
+                                    </div>
+
+
+                                    <div
+                                        class="
+                                            news-item-content
+                                        "
+                                    >
+
+                                        <h3
+                                            class="
+                                                news-item-title
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                item.title
+                                            )}
+                                        </h3>
+
+
+                                        <p
+                                            class="
+                                                news-item-text
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                item.content
+                                            )}
+                                        </p>
+
+
+                                        <div
+                                            class="
+                                                news-item-meta
+                                            "
+                                        >
+
+                                            <span>
+                                                🏷️
+                                                ${escapeHtml(
+                                                    category
+                                                )}
+                                            </span>
+
+
+                                            ${
+                                                item.author_username
+
+                                                    ? `
+
+                                                        <span>
+                                                            👤
+                                                            ${escapeHtml(
+                                                                item.author_username
+                                                            )}
+                                                        </span>
+
+                                                      `
+
+                                                    : ""
+
+                                            }
+
+
+                                            ${
+                                                date
+
+                                                    ? `
+
+                                                        <span>
+                                                            📅
+                                                            ${escapeHtml(
+                                                                date
+                                                            )}
+                                                        </span>
+
+                                                      `
+
+                                                    : ""
+
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </a>
+
+
+                                ${renderReactionButtons(
+                                    item
+                                )}
+
+                            </article>
+
+                        `;
+
                     }
+                )
+                .join("");
+
+    }
+
+
+    /* =====================================================
+       LOAD NEWS
+    ===================================================== */
+
+    async function loadNews(
+        silent = false
+    ) {
+
+        if (
+            !silent &&
+            !lastNewsSignature
+        ) {
+
+            newsList.innerHTML = `
+
+                <div
+                    class="news-loading"
+                >
+
+                    ⏳
+                    در حال دریافت آخرین اخبار VEXON...
 
                 </div>
 
@@ -1144,236 +1526,223 @@
         }
 
 
-        /* =========================================
-           RENDER NEWS
-        ========================================= */
+        try {
 
-        function renderNews(
-            news
-        ) {
+            const response =
+                await fetch(
+                    "/api/news?limit=50",
+                    {
+                        method:
+                            "GET",
 
-            if (!news.length) {
+                        cache:
+                            "no-store"
+                    }
+                );
 
-                newsList.innerHTML = `
-                    <div
-                        class="news-empty"
-                    >
-                        📰 هنوز خبری منتشر نشده است.
-                    </div>
-                `;
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    "NEWS_API_ERROR"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !data ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    "NEWS_DATA_ERROR"
+                );
+
+            }
+
+
+            const news =
+                Array.isArray(
+                    data.news
+                )
+                    ? data.news
+                    : [];
+
+
+            const signature =
+                createSignature(
+                    news
+                );
+
+
+            if (
+                signature ===
+                lastNewsSignature
+            ) {
 
                 return;
 
             }
 
 
-            newsList.innerHTML =
+            lastNewsSignature =
+                signature;
+
+
+            renderNews(
                 news
-                    .map(
-                        item => {
+            );
 
-                            const category =
-                                item.category ||
-                                "general";
-
-
-                            const icon =
-                                categoryIcon(
-                                    category
-                                );
-
-
-                            const colorClass =
-                                categoryClass(
-                                    category
-                                );
-
-
-                            const image =
-                                item.image_url
-                                    ? `
-                                        <img
-                                            class="news-item-image"
-                                            src="${escapeHtml(
-                                                item.image_url
-                                            )}"
-                                            alt="${escapeHtml(
-                                                item.title
-                                            )}"
-                                            loading="lazy"
-                                            onerror="
-                                                this.outerHTML =
-                                                '<div class=&quot;news-image-placeholder&quot;>📢</div>';
-                                            "
-                                        >
-                                      `
-                                    : `
-                                        <div
-                                            class="news-image-placeholder"
-                                        >
-                                            ${icon}
-                                        </div>
-                                      `;
-
-
-                            const date =
-                                formatDate(
-                                    item.published_at ||
-                                    item.created_at
-                                );
-
-
-                            return `
-
-                                <article
-                                    class="news-item"
-                                >
-
-                                    <a
-                                        class="news-clickable"
-                                        href="news-detail.html?id=${encodeURIComponent(
-                                            item.id
-                                        )}"
-                                    >
-
-                                        ${image}
-
-
-                                        <div
-                                            class="news-icon ${colorClass}"
-                                        >
-                                            ${icon}
-                                        </div>
-
-
-                                        <div
-                                            class="news-item-content"
-                                        >
-
-                                            <h3
-                                                class="news-item-title"
-                                            >
-                                                ${escapeHtml(
-                                                    item.title
-                                                )}
-                                            </h3>
-
-
-                                            <p
-                                                class="news-item-text"
-                                            >
-                                                ${escapeHtml(
-                                                    item.content
-                                                )}
-                                            </p>
-
-
-                                            <div
-                                                class="news-item-meta"
-                                            >
-
-                                                <span>
-                                                    🏷️ ${escapeHtml(
-                                                        category
-                                                    )}
-                                                </span>
-
-
-                                                ${
-                                                    item.author_username
-                                                        ? `
-                                                            <span>
-                                                                👤 ${escapeHtml(
-                                                                    item.author_username
-                                                                )}
-                                                            </span>
-                                                          `
-                                                        : ""
-                                                }
-
-
-                                                ${
-                                                    date
-                                                        ? `
-                                                            <span>
-                                                                📅 ${escapeHtml(
-                                                                    date
-                                                                )}
-                                                            </span>
-                                                          `
-                                                        : ""
-                                                }
-
-                                            </div>
-
-                                        </div>
-
-                                    </a>
-
-
-                                    ${renderReactionButtons(
-                                        item
-                                    )}
-
-                                </article>
-
-                            `;
-
-                        }
-                    )
-                    .join("");
-
-        }
-
-
-        /* =========================================
-           LOAD NEWS
-        ========================================= */
-
-        async function loadNews(
-            silent = false
+        } catch (
+            error
         ) {
 
+            console.error(
+                "VEXON_NEWS_ERROR:",
+                error
+            );
+
+
             if (
-                !silent &&
                 !lastNewsSignature
             ) {
 
                 newsList.innerHTML = `
+
                     <div
-                        class="news-loading"
+                        class="news-error"
                     >
-                        ⏳ در حال دریافت آخرین اخبار VEXON...
+
+                        ❌
+                        ارتباط با سرور اخبار برقرار نشد.
+
+                        <br><br>
+
+                        لطفاً چند لحظه دیگر دوباره امتحان کن.
+
                     </div>
+
                 `;
 
             }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       REACTION CLICK
+    ===================================================== */
+
+    newsList.addEventListener(
+        "click",
+        async event => {
+
+            const button =
+                event.target.closest(
+                    ".news-reaction"
+                );
+
+
+            if (
+                !button
+            ) {
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            event.stopPropagation();
+
+
+            if (
+                !loggedIn
+            ) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const newsId =
+                button.dataset.newsId;
+
+
+            const reaction =
+                button.dataset.reaction;
+
+
+            if (
+                !newsId ||
+                !reaction
+            ) {
+
+                return;
+
+            }
+
+
+            const allButtons =
+                newsList.querySelectorAll(
+                    `[data-news-id="${CSS.escape(
+                        newsId
+                    )}"]`
+                );
+
+
+            allButtons.forEach(
+                item => {
+
+                    item.disabled =
+                        true;
+
+                }
+            );
 
 
             try {
 
                 const response =
                     await fetch(
-                        "/api/news?limit=50",
+                        `/api/news/${encodeURIComponent(
+                            newsId
+                        )}/reaction`,
                         {
                             method:
-                                "GET",
+                                "POST",
 
-                            cache:
-                                "no-store"
+                            credentials:
+                                "same-origin",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    reaction
+                                })
+
                         }
                     );
-
-
-                if (
-                    !response.ok
-                ) {
-
-                    throw new Error(
-                        "NEWS_API_ERROR"
-                    );
-
-                }
 
 
                 const data =
@@ -1381,105 +1750,9 @@
 
 
                 if (
-                    !data ||
-                    !data.success
+                    response.status ===
+                    401
                 ) {
-
-                    throw new Error(
-                        "NEWS_DATA_ERROR"
-                    );
-
-                }
-
-
-                const news =
-                    Array.isArray(
-                        data.news
-                    )
-                        ? data.news
-                        : [];
-
-
-                const signature =
-                    createSignature(
-                        news
-                    );
-
-
-                if (
-                    signature ===
-                    lastNewsSignature
-                ) {
-
-                    return;
-
-                }
-
-
-                lastNewsSignature =
-                    signature;
-
-
-                renderNews(
-                    news
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "VEXON_NEWS_ERROR:",
-                    error
-                );
-
-
-                if (
-                    !lastNewsSignature
-                ) {
-
-                    newsList.innerHTML = `
-                        <div
-                            class="news-error"
-                        >
-                            ❌ ارتباط با سرور اخبار برقرار نشد.
-                            <br>
-                            لطفاً چند لحظه دیگر دوباره امتحان کن.
-                        </div>
-                    `;
-
-                }
-
-            }
-
-        }
-
-
-        /* =========================================
-           REACTION CLICK
-        ========================================= */
-
-        newsList.addEventListener(
-            "click",
-            async event => {
-
-                const button =
-                    event.target.closest(
-                        ".news-reaction"
-                    );
-
-
-                if (!button) {
-                    return;
-                }
-
-
-                event.preventDefault();
-
-
-                event.stopPropagation();
-
-
-                if (!loggedIn) {
 
                     window.location.href =
                         "login.html";
@@ -1489,285 +1762,160 @@
                 }
 
 
-                const newsId =
-                    button.dataset.newsId;
-
-
-                const reaction =
-                    button.dataset.reaction;
-
-
                 if (
-                    !newsId ||
-                    !reaction
+                    response.status ===
+                    403
                 ) {
+
+                    alert(
+                        data.message ||
+                        "این حساب اجازه واکنش دادن ندارد."
+                    );
 
                     return;
 
                 }
 
 
-                const allButtons =
-                    newsList.querySelectorAll(
-                        `[data-news-id="${CSS.escape(
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "ثبت واکنش ناموفق بود."
+                    );
+
+                }
+
+
+                myReactions[newsId] =
+                    data.my_reaction ||
+                    null;
+
+
+                const reactionContainer =
+                    newsList.querySelector(
+                        `[data-reactions-for="${CSS.escape(
                             newsId
                         )}"]`
                     );
 
 
-                allButtons.forEach(
-                    item => {
+                if (
+                    reactionContainer
+                ) {
 
-                        item.disabled =
-                            true;
-
-                    }
-                );
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            `/api/news/${encodeURIComponent(
-                                newsId
-                            )}/reaction`,
-                            {
-                                method:
-                                    "POST",
-
-                                credentials:
-                                    "same-origin",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify({
-                                        reaction
-                                    })
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (
-                        response.status ===
-                        401
-                    ) {
-
-                        window.location.href =
-                            "login.html";
-
-                        return;
-
-                    }
-
-
-                    if (
-                        response.status ===
-                        403
-                    ) {
-
-                        alert(
-                            data.message ||
-                            "این حساب اجازه واکنش دادن ندارد."
-                        );
-
-                        return;
-
-                    }
-
-
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
-
-                        throw new Error(
-                            data.message ||
-                            "ثبت واکنش ناموفق بود."
-                        );
-
-                    }
-
-
-                    myReactions[newsId] =
-                        data.my_reaction ||
-                        null;
-
-
-                    /*
-                     * بدون درخواست دوباره کل صفحه،
-                     * فقط شمارنده‌ها و حالت دکمه‌ها
-                     * همان خبر را آپدیت می‌کنیم.
-                     */
-
-                    const reactionContainer =
-                        newsList.querySelector(
-                            `[data-reactions-for="${CSS.escape(
-                                newsId
-                            )}"]`
-                        );
-
-
-                    if (
-                        reactionContainer
-                    ) {
-
-                        reactions.forEach(
-                            item => {
-
-                                const reactionButton =
-                                    reactionContainer.querySelector(
-                                        `[data-reaction="${item.key}"]`
-                                    );
-
-
-                                if (!reactionButton) {
-                                    return;
-                                }
-
-
-                                const count =
-                                    Number(
-                                        data.reactions?.[
-                                            item.key
-                                        ] ||
-                                        0
-                                    );
-
-
-                                const countElement =
-                                    reactionButton.querySelector(
-                                        ".news-reaction-count"
-                                    );
-
-
-                                if (
-                                    countElement
-                                ) {
-
-                                    countElement.textContent =
-                                        count;
-
-                                }
-
-
-                                reactionButton.classList.toggle(
-                                    "active",
-                                    data.my_reaction ===
-                                        item.key
-                                );
-
-                            }
-                        );
-
-                    }
-
-
-                    /*
-                     * امضای قبلی را تغییر می‌دهیم
-                     * تا Refresh خودکار مجدداً لازم نباشد.
-                     */
-
-                    lastNewsSignature =
-                        "";
-
-                } catch (error) {
-
-                    console.error(
-                        "NEWS_REACTION_ERROR:",
-                        error
-                    );
-
-
-                    alert(
-                        error.message ||
-                        "ثبت واکنش انجام نشد."
-                    );
-
-                } finally {
-
-                    allButtons.forEach(
+                    reactions.forEach(
                         item => {
 
-                            item.disabled =
-                                !loggedIn;
+                            const reactionButton =
+                                reactionContainer.querySelector(
+                                    `[data-reaction="${item.key}"]`
+                                );
+
+
+                            if (
+                                !reactionButton
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const count =
+                                Number(
+                                    data.reactions?.[
+                                        item.key
+                                    ] ||
+                                    0
+                                );
+
+
+                            const countElement =
+                                reactionButton.querySelector(
+                                    ".news-reaction-count"
+                                );
+
+
+                            if (
+                                countElement
+                            ) {
+
+                                countElement.textContent =
+                                    count;
+
+                            }
+
+
+                            reactionButton.classList.toggle(
+                                "active",
+                                data.my_reaction ===
+                                    item.key
+                            );
 
                         }
                     );
 
                 }
 
-            }
-        );
+
+                lastNewsSignature =
+                    "";
+
+            } catch (
+                error
+            ) {
+
+                console.error(
+                    "NEWS_REACTION_ERROR:",
+                    error
+                );
 
 
-        /* =========================================
-           FIRST LOAD
-        ========================================= */
+                alert(
+                    error.message ||
+                    "ثبت واکنش انجام نشد."
+                );
 
-        (async function start() {
+            } finally {
 
-            await checkLogin();
+                allButtons.forEach(
+                    item => {
 
-            await loadNews();
+                        item.disabled =
+                            !loggedIn;
 
-        })();
-
-
-        /* =========================================
-           LIVE NEWS UPDATE
-        ========================================= */
-
-        newsUpdateTimer =
-            setInterval(
-                async () => {
-
-                    await checkLogin();
-
-                    await loadNews(
-                        true
-                    );
-
-                },
-                10000
-            );
-
-
-        /* =========================================
-           UPDATE WHEN RETURNING
-        ========================================= */
-
-        document.addEventListener(
-            "visibilitychange",
-            async () => {
-
-                if (
-                    document.visibilityState ===
-                    "visible"
-                ) {
-
-                    await checkLogin();
-
-                    await loadNews(
-                        true
-                    );
-
-                }
+                    }
+                );
 
             }
-        );
+
+        }
+    );
 
 
-        window.addEventListener(
-            "focus",
+    /* =====================================================
+       FIRST LOAD
+    ===================================================== */
+
+    (async function start() {
+
+        await checkLogin();
+
+        await loadNews();
+
+    })();
+
+
+    /* =====================================================
+       LIVE UPDATE
+    ===================================================== */
+
+    newsUpdateTimer =
+        setInterval(
             async () => {
 
                 await checkLogin();
@@ -1776,34 +1924,79 @@
                     true
                 );
 
-            }
+            },
+            10000
         );
 
 
-        /* =========================================
-           CLEANUP
-        ========================================= */
+    /* =====================================================
+       VISIBILITY
+    ===================================================== */
 
-        window.addEventListener(
-            "beforeunload",
-            () => {
+    document.addEventListener(
+        "visibilitychange",
+        async () => {
 
-                if (
+            if (
+                document.visibilityState ===
+                "visible"
+            ) {
+
+                await checkLogin();
+
+                await loadNews(
+                    true
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       FOCUS
+    ===================================================== */
+
+    window.addEventListener(
+        "focus",
+        async () => {
+
+            await checkLogin();
+
+            await loadNews(
+                true
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       CLEANUP
+    ===================================================== */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (
+                newsUpdateTimer
+            ) {
+
+                clearInterval(
                     newsUpdateTimer
-                ) {
-
-                    clearInterval(
-                        newsUpdateTimer
-                    );
-
-                }
+                );
 
             }
-        );
 
-    })();
+        }
+    );
 
-    </script>
+})();
+
+</script>
+
 
 </body>
 

@@ -20,12 +20,19 @@
         content="#03040a"
     >
 
-    <title>VEXON | ثبت‌نام</title>
+    <title>
+        VEXON | ثبت‌نام
+    </title>
 
 
-    <!-- FONTS -->
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -39,12 +46,78 @@
     >
 
 
-    <!-- MAIN CSS -->
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
         href="../style.css"
     >
+
+
+    <style>
+
+        /* =================================================
+           REGISTER PAGE
+        ================================================= */
+
+        .register-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+        /* =================================================
+           REMOVE OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           AUTH HEADER
+        ================================================= */
+
+        .auth-navbar-profile {
+
+            min-width:
+                118px;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .register-page .auth-section {
+
+                margin-top:
+                    25px;
+
+                margin-bottom:
+                    65px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -52,519 +125,512 @@
 <body>
 
 
-    <!-- =========================
-         BACKGROUND
-    ========================== -->
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
-    <div
-        class="background-effects"
-        aria-hidden="true"
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+
+    <div class="nebula nebula-green"></div>
+
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+
+    <div class="stars stars-two"></div>
+
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+
+    <div class="planet planet-blue"></div>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
     >
 
-        <div class="nebula nebula-purple"></div>
-        <div class="nebula nebula-green"></div>
-        <div class="nebula nebula-blue"></div>
+        VE<span class="logo-x">X</span>ON
 
-        <div class="stars stars-one"></div>
-        <div class="stars stars-two"></div>
-        <div class="stars stars-three"></div>
+    </a>
 
-        <div class="planet planet-purple"></div>
-        <div class="planet planet-blue"></div>
+
+    <!--
+        منوی اصلی توسط vexon-nav.js ساخته می‌شود.
+    -->
+
+    <nav
+        class="nav-links"
+    ></nav>
+
+
+    <!-- =================================================
+         LOGIN
+    ================================================== -->
+
+    <a
+        href="login.html"
+        class="
+            header-profile
+            auth-navbar-profile
+        "
+    >
+
+        <div
+            class="header-profile-icon"
+        >
+            👤
+        </div>
+
+
+        <div>
+
+            <strong>
+                ورود
+            </strong>
+
+
+            <span>
+                ورود به حساب
+            </span>
+
+        </div>
+
+
+        <b>
+            ‹
+        </b>
+
+    </a>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main
+    class="register-page"
+>
+
+    <section
+        class="auth-section"
+    >
+
+        <div
+            class="auth-card"
+        >
+
+            <div
+                class="auth-glow"
+            ></div>
+
+
+            <!-- =================================================
+                 LOGO
+            ================================================== -->
+
+            <div
+                class="auth-logo"
+            >
+
+                V<span>X</span>
+
+            </div>
+
+
+            <span
+                class="auth-label"
+            >
+                ✦ VEXON ACCOUNT
+            </span>
+
+
+            <h1>
+                ساخت حساب
+            </h1>
+
+
+            <p
+                class="auth-description"
+            >
+
+                وارد دنیای VEXON شو و رقابتت را شروع کن.
+
+            </p>
+
+
+            <!-- =================================================
+                 REGISTER FORM
+            ================================================== -->
+
+            <form
+                class="auth-form"
+            >
+
+
+                <!-- USERNAME -->
+
+                <label
+                    for="register-username"
+                >
+                    نام کاربری
+                </label>
+
+
+                <div
+                    class="auth-input-wrap"
+                >
+
+                    <span>
+                        👤
+                    </span>
+
+
+                    <input
+                        id="register-username"
+                        type="text"
+                        name="username"
+                        placeholder="مثلاً VEXON_Player"
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="20"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <label
+                    for="register-password"
+                >
+                    رمز عبور
+                </label>
+
+
+                <div
+                    class="auth-input-wrap"
+                >
+
+                    <span>
+                        🔒
+                    </span>
+
+
+                    <input
+                        id="register-password"
+                        type="password"
+                        name="password"
+                        placeholder="رمز عبور خود را وارد کن"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <label
+                    for="register-confirm-password"
+                >
+                    تکرار رمز عبور
+                </label>
+
+
+                <div
+                    class="auth-input-wrap"
+                >
+
+                    <span>
+                        🛡️
+                    </span>
+
+
+                    <input
+                        id="register-confirm-password"
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="رمز عبور را دوباره وارد کن"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="auth-button"
+                >
+                    🚀 ساخت حساب
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 DIVIDER
+            ================================================== -->
+
+            <div
+                class="auth-divider"
+            >
+
+                <span></span>
+
+
+                <small>
+                    حساب داری؟
+                </small>
+
+
+                <span></span>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <a
+                href="login.html"
+                class="auth-secondary-button"
+            >
+                ورود به حساب
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div
+        class="footer-logo"
+    >
+        VE<span>X</span>ON
+    </div>
+
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
 
     </div>
 
 
-    <!-- =========================
-         NAVBAR
-    ========================== -->
+    <a
+        href="creators.html"
+        class="creators-link"
+    >
+        👨‍💻 سازندگان VEXON
+    </a>
 
-    <header class="navbar">
 
-        <a
-            href="../index.html"
-            class="logo"
-        >
-            VE<span class="logo-x">X</span>ON
-        </a>
+    <span>
 
+        ساخته شده با 💚 برای گیمرها
 
-        <nav class="nav-links">
+        <br>
 
-            <a
-                href="../index.html"
-                class="nav-link"
-            >
-                <span class="desktop-v-icon">V</span>
-                خانه
-            </a>
+        © 2026 VEXON — همه حقوق محفوظ است.
 
+    </span>
 
-            <a
-                href="games.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">🎮</span>
-                بازی‌ها
-            </a>
+</footer>
 
 
-            <a
-                href="leaderboard.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">🏆</span>
-                لیدربورد
-            </a>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
 
+<script
+    src="../script.js"
+></script>
 
-            <a
-                href="cafe.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">☕</span>
-                کافه بازی
-            </a>
 
+<script
+    src="../vexon-nav.js"
+></script>
 
-            <a
-                href="news.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">📢</span>
-                اخبار
-            </a>
 
+<!-- =====================================================
+     REGISTER API
+===================================================== -->
 
-            <a
-                href="guide.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">?</span>
-                راهنما
-            </a>
+<script>
 
-        </nav>
+const registerForm =
+    document.querySelector(
+        ".auth-form"
+    );
 
 
-        <a
-            href="login.html"
-            class="header-profile"
-        >
+registerForm.addEventListener(
+    "submit",
+    async event => {
 
-            <div class="header-profile-icon">
-                👤
-            </div>
+        event.preventDefault();
 
-            <div>
 
-                <strong>
-                    ورود
-                </strong>
+        const username =
+            document
+                .getElementById(
+                    "register-username"
+                )
+                .value
+                .trim();
 
-                <span>
-                    ورود به حساب
-                </span>
 
-            </div>
+        const password =
+            document
+                .getElementById(
+                    "register-password"
+                )
+                .value;
 
-            <b>
-                ‹
-            </b>
 
-        </a>
+        const confirmPassword =
+            document
+                .getElementById(
+                    "register-confirm-password"
+                )
+                .value;
 
-    </header>
 
+        if (
+            password !==
+            confirmPassword
+        ) {
 
-    <!-- =========================
-         MAIN
-    ========================== -->
+            alert(
+                "تکرار رمز عبور درست نیست."
+            );
 
-    <main>
+            return;
 
-        <section class="auth-section">
+        }
 
-            <div class="auth-card">
 
-                <div class="auth-glow"></div>
+        try {
 
-
-                <div class="auth-logo">
-                    V<span>X</span>
-                </div>
-
-
-                <span class="auth-label">
-                    ✦ VEXON ACCOUNT
-                </span>
-
-
-                <h1>
-                    ساخت حساب
-                </h1>
-
-
-                <p class="auth-description">
-                    وارد دنیای VEXON شو و رقابتت را شروع کن.
-                </p>
-
-
-                <form class="auth-form">
-
-
-                    <!-- USERNAME -->
-
-                    <label for="register-username">
-                        نام کاربری
-                    </label>
-
-                    <div class="auth-input-wrap">
-
-                        <span>👤</span>
-
-                        <input
-                            id="register-username"
-                            type="text"
-                            name="username"
-                            placeholder="مثلاً VEXON_Player"
-                            autocomplete="username"
-                            minlength="3"
-                            maxlength="20"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- PASSWORD -->
-
-                    <label for="register-password">
-                        رمز عبور
-                    </label>
-
-                    <div class="auth-input-wrap">
-
-                        <span>🔒</span>
-
-                        <input
-                            id="register-password"
-                            type="password"
-                            name="password"
-                            placeholder="رمز عبور خود را وارد کن"
-                            autocomplete="new-password"
-                            minlength="8"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- CONFIRM PASSWORD -->
-
-                    <label for="register-confirm-password">
-                        تکرار رمز عبور
-                    </label>
-
-                    <div class="auth-input-wrap">
-
-                        <span>🛡️</span>
-
-                        <input
-                            id="register-confirm-password"
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="رمز عبور را دوباره وارد کن"
-                            autocomplete="new-password"
-                            minlength="8"
-                            required
-                        >
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="auth-button"
-                    >
-                        🚀 ساخت حساب
-                    </button>
-
-                </form>
-
-
-                <div class="auth-divider">
-
-                    <span></span>
-
-                    <small>
-                        حساب داری؟
-                    </small>
-
-                    <span></span>
-
-                </div>
-
-
-                <a
-                    href="login.html"
-                    class="auth-secondary-button"
-                >
-                    ورود به حساب
-                </a>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
-    <footer>
-
-        <div class="footer-logo">
-            VE<span>X</span>ON
-        </div>
-
-        <p>
-            PLAY • COMPETE • LEVEL UP.
-        </p>
-
-
-        <div class="footer-socials">
-            <span>✈️</span>
-            <span>◎</span>
-            <span>▶</span>
-        </div>
-
-
-        <a
-            href="creators.html"
-            class="creators-link"
-        >
-            👨‍💻 سازندگان VEXON
-        </a>
-
-
-        <span>
-
-            ساخته شده با 💚 برای گیمرها
-
-            <br>
-
-            © 2026 VEXON — همه حقوق محفوظ است.
-
-        </span>
-
-    </footer>
-
-
-    <!-- =========================
-         MOBILE NAV
-    ========================== -->
-
-    <nav class="mobile-bottom-nav">
-
-
-        <a
-            href="games.html"
-            class="mobile-nav-item"
-        >
-
-            <span>
-                🎮
-            </span>
-
-            <small>
-                بازی‌ها
-            </small>
-
-        </a>
-
-
-        <a
-            href="cafe.html"
-            class="mobile-nav-item"
-        >
-
-            <span>
-                ☕
-            </span>
-
-            <small>
-                کافه
-            </small>
-
-        </a>
-
-
-        <a
-            href="../index.html"
-            class="mobile-nav-item"
-        >
-
-            <span class="home-v-icon">
-                V
-            </span>
-
-            <small>
-                خانه
-            </small>
-
-        </a>
-
-
-        <a
-            href="news.html"
-            class="mobile-nav-item"
-        >
-
-            <span>
-                📢
-            </span>
-
-            <small>
-                اخبار
-            </small>
-
-        </a>
-
-
-        <a
-            href="login.html"
-            class="mobile-nav-item active"
-        >
-
-            <span>
-                👤
-            </span>
-
-            <small>
-                ورود
-            </small>
-
-        </a>
-
-    </nav>
-
-
-    <!-- =========================
-         REGISTER API
-    ========================== -->
-
-    <script>
-
-        const registerForm =
-            document.querySelector(".auth-form");
-
-
-        registerForm.addEventListener(
-            "submit",
-            async (event) => {
-
-                event.preventDefault();
-
-
-                const username =
-                    document
-                        .getElementById(
-                            "register-username"
-                        )
-                        .value
-                        .trim();
-
-
-                const password =
-                    document
-                        .getElementById(
-                            "register-password"
-                        )
-                        .value;
-
-
-                const confirmPassword =
-                    document
-                        .getElementById(
-                            "register-confirm-password"
-                        )
-                        .value;
-
-
-                if (password !== confirmPassword) {
-
-                    alert(
-                        "تکرار رمز عبور درست نیست."
-                    );
-
-                    return;
-                }
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/api/register",
-                            {
-                                method: "POST",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify({
-                                        username,
-                                        password
-                                    })
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (!response.ok) {
-
-                        alert(
-                            data.message ||
-                            "ثبت‌نام ناموفق بود."
-                        );
-
-                        return;
+            const response =
+                await fetch(
+                    "/api/register",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                username,
+                                password
+                            })
                     }
+                );
 
 
-                    alert(
-                        data.message ||
-                        "حساب با موفقیت ساخته شد."
-                    );
+            const data =
+                await response.json();
 
 
-                    window.location.href =
-                        "login.html";
+            if (
+                !response.ok
+            ) {
 
+                alert(
+                    data.message ||
+                    "ثبت‌نام ناموفق بود."
+                );
 
-                } catch (error) {
-
-                    console.error(error);
-
-                    alert(
-                        "ارتباط با سرور برقرار نشد."
-                    );
-
-                }
+                return;
 
             }
-        );
 
-    </script>
+
+            alert(
+                data.message ||
+                "حساب با موفقیت ساخته شد."
+            );
+
+
+            window.location.href =
+                "login.html";
+
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "REGISTER_ERROR",
+                error
+            );
+
+
+            alert(
+                "ارتباط با سرور برقرار نشد."
+            );
+
+        }
+
+    }
+);
+
+</script>
+
 
 </body>
 

@@ -1,6 +1,5 @@
 /* =========================================================
    VEXON GLOBAL NAVIGATION
-   Global Hamburger + Left Sidebar
 ========================================================= */
 
 (function () {
@@ -136,13 +135,12 @@
     style.textContent = `
 
         /* =================================================
-           OLD MOBILE NAV = OFF
+           REMOVE OLD MOBILE NAV
         ================================================= */
 
         .mobile-bottom-nav {
             display: none !important;
         }
-
 
         body {
             padding-bottom: 0 !important;
@@ -150,55 +148,40 @@
 
 
         /* =================================================
-           MAIN NAVBAR
+           NAVBAR
         ================================================= */
 
         .navbar {
             position: relative !important;
 
-            min-height:
-                76px;
+            min-height: 76px;
 
-            display:
-                flex !important;
+            display: flex !important;
 
-            align-items:
-                center !important;
+            align-items: center !important;
 
-            justify-content:
-                center !important;
+            justify-content: center !important;
 
             padding:
-                12px
-                65px !important;
-
+                12px 72px !important;
         }
 
-
-        /* =================================================
-           HIDE OLD NAVIGATION
-        ================================================= */
 
         .navbar .nav-links {
-            display:
-                none !important;
+            display: none !important;
         }
 
 
         /* =================================================
-           LOGO CENTER
+           DESKTOP LOGO
         ================================================= */
 
         .navbar > .logo {
 
-            position:
-                absolute !important;
+            position: absolute !important;
 
-            left:
-                50%;
-
-            top:
-                50%;
+            left: 50%;
+            top: 50%;
 
             transform:
                 translate(
@@ -206,12 +189,9 @@
                     -50%
                 );
 
-            z-index:
-                5;
+            z-index: 5;
 
-            margin:
-                0 !important;
-
+            margin: 0 !important;
         }
 
 
@@ -222,10 +202,7 @@
                     -50%,
                     -50%
                 )
-                scale(
-                    1.04
-                );
-
+                scale(1.04);
         }
 
 
@@ -235,25 +212,26 @@
 
         .navbar .header-profile {
 
-            position:
-                absolute !important;
+            position: absolute !important;
 
-            right:
-                16px;
-
-            top:
-                50%;
+            right: 15px;
+            top: 50%;
 
             transform:
-                translateY(
-                    -50%
-                );
+                translateY(-50%);
 
-            z-index:
-                6;
+            z-index: 6;
 
-            margin:
-                0 !important;
+            margin: 0 !important;
+
+            width: 235px;
+
+            min-width: 235px;
+
+            padding:
+                10px 13px !important;
+
+            gap: 10px;
 
         }
 
@@ -266,50 +244,32 @@
                         -50% - 2px
                     )
                 );
-
         }
 
 
         /* =================================================
-           GLOBAL HAMBURGER LEFT
+           GLOBAL MENU BUTTON
         ================================================= */
 
         .vexon-global-menu-trigger {
 
-            position:
-                absolute !important;
+            position: absolute !important;
 
-            left:
-                16px;
-
-            top:
-                50%;
+            left: 15px;
+            top: 50%;
 
             transform:
-                translateY(
-                    -50%
-                );
+                translateY(-50%);
 
-            z-index:
-                7;
+            z-index: 7;
 
-            width:
-                43px;
+            width: 43px;
+            height: 43px;
 
-            height:
-                43px;
+            display: flex;
 
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            flex:
-                none;
+            align-items: center;
+            justify-content: center;
 
             border:
                 1px solid
@@ -320,8 +280,7 @@
                     .18
                 );
 
-            border-radius:
-                13px;
+            border-radius: 13px;
 
             background:
                 rgba(
@@ -331,17 +290,11 @@
                     .055
                 );
 
-            color:
-                #ffffff;
+            color: #ffffff;
 
-            font-size:
-                20px;
+            font-size: 20px;
 
-            line-height:
-                1;
-
-            cursor:
-                pointer;
+            cursor: pointer;
 
             box-shadow:
                 0 0 22px
@@ -352,17 +305,11 @@
                     .07
                 );
 
-            backdrop-filter:
-                blur(
-                    12px
-                );
-
             transition:
                 transform .2s ease,
                 background .2s ease,
                 border-color .2s ease,
                 box-shadow .2s ease;
-
         }
 
 
@@ -399,20 +346,14 @@
                     157,
                     .14
                 );
-
         }
 
 
         .vexon-global-menu-trigger:active {
 
             transform:
-                translateY(
-                    -50%
-                )
-                scale(
-                    .96
-                );
-
+                translateY(-50%)
+                scale(.96);
         }
 
 
@@ -422,42 +363,31 @@
 
         .vexon-global-menu {
 
-            position:
-                fixed;
+            position: fixed;
 
-            inset:
-                0;
+            inset: 0;
 
-            z-index:
-                60000;
+            z-index: 60000;
 
-            visibility:
-                hidden;
+            visibility: hidden;
 
-            pointer-events:
-                none;
-
+            pointer-events: none;
         }
 
 
         .vexon-global-menu.open {
 
-            visibility:
-                visible;
+            visibility: visible;
 
-            pointer-events:
-                auto;
-
+            pointer-events: auto;
         }
 
 
         .vexon-global-menu-backdrop {
 
-            position:
-                absolute;
+            position: absolute;
 
-            inset:
-                0;
+            inset: 0;
 
             background:
                 rgba(
@@ -467,42 +397,30 @@
                     .58
                 );
 
-            opacity:
-                0;
+            opacity: 0;
 
             transition:
                 opacity .24s ease;
 
             backdrop-filter:
-                blur(
-                    3px
-                );
-
+                blur(3px);
         }
 
 
         .vexon-global-menu.open
         .vexon-global-menu-backdrop {
 
-            opacity:
-                1;
-
+            opacity: 1;
         }
 
 
         .vexon-global-drawer {
 
-            position:
-                absolute;
+            position: absolute;
 
-            top:
-                0;
-
-            bottom:
-                0;
-
-            left:
-                0;
+            top: 0;
+            bottom: 0;
+            left: 0;
 
             width:
                 min(
@@ -513,11 +431,9 @@
             padding:
                 22px 15px;
 
-            overflow-y:
-                auto;
+            overflow-y: auto;
 
-            direction:
-                rtl;
+            direction: rtl;
 
             background:
                 linear-gradient(
@@ -555,9 +471,7 @@
                 );
 
             transform:
-                translateX(
-                    -105%
-                );
+                translateX(-105%);
 
             transition:
                 transform .28s
@@ -567,7 +481,6 @@
                     .36,
                     1
                 );
-
         }
 
 
@@ -575,10 +488,7 @@
         .vexon-global-drawer {
 
             transform:
-                translateX(
-                    0
-                );
-
+                translateX(0);
         }
 
 
@@ -588,23 +498,18 @@
 
         .vexon-global-drawer-head {
 
-            display:
-                flex;
+            display: flex;
 
-            align-items:
-                center;
+            align-items: center;
 
-            justify-content:
-                space-between;
+            justify-content: space-between;
 
-            gap:
-                10px;
+            gap: 10px;
 
             padding:
                 2px 5px 17px;
 
-            margin-bottom:
-                8px;
+            margin-bottom: 8px;
 
             border-bottom:
                 1px solid
@@ -614,7 +519,6 @@
                     255,
                     .06
                 );
-
         }
 
 
@@ -624,38 +528,22 @@
                 "Orbitron",
                 sans-serif;
 
-            font-size:
-                24px;
+            font-size: 24px;
 
-            font-weight:
-                900;
+            font-weight: 900;
 
-            letter-spacing:
-                3px;
+            letter-spacing: 3px;
 
-            color:
-                #ffffff;
-
-            text-shadow:
-                0 0 14px
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .18
-                );
-
+            color: #ffffff;
         }
 
 
         .vexon-global-drawer-logo span {
 
-            color:
-                #00ff9d;
+            color: #00ff9d;
 
             text-shadow:
-                0 0 9px
-                #00ff9d,
+                0 0 9px #00ff9d,
                 0 0 22px
                 rgba(
                     0,
@@ -663,17 +551,13 @@
                     157,
                     .5
                 );
-
         }
 
 
         .vexon-global-menu-close {
 
-            width:
-                38px;
-
-            height:
-                38px;
+            width: 38px;
+            height: 38px;
 
             border:
                 1px solid
@@ -684,8 +568,7 @@
                     .07
                 );
 
-            border-radius:
-                11px;
+            border-radius: 11px;
 
             background:
                 rgba(
@@ -695,37 +578,11 @@
                     .035
                 );
 
-            color:
-                #ffffff;
+            color: #ffffff;
 
-            font-size:
-                20px;
+            font-size: 20px;
 
-            cursor:
-                pointer;
-
-            transition:
-                background .2s ease,
-                transform .2s ease;
-
-        }
-
-
-        .vexon-global-menu-close:hover {
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .08
-                );
-
-            transform:
-                scale(
-                    1.04
-                );
-
+            cursor: pointer;
         }
 
 
@@ -734,46 +591,35 @@
             padding:
                 0 6px 17px;
 
-            color:
-                #6f6f83;
+            color: #6f6f83;
 
-            font-size:
-                9px;
+            font-size: 9px;
 
-            line-height:
-                1.9;
-
+            line-height: 1.9;
         }
 
 
         /* =================================================
-           NAV LIST
+           NAV ITEMS
         ================================================= */
 
         .vexon-global-nav-list {
 
-            display:
-                grid;
+            display: grid;
 
-            gap:
-                7px;
-
+            gap: 7px;
         }
 
 
         .vexon-global-nav-item {
 
-            width:
-                100%;
+            width: 100%;
 
-            display:
-                flex;
+            display: flex;
 
-            align-items:
-                center;
+            align-items: center;
 
-            gap:
-                11px;
+            gap: 11px;
 
             padding:
                 11px 12px;
@@ -782,41 +628,33 @@
                 1px solid
                 transparent;
 
-            border-radius:
-                14px;
+            border-radius: 14px;
 
-            background:
-                transparent;
+            background: transparent;
 
-            color:
-                #b4b4c4;
+            color: #b4b4c4;
 
             font-family:
                 "Vazirmatn",
                 sans-serif;
 
-            font-size:
-                12px;
+            font-size: 12px;
 
-            font-weight:
-                700;
+            font-weight: 700;
 
-            text-decoration:
-                none;
+            text-decoration: none;
 
             transition:
                 color .2s ease,
                 background .2s ease,
                 border-color .2s ease,
                 transform .2s ease;
-
         }
 
 
         .vexon-global-nav-item:hover {
 
-            color:
-                #ffffff;
+            color: #ffffff;
 
             background:
                 rgba(
@@ -835,17 +673,13 @@
                 );
 
             transform:
-                translateX(
-                    3px
-                );
-
+                translateX(3px);
         }
 
 
         .vexon-global-nav-item.active {
 
-            color:
-                #00ff9d;
+            color: #00ff9d;
 
             background:
                 linear-gradient(
@@ -871,29 +705,28 @@
                     157,
                     .14
                 );
+        }
+
+
+        .vexon-global-nav-icon,
+        .vexon-global-home-icon {
+
+            width: 40px;
+            height: 40px;
+
+            flex: 0 0 40px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
 
         }
 
 
         .vexon-global-nav-icon {
-
-            width:
-                40px;
-
-            height:
-                40px;
-
-            flex:
-                0 0 40px;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
 
             border:
                 1px solid
@@ -904,9 +737,6 @@
                     .05
                 );
 
-            border-radius:
-                12px;
-
             background:
                 rgba(
                     255,
@@ -915,63 +745,11 @@
                     .04
                 );
 
-            font-size:
-                18px;
-
+            font-size: 18px;
         }
 
-
-        .vexon-global-nav-item.active
-        .vexon-global-nav-icon {
-
-            border-color:
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .18
-                );
-
-            background:
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .08
-                );
-
-        }
-
-
-        /* =================================================
-           HOME ICON
-        ================================================= */
 
         .vexon-global-home-icon {
-
-            width:
-                40px;
-
-            height:
-                40px;
-
-            flex:
-                0 0 40px;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            border-radius:
-                11px;
-
-            background:
-                #03040a;
 
             border:
                 1px solid
@@ -982,22 +760,21 @@
                     .23
                 );
 
-            color:
-                #00ff9d;
+            background:
+                #03040a;
+
+            color: #00ff9d;
 
             font-family:
                 "Orbitron",
                 sans-serif;
 
-            font-size:
-                15px;
+            font-size: 15px;
 
-            font-weight:
-                900;
+            font-weight: 900;
 
             text-shadow:
-                0 0 7px
-                #00ff9d;
+                0 0 7px #00ff9d;
 
             box-shadow:
                 0 0 14px
@@ -1007,65 +784,30 @@
                     157,
                     .08
                 );
-
-        }
-
-
-        .vexon-global-nav-item:hover
-        .vexon-global-home-icon {
-
-            border-color:
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .42
-                );
-
-            box-shadow:
-                0 0 21px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .16
-                );
-
         }
 
 
         .vexon-global-nav-text {
 
-            flex:
-                1;
+            flex: 1;
 
-            min-width:
-                0;
-
+            min-width: 0;
         }
 
 
         .vexon-global-nav-arrow {
 
-            color:
-                #525267;
+            color: #525267;
 
-            font-size:
-                19px;
-
-            line-height:
-                1;
-
+            font-size: 19px;
         }
 
 
         .vexon-global-drawer-footer {
 
-            margin-top:
-                18px;
+            margin-top: 18px;
 
-            padding:
-                13px;
+            padding: 13px;
 
             border:
                 1px solid
@@ -1076,8 +818,7 @@
                     .05
                 );
 
-            border-radius:
-                14px;
+            border-radius: 14px;
 
             background:
                 rgba(
@@ -1087,82 +828,75 @@
                     .025
                 );
 
-            text-align:
-                center;
+            text-align: center;
 
-            color:
-                #626275;
+            color: #626275;
 
-            font-size:
-                8px;
+            font-size: 8px;
 
-            line-height:
-                1.9;
-
+            line-height: 1.9;
         }
 
 
         /* =================================================
-           SUPPORT BUTTON FIX
+           MOBILE PROFILE
         ================================================= */
 
-        #vexon-support-widget {
-
-            bottom:
-                22px !important;
-
-        }
-
-
-        @media (
-            max-width: 600px
-        ) {
-
-            #vexon-support-widget {
-
-                bottom:
-                    16px !important;
-
-            }
-
-        }
-
-
-        /* =================================================
-           SMALL DEVICES
-        ================================================= */
-
-        @media (
-            max-width: 900px
-        ) {
+        @media (max-width: 900px) {
 
             .navbar {
 
-                min-height:
-                    62px;
+                min-height: 64px;
 
                 padding:
-                    9px
+                    8px
+                    175px
+                    8px
                     60px !important;
-
             }
 
+
+            /*
+             * لوگوی اصلی VEXON کنار دکمه سه‌خط
+             */
 
             .navbar > .logo {
 
+                position:
+                    absolute !important;
+
+                left:
+                    61px;
+
+                top:
+                    50%;
+
+                transform:
+                    translateY(-50%);
+
+                margin: 0 !important;
+
                 font-size:
-                    21px;
+                    20px;
+
+                letter-spacing:
+                    2px;
 
             }
 
 
-            .navbar .header-profile {
+            .navbar > .logo:hover {
 
-                right:
-                    10px;
+                transform:
+                    translateY(-50%)
+                    scale(1.04);
 
             }
 
+
+            /*
+             * سه‌خط سمت چپ
+             */
 
             .vexon-global-menu-trigger {
 
@@ -1183,14 +917,27 @@
 
             }
 
-        }
 
+            /*
+             * پروفایل کشیده و واضح
+             */
 
-        @media (
-            max-width: 480px
-        ) {
+            .navbar .header-profile {
 
-            .navbar {
+                right:
+                    8px;
+
+                width:
+                    160px;
+
+                min-width:
+                    160px;
+
+                padding:
+                    8px 10px !important;
+
+                gap:
+                    8px;
 
                 border-radius:
                     14px;
@@ -1198,21 +945,166 @@
             }
 
 
-            .navbar > .logo {
+            .navbar .header-profile-icon {
+
+                width:
+                    35px !important;
+
+                height:
+                    35px !important;
+
+                flex:
+                    0 0 35px !important;
 
                 font-size:
-                    18px;
+                    18px !important;
 
-                letter-spacing:
-                    2px;
+                border-radius:
+                    10px;
 
             }
 
 
-            .navbar .header-profile {
+            .navbar .header-profile
+            > div:nth-child(2) {
 
-                right:
-                    8px;
+                display:
+                    flex !important;
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+
+                justify-content:
+                    center;
+
+                min-width:
+                    0;
+
+                gap:
+                    3px;
+
+            }
+
+
+            .navbar .header-profile
+            strong {
+
+                max-width:
+                    105px;
+
+                overflow:
+                    hidden;
+
+                text-overflow:
+                    ellipsis;
+
+                white-space:
+                    nowrap;
+
+                font-size:
+                    11px !important;
+
+            }
+
+
+            .navbar .header-profile
+            .header-player-stats {
+
+                display:
+                    block !important;
+
+                max-width:
+                    125px;
+
+                overflow:
+                    hidden;
+
+                text-overflow:
+                    ellipsis;
+
+                white-space:
+                    nowrap;
+
+                color:
+                    #00ff9d;
+
+                font-size:
+                    9px !important;
+
+                line-height:
+                    1.5;
+
+                text-shadow:
+                    0 0 7px
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .35
+                    );
+
+            }
+
+
+            .navbar .header-profile
+            .header-xp-bar {
+
+                display:
+                    block !important;
+
+                width:
+                    120px !important;
+
+                height:
+                    5px !important;
+
+            }
+
+
+            .navbar .header-profile
+            > b {
+
+                display:
+                    none !important;
+
+            }
+
+        }
+
+
+        /* =================================================
+           SMALL PHONES
+        ================================================= */
+
+        @media (max-width: 520px) {
+
+            .navbar {
+
+                width:
+                    96%;
+
+                padding:
+                    7px
+                    142px
+                    7px
+                    56px !important;
+
+            }
+
+
+            .navbar > .logo {
+
+                left:
+                    56px;
+
+                font-size:
+                    17px;
+
+                letter-spacing:
+                    1px;
 
             }
 
@@ -1222,27 +1114,231 @@
                 left:
                     8px;
 
-            }
-
-
-            .vexon-global-drawer {
-
                 width:
-                    min(
-                        320px,
-                        89vw
-                    );
+                    38px;
 
-                padding:
-                    18px 12px;
-
-            }
-
-
-            .vexon-global-drawer-logo {
+                height:
+                    38px;
 
                 font-size:
-                    20px;
+                    17px;
+
+            }
+
+
+            .navbar .header-profile {
+
+                right:
+                    7px;
+
+                width:
+                    132px;
+
+                min-width:
+                    132px;
+
+                padding:
+                    7px 8px !important;
+
+                gap:
+                    6px;
+
+            }
+
+
+            .navbar .header-profile-icon {
+
+                width:
+                    31px !important;
+
+                height:
+                    31px !important;
+
+                flex-basis:
+                    31px !important;
+
+                font-size:
+                    16px !important;
+
+            }
+
+
+            .navbar .header-profile
+            strong {
+
+                max-width:
+                    82px;
+
+                font-size:
+                    10px !important;
+
+            }
+
+
+            .navbar .header-profile
+            .header-player-stats {
+
+                max-width:
+                    94px;
+
+                font-size:
+                    8px !important;
+
+            }
+
+
+            .navbar .header-profile
+            .header-xp-bar {
+
+                width:
+                    92px !important;
+
+                height:
+                    4px !important;
+
+            }
+
+        }
+
+
+        /* =================================================
+           VERY SMALL PHONES
+        ================================================= */
+
+        @media (max-width: 400px) {
+
+            .navbar {
+
+                padding:
+                    6px
+                    122px
+                    6px
+                    52px !important;
+
+            }
+
+
+            .navbar > .logo {
+
+                left:
+                    52px;
+
+                font-size:
+                    15px;
+
+            }
+
+
+            .vexon-global-menu-trigger {
+
+                left:
+                    7px;
+
+                width:
+                    36px;
+
+                height:
+                    36px;
+
+                font-size:
+                    16px;
+
+            }
+
+
+            .navbar .header-profile {
+
+                right:
+                    6px;
+
+                width:
+                    114px;
+
+                min-width:
+                    114px;
+
+                padding:
+                    6px 7px !important;
+
+                gap:
+                    5px;
+
+            }
+
+
+            .navbar .header-profile-icon {
+
+                width:
+                    28px !important;
+
+                height:
+                    28px !important;
+
+                flex-basis:
+                    28px !important;
+
+                font-size:
+                    14px !important;
+
+            }
+
+
+            .navbar .header-profile
+            strong {
+
+                max-width:
+                    72px;
+
+                font-size:
+                    9px !important;
+
+            }
+
+
+            .navbar .header-profile
+            .header-player-stats {
+
+                max-width:
+                    80px;
+
+                font-size:
+                    7px !important;
+
+            }
+
+
+            .navbar .header-profile
+            .header-xp-bar {
+
+                width:
+                    78px !important;
+
+                height:
+                    3px !important;
+
+            }
+
+        }
+
+
+        /* =================================================
+           SUPPORT BUTTON
+        ================================================= */
+
+        #vexon-support-widget {
+
+            bottom:
+                22px !important;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            #vexon-support-widget {
+
+                bottom:
+                    16px !important;
 
             }
 
@@ -1257,7 +1353,7 @@
 
 
     /* =====================================================
-       CURRENT PAGE
+       CURRENT PATH
     ===================================================== */
 
     const currentPath =
@@ -1307,7 +1403,7 @@
 
 
     /* =====================================================
-       BUILD MENU
+       CREATE DRAWER
     ===================================================== */
 
     const menu =
@@ -1351,7 +1447,6 @@
                     type="button"
                     class="vexon-global-menu-close"
                     data-vexon-menu-close
-                    aria-label="بستن منو"
                 >
                     ×
                 </button>
@@ -1368,7 +1463,6 @@
 
             <nav
                 class="vexon-global-nav-list"
-                aria-label="منوی اصلی VEXON"
             >
 
                 ${
@@ -1476,7 +1570,6 @@
             "open"
         );
 
-
         document.body.style.overflow =
             "hidden";
 
@@ -1488,7 +1581,6 @@
         menu.classList.remove(
             "open"
         );
-
 
         document.body.style.overflow =
             "";
@@ -1549,7 +1641,7 @@
 
 
     /* =====================================================
-       CREATE GLOBAL TRIGGER
+       TRIGGER
     ===================================================== */
 
     let trigger =
@@ -1558,7 +1650,9 @@
         );
 
 
-    if (!trigger) {
+    if (
+        !trigger
+    ) {
 
         trigger =
             document.createElement(
@@ -1588,19 +1682,15 @@
         );
 
 
-        trigger.setAttribute(
-            "title",
-            "منوی VEXON"
-        );
-
-
         const navbar =
             document.querySelector(
                 ".navbar"
             );
 
 
-        if (navbar) {
+        if (
+            navbar
+        ) {
 
             navbar.appendChild(
                 trigger
@@ -1616,10 +1706,6 @@
 
     }
 
-
-    /* =====================================================
-       BIND TRIGGER
-    ===================================================== */
 
     if (
         !trigger.dataset.vexonNavBound

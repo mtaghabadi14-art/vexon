@@ -5,407 +5,750 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <meta
         name="description"
         content="VEXON Cafe؛ جایی برای بازی و رقابت با دوستان."
     >
 
-    <meta name="theme-color" content="#03040a">
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
 
-    <title>VEXON | کافه بازی</title>
+    <title>
+        VEXON | کافه بازی
+    </title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <style>
+
+        /* =================================================
+           CAFE PAGE
+        ================================================= */
+
+        .cafe-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                100%;
+
+        }
+
+
+        /* =================================================
+           REMOVE OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           CAFE CONTENT
+        ================================================= */
+
+        .cafe-page .feature-section {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+        /* =================================================
+           CAFE MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .cafe-page .feature-section {
+
+                margin-top:
+                    25px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="background-effects" aria-hidden="true">
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
 
     <div class="nebula nebula-purple"></div>
+
     <div class="nebula nebula-green"></div>
+
     <div class="nebula nebula-blue"></div>
 
     <div class="stars stars-one"></div>
+
     <div class="stars stars-two"></div>
+
     <div class="stars stars-three"></div>
 
     <div class="planet planet-purple"></div>
+
     <div class="planet planet-blue"></div>
 
     <div class="city">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span>
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
     </div>
 
 </div>
 
 
-<header class="navbar">
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-    <a href="../index.html" class="logo">
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
+    >
+
         VE<span class="logo-x">X</span>ON
+
     </a>
 
-    <nav class="nav-links">
 
-        <a href="../index.html" class="nav-link">
-            <span class="desktop-v-icon">V</span>
-            خانه
-        </a>
+    <!--
+        منوی قدیمی عمداً خالی است.
+        vexon-nav.js منوی جدید را می‌سازد.
+    -->
 
-        <a href="games.html" class="nav-link">
-            <span class="nav-icon">🎮</span>
-            بازی‌ها
-        </a>
+    <nav
+        class="nav-links"
+    ></nav>
 
-        <a href="leaderboard.html" class="nav-link">
-            <span class="nav-icon">🏆</span>
-            لیدربورد
-        </a>
 
-        <a href="cafe.html" class="nav-link active">
-            <span class="nav-icon">☕</span>
-            کافه بازی
-        </a>
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
 
-        <a href="news.html" class="nav-link">
-            <span class="nav-icon">📢</span>
-            اخبار
-        </a>
+    <a
+        href="login.html"
+        class="header-profile"
+    >
 
-        <a href="guide.html" class="nav-link">
-            <span class="nav-icon">?</span>
-            راهنما
-        </a>
-
-    </nav>
-
-    <a href="profile.html" class="header-profile">
-
-        <div class="header-profile-icon">
+        <div
+            class="header-profile-icon"
+        >
             👤
         </div>
 
-        <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
+
+        <div
+            class="header-player-info"
+        >
+
+            <strong>
+                ...
+            </strong>
+
+
+            <div
+                class="header-xp-bar"
+                style="
+                    display:none;
+                "
+            >
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
+            </div>
+
+
+            <span>
+                در حال بررسی حساب...
+            </span>
+
         </div>
 
-        <b>‹</b>
+
+        <b>
+            ‹
+        </b>
 
     </a>
 
 </header>
 
 
-<main>
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-<section class="feature-section">
-
-    <div class="feature-content">
-
-        <span class="section-label">
-            ☕ VEXON CAFE
-        </span>
-
-        <h1>
-            کافه بازی
-            <span>جایی برای رقابت.</span>
-        </h1>
-
-        <p>
-            وارد کافه بازی VEXON شو، با دوستانت بازی کن،
-            اتاق بساز و در بازی‌های چندنفره رقابت کن.
-        </p>
-
-        <a href="games.html" class="primary-button">
-            🎮 انتخاب بازی
-        </a>
-
-    </div>
+<main
+    class="cafe-page"
+>
 
 
-    <div class="cafe-card">
+    <!-- =================================================
+         HERO
+    ================================================== -->
 
-        <div class="cafe-glow"></div>
+    <section
+        class="feature-section"
+    >
 
-        <div class="cafe-icon">
-            ☕
+
+        <div
+            class="feature-content"
+        >
+
+            <span
+                class="section-label"
+            >
+                ☕ VEXON CAFE
+            </span>
+
+
+            <h1>
+
+                کافه بازی
+
+                <span>
+                    جایی برای رقابت.
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                وارد کافه بازی VEXON شو، با دوستانت بازی کن،
+                اتاق بساز و در بازی‌های چندنفره رقابت کن.
+
+            </p>
+
+
+            <a
+                href="games.html"
+                class="primary-button"
+            >
+                🎮 انتخاب بازی
+            </a>
+
         </div>
 
-        <strong>
-            VEXON CAFE
-        </strong>
 
-        <span>
-            PLAY TOGETHER
-        </span>
+        <!-- =================================================
+             CAFE CARD
+        ================================================== -->
 
-        <div class="cafe-status">
-            <i></i>
-            ONLINE
+        <div
+            class="cafe-card"
+        >
+
+            <div
+                class="cafe-glow"
+            ></div>
+
+
+            <div
+                class="cafe-icon"
+            >
+                ☕
+            </div>
+
+
+            <strong>
+                VEXON CAFE
+            </strong>
+
+
+            <span>
+                PLAY TOGETHER
+            </span>
+
+
+            <div
+                class="cafe-status"
+            >
+
+                <i></i>
+
+                ONLINE
+
+            </div>
+
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<section class="section">
+    <!-- =================================================
+         GAME ROOMS
+    ================================================== -->
 
-    <div class="section-title">
-
-        <span>
-            🎮 GAME ROOM
-        </span>
-
-        <h2>
-            وارد رقابت شو
-        </h2>
-
-        <p>
-            بازی مورد علاقه‌ات را انتخاب کن و برای رقابت آماده شو.
-        </p>
-
-    </div>
+    <section
+        class="section"
+    >
 
 
-    <div class="games-grid">
+        <div
+            class="section-title"
+        >
 
-        <article class="game-box">
-
-            <div class="game-icon">🃏</div>
-
-            <span class="game-tag">
-                MULTIPLAYER
+            <span>
+                🎮 GAME ROOM
             </span>
 
-            <h3>UNO</h3>
+
+            <h2>
+                وارد رقابت شو
+            </h2>
+
 
             <p>
-                یک اتاق بساز و با دوستانت UNO بازی کن.
+                بازی مورد علاقه‌ات را انتخاب کن و برای رقابت آماده شو.
             </p>
 
-            <a href="#" class="card-button">
-                ورود
-            </a>
-
-        </article>
+        </div>
 
 
-        <article class="game-box">
+        <div
+            class="games-grid"
+        >
 
-            <div class="game-icon">🎲</div>
 
-            <span class="game-tag">
-                MULTIPLAYER
+            <!-- UNO -->
+
+            <article
+                class="game-box"
+            >
+
+                <div
+                    class="game-icon"
+                >
+                    🃏
+                </div>
+
+
+                <span
+                    class="game-tag"
+                >
+                    MULTIPLAYER
+                </span>
+
+
+                <h3>
+                    UNO
+                </h3>
+
+
+                <p>
+                    یک اتاق بساز و با دوستانت UNO بازی کن.
+                </p>
+
+
+                <a
+                    href="#"
+                    class="card-button"
+                >
+                    ورود
+                </a>
+
+            </article>
+
+
+            <!-- MANCHE -->
+
+            <article
+                class="game-box"
+            >
+
+                <div
+                    class="game-icon"
+                >
+                    🎲
+                </div>
+
+
+                <span
+                    class="game-tag"
+                >
+                    MULTIPLAYER
+                </span>
+
+
+                <h3>
+                    منچ
+                </h3>
+
+
+                <p>
+                    یک رقابت کلاسیک با دوستانت.
+                </p>
+
+
+                <a
+                    href="#"
+                    class="card-button"
+                >
+                    ورود
+                </a>
+
+            </article>
+
+
+            <!-- TIC TAC TOE -->
+
+            <article
+                class="game-box"
+            >
+
+                <div
+                    class="game-icon"
+                >
+                    ❌
+                </div>
+
+
+                <span
+                    class="game-tag"
+                >
+                    1 VS 1
+                </span>
+
+
+                <h3>
+                    دوز
+                </h3>
+
+
+                <p>
+                    حریفت را پیدا کن و در یک نبرد فکری پیروز شو.
+                </p>
+
+
+                <a
+                    href="#"
+                    class="card-button"
+                >
+                    ورود
+                </a>
+
+            </article>
+
+
+            <!-- ROCK PAPER SCISSORS -->
+
+            <article
+                class="game-box"
+            >
+
+                <div
+                    class="game-icon"
+                >
+                    ✊
+                </div>
+
+
+                <span
+                    class="game-tag"
+                >
+                    1 VS 1
+                </span>
+
+
+                <h3>
+                    سنگ کاغذ قیچی
+                </h3>
+
+
+                <p>
+                    سریع انتخاب کن و حریف را شکست بده.
+                </p>
+
+
+                <a
+                    href="#"
+                    class="card-button"
+                >
+                    ورود
+                </a>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         HOW IT WORKS
+    ================================================== -->
+
+    <section
+        class="guide-section"
+    >
+
+
+        <div
+            class="section-title"
+        >
+
+            <span>
+                ☕ HOW IT WORKS
             </span>
 
-            <h3>منچ</h3>
+
+            <h2>
+                کافه چطور کار می‌کند؟
+            </h2>
+
 
             <p>
-                یک رقابت کلاسیک با دوستانت.
+                چند قدم ساده تا شروع یک رقابت.
             </p>
 
-            <a href="#" class="card-button">
-                ورود
-            </a>
-
-        </article>
+        </div>
 
 
-        <article class="game-box">
-
-            <div class="game-icon">❌</div>
-
-            <span class="game-tag">
-                1 VS 1
-            </span>
-
-            <h3>دوز</h3>
-
-            <p>
-                حریفت را پیدا کن و در یک نبرد فکری پیروز شو.
-            </p>
-
-            <a href="#" class="card-button">
-                ورود
-            </a>
-
-        </article>
+        <div
+            class="guide-grid"
+        >
 
 
-        <article class="game-box">
+            <!-- STEP 1 -->
 
-            <div class="game-icon">✊</div>
+            <article
+                class="guide-card"
+            >
 
-            <span class="game-tag">
-                1 VS 1
-            </span>
-
-            <h3>سنگ کاغذ قیچی</h3>
-
-            <p>
-                سریع انتخاب کن و حریف را شکست بده.
-            </p>
-
-            <a href="#" class="card-button">
-                ورود
-            </a>
-
-        </article>
-
-    </div>
-
-</section>
+                <span>
+                    01
+                </span>
 
 
-<section class="guide-section">
-
-    <div class="section-title">
-
-        <span>
-            ☕ HOW IT WORKS
-        </span>
-
-        <h2>
-            کافه چطور کار می‌کند؟
-        </h2>
-
-        <p>
-            چند قدم ساده تا شروع یک رقابت.
-        </p>
-
-    </div>
+                <div>
+                    👥
+                </div>
 
 
-    <div class="guide-grid">
-
-        <article class="guide-card">
-
-            <span>01</span>
-
-            <div>👥</div>
-
-            <h3>
-                وارد کافه شو
-            </h3>
-
-            <p>
-                وارد فضای چندنفره VEXON شو.
-            </p>
-
-        </article>
+                <h3>
+                    وارد کافه شو
+                </h3>
 
 
-        <article class="guide-card">
+                <p>
+                    وارد فضای چندنفره VEXON شو.
+                </p>
 
-            <span>02</span>
-
-            <div>🎮</div>
-
-            <h3>
-                بازی انتخاب کن
-            </h3>
-
-            <p>
-                بازی مورد علاقه‌ات را انتخاب کن.
-            </p>
-
-        </article>
+            </article>
 
 
-        <article class="guide-card">
+            <!-- STEP 2 -->
 
-            <span>03</span>
+            <article
+                class="guide-card"
+            >
 
-            <div>🏆</div>
+                <span>
+                    02
+                </span>
 
-            <h3>
-                رقابت کن
-            </h3>
 
-            <p>
-                با دوستانت بازی کن و برای پیروزی بجنگ.
-            </p>
+                <div>
+                    🎮
+                </div>
 
-        </article>
 
-    </div>
+                <h3>
+                    بازی انتخاب کن
+                </h3>
 
-</section>
+
+                <p>
+                    بازی مورد علاقه‌ات را انتخاب کن.
+                </p>
+
+            </article>
+
+
+            <!-- STEP 3 -->
+
+            <article
+                class="guide-card"
+            >
+
+                <span>
+                    03
+                </span>
+
+
+                <div>
+                    🏆
+                </div>
+
+
+                <h3>
+                    رقابت کن
+                </h3>
+
+
+                <p>
+                    با دوستانت بازی کن و برای پیروزی بجنگ.
+                </p>
+
+            </article>
+
+        </div>
+
+    </section>
 
 </main>
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer>
 
-    <div class="footer-logo">
+
+    <div
+        class="footer-logo"
+    >
+
         VE<span>X</span>ON
+
     </div>
+
 
     <p>
         PLAY • COMPETE • LEVEL UP.
     </p>
 
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
+
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
+
     </div>
 
+
     <span>
+
         ساخته شده با 💚 برای گیمرها
+
         <br>
+
         © 2026 VEXON — همه حقوق محفوظ است.
+
     </span>
 
 </footer>
 
 
-<nav class="mobile-bottom-nav">
+<!-- =====================================================
+     SCRIPT
+===================================================== -->
 
-    <a href="games.html" class="mobile-nav-item">
-        <span>🎮</span>
-        <small>بازی‌ها</small>
-    </a>
-
-    <a href="cafe.html" class="mobile-nav-item mobile-home active">
-        <span>☕</span>
-        <small>کافه</small>
-    </a>
-
-    <a href="../index.html" class="mobile-nav-item">
-        <span class="home-v-icon">V</span>
-        <small>خانه</small>
-    </a>
-
-    <a href="news.html" class="mobile-nav-item">
-        <span>📢</span>
-        <small>اخبار</small>
-    </a>
-
-    <a href="profile.html" class="mobile-nav-item">
-        <span>👤</span>
-        <small>پروفایل</small>
-    </a>
-
-</nav>
+<script
+    src="../script.js"
+></script>
 
 
-<script src="../script.js"></script>
+<script
+    src="../vexon-nav.js"
+></script>
+
 
 </body>
+
 </html>

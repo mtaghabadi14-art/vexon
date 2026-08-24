@@ -2,6 +2,7 @@
 <html lang="fa" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,192 +10,423 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>VEXON | راهنما</title>
+    <meta
+        name="description"
+        content="VEXON Guide؛ راهنمای استفاده از VEXON."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        VEXON | راهنما
+    </title>
+
+
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <style>
+
+        /* =================================================
+           GUIDE PAGE
+        ================================================= */
+
+        .guide-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+        /* =================================================
+           OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .guide-page .guide-section {
+
+                margin-top:
+                    35px;
+
+                margin-bottom:
+                    65px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div class="background-effects" aria-hidden="true">
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
 
     <div class="nebula nebula-purple"></div>
+
     <div class="nebula nebula-green"></div>
+
     <div class="nebula nebula-blue"></div>
 
     <div class="stars stars-one"></div>
+
     <div class="stars stars-two"></div>
+
     <div class="stars stars-three"></div>
 
     <div class="planet planet-purple"></div>
+
     <div class="planet planet-blue"></div>
 
 </div>
 
 
-<header class="navbar">
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-    <a href="../index.html" class="logo">
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
+    >
+
         VE<span class="logo-x">X</span>ON
+
     </a>
 
-    <nav class="nav-links">
 
-        <a href="../index.html" class="nav-link">
-            <span class="desktop-v-icon">V</span>
-            خانه
-        </a>
+    <!--
+        منوی قدیمی عمداً خالی است.
+        vexon-nav.js منوی جدید را ایجاد می‌کند.
+    -->
 
-        <a href="games.html" class="nav-link">
-            <span class="nav-icon">🎮</span>
-            بازی‌ها
-        </a>
+    <nav
+        class="nav-links"
+    ></nav>
 
-        <a href="leaderboard.html" class="nav-link">
-            <span class="nav-icon">🏆</span>
-            لیدربورد
-        </a>
 
-        <a href="cafe.html" class="nav-link">
-            <span class="nav-icon">☕</span>
-            کافه بازی
-        </a>
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
 
-        <a href="news.html" class="nav-link">
-            <span class="nav-icon">📢</span>
-            اخبار
-        </a>
+    <a
+        href="login.html"
+        class="header-profile"
+    >
 
-        <a href="guide.html" class="nav-link active">
-            <span class="nav-icon">?</span>
-            راهنما
-        </a>
-
-    </nav>
-
-    <a href="profile.html" class="header-profile">
-
-        <div class="header-profile-icon">
+        <div
+            class="header-profile-icon"
+        >
             👤
         </div>
 
-        <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
+
+        <div
+            class="header-player-info"
+        >
+
+            <strong>
+                ...
+            </strong>
+
+
+            <div
+                class="header-xp-bar"
+                style="
+                    display:none;
+                "
+            >
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
+            </div>
+
+
+            <span>
+                در حال بررسی حساب...
+            </span>
+
         </div>
 
-        <b>‹</b>
+
+        <b>
+            ‹
+        </b>
 
     </a>
 
 </header>
 
 
-<main>
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-<section class="guide-section">
+<main
+    class="guide-page"
+>
 
-    <div class="section-title">
-
-        <span>❓ VEXON GUIDE</span>
-
-        <h1>راهنمای VEXON</h1>
-
-        <p>
-            همه چیز برای شروع بازی آماده است.
-        </p>
-
-    </div>
+    <section
+        class="guide-section"
+    >
 
 
-    <div class="guide-grid">
+        <!-- =================================================
+             TITLE
+        ================================================== -->
 
-        <article class="guide-card">
+        <div
+            class="section-title"
+        >
 
-            <span>01</span>
+            <span>
+                ❓ VEXON GUIDE
+            </span>
 
-            <div>🎮</div>
 
-            <h3>
-                بازی انتخاب کن
-            </h3>
+            <h1>
+                راهنمای VEXON
+            </h1>
+
 
             <p>
-                از بین بازی‌های VEXON بازی مورد علاقه‌ات را انتخاب کن.
+                همه چیز برای شروع بازی آماده است.
             </p>
 
-        </article>
+        </div>
 
 
-        <article class="guide-card">
+        <!-- =================================================
+             GUIDE CARDS
+        ================================================== -->
 
-            <span>02</span>
-
-            <div>⚡</div>
-
-            <h3>
-                رقابت کن
-            </h3>
-
-            <p>
-                با دوستان یا بازیکنان دیگر وارد رقابت شو.
-            </p>
-
-        </article>
+        <div
+            class="guide-grid"
+        >
 
 
-        <article class="guide-card">
+            <!-- STEP 1 -->
 
-            <span>03</span>
+            <article
+                class="guide-card"
+            >
 
-            <div>🏆</div>
+                <span>
+                    01
+                </span>
 
-            <h3>
-                Level Up
-            </h3>
 
-            <p>
-                XP جمع کن، رتبه بگیر و به صدر لیدربورد برس.
-            </p>
+                <div>
+                    🎮
+                </div>
 
-        </article>
 
-    </div>
+                <h3>
+                    بازی انتخاب کن
+                </h3>
 
-</section>
+
+                <p>
+                    از بین بازی‌های VEXON بازی مورد علاقه‌ات را انتخاب کن.
+                </p>
+
+            </article>
+
+
+            <!-- STEP 2 -->
+
+            <article
+                class="guide-card"
+            >
+
+                <span>
+                    02
+                </span>
+
+
+                <div>
+                    ⚡
+                </div>
+
+
+                <h3>
+                    رقابت کن
+                </h3>
+
+
+                <p>
+                    با دوستان یا بازیکنان دیگر وارد رقابت شو.
+                </p>
+
+            </article>
+
+
+            <!-- STEP 3 -->
+
+            <article
+                class="guide-card"
+            >
+
+                <span>
+                    03
+                </span>
+
+
+                <div>
+                    🏆
+                </div>
+
+
+                <h3>
+                    Level Up
+                </h3>
+
+
+                <p>
+                    XP جمع کن، رتبه بگیر و به صدر لیدربورد برس.
+                </p>
+
+            </article>
+
+        </div>
+
+    </section>
 
 </main>
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer>
 
-    <div class="footer-logo">
+    <div
+        class="footer-logo"
+    >
+
         VE<span>X</span>ON
+
     </div>
 
-    <p>PLAY • COMPETE • LEVEL UP.</p>
 
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
+
     </div>
+
 
     <span>
+
         ساخته شده با 💚 برای گیمرها
+
         <br>
+
         © 2026 VEXON — همه حقوق محفوظ است.
+
     </span>
 
 </footer>
 
 
-<script src="../script.js"></script>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
+
+<script
+    src="../script.js"
+></script>
+
+
+<script
+    src="../vexon-nav.js"
+></script>
+
 
 </body>
+
 </html>

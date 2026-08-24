@@ -10,182 +10,407 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>VEXON | سازندگان</title>
+    <meta
+        name="description"
+        content="VEXON Team؛ سازندگان و توسعه‌دهندگان VEXON."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        VEXON | سازندگان
+    </title>
+
+
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <style>
+
+        /* =================================================
+           CREATORS PAGE
+        ================================================= */
+
+        .creators-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+        /* =================================================
+           OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .creators-page
+            .creators-section {
+
+                margin-top:
+                    35px;
+
+                margin-bottom:
+                    65px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="background-effects" aria-hidden="true">
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
 
     <div class="nebula nebula-purple"></div>
+
     <div class="nebula nebula-green"></div>
+
     <div class="nebula nebula-blue"></div>
 
     <div class="stars stars-one"></div>
+
     <div class="stars stars-two"></div>
+
     <div class="stars stars-three"></div>
 
     <div class="planet planet-purple"></div>
+
     <div class="planet planet-blue"></div>
 
 </div>
 
 
-<header class="navbar">
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-    <a href="../index.html" class="logo">
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
+    >
+
         VE<span class="logo-x">X</span>ON
+
     </a>
 
-    <nav class="nav-links">
 
-        <a href="../index.html" class="nav-link">
-            <span class="desktop-v-icon">V</span>
-            خانه
-        </a>
+    <!--
+        منوی قدیمی عمداً خالی است.
+        vexon-nav.js منوی جدید را ایجاد می‌کند.
+    -->
 
-        <a href="games.html" class="nav-link">
-            <span class="nav-icon">🎮</span>
-            بازی‌ها
-        </a>
+    <nav
+        class="nav-links"
+    ></nav>
 
-        <a href="leaderboard.html" class="nav-link">
-            <span class="nav-icon">🏆</span>
-            لیدربورد
-        </a>
 
-        <a href="cafe.html" class="nav-link">
-            <span class="nav-icon">☕</span>
-            کافه بازی
-        </a>
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
 
-        <a href="news.html" class="nav-link">
-            <span class="nav-icon">📢</span>
-            اخبار
-        </a>
+    <a
+        href="login.html"
+        class="header-profile"
+    >
 
-        <a href="guide.html" class="nav-link">
-            <span class="nav-icon">?</span>
-            راهنما
-        </a>
-
-    </nav>
-
-    <a href="profile.html" class="header-profile">
-        <div class="header-profile-icon">👤</div>
-
-        <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
+        <div
+            class="header-profile-icon"
+        >
+            👤
         </div>
 
-        <b>‹</b>
+
+        <div
+            class="header-player-info"
+        >
+
+            <strong>
+                ...
+            </strong>
+
+
+            <div
+                class="header-xp-bar"
+                style="
+                    display:none;
+                "
+            >
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
+            </div>
+
+
+            <span>
+                در حال بررسی حساب...
+            </span>
+
+        </div>
+
+
+        <b>
+            ‹
+        </b>
+
     </a>
 
 </header>
 
 
-<main>
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-<section class="creators-section">
+<main
+    class="creators-page"
+>
 
-    <div class="section-title">
-
-        <span>👨‍💻 VEXON TEAM</span>
-
-        <h1>سازندگان</h1>
-
-        <p>
-            پشت VEXON چه کسانی هستند؟
-        </p>
-
-    </div>
+    <section
+        class="creators-section"
+    >
 
 
-    <div class="creators-grid">
+        <!-- =================================================
+             TITLE
+        ================================================== -->
 
-        <article class="creator-card">
-
-            <div class="creator-icon">
-                🐞
-            </div>
+        <div
+            class="section-title"
+        >
 
             <span>
-                باگ‌گیر
+                👨‍💻 VEXON TEAM
             </span>
 
-            <h3>
-                TJS
-            </h3>
+
+            <h1>
+                سازندگان
+            </h1>
+
 
             <p>
-                مسئول پیدا کردن و شکار باگ‌های VEXON.
+                پشت VEXON چه کسانی هستند؟
             </p>
 
-        </article>
+        </div>
 
 
-        <article class="creator-card featured-creator">
+        <!-- =================================================
+             CREATORS
+        ================================================== -->
 
-            <div class="creator-icon">
-                ⚡
-            </div>
+        <div
+            class="creators-grid"
+        >
 
-            <span>
-                اصل کار
-            </span>
 
-            <h3>
-                MASTERSTAR
-            </h3>
+            <!-- =================================================
+                 TJS
+            ================================================== -->
 
-            <p>
-                یکی از افراد اصلی پشت ساخت و توسعه VEXON.
-            </p>
+            <article
+                class="creator-card"
+            >
 
-        </article>
+                <div
+                    class="creator-icon"
+                >
+                    🐞
+                </div>
 
-    </div>
 
-</section>
+                <span>
+                    باگ‌گیر
+                </span>
+
+
+                <h3>
+                    TJS
+                </h3>
+
+
+                <p>
+                    مسئول پیدا کردن و شکار باگ‌های VEXON.
+                </p>
+
+            </article>
+
+
+            <!-- =================================================
+                 MASTERSTAR
+            ================================================== -->
+
+            <article
+                class="
+                    creator-card
+                    featured-creator
+                "
+            >
+
+                <div
+                    class="creator-icon"
+                >
+                    ⚡
+                </div>
+
+
+                <span>
+                    اصل کار
+                </span>
+
+
+                <h3>
+                    MASTERSTAR
+                </h3>
+
+
+                <p>
+                    یکی از افراد اصلی پشت ساخت و توسعه VEXON.
+                </p>
+
+            </article>
+
+        </div>
+
+    </section>
 
 </main>
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer>
 
-    <div class="footer-logo">
+    <div
+        class="footer-logo"
+    >
+
         VE<span>X</span>ON
+
     </div>
+
 
     <p>
         PLAY • COMPETE • LEVEL UP.
     </p>
 
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
+
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
+
     </div>
 
+
     <span>
+
         ساخته شده با 💚 برای گیمرها
+
         <br>
+
         © 2026 VEXON — همه حقوق محفوظ است.
+
     </span>
 
 </footer>
 
 
-<script src="../script.js"></script>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
+
+<script
+    src="../script.js"
+></script>
+
+
+<script
+    src="../vexon-nav.js"
+></script>
+
 
 </body>
+
 </html>

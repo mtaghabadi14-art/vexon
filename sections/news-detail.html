@@ -30,8 +30,14 @@
     </title>
 
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -40,9 +46,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
+
+
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -52,30 +63,49 @@
 
     <style>
 
+        /* =================================================
+           NEWS DETAIL
+        ================================================= */
+
         .news-detail-page {
-            width: min(
-                950px,
-                92%
-            );
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                min(
+                    950px,
+                    92%
+                );
 
             margin:
                 0 auto;
 
             padding:
                 55px 0 100px;
+
         }
 
 
         .news-detail-card {
 
-            overflow: hidden;
+            overflow:
+                hidden;
 
             padding:
                 0 0 35px;
 
             border:
                 1px solid
-                rgba(255,255,255,0.08);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
 
             border-radius:
                 26px;
@@ -85,11 +115,13 @@
                     5,
                     9,
                     17,
-                    0.82
+                    .82
                 );
 
             backdrop-filter:
-                blur(18px);
+                blur(
+                    18px
+                );
 
             box-shadow:
                 0 0 45px
@@ -97,14 +129,16 @@
                     0,
                     255,
                     157,
-                    0.06
+                    .06
                 );
+
         }
 
 
         .news-detail-image {
 
-            width: 100%;
+            width:
+                100%;
 
             max-height:
                 500px;
@@ -114,6 +148,7 @@
 
             display:
                 block;
+
         }
 
 
@@ -137,9 +172,20 @@
             background:
                 linear-gradient(
                     135deg,
-                    rgba(0,255,157,0.07),
-                    rgba(120,70,255,0.12)
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .07
+                    ),
+                    rgba(
+                        120,
+                        70,
+                        255,
+                        .12
+                    )
                 );
+
         }
 
 
@@ -147,6 +193,7 @@
 
             padding:
                 30px 35px 0;
+
         }
 
 
@@ -175,7 +222,7 @@
                     0,
                     255,
                     157,
-                    0.08
+                    .08
                 );
 
             border:
@@ -184,8 +231,9 @@
                     0,
                     255,
                     157,
-                    0.14
+                    .14
                 );
+
         }
 
 
@@ -203,6 +251,7 @@
 
             line-height:
                 1.5;
+
         }
 
 
@@ -224,7 +273,8 @@
                 11px;
 
             opacity:
-                0.52;
+                .52;
+
         }
 
 
@@ -244,8 +294,9 @@
                     255,
                     255,
                     255,
-                    0.88
+                    .88
                 );
+
         }
 
 
@@ -280,7 +331,7 @@
                     255,
                     255,
                     255,
-                    0.06
+                    .06
                 );
 
             border:
@@ -289,8 +340,31 @@
                     255,
                     255,
                     255,
-                    0.08
+                    .08
                 );
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+
+        }
+
+
+        .news-detail-back:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .09
+                );
+
         }
 
 
@@ -304,17 +378,55 @@
                 center;
 
             opacity:
-                0.65;
+                .65;
+
         }
 
 
         .news-detail-error {
+
             color:
                 #ffbdc5;
+
         }
 
 
-        @media (max-width: 600px) {
+        /* =================================================
+           REMOVE OLD MOBILE NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .news-detail-page {
+
+                padding-top:
+                    30px;
+
+                padding-bottom:
+                    70px;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 600px
+        ) {
 
             .news-detail-page {
 
@@ -359,6 +471,9 @@
                 height:
                     200px;
 
+                font-size:
+                    55px;
+
             }
 
         }
@@ -371,515 +486,523 @@
 <body>
 
 
-    <div
-        class="background-effects"
-        aria-hidden="true"
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+
+    <div class="nebula nebula-green"></div>
+
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+
+    <div class="stars stars-two"></div>
+
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+
+    <div class="planet planet-blue"></div>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header
+    class="navbar"
+>
+
+    <a
+        href="../index.html"
+        class="logo"
     >
 
-        <div class="nebula nebula-purple"></div>
-        <div class="nebula nebula-green"></div>
-        <div class="nebula nebula-blue"></div>
+        VE<span class="logo-x">X</span>ON
 
-        <div class="stars stars-one"></div>
-        <div class="stars stars-two"></div>
-        <div class="stars stars-three"></div>
-
-        <div class="planet planet-purple"></div>
-        <div class="planet planet-blue"></div>
-
-    </div>
+    </a>
 
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+    <!--
+        منوی قدیمی عمداً خالی است.
+        vexon-nav.js منوی جدید را می‌سازد.
+    -->
 
-    <header class="navbar">
-
-        <a
-            href="../index.html"
-            class="logo"
-        >
-            VE<span class="logo-x">X</span>ON
-        </a>
+    <nav
+        class="nav-links"
+    ></nav>
 
 
-        <nav class="nav-links">
+    <!-- =================================================
+         PROFILE
+    ================================================== -->
 
-            <a
-                href="../index.html"
-                class="nav-link"
-            >
-                <span class="desktop-v-icon">
-                    V
-                </span>
-                خانه
-            </a>
-
-
-            <a
-                href="games.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🎮
-                </span>
-                بازی‌ها
-            </a>
-
-
-            <a
-                href="leaderboard.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🏆
-                </span>
-                لیدربورد
-            </a>
-
-
-            <a
-                href="cafe.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ☕
-                </span>
-                کافه بازی
-            </a>
-
-
-            <a
-                href="news.html"
-                class="nav-link active"
-            >
-                <span class="nav-icon">
-                    📢
-                </span>
-                اخبار
-            </a>
-
-
-            <a
-                href="guide.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ?
-                </span>
-                راهنما
-            </a>
-
-        </nav>
-
-
-        <a
-            href="login.html"
-            class="header-profile"
-        >
-
-            <div class="header-profile-icon">
-                👤
-            </div>
-
-
-            <div class="header-player-info">
-
-                <strong>
-                    ...
-                </strong>
-
-
-                <div
-                    class="header-xp-bar"
-                    style="display:none;"
-                >
-
-                    <div
-                        class="header-xp-fill"
-                    ></div>
-
-                </div>
-
-
-                <span>
-                    در حال بررسی حساب...
-                </span>
-
-            </div>
-
-
-            <b>
-                ‹
-            </b>
-
-        </a>
-
-    </header>
-
-
-    <!-- =========================
-         NEWS DETAIL
-    ========================== -->
-
-    <main
-        class="news-detail-page"
+    <a
+        href="login.html"
+        class="header-profile"
     >
 
-        <a
-            href="news.html"
-            class="news-detail-back"
+        <div
+            class="header-profile-icon"
         >
-            ← برگشت به اخبار
-        </a>
+            👤
+        </div>
 
 
-        <article
-            id="news-detail"
-            class="news-detail-card"
+        <div
+            class="header-player-info"
         >
+
+            <strong>
+                ...
+            </strong>
+
 
             <div
-                class="news-detail-loading"
+                class="header-xp-bar"
+                style="
+                    display:none;
+                "
             >
-                ⏳ در حال دریافت خبر...
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
             </div>
 
-        </article>
 
-    </main>
-
-
-    <!-- =========================
-         MOBILE NAV
-    ========================== -->
-
-    <nav class="mobile-bottom-nav">
-
-        <a
-            href="games.html"
-            class="mobile-nav-item"
-        >
-            <span>🎮</span>
-            <small>بازی‌ها</small>
-        </a>
-
-
-        <a
-            href="cafe.html"
-            class="mobile-nav-item"
-        >
-            <span>☕</span>
-            <small>کافه</small>
-        </a>
-
-
-        <a
-            href="../index.html"
-            class="mobile-nav-item"
-        >
-            <span class="home-v-icon">
-                V
+            <span>
+                در حال بررسی حساب...
             </span>
-            <small>خانه</small>
-        </a>
+
+        </div>
 
 
-        <a
-            href="news.html"
-            class="mobile-nav-item mobile-home active"
+        <b>
+            ‹
+        </b>
+
+    </a>
+
+</header>
+
+
+<!-- =====================================================
+     NEWS DETAIL
+===================================================== -->
+
+<main
+    class="news-detail-page"
+>
+
+
+    <a
+        href="news.html"
+        class="news-detail-back"
+    >
+
+        ←
+        برگشت به اخبار
+
+    </a>
+
+
+    <article
+        id="news-detail"
+        class="news-detail-card"
+    >
+
+        <div
+            class="news-detail-loading"
         >
-            <span>📢</span>
-            <small>اخبار</small>
-        </a>
+
+            ⏳
+            در حال دریافت خبر...
+
+        </div>
+
+    </article>
+
+</main>
 
 
-        <a
-            href="profile.html"
-            class="mobile-nav-item"
-        >
-            <span>⚙️</span>
-            <small>تنظیمات</small>
-        </a>
-
-    </nav>
+<!-- =====================================================
+     OLD MOBILE NAV REMOVED
+===================================================== -->
 
 
-    <script src="../script.js"></script>
+<!-- =====================================================
+     SCRIPTS
+===================================================== -->
+
+<script
+    src="../script.js"
+></script>
 
 
-    <script>
-
-    (async function () {
-
-        "use strict";
+<script
+    src="../vexon-nav.js"
+></script>
 
 
-        const detail =
-            document.getElementById(
-                "news-detail"
-            );
+<script>
+
+(async function () {
+
+    "use strict";
 
 
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
+    const detail =
+        document.getElementById(
+            "news-detail"
+        );
 
 
-        const id =
-            params.get("id");
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
 
-        function escapeHtml(
-            value
-        ) {
+    const id =
+        params.get("id");
 
-            return String(
-                value ?? ""
+
+    /* =====================================================
+       ESCAPE
+    ===================================================== */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+
+            .replace(
+                /&/g,
+                "&amp;"
             )
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
 
-        }
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
 
 
-        function formatDate(
-            value
+    /* =====================================================
+       DATE
+    ===================================================== */
+
+    function formatDate(
+        value
+    ) {
+
+        if (
+            !value
         ) {
 
-            if (!value) {
-                return "";
-            }
-
-
-            try {
-
-                return new Intl.DateTimeFormat(
-                    "fa-IR",
-                    {
-                        dateStyle:
-                            "full",
-                        timeStyle:
-                            "short"
-                    }
-                ).format(
-                    new Date(value)
-                );
-
-            } catch {
-
-                return value;
-
-            }
-
-        }
-
-
-        if (!id) {
-
-            detail.innerHTML = `
-                <div class="news-detail-error">
-                    ❌ شناسه خبر پیدا نشد.
-                </div>
-            `;
-
-            return;
+            return "";
 
         }
 
 
         try {
 
-            const response =
-                await fetch(
-                    `/api/news/${encodeURIComponent(
-                        id
-                    )}`,
-                    {
-                        method:
-                            "GET",
+            return new Intl.DateTimeFormat(
+                "fa-IR",
+                {
+                    dateStyle:
+                        "full",
 
-                        cache:
-                            "no-store"
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (
-                !response.ok ||
-                !data.success ||
-                !data.news
-            ) {
-
-                throw new Error(
-                    data.message ||
-                    "خبر پیدا نشد."
-                );
-
-            }
-
-
-            const news =
-                data.news;
-
-
-            document.title =
-                `VEXON | ${news.title}`;
-
-
-            const image =
-                news.image_url
-                    ? `
-                        <img
-                            class="news-detail-image"
-                            src="${escapeHtml(
-                                news.image_url
-                            )}"
-                            alt="${escapeHtml(
-                                news.title
-                            )}"
-                        >
-                      `
-                    : `
-                        <div
-                            class="news-detail-placeholder"
-                        >
-                            📢
-                        </div>
-                      `;
-
-
-            detail.innerHTML = `
-
-                ${image}
-
-                <div
-                    class="news-detail-content"
-                >
-
-                    <span
-                        class="news-detail-category"
-                    >
-                        🏷️ ${escapeHtml(
-                            news.category ||
-                            "عمومی"
-                        )}
-                    </span>
-
-
-                    <h1
-                        class="news-detail-title"
-                    >
-                        ${escapeHtml(
-                            news.title
-                        )}
-                    </h1>
-
-
-                    <div
-                        class="news-detail-meta"
-                    >
-
-                        ${
-                            news.author_username
-                                ? `
-                                    <span>
-                                        👤 ${escapeHtml(
-                                            news.author_username
-                                        )}
-                                    </span>
-                                  `
-                                : ""
-                        }
-
-
-                        <span>
-                            📅 ${escapeHtml(
-                                formatDate(
-                                    news.published_at ||
-                                    news.created_at
-                                )
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="news-detail-text"
-                    >
-                        ${escapeHtml(
-                            news.content
-                        )}
-                    </div>
-
-                </div>
-
-            `;
-
-
-        } catch (error) {
-
-            console.error(
-                "NEWS_DETAIL_ERROR:",
-                error
+                    timeStyle:
+                        "short"
+                }
+            ).format(
+                new Date(
+                    value
+                )
             );
 
+        } catch {
 
-            detail.innerHTML = `
-
-                <div
-                    class="news-detail-error"
-                >
-
-                    ❌
-                    ${escapeHtml(
-                        error.message ||
-                        "دریافت خبر ناموفق بود."
-                    )}
-
-                    <br><br>
-
-                    <a
-                        href="news.html"
-                        class="news-detail-back"
-                    >
-                        ← برگشت به اخبار
-                    </a>
-
-                </div>
-
-            `;
+            return value;
 
         }
 
-    })();
+    }
 
-    </script>
+
+    /* =====================================================
+       NO ID
+    ===================================================== */
+
+    if (
+        !id
+    ) {
+
+        detail.innerHTML = `
+
+            <div
+                class="news-detail-error"
+            >
+
+                ❌
+                شناسه خبر پیدا نشد.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       LOAD NEWS
+    ===================================================== */
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/news/${encodeURIComponent(
+                    id
+                )}`,
+                {
+                    method:
+                        "GET",
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success ||
+            !data.news
+        ) {
+
+            throw new Error(
+                data.message ||
+                "خبر پیدا نشد."
+            );
+
+        }
+
+
+        const news =
+            data.news;
+
+
+        document.title =
+            `VEXON | ${news.title}`;
+
+
+        /* =================================================
+           IMAGE
+        ================================================= */
+
+        const image =
+            news.image_url
+
+                ? `
+
+                    <img
+                        class="news-detail-image"
+                        src="${escapeHtml(
+                            news.image_url
+                        )}"
+                        alt="${escapeHtml(
+                            news.title
+                        )}"
+                        loading="eager"
+                    >
+
+                  `
+
+                : `
+
+                    <div
+                        class="news-detail-placeholder"
+                    >
+                        📢
+                    </div>
+
+                  `;
+
+
+        /* =================================================
+           RENDER
+        ================================================= */
+
+        detail.innerHTML = `
+
+            ${image}
+
+
+            <div
+                class="news-detail-content"
+            >
+
+
+                <span
+                    class="news-detail-category"
+                >
+
+                    🏷️
+                    ${escapeHtml(
+                        news.category ||
+                        "عمومی"
+                    )}
+
+                </span>
+
+
+                <h1
+                    class="news-detail-title"
+                >
+
+                    ${escapeHtml(
+                        news.title
+                    )}
+
+                </h1>
+
+
+                <div
+                    class="news-detail-meta"
+                >
+
+                    ${
+                        news.author_username
+
+                            ? `
+
+                                <span>
+                                    👤
+                                    ${escapeHtml(
+                                        news.author_username
+                                    )}
+                                </span>
+
+                              `
+
+                            : ""
+                    }
+
+
+                    <span>
+
+                        📅
+                        ${escapeHtml(
+                            formatDate(
+                                news.published_at ||
+                                news.created_at
+                            )
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="news-detail-text"
+                >
+
+                    ${escapeHtml(
+                        news.content
+                    )}
+
+                </div>
+
+            </div>
+
+        `;
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "NEWS_DETAIL_ERROR:",
+            error
+        );
+
+
+        detail.innerHTML = `
+
+            <div
+                class="news-detail-error"
+            >
+
+                ❌
+
+                ${escapeHtml(
+                    error.message ||
+                    "دریافت خبر ناموفق بود."
+                )}
+
+                <br><br>
+
+
+                <a
+                    href="news.html"
+                    class="news-detail-back"
+                >
+
+                    ←
+                    برگشت به اخبار
+
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+})();
+
+</script>
+
 
 </body>
 

@@ -25,9 +25,9 @@
     </title>
 
 
-    <!-- =========================
+    <!-- =====================================================
          FONT
-    ========================== -->
+    ====================================================== -->
 
     <link
         rel="preconnect"
@@ -41,14 +41,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
 
-    <!-- =========================
+    <!-- =====================================================
          MAIN CSS
-    ========================== -->
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -58,14 +58,17 @@
 
     <style>
 
-        /* =========================================
+        /* =================================================
            LEADERBOARD PAGE
-        ========================================= */
+        ================================================= */
 
         .leaderboard-page {
-            position: relative;
 
-            z-index: 2;
+            position:
+                relative;
+
+            z-index:
+                2;
 
             width:
                 min(
@@ -78,23 +81,27 @@
 
             padding:
                 55px 0 100px;
+
         }
 
 
-        /* =========================================
-           HEADER
-        ========================================= */
+        /* =================================================
+           TITLE
+        ================================================= */
 
         .leaderboard-title {
+
             text-align:
                 center;
 
             margin-bottom:
                 30px;
+
         }
 
 
         .leaderboard-label {
+
             display:
                 inline-block;
 
@@ -110,14 +117,16 @@
                 1.5px;
 
             opacity:
-                0.65;
+                .65;
 
             margin-bottom:
                 9px;
+
         }
 
 
         .leaderboard-title h1 {
+
             margin:
                 0;
 
@@ -130,10 +139,12 @@
 
             line-height:
                 1.35;
+
         }
 
 
         .leaderboard-title h1 span {
+
             color:
                 #00ff9d;
 
@@ -143,12 +154,14 @@
                     0,
                     255,
                     157,
-                    0.22
+                    .22
                 );
+
         }
 
 
         .leaderboard-title p {
+
             max-width:
                 600px;
 
@@ -162,15 +175,17 @@
                 2;
 
             opacity:
-                0.62;
+                .62;
+
         }
 
 
-        /* =========================================
+        /* =================================================
            TABS
-        ========================================= */
+        ================================================= */
 
         .leaderboard-tabs {
+
             display:
                 grid;
 
@@ -191,17 +206,19 @@
 
             margin:
                 0 auto 22px;
+
         }
 
 
         .leaderboard-tab {
+
             border:
                 1px solid
                 rgba(
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
 
             border-radius:
@@ -212,7 +229,7 @@
                     255,
                     255,
                     255,
-                    0.035
+                    .035
                 );
 
             color:
@@ -234,35 +251,32 @@
                 pointer;
 
             transition:
-                transform
-                    0.2s ease,
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
 
-                border-color
-                    0.2s ease,
-
-                background
-                    0.2s ease,
-
-                box-shadow
-                    0.2s ease;
         }
 
 
         .leaderboard-tab:hover {
+
             transform:
                 translateY(
                     -2px
                 );
+
         }
 
 
         .leaderboard-tab.active {
+
             border-color:
                 rgba(
                     0,
                     255,
                     157,
-                    0.28
+                    .28
                 );
 
             background:
@@ -272,13 +286,13 @@
                         0,
                         255,
                         157,
-                        0.10
+                        .10
                     ),
                     rgba(
                         116,
                         77,
                         255,
-                        0.08
+                        .08
                     )
                 );
 
@@ -288,16 +302,18 @@
                     0,
                     255,
                     157,
-                    0.07
+                    .07
                 );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            PANEL
-        ========================================= */
+        ================================================= */
 
         .leaderboard-panel {
+
             padding:
                 20px;
 
@@ -309,7 +325,7 @@
                     6,
                     10,
                     18,
-                    0.80
+                    .80
                 );
 
             border:
@@ -318,7 +334,7 @@
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
 
             backdrop-filter:
@@ -332,16 +348,18 @@
                     0,
                     0,
                     0,
-                    0.18
+                    .18
                 );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            TABLE HEADER
-        ========================================= */
+        ================================================= */
 
         .leaderboard-header {
+
             display:
                 grid;
 
@@ -366,30 +384,36 @@
                 10px;
 
             opacity:
-                0.42;
+                .42;
+
         }
 
 
         .leaderboard-header-value {
+
             text-align:
                 left;
+
         }
 
 
-        /* =========================================
-           PLAYER LIST
-        ========================================= */
+        /* =================================================
+           LIST
+        ================================================= */
 
         .leaderboard-list {
+
             display:
                 grid;
 
             gap:
                 8px;
+
         }
 
 
         .leaderboard-row {
+
             display:
                 grid;
 
@@ -419,7 +443,7 @@
                     255,
                     255,
                     255,
-                    0.055
+                    .055
                 );
 
             background:
@@ -427,22 +451,19 @@
                     255,
                     255,
                     255,
-                    0.028
+                    .028
                 );
 
             transition:
-                transform
-                    0.2s ease,
+                transform .2s ease,
+                border-color .2s ease,
+                background .2s ease;
 
-                border-color
-                    0.2s ease,
-
-                background
-                    0.2s ease;
         }
 
 
         .leaderboard-row:hover {
+
             transform:
                 translateY(
                     -2px
@@ -453,7 +474,7 @@
                     0,
                     255,
                     157,
-                    0.14
+                    .14
                 );
 
             background:
@@ -461,18 +482,24 @@
                     255,
                     255,
                     255,
-                    0.045
+                    .045
                 );
+
         }
 
 
+        /* =================================================
+           TOP THREE
+        ================================================= */
+
         .leaderboard-row.top-one {
+
             border-color:
                 rgba(
                     255,
                     214,
                     74,
-                    0.18
+                    .18
                 );
 
             background:
@@ -482,25 +509,27 @@
                         255,
                         214,
                         74,
-                        0.055
+                        .055
                     ),
                     rgba(
                         255,
                         255,
                         255,
-                        0.025
+                        .025
                     )
                 );
+
         }
 
 
         .leaderboard-row.top-two {
+
             border-color:
                 rgba(
                     190,
                     195,
                     205,
-                    0.16
+                    .16
                 );
 
             background:
@@ -510,25 +539,27 @@
                         190,
                         195,
                         205,
-                        0.04
+                        .04
                     ),
                     rgba(
                         255,
                         255,
                         255,
-                        0.025
+                        .025
                     )
                 );
+
         }
 
 
         .leaderboard-row.top-three {
+
             border-color:
                 rgba(
                     184,
                     117,
                     64,
-                    0.17
+                    .17
                 );
 
             background:
@@ -538,23 +569,25 @@
                         184,
                         117,
                         64,
-                        0.045
+                        .045
                     ),
                     rgba(
                         255,
                         255,
                         255,
-                        0.025
+                        .025
                     )
                 );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            RANK
-        ========================================= */
+        ================================================= */
 
         .leaderboard-rank {
+
             display:
                 flex;
 
@@ -566,10 +599,12 @@
 
             font-weight:
                 900;
+
         }
 
 
         .leaderboard-medal {
+
             width:
                 32px;
 
@@ -593,28 +628,32 @@
                     255,
                     255,
                     255,
-                    0.055
+                    .055
                 );
 
             font-size:
                 17px;
+
         }
 
 
         .leaderboard-rank-number {
+
             font-size:
                 12px;
 
             opacity:
-                0.6;
+                .6;
+
         }
 
 
-        /* =========================================
-           USER
-        ========================================= */
+        /* =================================================
+           PLAYER
+        ================================================= */
 
         .leaderboard-user {
+
             display:
                 flex;
 
@@ -626,10 +665,12 @@
 
             min-width:
                 0;
+
         }
 
 
         .leaderboard-avatar {
+
             width:
                 41px;
 
@@ -658,13 +699,13 @@
                         0,
                         255,
                         157,
-                        0.10
+                        .10
                     ),
                     rgba(
                         116,
                         77,
                         255,
-                        0.10
+                        .10
                     )
                 );
 
@@ -674,21 +715,25 @@
                     0,
                     255,
                     157,
-                    0.11
+                    .11
                 );
 
             font-size:
                 17px;
+
         }
 
 
         .leaderboard-user-info {
+
             min-width:
                 0;
+
         }
 
 
         .leaderboard-username {
+
             display:
                 block;
 
@@ -706,10 +751,12 @@
 
             font-weight:
                 800;
+
         }
 
 
         .leaderboard-subtitle {
+
             display:
                 block;
 
@@ -720,15 +767,17 @@
                 9px;
 
             opacity:
-                0.42;
+                .42;
+
         }
 
 
-        /* =========================================
+        /* =================================================
            VALUE
-        ========================================= */
+        ================================================= */
 
         .leaderboard-value {
+
             text-align:
                 left;
 
@@ -737,22 +786,20 @@
 
             font-weight:
                 900;
+
         }
 
 
-        .leaderboard-value small {
-            font-size:
-                10px;
+        .leaderboard-value span {
 
-            opacity:
-                0.55;
-
-            margin-right:
+            margin-left:
                 4px;
+
         }
 
 
         .leaderboard-value.coins {
+
             color:
                 #ffd95a;
 
@@ -762,12 +809,14 @@
                     255,
                     217,
                     90,
-                    0.14
+                    .14
                 );
+
         }
 
 
         .leaderboard-value.level {
+
             color:
                 #00ff9d;
 
@@ -777,16 +826,18 @@
                     0,
                     255,
                     157,
-                    0.14
+                    .14
                 );
+
         }
 
 
-        /* =========================================
-           LOADING / EMPTY / ERROR
-        ========================================= */
+        /* =================================================
+           STATES
+        ================================================= */
 
         .leaderboard-state {
+
             text-align:
                 center;
 
@@ -794,17 +845,19 @@
                 50px 20px;
 
             opacity:
-                0.58;
+                .58;
 
             font-size:
                 12px;
 
             line-height:
                 2;
+
         }
 
 
         .leaderboard-error {
+
             color:
                 #ffc0c8;
 
@@ -813,7 +866,7 @@
                     255,
                     63,
                     90,
-                    0.055
+                    .055
                 );
 
             border:
@@ -822,7 +875,7 @@
                     255,
                     63,
                     90,
-                    0.10
+                    .10
                 );
 
             border-radius:
@@ -830,14 +883,16 @@
 
             margin:
                 8px;
+
         }
 
 
-        /* =========================================
+        /* =================================================
            REFRESH
-        ========================================= */
+        ================================================= */
 
         .leaderboard-footer {
+
             display:
                 flex;
 
@@ -846,17 +901,19 @@
 
             margin-top:
                 15px;
+
         }
 
 
         .leaderboard-refresh {
+
             border:
                 1px solid
                 rgba(
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
 
             background:
@@ -864,7 +921,7 @@
                     255,
                     255,
                     255,
-                    0.035
+                    .035
                 );
 
             color:
@@ -889,15 +946,14 @@
                 pointer;
 
             transition:
-                transform
-                    0.2s ease,
+                transform .2s ease,
+                background .2s ease;
 
-                background
-                    0.2s ease;
         }
 
 
         .leaderboard-refresh:hover {
+
             transform:
                 translateY(
                     -2px
@@ -908,31 +964,36 @@
                     255,
                     255,
                     255,
-                    0.07
+                    .07
                 );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            MOBILE
-        ========================================= */
+        ================================================= */
 
         @media (
             max-width: 700px
         ) {
 
             .leaderboard-page {
+
                 width:
                     94%;
 
                 padding-top:
                     28px;
+
             }
 
 
             .leaderboard-panel {
+
                 padding:
                     11px;
+
             }
 
 
@@ -951,21 +1012,26 @@
 
 
             .leaderboard-header {
+
                 padding:
                     8px 9px 11px;
+
             }
 
 
             .leaderboard-row {
+
                 min-height:
                     64px;
 
                 padding:
                     9px;
+
             }
 
 
             .leaderboard-medal {
+
                 width:
                     28px;
 
@@ -974,16 +1040,20 @@
 
                 font-size:
                     15px;
+
             }
 
 
             .leaderboard-rank-number {
+
                 font-size:
                     10px;
+
             }
 
 
             .leaderboard-avatar {
+
                 width:
                     36px;
 
@@ -995,30 +1065,31 @@
 
                 font-size:
                     15px;
+
             }
 
 
             .leaderboard-username {
+
                 font-size:
                     11px;
+
             }
 
 
             .leaderboard-subtitle {
+
                 font-size:
                     8px;
+
             }
 
 
             .leaderboard-value {
+
                 font-size:
                     14px;
-            }
 
-
-            .leaderboard-value small {
-                font-size:
-                    8px;
             }
 
         }
@@ -1040,36 +1111,58 @@
 
 
             .leaderboard-row {
+
                 min-height:
                     60px;
+
             }
 
 
             .leaderboard-title h1 {
+
                 font-size:
                     28px;
+
             }
 
 
             .leaderboard-title p {
+
                 font-size:
                     11px;
+
             }
 
 
             .leaderboard-tabs {
+
                 gap:
                     7px;
+
             }
 
 
             .leaderboard-tab {
+
                 padding:
                     12px 9px;
 
                 font-size:
                     11px;
+
             }
+
+        }
+
+
+        /* =================================================
+           REMOVE OLD BOTTOM NAV
+        ================================================= */
+
+        .mobile-bottom-nav {
+
+            display:
+                none !important;
 
         }
 
@@ -1081,9 +1174,9 @@
 <body>
 
 
-<!-- =========================
+<!-- =====================================================
      BACKGROUND
-========================== -->
+===================================================== -->
 
 <div
     class="background-effects"
@@ -1091,17 +1184,23 @@
 >
 
     <div class="nebula nebula-purple"></div>
+
     <div class="nebula nebula-green"></div>
+
     <div class="nebula nebula-blue"></div>
 
     <div class="stars stars-one"></div>
+
     <div class="stars stars-two"></div>
+
     <div class="stars stars-three"></div>
 
     <div class="planet planet-purple"></div>
+
     <div class="planet planet-blue"></div>
 
     <div class="city">
+
         <span></span>
         <span></span>
         <span></span>
@@ -1113,96 +1212,43 @@
         <span></span>
         <span></span>
         <span></span>
+
     </div>
 
 </div>
 
 
-<!-- =========================
+<!-- =====================================================
      HEADER
-========================== -->
+===================================================== -->
 
-<header class="navbar">
+<header
+    class="navbar"
+>
 
     <a
         href="../index.html"
         class="logo"
     >
+
         VE<span class="logo-x">X</span>ON
+
     </a>
 
 
-    <nav class="nav-links">
+    <!--
+        OLD DESKTOP NAV
+        intentionally hidden by vexon-nav.js
+    -->
 
-        <a
-            href="../index.html"
-            class="nav-link"
-        >
-            <span class="desktop-v-icon">
-                V
-            </span>
-            خانه
-        </a>
+    <nav
+        class="nav-links"
+    ></nav>
 
 
-        <a
-            href="games.html"
-            class="nav-link"
-        >
-            <span class="nav-icon">
-                🎮
-            </span>
-            بازی‌ها
-        </a>
-
-
-        <a
-            href="leaderboard.html"
-            class="nav-link active"
-        >
-            <span class="nav-icon">
-                🏆
-            </span>
-            لیدربورد
-        </a>
-
-
-        <a
-            href="cafe.html"
-            class="nav-link"
-        >
-            <span class="nav-icon">
-                ☕
-            </span>
-            کافه بازی
-        </a>
-
-
-        <a
-            href="news.html"
-            class="nav-link"
-        >
-            <span class="nav-icon">
-                📢
-            </span>
-            اخبار
-        </a>
-
-
-        <a
-            href="guide.html"
-            class="nav-link"
-        >
-            <span class="nav-icon">
-                ?
-            </span>
-            راهنما
-        </a>
-
-    </nav>
-
-
-    <!-- ACCOUNT -->
+    <!-- =================================================
+         ACCOUNT
+    ================================================== -->
 
     <a
         href="login.html"
@@ -1227,7 +1273,9 @@
 
             <div
                 class="header-xp-bar"
-                style="display: none;"
+                style="
+                    display:none;
+                "
             >
 
                 <div
@@ -1253,9 +1301,9 @@
 </header>
 
 
-<!-- =========================
+<!-- =====================================================
      MAIN
-========================== -->
+===================================================== -->
 
 <main>
 
@@ -1263,6 +1311,10 @@
         class="leaderboard-page"
     >
 
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
 
         <div
             class="leaderboard-title"
@@ -1276,21 +1328,28 @@
 
 
             <h1>
-                🏆 <span>لیدربورد</span>
+
+                🏆
+                <span>
+                    لیدربورد
+                </span>
+
             </h1>
 
 
             <p>
+
                 با بازیکنان VEXON رقابت کن و جایگاهت را
                 در بین بهترین‌ها پیدا کن.
+
             </p>
 
         </div>
 
 
-        <!-- =====================
+        <!-- =================================================
              TABS
-        ====================== -->
+        ================================================== -->
 
         <div
             class="leaderboard-tabs"
@@ -1304,7 +1363,9 @@
                 role="tab"
                 aria-selected="true"
             >
+
                 🏆 Level
+
             </button>
 
 
@@ -1315,15 +1376,17 @@
                 role="tab"
                 aria-selected="false"
             >
+
                 🪙 Coins
+
             </button>
 
         </div>
 
 
-        <!-- =====================
+        <!-- =================================================
              PANEL
-        ====================== -->
+        ================================================== -->
 
         <section
             class="leaderboard-panel"
@@ -1362,13 +1425,20 @@
                 <div
                     class="leaderboard-state"
                 >
-                    ⏳ در حال دریافت لیدربورد...
+
+                    ⏳
+                    در حال دریافت لیدربورد...
+
                 </div>
 
             </div>
 
         </section>
 
+
+        <!-- =================================================
+             REFRESH
+        ================================================== -->
 
         <div
             class="leaderboard-footer"
@@ -1379,7 +1449,9 @@
                 id="leaderboard-refresh"
                 class="leaderboard-refresh"
             >
+
                 🔄 بروزرسانی
+
             </button>
 
         </div>
@@ -1389,14 +1461,18 @@
 </main>
 
 
-<!-- =========================
+<!-- =====================================================
      FOOTER
-========================== -->
+===================================================== -->
 
 <footer>
 
-    <div class="footer-logo">
+    <div
+        class="footer-logo"
+    >
+
         VE<span>X</span>ON
+
     </div>
 
 
@@ -1405,10 +1481,22 @@
     </p>
 
 
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
+
     </div>
 
 
@@ -1416,112 +1504,46 @@
         href="creators.html"
         class="creators-link"
     >
+
         👨‍💻 سازندگان VEXON
+
     </a>
 
 
     <span>
+
         ساخته شده با 💚 برای گیمرها
+
         <br>
+
         © 2026 VEXON — همه حقوق محفوظ است.
+
     </span>
 
 </footer>
 
 
-<!-- =========================
-     MOBILE NAV
-========================== -->
-
-<nav
-    class="mobile-bottom-nav"
->
-
-    <a
-        href="cafe.html"
-        class="mobile-nav-item"
-    >
-        <span>
-            ☕
-        </span>
-
-        <small>
-            کافه
-        </small>
-    </a>
+<!-- =====================================================
+     OLD MOBILE NAV REMOVED
+===================================================== -->
 
 
-    <a
-        href="leaderboard.html"
-        class="mobile-nav-item mobile-home active"
-    >
-        <span>
-            🏆
-        </span>
-
-        <small>
-            لیدربورد
-        </small>
-    </a>
-
-
-    <a
-        href="../index.html"
-        class="mobile-nav-item"
-    >
-
-        <span
-            class="home-v-icon"
-        >
-            V
-        </span>
-
-        <small>
-            خانه
-        </small>
-
-    </a>
-
-
-    <a
-        href="news.html"
-        class="mobile-nav-item"
-    >
-
-        <span>
-            📢
-        </span>
-
-        <small>
-            اخبار
-        </small>
-
-    </a>
-
-
-    <a
-        href="profile.html"
-        class="mobile-nav-item"
-    >
-
-        <span>
-            👤
-        </span>
-
-        <small>
-            پروفایل
-        </small>
-
-    </a>
-
-</nav>
-
-
-<!-- =========================
+<!-- =====================================================
      MAIN SCRIPT
-========================== -->
+===================================================== -->
 
-<script src="../script.js"></script>
+<script
+    src="../script.js"
+></script>
+
+
+<!-- =====================================================
+     GLOBAL VEXON NAV
+===================================================== -->
+
+<script
+    src="../vexon-nav.js"
+></script>
 
 
 <script>
@@ -1530,6 +1552,10 @@
 
     "use strict";
 
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
 
     const list =
         document.getElementById(
@@ -1563,9 +1589,9 @@
         null;
 
 
-    /* =========================================
+    /* =====================================================
        ESCAPE
-    ========================================= */
+    ===================================================== */
 
     function escapeHtml(
         value
@@ -1574,22 +1600,27 @@
         return String(
             value ?? ""
         )
+
             .replace(
                 /&/g,
                 "&amp;"
             )
+
             .replace(
                 /</g,
                 "&lt;"
             )
+
             .replace(
                 />/g,
                 "&gt;"
             )
+
             .replace(
                 /"/g,
                 "&quot;"
             )
+
             .replace(
                 /'/g,
                 "&#039;"
@@ -1598,9 +1629,9 @@
     }
 
 
-    /* =========================================
-       RANK
-    ========================================= */
+    /* =====================================================
+       RANK CLASS
+    ===================================================== */
 
     function getRankClass(
         rank
@@ -1638,6 +1669,10 @@
     }
 
 
+    /* =====================================================
+       MEDAL
+    ===================================================== */
+
     function getMedal(
         rank
     ) {
@@ -1674,17 +1709,16 @@
     }
 
 
-    /* =========================================
+    /* =====================================================
        NUMBER
-    ========================================= */
+    ===================================================== */
 
     function formatNumber(
         value
     ) {
 
         return Number(
-            value ??
-            0
+            value ?? 0
         ).toLocaleString(
             "en-US"
         );
@@ -1692,9 +1726,9 @@
     }
 
 
-    /* =========================================
+    /* =====================================================
        RENDER
-    ========================================= */
+    ===================================================== */
 
     function renderLeaderboard(
         players
@@ -1749,8 +1783,7 @@
 
 
                         const value =
-                            currentType ===
-                            "coins"
+                            currentType === "coins"
 
                                 ? Number(
                                     player.coins ??
@@ -1764,27 +1797,24 @@
 
 
                         const valueClass =
-                            currentType ===
-                            "coins"
-
+                            currentType === "coins"
                                 ? "coins"
-
                                 : "level";
 
 
                         const valueLabel =
-                            currentType ===
-                            "coins"
-
+                            currentType === "coins"
                                 ? "🪙"
-
                                 : "LV";
 
 
                         return `
 
                             <article
-                                class="leaderboard-row ${rankClass}"
+                                class="
+                                    leaderboard-row
+                                    ${rankClass}
+                                "
                             >
 
                                 <div
@@ -1799,7 +1829,9 @@
 
 
                                     <span
-                                        class="leaderboard-rank-number"
+                                        class="
+                                            leaderboard-rank-number
+                                        "
                                     >
                                         #${rank}
                                     </span>
@@ -1819,11 +1851,15 @@
 
 
                                     <div
-                                        class="leaderboard-user-info"
+                                        class="
+                                            leaderboard-user-info
+                                        "
                                     >
 
                                         <span
-                                            class="leaderboard-username"
+                                            class="
+                                                leaderboard-username
+                                            "
                                         >
                                             ${escapeHtml(
                                                 username
@@ -1832,7 +1868,9 @@
 
 
                                         <span
-                                            class="leaderboard-subtitle"
+                                            class="
+                                                leaderboard-subtitle
+                                            "
                                         >
                                             بازیکن VEXON
                                         </span>
@@ -1843,7 +1881,10 @@
 
 
                                 <div
-                                    class="leaderboard-value ${valueClass}"
+                                    class="
+                                        leaderboard-value
+                                        ${valueClass}
+                                    "
                                 >
 
                                     <span>
@@ -1869,9 +1910,9 @@
     }
 
 
-    /* =========================================
+    /* =====================================================
        LOAD
-    ========================================= */
+    ===================================================== */
 
     async function loadLeaderboard(
         silent = false
@@ -1941,7 +1982,9 @@
             );
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             console.error(
                 "LEADERBOARD_ERROR",
@@ -1952,9 +1995,14 @@
             list.innerHTML = `
 
                 <div
-                    class="leaderboard-state leaderboard-error"
+                    class="
+                        leaderboard-state
+                        leaderboard-error
+                    "
                 >
-                    ❌ ${escapeHtml(
+
+                    ❌
+                    ${escapeHtml(
                         error.message ||
                         "ارتباط با لیدربورد برقرار نشد."
                     )}
@@ -1972,9 +2020,9 @@
     }
 
 
-    /* =========================================
+    /* =====================================================
        CHANGE TAB
-    ========================================= */
+    ===================================================== */
 
     tabs.forEach(
         tab => {
@@ -1988,10 +2036,8 @@
 
 
                     if (
-                        type !==
-                        "level" &&
-                        type !==
-                        "coins"
+                        type !== "level" &&
+                        type !== "coins"
                     ) {
 
                         return;
@@ -2007,8 +2053,7 @@
                         item => {
 
                             const active =
-                                item ===
-                                tab;
+                                item === tab;
 
 
                             item.classList.toggle(
@@ -2029,11 +2074,8 @@
 
 
                     valueTitle.textContent =
-                        type ===
-                            "coins"
-
+                        type === "coins"
                             ? "Coins"
-
                             : "Level";
 
 
@@ -2046,9 +2088,9 @@
     );
 
 
-    /* =========================================
+    /* =====================================================
        REFRESH
-    ========================================= */
+    ===================================================== */
 
     refreshButton.addEventListener(
         "click",
@@ -2056,6 +2098,7 @@
 
             refreshButton.disabled =
                 true;
+
 
             refreshButton.textContent =
                 "⏳ در حال بروزرسانی...";
@@ -2072,6 +2115,7 @@
                 refreshButton.disabled =
                     false;
 
+
                 refreshButton.textContent =
                     "🔄 بروزرسانی";
 
@@ -2081,16 +2125,16 @@
     );
 
 
-    /* =========================================
+    /* =====================================================
        FIRST LOAD
-    ========================================= */
+    ===================================================== */
 
     loadLeaderboard();
 
 
-    /* =========================================
+    /* =====================================================
        AUTO UPDATE
-    ========================================= */
+    ===================================================== */
 
     refreshTimer =
         setInterval(
@@ -2105,9 +2149,9 @@
         );
 
 
-    /* =========================================
+    /* =====================================================
        VISIBILITY
-    ========================================= */
+    ===================================================== */
 
     document.addEventListener(
         "visibilitychange",
@@ -2128,9 +2172,9 @@
     );
 
 
-    /* =========================================
+    /* =====================================================
        CLEANUP
-    ========================================= */
+    ===================================================== */
 
     window.addEventListener(
         "beforeunload",
@@ -2153,5 +2197,7 @@
 
 </script>
 
+
 </body>
+
 </html>
