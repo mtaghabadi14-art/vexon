@@ -1,0 +1,3961 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <meta
+        name="description"
+        content="VEXON Messenger"
+    >
+
+    <title>
+        VEXON | پیام‌رسان
+    </title>
+
+
+    <!-- =====================================================
+         FONTS
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@500;700;900&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         MAIN VEXON CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <!-- =====================================================
+         MESSENGER STYLE
+    ====================================================== -->
+
+    <style>
+
+        :root {
+
+            --messenger-green:
+                #00ff9d;
+
+            --messenger-purple:
+                #744dff;
+
+            --messenger-blue:
+                #00eaff;
+
+            --messenger-bg:
+                #03040a;
+
+        }
+
+
+        /* =================================================
+           RESET
+        ================================================= */
+
+        * {
+            box-sizing:
+                border-box;
+        }
+
+
+        html,
+        body {
+
+            min-height:
+                100%;
+
+        }
+
+
+        body {
+
+            margin:
+                0;
+
+            min-height:
+                100vh;
+
+            background:
+                #03040a;
+
+            overflow-x:
+                hidden;
+
+        }
+
+
+        /* =================================================
+           PAGE
+        ================================================= */
+
+        .messenger-page {
+
+            position:
+                relative;
+
+            z-index:
+                3;
+
+            min-height:
+                100vh;
+
+            padding:
+                20px
+                20px
+                45px;
+
+        }
+
+
+        /* =================================================
+           HEADER
+        ================================================= */
+
+        .messenger-header {
+
+            width:
+                min(
+                    1250px,
+                    94%
+                );
+
+            min-height:
+                76px;
+
+            margin:
+                0 auto;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            padding:
+                12px
+                16px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            border-radius:
+                20px;
+
+            background:
+                rgba(
+                    7,
+                    8,
+                    18,
+                    .74
+                );
+
+            backdrop-filter:
+                blur(
+                    20px
+                );
+
+            box-shadow:
+                0 15px 50px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .28
+                );
+
+        }
+
+
+        .messenger-brand {
+
+            min-width:
+                0;
+
+            flex:
+                1;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .messenger-logo {
+
+            font-family:
+                "Orbitron",
+                sans-serif;
+
+            font-size:
+                25px;
+
+            font-weight:
+                900;
+
+            letter-spacing:
+                3px;
+
+            color:
+                #ffffff;
+
+            text-shadow:
+                0 0 12px
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .18
+                );
+
+        }
+
+
+        .messenger-logo span {
+
+            color:
+                var(--messenger-green);
+
+            text-shadow:
+                0 0 9px
+                var(--messenger-green),
+
+                0 0 20px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .48
+                );
+
+        }
+
+
+        .messenger-title {
+
+            margin-top:
+                4px;
+
+            text-align:
+                center;
+
+            color:
+                #77778c;
+
+            font-size:
+                9px;
+
+        }
+
+
+        .messenger-header-spacer {
+
+            width:
+                43px;
+
+            flex:
+                0 0 43px;
+
+        }
+
+
+        /* =================================================
+           MAIN
+        ================================================= */
+
+        .messenger-shell {
+
+            width:
+                min(
+                    1250px,
+                    94%
+                );
+
+            margin:
+                20px auto 0;
+
+        }
+
+
+        .messenger-heading {
+
+            display:
+                flex;
+
+            align-items:
+                flex-end;
+
+            justify-content:
+                space-between;
+
+            gap:
+                15px;
+
+            margin:
+                0 0 18px;
+
+        }
+
+
+        .messenger-heading h1 {
+
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    25px,
+                    4vw,
+                    38px
+                );
+
+            font-weight:
+                900;
+
+        }
+
+
+        .messenger-heading p {
+
+            margin:
+                6px 0 0;
+
+            color:
+                #77778c;
+
+            font-size:
+                10px;
+
+        }
+
+
+        /* =================================================
+           CONVERSATION AREA
+        ================================================= */
+
+        .messenger-conversation-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                13px;
+
+        }
+
+
+        .messenger-conversation-card {
+
+            position:
+                relative;
+
+            min-height:
+                105px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
+            padding:
+                16px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            border-radius:
+                18px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            text-align:
+                right;
+
+            font:
+                inherit;
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                background .25s ease,
+                box-shadow .25s ease;
+
+        }
+
+
+        .messenger-conversation-card:hover {
+
+            transform:
+                translateY(
+                    -4px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .042
+                );
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .17
+                );
+
+            box-shadow:
+                0 15px 45px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .18
+                );
+
+        }
+
+
+        .messenger-conversation-card.unread {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .07
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .045
+                    )
+                );
+
+        }
+
+
+        .messenger-avatar {
+
+            width:
+                54px;
+
+            height:
+                54px;
+
+            flex:
+                0 0 54px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .12
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .14
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            font-size:
+                24px;
+
+        }
+
+
+        .messenger-conversation-main {
+
+            min-width:
+                0;
+
+            flex:
+                1;
+
+        }
+
+
+        .messenger-conversation-top {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                8px;
+
+        }
+
+
+        .messenger-conversation-name {
+
+            min-width:
+                0;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+
+            white-space:
+                nowrap;
+
+            font-size:
+                13px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .messenger-conversation-time {
+
+            flex:
+                0 0 auto;
+
+            color:
+                #68687b;
+
+            font-size:
+                8px;
+
+        }
+
+
+        .messenger-conversation-preview {
+
+            margin-top:
+                7px;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+
+            white-space:
+                nowrap;
+
+            color:
+                #77778c;
+
+            font-size:
+                10px;
+
+        }
+
+
+        .messenger-unread {
+
+            min-width:
+                22px;
+
+            height:
+                22px;
+
+            padding:
+                0 6px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                999px;
+
+            background:
+                var(--messenger-green);
+
+            color:
+                #03110c;
+
+            font-size:
+                9px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        /* =================================================
+           EMPTY
+        ================================================= */
+
+        .messenger-empty {
+
+            min-height:
+                300px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                20px;
+
+            border:
+                1px dashed
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            border-radius:
+                22px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .018
+                );
+
+            text-align:
+                center;
+
+        }
+
+
+        .messenger-empty-icon {
+
+            font-size:
+                46px;
+
+            margin-bottom:
+                12px;
+
+        }
+
+
+        .messenger-empty h2 {
+
+            margin:
+                0 0 8px;
+
+            font-size:
+                20px;
+
+        }
+
+
+        .messenger-empty p {
+
+            max-width:
+                430px;
+
+            margin:
+                0 auto;
+
+            color:
+                #77778c;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.9;
+
+        }
+
+
+        /* =================================================
+           FLOATING NEW CHAT
+        ================================================= */
+
+        .messenger-floating-new {
+
+            position:
+                fixed;
+
+            left:
+                24px;
+
+            bottom:
+                24px;
+
+            z-index:
+                3000;
+
+            width:
+                62px;
+
+            height:
+                62px;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .28
+                );
+
+            border-radius:
+                20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .22
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .25
+                    )
+                );
+
+            color:
+                #ffffff;
+
+            font-size:
+                25px;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 18px 45px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .38
+                ),
+
+                0 0 30px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .10
+                );
+
+            backdrop-filter:
+                blur(
+                    16px
+                );
+
+            transition:
+                transform .22s ease,
+                box-shadow .22s ease;
+
+        }
+
+
+        .messenger-floating-new:hover {
+
+            transform:
+                translateY(
+                    -5px
+                )
+                rotate(
+                    -3deg
+                );
+
+            box-shadow:
+                0 22px 55px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .44
+                ),
+
+                0 0 36px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .16
+                );
+
+        }
+
+
+        /* =================================================
+           CHAT MODAL / SCREEN
+        ================================================= */
+
+        .messenger-chat-overlay {
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                40000;
+
+            display:
+                none;
+
+            align-items:
+                stretch;
+
+            justify-content:
+                center;
+
+            padding:
+                18px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .68
+                );
+
+            backdrop-filter:
+                blur(
+                    4px
+                );
+
+        }
+
+
+        .messenger-chat-overlay.open {
+
+            display:
+                flex;
+
+        }
+
+
+        .messenger-chat-window {
+
+            width:
+                min(
+                    1050px,
+                    100%
+                );
+
+            height:
+                min(
+                    900px,
+                    100%
+                );
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            overflow:
+                hidden;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                24px;
+
+            background:
+                rgba(
+                    5,
+                    8,
+                    15,
+                    .98
+                );
+
+            box-shadow:
+                0 30px 100px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .55
+                );
+
+        }
+
+
+        .messenger-chat-header {
+
+            min-height:
+                72px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                10px
+                14px;
+
+            border-bottom:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .018
+                );
+
+        }
+
+
+        .messenger-chat-header-info {
+
+            min-width:
+                0;
+
+            flex:
+                1;
+
+        }
+
+
+        .messenger-chat-header-info strong {
+
+            display:
+                block;
+
+            font-size:
+                14px;
+
+        }
+
+
+        .messenger-chat-header-info span {
+
+            display:
+                block;
+
+            margin-top:
+                3px;
+
+            color:
+                #77778c;
+
+            font-size:
+                8px;
+
+        }
+
+
+        .messenger-chat-close {
+
+            width:
+                40px;
+
+            height:
+                40px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            border-radius:
+                11px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            font-size:
+                19px;
+
+        }
+
+
+        .messenger-messages {
+
+            flex:
+                1;
+
+            min-height:
+                0;
+
+            overflow:
+                auto;
+
+            padding:
+                20px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                8px;
+
+        }
+
+
+        .messenger-message-row {
+
+            width:
+                100%;
+
+            display:
+                flex;
+
+        }
+
+
+        .messenger-message-row.me {
+
+            justify-content:
+                flex-start;
+
+        }
+
+
+        .messenger-message-row.other {
+
+            justify-content:
+                flex-end;
+
+        }
+
+
+        .messenger-message-bubble {
+
+            max-width:
+                min(
+                    72%,
+                    620px
+                );
+
+            padding:
+                11px 13px;
+
+            border-radius:
+                16px;
+
+            line-height:
+                1.85;
+
+            font-size:
+                12px;
+
+            white-space:
+                pre-wrap;
+
+            word-break:
+                break-word;
+
+        }
+
+
+        .messenger-message-row.me
+        .messenger-message-bubble {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .15
+                    ),
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .07
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .13
+                );
+
+            border-bottom-right-radius:
+                5px;
+
+        }
+
+
+        .messenger-message-row.other
+        .messenger-message-bubble {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .045
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            border-bottom-left-radius:
+                5px;
+
+        }
+
+
+        .messenger-message-time {
+
+            display:
+                block;
+
+            margin-top:
+                5px;
+
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .42
+                );
+
+            font-size:
+                8px;
+
+        }
+
+
+        /* =================================================
+           COMPOSER
+        ================================================= */
+
+        .messenger-composer {
+
+            display:
+                flex;
+
+            align-items:
+                flex-end;
+
+            gap:
+                8px;
+
+            padding:
+                12px;
+
+            border-top:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .018
+                );
+
+        }
+
+
+        .messenger-composer textarea {
+
+            min-height:
+                46px;
+
+            max-height:
+                130px;
+
+            resize:
+                none;
+
+            flex:
+                1;
+
+            padding:
+                11px 13px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            color:
+                #ffffff;
+
+            outline:
+                none;
+
+            font:
+                inherit;
+
+            font-size:
+                12px;
+
+        }
+
+
+        .messenger-composer textarea:focus {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .33
+                );
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .05
+                );
+
+        }
+
+
+        .messenger-send {
+
+            width:
+                48px;
+
+            height:
+                46px;
+
+            border:
+                0;
+
+            border-radius:
+                14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00ff9d,
+                    #00eaff
+                );
+
+            color:
+                #04110b;
+
+            font-size:
+                19px;
+
+            font-weight:
+                900;
+
+            cursor:
+                pointer;
+
+        }
+
+
+        .messenger-send:disabled {
+
+            opacity:
+                .5;
+
+            cursor:
+                not-allowed;
+
+        }
+
+
+        /* =================================================
+           NEW CHAT MODAL
+        ================================================= */
+
+        .messenger-new-chat-overlay {
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                45000;
+
+            display:
+                none;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                18px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .66
+                );
+
+            backdrop-filter:
+                blur(
+                    4px
+                );
+
+        }
+
+
+        .messenger-new-chat-overlay.open {
+
+            display:
+                flex;
+
+        }
+
+
+        .messenger-new-chat-card {
+
+            width:
+                min(
+                    520px,
+                    100%
+                );
+
+            max-height:
+                min(
+                    80vh,
+                    620px
+                );
+
+            overflow:
+                auto;
+
+            padding:
+                18px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                22px;
+
+            background:
+                rgba(
+                    6,
+                    10,
+                    18,
+                    .98
+                );
+
+            box-shadow:
+                0 25px 90px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .5
+                );
+
+        }
+
+
+        .messenger-new-chat-head {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
+
+            margin-bottom:
+                14px;
+
+        }
+
+
+        .messenger-new-chat-head h2 {
+
+            margin:
+                0;
+
+            font-size:
+                16px;
+
+        }
+
+
+        .messenger-close-btn {
+
+            width:
+                36px;
+
+            height:
+                36px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            border-radius:
+                10px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            font-size:
+                18px;
+
+        }
+
+
+        .messenger-user-search {
+
+            width:
+                100%;
+
+            padding:
+                12px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                13px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            color:
+                #ffffff;
+
+            outline:
+                none;
+
+            font:
+                inherit;
+
+            font-size:
+                11px;
+
+        }
+
+
+        .messenger-user-search:focus {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .34
+                );
+
+        }
+
+
+        .messenger-user-results {
+
+            margin-top:
+                12px;
+
+            display:
+                grid;
+
+            gap:
+                7px;
+
+        }
+
+
+        .messenger-user-result {
+
+            width:
+                100%;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                10px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            border-radius:
+                13px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            color:
+                #ffffff;
+
+            font:
+                inherit;
+
+            text-align:
+                right;
+
+            cursor:
+                pointer;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+
+        }
+
+
+        .messenger-user-result:hover {
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .055
+                );
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+        }
+
+
+        .messenger-user-result-avatar {
+
+            width:
+                42px;
+
+            height:
+                42px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            flex:
+                0 0 42px;
+
+            border-radius:
+                12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .11
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .12
+                    )
+                );
+
+            font-size:
+                18px;
+
+        }
+
+
+        .messenger-status {
+
+            margin-top:
+                10px;
+
+            padding:
+                9px 10px;
+
+            display:
+                none;
+
+            border-radius:
+                10px;
+
+            font-size:
+                10px;
+
+        }
+
+
+        .messenger-status.show {
+
+            display:
+                block;
+
+        }
+
+
+        .messenger-status.error {
+
+            color:
+                #ffc1c9;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                );
+
+        }
+
+
+        .messenger-status.success {
+
+            color:
+                #9dffcf;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .06
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .08
+                );
+
+        }
+
+
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
+
+        @media (
+            max-width: 850px
+        ) {
+
+            .messenger-page {
+
+                padding:
+                    10px
+                    10px
+                    30px;
+
+            }
+
+
+            .messenger-header {
+
+                width:
+                    100%;
+
+                min-height:
+                    64px;
+
+                border-radius:
+                    15px;
+
+                padding:
+                    9px
+                    11px;
+
+            }
+
+
+            .messenger-logo {
+
+                font-size:
+                    20px;
+
+            }
+
+
+            .messenger-title {
+
+                font-size:
+                    8px;
+
+            }
+
+
+            .messenger-header-spacer {
+
+                width:
+                    40px;
+
+                flex-basis:
+                    40px;
+
+            }
+
+
+            .messenger-shell {
+
+                width:
+                    100%;
+
+                margin-top:
+                    15px;
+
+            }
+
+
+            .messenger-heading {
+
+                align-items:
+                    center;
+
+            }
+
+
+            .messenger-heading h1 {
+
+                font-size:
+                    25px;
+
+            }
+
+
+            .messenger-conversation-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .messenger-floating-new {
+
+                left:
+                    16px;
+
+                bottom:
+                    16px;
+
+                width:
+                    58px;
+
+                height:
+                    58px;
+
+                border-radius:
+                    18px;
+
+            }
+
+
+            .messenger-chat-overlay {
+
+                padding:
+                    0;
+
+            }
+
+
+            .messenger-chat-window {
+
+                width:
+                    100%;
+
+                height:
+                    100%;
+
+                border-radius:
+                    0;
+
+            }
+
+
+            .messenger-message-bubble {
+
+                max-width:
+                    84%;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 480px
+        ) {
+
+            .messenger-heading h1 {
+
+                font-size:
+                    22px;
+
+            }
+
+
+            .messenger-heading p {
+
+                font-size:
+                    9px;
+
+            }
+
+
+            .messenger-conversation-card {
+
+                min-height:
+                    92px;
+
+                padding:
+                    12px;
+
+            }
+
+
+            .messenger-avatar {
+
+                width:
+                    48px;
+
+                height:
+                    48px;
+
+                flex-basis:
+                    48px;
+
+                border-radius:
+                    14px;
+
+                font-size:
+                    21px;
+
+            }
+
+
+            .messenger-conversation-name {
+
+                font-size:
+                    12px;
+
+            }
+
+
+            .messenger-conversation-preview {
+
+                font-size:
+                    9px;
+
+            }
+
+
+            .messenger-messages {
+
+                padding:
+                    14px 10px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+    <div class="planet planet-blue"></div>
+
+</div>
+
+
+<!-- =====================================================
+     PAGE
+===================================================== -->
+
+<main
+    class="messenger-page"
+>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header
+        class="messenger-header"
+    >
+
+        <button
+            type="button"
+            id="vexon-menu-trigger"
+            class="vexon-global-menu-trigger"
+            aria-label="باز کردن منوی VEXON"
+            title="منوی VEXON"
+        >
+            ☰
+        </button>
+
+
+        <div
+            class="messenger-brand"
+        >
+
+            <div>
+
+                <div
+                    class="messenger-logo"
+                >
+                    VE<span>X</span>ON
+                </div>
+
+
+                <div
+                    class="messenger-title"
+                >
+                    پیام‌رسان رسمی VEXON
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="messenger-header-spacer"
+        ></div>
+
+    </header>
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <section
+        class="messenger-shell"
+    >
+
+
+        <div
+            class="messenger-heading"
+        >
+
+            <div>
+
+                <h1>
+                    پیام‌رسان 💬
+                </h1>
+
+
+                <p>
+                    با بازیکنان VEXON گفتگو کن.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CONVERSATIONS
+        ================================================== -->
+
+        <section
+            id="conversation-wall"
+            class="messenger-conversation-grid"
+        >
+
+            <div
+                class="messenger-empty"
+                style="
+                    grid-column:
+                        1 / -1;
+                "
+                id="conversation-loading"
+            >
+
+                <div>
+
+                    <div
+                        class="messenger-empty-icon"
+                    >
+                        ⏳
+                    </div>
+
+
+                    <h2>
+                        در حال دریافت گفتگوها...
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     FLOATING NEW CHAT
+===================================================== -->
+
+<button
+    type="button"
+    id="new-chat-button"
+    class="messenger-floating-new"
+    title="گفتگوی جدید"
+    aria-label="شروع گفتگوی جدید"
+>
+    ✎
+</button>
+
+
+<!-- =====================================================
+     CHAT OVERLAY
+===================================================== -->
+
+<div
+    class="messenger-chat-overlay"
+    id="chat-overlay"
+    aria-hidden="true"
+>
+
+    <section
+        class="messenger-chat-window"
+    >
+
+
+        <header
+            class="messenger-chat-header"
+        >
+
+            <button
+                type="button"
+                class="messenger-close-btn"
+                id="close-chat"
+                aria-label="بستن گفتگو"
+            >
+                ×
+            </button>
+
+
+            <div
+                class="messenger-chat-header-info"
+            >
+
+                <strong
+                    id="chat-title"
+                >
+                    گفتگو
+                </strong>
+
+
+                <span>
+                    گفتگوی خصوصی VEXON
+                </span>
+
+            </div>
+
+
+            <div
+                class="messenger-avatar"
+                style="
+                    width:42px;
+                    height:42px;
+                    flex-basis:42px;
+                    border-radius:12px;
+                    font-size:18px;
+                "
+            >
+                👤
+            </div>
+
+        </header>
+
+
+        <div
+            class="messenger-messages"
+            id="message-list"
+        ></div>
+
+
+        <form
+            class="messenger-composer"
+            id="message-form"
+        >
+
+            <textarea
+                id="message-input"
+                maxlength="4000"
+                rows="1"
+                placeholder="پیامت را بنویس..."
+                autocomplete="off"
+            ></textarea>
+
+
+            <button
+                type="submit"
+                class="messenger-send"
+                id="send-message"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     NEW CHAT MODAL
+===================================================== -->
+
+<div
+    class="messenger-new-chat-overlay"
+    id="new-chat-overlay"
+    aria-hidden="true"
+>
+
+    <section
+        class="messenger-new-chat-card"
+    >
+
+        <div
+            class="messenger-new-chat-head"
+        >
+
+            <h2>
+                ✎ شروع گفتگوی جدید
+            </h2>
+
+
+            <button
+                type="button"
+                class="messenger-close-btn"
+                id="close-new-chat"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <input
+            type="search"
+            id="user-search"
+            class="messenger-user-search"
+            placeholder="نام کاربری را جستجو کن..."
+            autocomplete="off"
+        >
+
+
+        <div
+            id="search-status"
+            class="messenger-status"
+        ></div>
+
+
+        <div
+            id="user-results"
+            class="messenger-user-results"
+        ></div>
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     GLOBAL NAV
+===================================================== -->
+
+<script
+    src="../vexon-nav.js"
+></script>
+
+
+<!-- =====================================================
+     MESSENGER LOGIC
+===================================================== -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    const $ =
+        selector =>
+            document.querySelector(
+                selector
+            );
+
+
+    const conversationWall =
+        $(
+            "#conversation-wall"
+        );
+
+
+    const chatOverlay =
+        $(
+            "#chat-overlay"
+        );
+
+
+    const newChatOverlay =
+        $(
+            "#new-chat-overlay"
+        );
+
+
+    const messageList =
+        $(
+            "#message-list"
+        );
+
+
+    const messageInput =
+        $(
+            "#message-input"
+        );
+
+
+    const sendButton =
+        $(
+            "#send-message"
+        );
+
+
+    const chatTitle =
+        $(
+            "#chat-title"
+        );
+
+
+    const userSearch =
+        $(
+            "#user-search"
+        );
+
+
+    const userResults =
+        $(
+            "#user-results"
+        );
+
+
+    const searchStatus =
+        $(
+            "#search-status"
+        );
+
+
+    let currentUser =
+        null;
+
+
+    let conversations =
+        [];
+
+
+    let currentConversation =
+        null;
+
+
+    let messagePollTimer =
+        null;
+
+
+    let conversationPollTimer =
+        null;
+
+
+    let searchTimer =
+        null;
+
+
+    /* =====================================================
+       ESCAPE
+    ===================================================== */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =====================================================
+       DATE
+    ===================================================== */
+
+    function dateText(
+        value
+    ) {
+
+        if (!value) {
+
+            return "";
+
+        }
+
+
+        try {
+
+            return new Intl.DateTimeFormat(
+                "fa-IR",
+                {
+                    dateStyle:
+                        "short",
+
+                    timeStyle:
+                        "short"
+                }
+            ).format(
+                new Date(
+                    value
+                )
+            );
+
+        } catch {
+
+            return "";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       API
+    ===================================================== */
+
+    async function api(
+        path,
+        options = {}
+    ) {
+
+        const response =
+            await fetch(
+                path,
+                {
+                    credentials:
+                        "same-origin",
+
+                    cache:
+                        "no-store",
+
+                    ...options
+                }
+            );
+
+
+        let data =
+            {};
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            data =
+                {};
+
+        }
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data.message ||
+                "خطایی رخ داد."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    function showSearchStatus(
+        text,
+        type = "error"
+    ) {
+
+        searchStatus.textContent =
+            text;
+
+        searchStatus.className =
+            `
+                messenger-status
+                show
+                ${type}
+            `;
+
+    }
+
+
+    function hideSearchStatus() {
+
+        searchStatus.textContent =
+            "";
+
+        searchStatus.className =
+            "messenger-status";
+
+    }
+
+
+    /* =====================================================
+       BOOTSTRAP
+    ===================================================== */
+
+    async function bootstrap() {
+
+        try {
+
+            const me =
+                await api(
+                    "/api/me"
+                );
+
+
+            if (
+                !me.loggedIn ||
+                !me.user
+            ) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            currentUser =
+                me.user;
+
+
+            if (
+                currentUser.banned &&
+                currentUser.ban_type ===
+                    "full"
+            ) {
+
+                window.location.href =
+                    "../banned.html";
+
+                return;
+
+            }
+
+
+            await loadConversations();
+
+            bindEvents();
+
+            startConversationPolling();
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "MESSENGER_BOOT_ERROR",
+                error
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOAD CONVERSATIONS
+    ===================================================== */
+
+    async function loadConversations() {
+
+        const data =
+            await api(
+                "/api/messenger/conversations"
+            );
+
+
+        conversations =
+            Array.isArray(
+                data.conversations
+            )
+
+                ? data.conversations
+
+                : [];
+
+
+        renderConversations();
+
+    }
+
+
+    /* =====================================================
+       RENDER CONVERSATIONS
+    ===================================================== */
+
+    function renderConversations() {
+
+        if (
+            !conversations.length
+        ) {
+
+            conversationWall.innerHTML = `
+
+                <div
+                    class="messenger-empty"
+                    style="
+                        grid-column:
+                            1 / -1;
+                    "
+                >
+
+                    <div>
+
+                        <div
+                            class="messenger-empty-icon"
+                        >
+                            💬
+                        </div>
+
+
+                        <h2>
+                            هنوز گفتگویی نداری
+                        </h2>
+
+
+                        <p>
+                            روی دکمه ✎ پایین صفحه بزن
+                            و یک کاربر VEXON را جستجو کن
+                            تا گفتگوی جدیدی شروع شود.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        conversationWall.innerHTML =
+            conversations
+                .map(
+                    conversation => {
+
+                        const unread =
+                            Number(
+                                conversation.unread_count ||
+                                0
+                            );
+
+
+                        return `
+
+                            <button
+                                type="button"
+                                class="
+                                    messenger-conversation-card
+                                    ${
+                                        unread > 0
+                                            ? "unread"
+                                            : ""
+                                    }
+                                "
+                                data-conversation-id="${escapeHtml(
+                                    conversation.id
+                                )}"
+                            >
+
+                                <div
+                                    class="messenger-avatar"
+                                >
+                                    👤
+                                </div>
+
+
+                                <div
+                                    class="messenger-conversation-main"
+                                >
+
+                                    <div
+                                        class="messenger-conversation-top"
+                                    >
+
+                                        <span
+                                            class="
+                                                messenger-conversation-name
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                conversation.other_username
+                                            )}
+                                        </span>
+
+
+                                        <span
+                                            class="
+                                                messenger-conversation-time
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                dateText(
+                                                    conversation.last_message_at
+                                                )
+                                            )}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div
+                                        class="
+                                            messenger-conversation-preview
+                                        "
+                                    >
+                                        ${escapeHtml(
+                                            conversation.last_message ||
+                                            "هنوز پیامی نیست"
+                                        )}
+                                    </div>
+
+                                </div>
+
+
+                                ${
+                                    unread > 0
+
+                                        ? `
+                                            <span
+                                                class="
+                                                    messenger-unread
+                                                "
+                                            >
+                                                ${escapeHtml(
+                                                    unread
+                                                )}
+                                            </span>
+                                          `
+
+                                        : ""
+                                }
+
+                            </button>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        conversationWall
+            .querySelectorAll(
+                "[data-conversation-id]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            openConversation(
+                                button.dataset
+                                    .conversationId
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       OPEN CONVERSATION
+    ===================================================== */
+
+    async function openConversation(
+        conversationId
+    ) {
+
+        const conversation =
+            conversations.find(
+                item =>
+                    String(
+                        item.id
+                    ) ===
+                    String(
+                        conversationId
+                    )
+            );
+
+
+        if (!conversation) {
+
+            return;
+
+        }
+
+
+        currentConversation =
+            conversation;
+
+
+        chatTitle.textContent =
+            conversation.other_username;
+
+
+        chatOverlay.classList.add(
+            "open"
+        );
+
+
+        chatOverlay.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+
+        await loadMessages();
+
+
+        startMessagePolling();
+
+
+        setTimeout(
+            () => {
+
+                messageInput.focus();
+
+            },
+            80
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE CONVERSATION
+    ===================================================== */
+
+    function closeConversation() {
+
+        chatOverlay.classList.remove(
+            "open"
+        );
+
+
+        chatOverlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        stopMessagePolling();
+
+
+        currentConversation =
+            null;
+
+
+        messageList.innerHTML =
+            "";
+
+
+        document.body.style.overflow =
+            "";
+
+    }
+
+
+    /* =====================================================
+       LOAD MESSAGES
+    ===================================================== */
+
+    async function loadMessages() {
+
+        if (
+            !currentConversation
+        ) {
+
+            return;
+
+        }
+
+
+        const data =
+            await api(
+                `/api/messenger/conversations/${encodeURIComponent(
+                    currentConversation.id
+                )}/messages`
+            );
+
+
+        const items =
+            Array.isArray(
+                data.messages
+            )
+
+                ? data.messages
+
+                : [];
+
+
+        messageList.innerHTML =
+            items.length
+
+                ? items
+                    .map(
+                        message => {
+
+                            const isMe =
+                                Number(
+                                    message.sender_id
+                                ) ===
+                                Number(
+                                    currentUser.id
+                                );
+
+
+                            return `
+
+                                <div
+                                    class="
+                                        messenger-message-row
+                                        ${
+                                            isMe
+                                                ? "me"
+                                                : "other"
+                                        }
+                                    "
+                                >
+
+                                    <div
+                                        class="
+                                            messenger-message-bubble
+                                        "
+                                    >
+
+                                        ${escapeHtml(
+                                            message.content
+                                        )}
+
+
+                                        <span
+                                            class="
+                                                messenger-message-time
+                                            "
+                                        >
+                                            ${escapeHtml(
+                                                dateText(
+                                                    message.created_at
+                                                )
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("")
+
+                : `
+
+                    <div
+                        style="
+                            margin:auto;
+                            text-align:center;
+                            opacity:.38;
+                            font-size:10px;
+                        "
+                    >
+                        هنوز پیامی بین شما نیست.<br>
+                        اولین پیام را بفرست 👋
+                    </div>
+
+                `;
+
+
+        messageList.scrollTop =
+            messageList.scrollHeight;
+
+
+        await api(
+            `/api/messenger/conversations/${encodeURIComponent(
+                currentConversation.id
+            )}/read`,
+            {
+                method:
+                    "POST"
+            }
+        ).catch(
+            () => {}
+        );
+
+    }
+
+
+    /* =====================================================
+       MESSAGE POLLING
+    ===================================================== */
+
+    function startMessagePolling() {
+
+        stopMessagePolling();
+
+
+        messagePollTimer =
+            setInterval(
+                async () => {
+
+                    if (
+                        document.hidden ||
+                        !currentConversation
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        await loadMessages();
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.warn(
+                            "MESSAGE_POLL_ERROR",
+                            error
+                        );
+
+                    }
+
+                },
+                3000
+            );
+
+    }
+
+
+    function stopMessagePolling() {
+
+        if (
+            messagePollTimer
+        ) {
+
+            clearInterval(
+                messagePollTimer
+            );
+
+        }
+
+
+        messagePollTimer =
+            null;
+
+    }
+
+
+    /* =====================================================
+       CONVERSATION POLLING
+    ===================================================== */
+
+    function startConversationPolling() {
+
+        stopConversationPolling();
+
+
+        conversationPollTimer =
+            setInterval(
+                async () => {
+
+                    if (
+                        document.hidden
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        await loadConversations();
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.warn(
+                            "CONVERSATION_POLL_ERROR",
+                            error
+                        );
+
+                    }
+
+                },
+                5000
+            );
+
+    }
+
+
+    function stopConversationPolling() {
+
+        if (
+            conversationPollTimer
+        ) {
+
+            clearInterval(
+                conversationPollTimer
+            );
+
+        }
+
+
+        conversationPollTimer =
+            null;
+
+    }
+
+
+    /* =====================================================
+       SEND MESSAGE
+    ===================================================== */
+
+    async function sendMessage(
+        event
+    ) {
+
+        event.preventDefault();
+
+
+        if (
+            !currentConversation
+        ) {
+
+            return;
+
+        }
+
+
+        const content =
+            messageInput.value.trim();
+
+
+        if (!content) {
+
+            return;
+
+        }
+
+
+        sendButton.disabled =
+            true;
+
+
+        try {
+
+            await api(
+                `/api/messenger/conversations/${encodeURIComponent(
+                    currentConversation.id
+                )}/messages`,
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            content
+                        })
+
+                }
+            );
+
+
+            messageInput.value =
+                "";
+
+
+            messageInput.style.height =
+                "46px";
+
+
+            await loadMessages();
+
+            await loadConversations();
+
+
+        } catch (
+            error
+        ) {
+
+            alert(
+                error.message ||
+                "ارسال پیام انجام نشد."
+            );
+
+        } finally {
+
+            sendButton.disabled =
+                false;
+
+
+            messageInput.focus();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       AUTO GROW
+    ===================================================== */
+
+    function autoGrowMessageBox() {
+
+        messageInput.style.height =
+            "46px";
+
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                130
+            ) +
+            "px";
+
+    }
+
+
+    /* =====================================================
+       OPEN NEW CHAT
+    ===================================================== */
+
+    function openNewChat() {
+
+        newChatOverlay.classList.add(
+            "open"
+        );
+
+
+        newChatOverlay.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        userSearch.value =
+            "";
+
+
+        userResults.innerHTML =
+            "";
+
+
+        hideSearchStatus();
+
+
+        setTimeout(
+            () => {
+
+                userSearch.focus();
+
+            },
+            80
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE NEW CHAT
+    ===================================================== */
+
+    function closeNewChat() {
+
+        newChatOverlay.classList.remove(
+            "open"
+        );
+
+
+        newChatOverlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        userSearch.value =
+            "";
+
+
+        userResults.innerHTML =
+            "";
+
+
+        hideSearchStatus();
+
+    }
+
+
+    /* =====================================================
+       SEARCH USERS
+    ===================================================== */
+
+    async function searchUsers() {
+
+        const query =
+            userSearch.value.trim();
+
+
+        if (
+            query.length < 2
+        ) {
+
+            userResults.innerHTML =
+                "";
+
+            hideSearchStatus();
+
+            return;
+
+        }
+
+
+        try {
+
+            const data =
+                await api(
+                    `/api/messenger/users/search?q=${encodeURIComponent(
+                        query
+                    )}`
+                );
+
+
+            const users =
+                Array.isArray(
+                    data.users
+                )
+
+                    ? data.users
+
+                    : [];
+
+
+            if (
+                !users.length
+            ) {
+
+                userResults.innerHTML = `
+
+                    <div
+                        style="
+                            padding:18px;
+                            text-align:center;
+                            opacity:.45;
+                            font-size:10px;
+                        "
+                    >
+                        کاربری پیدا نشد.
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            userResults.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <button
+                                type="button"
+                                class="messenger-user-result"
+                                data-user-id="${escapeHtml(
+                                    user.id
+                                )}"
+                            >
+
+                                <span
+                                    class="
+                                        messenger-user-result-avatar
+                                    "
+                                >
+                                    👤
+                                </span>
+
+
+                                <strong>
+                                    ${escapeHtml(
+                                        user.username
+                                    )}
+                                </strong>
+
+                            </button>
+
+                        `
+                    )
+                    .join("");
+
+
+            userResults
+                .querySelectorAll(
+                    "[data-user-id]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                startConversation(
+                                    button.dataset
+                                        .userId
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+
+        } catch (
+            error
+        ) {
+
+            showSearchStatus(
+                error.message ||
+                "جستجو ناموفق بود.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START CONVERSATION
+    ===================================================== */
+
+    async function startConversation(
+        userId
+    ) {
+
+        try {
+
+            const data =
+                await api(
+                    "/api/messenger/conversations",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                user_id:
+                                    Number(
+                                        userId
+                                    )
+                            })
+
+                    }
+                );
+
+
+            closeNewChat();
+
+
+            await loadConversations();
+
+
+            await openConversation(
+                data.conversation.id
+            );
+
+
+        } catch (
+            error
+        ) {
+
+            showSearchStatus(
+                error.message ||
+                "ساخت گفتگو انجام نشد.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+    function bindEvents() {
+
+        $("#new-chat-button")
+            .addEventListener(
+                "click",
+                openNewChat
+            );
+
+
+        $("#close-new-chat")
+            .addEventListener(
+                "click",
+                closeNewChat
+            );
+
+
+        $("#close-chat")
+            .addEventListener(
+                "click",
+                closeConversation
+            );
+
+
+        $("#message-form")
+            .addEventListener(
+                "submit",
+                sendMessage
+            );
+
+
+        messageInput.addEventListener(
+            "input",
+            autoGrowMessageBox
+        );
+
+
+        messageInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                        "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+
+                    sendMessage(
+                        event
+                    );
+
+                }
+
+            }
+        );
+
+
+        userSearch.addEventListener(
+            "input",
+            () => {
+
+                clearTimeout(
+                    searchTimer
+                );
+
+
+                searchTimer =
+                    setTimeout(
+                        searchUsers,
+                        250
+                    );
+
+            }
+        );
+
+
+        newChatOverlay.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    newChatOverlay
+                ) {
+
+                    closeNewChat();
+
+                }
+
+            }
+        );
+
+
+        chatOverlay.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    chatOverlay
+                ) {
+
+                    closeConversation();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key !==
+                    "Escape"
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    newChatOverlay.classList.contains(
+                        "open"
+                    )
+                ) {
+
+                    closeNewChat();
+
+                    return;
+
+                }
+
+
+                if (
+                    chatOverlay.classList.contains(
+                        "open"
+                    )
+                ) {
+
+                    closeConversation();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    bootstrap();
+
+})();
+
+</script>
+
+</body>
+
+</html>

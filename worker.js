@@ -1117,6 +1117,191 @@ async function getLeaderboardPlayers(
     );
 }
 
+/* =========================================================
+   VEXON MESSENGER — HELPERS
+========================================================= */
+
+async function ensureMessengerTables(env) {
+
+    await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS conversations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
+
+
+    await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS conversation_members (
+            conversation_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            last_read_at TEXT,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+            PRIMARY KEY (
+                conversation_id,
+                user_id
+            ),
+
+            FOREIGN KEY (
+                conversation_id
+            )
+            REFERENCES conversations(id)
+            ON DELETE CASCADE,
+
+            FOREIGN KEY (
+                user_id
+            )
+            REFERENCES users(id)
+            ON DELETE CASCADE
+        )
+    `).run();
+
+
+    await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            conversation_id INTEGER NOT NULL,
+
+            sender_id INTEGER NOT NULL,
+
+            content TEXT NOT NULL,
+
+            created_at TEXT NOT NULL
+                DEFAULT CURRENT_TIMESTAMP,
+
+            deleted_at TEXT,
+
+            FOREIGN KEY (
+                conversation_id
+            )
+            REFERENCES conversations(id)
+            ON DELETE CASCADE,
+
+            FOREIGN KEY (
+                sender_id
+            )
+            REFERENCES users(id)
+            ON DELETE CASCADE
+        )
+    `).run();
+
+
+    await env.DB.prepare(
+        `
+        CREATE INDEX IF NOT EXISTS
+        idx_conversation_members_user
+
+        ON conversation_members(user_id)
+        `
+    ).run();
+
+
+    await env.DB.prepare(
+        `
+        CREATE INDEX IF NOT EXISTS
+        idx_messages_conversation
+
+        ON messages(
+            conversation_id,
+            id
+        )
+        `
+    ).run();
+
+}
+
+
+async function messengerAccess(
+    request,
+    env
+) {
+
+    const user =
+        await getCurrentUser(
+            request,
+            env
+        );
+
+
+    if (!user) {
+
+        return {
+            ok: false,
+            status: 401,
+            user: null,
+            ban: null
+        };
+
+    }
+
+
+    const ban =
+        await getActiveBan(
+            user.id,
+            env
+        );
+
+
+    if (
+        ban &&
+        ban.ban_type ===
+            "full"
+    ) {
+
+        return {
+            ok: false,
+            status: 403,
+            user,
+            ban
+        };
+
+    }
+
+
+    return {
+        ok: true,
+        status: 200,
+        user,
+        ban
+    };
+
+}
+
+
+async function messengerConversationMember(
+    env,
+    conversationId,
+    userId
+) {
+
+    return await env.DB
+        .prepare(
+            `
+            SELECT
+                conversation_id,
+                user_id,
+                last_read_at
+
+            FROM conversation_members
+
+            WHERE
+                conversation_id = ?1
+                AND user_id = ?2
+
+            LIMIT 1
+            `
+        )
+        .bind(
+            conversationId,
+            userId
+        )
+        .first();
+
+}
+
 
 /* =========================================================
    MAIN WORKER
@@ -4515,6 +4700,1208 @@ export default {
                     "VEXON API is online!"
             });
         }
+
+
+        /* =====================================================
+   VEXON MESSENGER
+===================================================== */
+
+
+/* =====================================================
+   GET CONVERSATIONS
+===================================================== */
+
+if (
+    url.pathname ===
+        "/api/messenger/conversations" &&
+    request.method ===
+        "GET"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    access.ban?.ban_type ===
+                    "full"
+
+                        ? "دسترسی این حساب به VEXON محدود شده است."
+
+                        : "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    try {
+
+        await ensureMessengerTables(
+            env
+        );
+
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+
+                        c.id,
+
+                        c.updated_at,
+
+                        other.id
+                            AS other_user_id,
+
+                        other.username
+                            AS other_username,
+
+                        lm.content
+                            AS last_message,
+
+                        lm.created_at
+                            AS last_message_at,
+
+                        (
+                            SELECT
+                                COUNT(*)
+
+                            FROM messages um
+
+                            WHERE
+                                um.conversation_id =
+                                    c.id
+
+                                AND um.sender_id !=
+                                    ?1
+
+                                AND um.deleted_at
+                                    IS NULL
+
+                                AND (
+                                    cm.last_read_at
+                                        IS NULL
+
+                                    OR
+
+                                    um.created_at >
+                                        cm.last_read_at
+                                )
+
+                        ) AS unread_count
+
+                    FROM conversations c
+
+                    INNER JOIN
+                        conversation_members cm
+
+                        ON
+                            cm.conversation_id =
+                                c.id
+
+                        AND
+                            cm.user_id =
+                                ?1
+
+                    INNER JOIN
+                        conversation_members ocm
+
+                        ON
+                            ocm.conversation_id =
+                                c.id
+
+                        AND
+                            ocm.user_id !=
+                                ?1
+
+                    INNER JOIN users other
+
+                        ON
+                            other.id =
+                                ocm.user_id
+
+                    LEFT JOIN messages lm
+
+                        ON
+                            lm.id = (
+
+                                SELECT
+                                    MAX(id)
+
+                                FROM messages m2
+
+                                WHERE
+                                    m2.conversation_id =
+                                        c.id
+
+                                AND
+                                    m2.deleted_at
+                                        IS NULL
+                            )
+
+                    ORDER BY
+
+                        COALESCE(
+                            lm.created_at,
+                            c.created_at
+                        ) DESC,
+
+                        c.id DESC
+                    `
+                )
+                .bind(
+                    access.user.id
+                )
+                .all();
+
+
+        return json(
+            {
+                success: true,
+
+                conversations:
+                    result.results ??
+                    []
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_CONVERSATIONS_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                conversations: [],
+
+                message:
+                    "دریافت گفتگوها انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SEARCH USERS
+===================================================== */
+
+if (
+    url.pathname ===
+        "/api/messenger/users/search" &&
+    request.method ===
+        "GET"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    const q =
+        (
+            url.searchParams.get(
+                "q"
+            ) ||
+            ""
+        ).trim();
+
+
+    if (
+        q.length < 2
+    ) {
+
+        return json({
+            success: true,
+
+            users: []
+        });
+
+    }
+
+
+    try {
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+                        id,
+                        username
+
+                    FROM users
+
+                    WHERE
+                        id != ?1
+
+                        AND username LIKE ?2
+
+                    ORDER BY
+                        username ASC
+
+                    LIMIT 30
+                    `
+                )
+                .bind(
+                    access.user.id,
+
+                    `%${q}%`
+                )
+                .all();
+
+
+        return json({
+            success: true,
+
+            users:
+                result.results ??
+                []
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_USER_SEARCH_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                users: [],
+
+                message:
+                    "جستجوی کاربر انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE / GET CONVERSATION
+===================================================== */
+
+if (
+    url.pathname ===
+        "/api/messenger/conversations" &&
+    request.method ===
+        "POST"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    access.ban?.ban_type ===
+                    "full"
+
+                        ? "دسترسی این حساب به VEXON محدود شده است."
+
+                        : "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    if (
+        access.ban?.ban_type ===
+            "messages"
+    ) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "💬 این حساب از ارسال پیام محروم شده است."
+            },
+            403
+        );
+
+    }
+
+
+    try {
+
+        await ensureMessengerTables(
+            env
+        );
+
+
+        const body =
+            await request.json();
+
+
+        const targetUserId =
+            Number(
+                body.user_id
+            );
+
+
+        if (
+            !Number.isInteger(
+                targetUserId
+            ) ||
+            targetUserId <= 0 ||
+            targetUserId ===
+                access.user.id
+        ) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "کاربر مقصد نامعتبر است."
+                },
+                400
+            );
+
+        }
+
+
+        const target =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+                        id,
+                        username
+
+                    FROM users
+
+                    WHERE id = ?1
+
+                    LIMIT 1
+                    `
+                )
+                .bind(
+                    targetUserId
+                )
+                .first();
+
+
+        if (!target) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "کاربر پیدا نشد."
+                },
+                404
+            );
+
+        }
+
+
+        const existing =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+                        c.id
+
+                    FROM conversations c
+
+                    INNER JOIN
+                        conversation_members a
+
+                        ON
+                            a.conversation_id =
+                                c.id
+
+                        AND
+                            a.user_id =
+                                ?1
+
+                    INNER JOIN
+                        conversation_members b
+
+                        ON
+                            b.conversation_id =
+                                c.id
+
+                        AND
+                            b.user_id =
+                                ?2
+
+                    WHERE NOT EXISTS (
+
+                        SELECT
+                            1
+
+                        FROM conversation_members x
+
+                        WHERE
+                            x.conversation_id =
+                                c.id
+
+                            AND x.user_id NOT IN (
+                                ?1,
+                                ?2
+                            )
+                    )
+
+                    LIMIT 1
+                    `
+                )
+                .bind(
+                    access.user.id,
+                    targetUserId
+                )
+                .first();
+
+
+        let conversationId =
+            existing?.id;
+
+
+        if (!conversationId) {
+
+            const created =
+                await env.DB
+                    .prepare(
+                        `
+                        INSERT INTO
+                            conversations
+                        DEFAULT VALUES
+                        `
+                    )
+                    .run();
+
+
+            conversationId =
+                created.meta?.last_row_id;
+
+
+            if (!conversationId) {
+
+                throw new Error(
+                    "Conversation was not created."
+                );
+
+            }
+
+
+            await env.DB
+                .prepare(
+                    `
+                    INSERT INTO
+                        conversation_members
+                        (
+                            conversation_id,
+                            user_id
+                        )
+
+                    VALUES
+                        (?1, ?2),
+                        (?1, ?3)
+                    `
+                )
+                .bind(
+                    conversationId,
+                    access.user.id,
+                    targetUserId
+                )
+                .run();
+
+        }
+
+
+        return json(
+            {
+                success: true,
+
+                conversation: {
+
+                    id:
+                        conversationId,
+
+                    other_user_id:
+                        target.id,
+
+                    other_username:
+                        target.username
+
+                }
+            },
+            201
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_CREATE_CONVERSATION_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "ساخت گفتگو انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GET MESSAGES
+===================================================== */
+
+const messengerMessagesMatch =
+    url.pathname.match(
+        /^\/api\/messenger\/conversations\/(\d+)\/messages$/
+    );
+
+
+if (
+    messengerMessagesMatch &&
+    request.method ===
+        "GET"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    access.ban?.ban_type ===
+                    "full"
+
+                        ? "دسترسی این حساب به VEXON محدود شده است."
+
+                        : "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    try {
+
+        await ensureMessengerTables(
+            env
+        );
+
+
+        const conversationId =
+            Number(
+                messengerMessagesMatch[1]
+            );
+
+
+        const member =
+            await messengerConversationMember(
+                env,
+                conversationId,
+                access.user.id
+            );
+
+
+        if (!member) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "دسترسی به این گفتگو ندارید."
+                },
+                403
+            );
+
+        }
+
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+
+                        m.id,
+
+                        m.sender_id,
+
+                        u.username
+                            AS sender_username,
+
+                        m.content,
+
+                        m.created_at
+
+                    FROM messages m
+
+                    INNER JOIN users u
+                        ON
+                            u.id =
+                                m.sender_id
+
+                    WHERE
+                        m.conversation_id =
+                            ?1
+
+                        AND
+                            m.deleted_at
+                                IS NULL
+
+                    ORDER BY
+                        m.id ASC
+
+                    LIMIT 500
+                    `
+                )
+                .bind(
+                    conversationId
+                )
+                .all();
+
+
+        return json({
+            success: true,
+
+            messages:
+                result.results ??
+                []
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_MESSAGES_GET_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                messages: [],
+
+                message:
+                    "دریافت پیام‌ها انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
+
+if (
+    messengerMessagesMatch &&
+    request.method ===
+        "POST"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    access.ban?.ban_type ===
+                    "full"
+
+                        ? "دسترسی این حساب به VEXON محدود شده است."
+
+                        : "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    if (
+        access.ban?.ban_type ===
+            "messages"
+    ) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "💬 این حساب از ارسال پیام محروم شده است."
+            },
+            403
+        );
+
+    }
+
+
+    try {
+
+        await ensureMessengerTables(
+            env
+        );
+
+
+        const conversationId =
+            Number(
+                messengerMessagesMatch[1]
+            );
+
+
+        const member =
+            await messengerConversationMember(
+                env,
+                conversationId,
+                access.user.id
+            );
+
+
+        if (!member) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "دسترسی به این گفتگو ندارید."
+                },
+                403
+            );
+
+        }
+
+
+        const body =
+            await request.json();
+
+
+        const content =
+            typeof body.content ===
+            "string"
+
+                ? body.content
+                    .trim()
+                    .slice(
+                        0,
+                        4000
+                    )
+
+                : "";
+
+
+        if (!content) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "پیام خالی است."
+                },
+                400
+            );
+
+        }
+
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    INSERT INTO messages
+                        (
+                            conversation_id,
+                            sender_id,
+                            content
+                        )
+
+                    VALUES
+                        (
+                            ?1,
+                            ?2,
+                            ?3
+                        )
+                    `
+                )
+                .bind(
+                    conversationId,
+                    access.user.id,
+                    content
+                )
+                .run();
+
+
+        await env.DB
+            .prepare(
+                `
+                UPDATE conversations
+
+                SET
+                    updated_at =
+                        CURRENT_TIMESTAMP
+
+                WHERE
+                    id = ?1
+                `
+            )
+            .bind(
+                conversationId
+            )
+            .run();
+
+
+        return json(
+            {
+                success: true,
+
+                id:
+                    result.meta
+                        ?.last_row_id
+            },
+            201
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_SEND_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "ارسال پیام انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MARK READ
+===================================================== */
+
+const messengerReadMatch =
+    url.pathname.match(
+        /^\/api\/messenger\/conversations\/(\d+)\/read$/
+    );
+
+
+if (
+    messengerReadMatch &&
+    request.method ===
+        "POST"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    try {
+
+        await ensureMessengerTables(
+            env
+        );
+
+
+        const conversationId =
+            Number(
+                messengerReadMatch[1]
+            );
+
+
+        const member =
+            await messengerConversationMember(
+                env,
+                conversationId,
+                access.user.id
+            );
+
+
+        if (!member) {
+
+            return json(
+                {
+                    success: false,
+
+                    message:
+                        "دسترسی به این گفتگو ندارید."
+                },
+                403
+            );
+
+        }
+
+
+        await env.DB
+            .prepare(
+                `
+                UPDATE
+                    conversation_members
+
+                SET
+                    last_read_at =
+                        CURRENT_TIMESTAMP
+
+                WHERE
+                    conversation_id =
+                        ?1
+
+                    AND user_id =
+                        ?2
+                `
+            )
+            .bind(
+                conversationId,
+                access.user.id
+            )
+            .run();
+
+
+        return json({
+            success: true
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_READ_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE OWN MESSAGE
+===================================================== */
+
+const messengerDeleteMessageMatch =
+    url.pathname.match(
+        /^\/api\/messenger\/messages\/(\d+)$/
+    );
+
+
+if (
+    messengerDeleteMessageMatch &&
+    request.method ===
+        "DELETE"
+) {
+
+    const access =
+        await messengerAccess(
+            request,
+            env
+        );
+
+
+    if (!access.ok) {
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "ابتدا وارد حساب شو."
+            },
+            access.status
+        );
+
+    }
+
+
+    try {
+
+        const messageId =
+            Number(
+                messengerDeleteMessageMatch[1]
+            );
+
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    UPDATE messages
+
+                    SET
+                        deleted_at =
+                            CURRENT_TIMESTAMP
+
+                    WHERE
+                        id = ?1
+
+                        AND sender_id = ?2
+
+                        AND deleted_at
+                            IS NULL
+                    `
+                )
+                .bind(
+                    messageId,
+                    access.user.id
+                )
+                .run();
+
+
+        return json({
+            success: true,
+
+            changed:
+                Number(
+                    result.meta?.changes ??
+                    0
+                )
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "MESSENGER_DELETE_MESSAGE_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+
+                message:
+                    "حذف پیام انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
 
 
         /* =====================================================
