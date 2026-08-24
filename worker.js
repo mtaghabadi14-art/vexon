@@ -2,6 +2,7 @@ const PASSWORD_ITERATIONS = 100000;
 const SESSION_DAYS = 7;
 const RUBIKA_CODE_MINUTES = 10;
 
+
 /* =========================================================
    JSON RESPONSE
 ========================================================= */
@@ -19,6 +20,7 @@ function json(data, status = 200) {
   );
 }
 
+
 /* =========================================================
    BASE64
 ========================================================= */
@@ -33,6 +35,7 @@ function toBase64(bytes) {
   return btoa(binary);
 }
 
+
 function fromBase64(value) {
   const binary = atob(value);
 
@@ -41,6 +44,7 @@ function fromBase64(value) {
     char => char.charCodeAt(0)
   );
 }
+
 
 /* =========================================================
    PASSWORD HASH
@@ -82,7 +86,11 @@ async function hashPassword(password) {
   ].join("$");
 }
 
-async function verifyPassword(password, storedHash) {
+
+async function verifyPassword(
+  password,
+  storedHash
+) {
   try {
     const parts = storedHash.split("$");
 
@@ -136,6 +144,7 @@ async function verifyPassword(password, storedHash) {
   }
 }
 
+
 /* =========================================================
    SESSION
 ========================================================= */
@@ -152,6 +161,7 @@ function createSessionToken() {
     .join("");
 }
 
+
 async function hashSessionToken(token) {
   const digest =
     await crypto.subtle.digest(
@@ -165,6 +175,7 @@ async function hashSessionToken(token) {
     )
     .join("");
 }
+
 
 function getCookie(request, name) {
   const cookieHeader =
@@ -190,6 +201,7 @@ function getCookie(request, name) {
   return null;
 }
 
+
 /* =========================================================
    XP TABLE
 ========================================================= */
@@ -210,11 +222,15 @@ function getNextLevelXp(level) {
   return levels[level] ?? (level * 700);
 }
 
+
 /* =========================================================
    GET PLAYER FROM RENDER / SUPABASE
 ========================================================= */
 
-async function getPlayerFromRender(env, rubikaUserId) {
+async function getPlayerFromRender(
+  env,
+  rubikaUserId
+) {
   if (!env.VEXON_RUBIKA_API_KEY) {
     console.error(
       "VEXON_RUBIKA_API_KEY is not configured."
@@ -250,7 +266,8 @@ async function getPlayerFromRender(env, rubikaUserId) {
       return null;
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     if (
       !data ||
@@ -276,11 +293,15 @@ async function getPlayerFromRender(env, rubikaUserId) {
   }
 }
 
+
 /* =========================================================
    CURRENT USER
 ========================================================= */
 
-async function getCurrentUser(request, env) {
+async function getCurrentUser(
+  request,
+  env
+) {
   const sessionToken =
     getCookie(
       request,
@@ -292,7 +313,9 @@ async function getCurrentUser(request, env) {
   }
 
   const tokenHash =
-    await hashSessionToken(sessionToken);
+    await hashSessionToken(
+      sessionToken
+    );
 
   const session =
     await env.DB
@@ -332,10 +355,10 @@ async function getCurrentUser(request, env) {
       .bind(session.user_id)
       .first();
 
-  /*
-   * روبیکا متصل است:
-   * Render → Supabase
-   */
+
+  /* =======================================================
+     RUBIKA → RENDER → SUPABASE
+  ======================================================= */
 
   if (
     rubikaLink &&
@@ -376,9 +399,7 @@ async function getCurrentUser(request, env) {
 
       return {
         id: session.user_id,
-
-        username:
-          session.username,
+        username: session.username,
 
         rubika_user_id:
           String(
@@ -395,13 +416,8 @@ async function getCurrentUser(request, env) {
 
         xp,
         level,
-
-        next_xp:
-          nextXp,
-
-        xp_progress:
-          progress,
-
+        next_xp: nextXp,
+        xp_progress: progress,
         coins,
 
         typing_games:
@@ -422,9 +438,10 @@ async function getCurrentUser(request, env) {
     }
   }
 
-  /*
-   * Fallback → D1
-   */
+
+  /* =======================================================
+     FALLBACK → D1
+  ======================================================= */
 
   const localStats =
     await env.DB
@@ -467,25 +484,17 @@ async function getCurrentUser(request, env) {
 
   return {
     id: session.user_id,
-
-    username:
-      session.username,
+    username: session.username,
 
     rubika_user_id: null,
     nickname: null,
 
-    title:
-      "🥉 تازه‌کار",
+    title: "🥉 تازه‌کار",
 
     xp,
     level,
-
-    next_xp:
-      nextXp,
-
-    xp_progress:
-      progress,
-
+    next_xp: nextXp,
+    xp_progress: progress,
     coins,
 
     typing_games: 0,
@@ -493,6 +502,7 @@ async function getCurrentUser(request, env) {
     typing_best_wpm: 0
   };
 }
+
 
 /* =========================================================
    ADMIN CHECK
@@ -515,7 +525,11 @@ function isAdminUser(user, env) {
   return user.username === adminUsername;
 }
 
-async function requireAdmin(request, env) {
+
+async function requireAdmin(
+  request,
+  env
+) {
   const user =
     await getCurrentUser(
       request,
@@ -530,7 +544,12 @@ async function requireAdmin(request, env) {
     };
   }
 
-  if (!isAdminUser(user, env)) {
+  if (
+    !isAdminUser(
+      user,
+      env
+    )
+  ) {
     return {
       ok: false,
       status: 403,
@@ -544,6 +563,105 @@ async function requireAdmin(request, env) {
     user
   };
 }
+
+
+/* =========================================================
+   BAN CHECK
+========================================================= */
+
+async function getActiveBan(
+  userId,
+  env
+) {
+  const ban =
+    await env.DB
+      .prepare(
+        `
+        SELECT
+          id,
+          reason,
+          banned_until,
+          created_at
+        FROM user_bans
+        WHERE
+          user_id = ?1
+          AND active = 1
+          AND (
+            banned_until IS NULL
+            OR banned_until = ''
+            OR banned_until > CURRENT_TIMESTAMP
+          )
+        ORDER BY id DESC
+        LIMIT 1
+        `
+      )
+      .bind(userId)
+      .first();
+
+  return ban || null;
+}
+
+
+async function requireActiveUser(
+  request,
+  env
+) {
+  const user =
+    await getCurrentUser(
+      request,
+      env
+    );
+
+  if (!user) {
+    return {
+      ok: false,
+      status: 401,
+      user: null,
+      ban: null
+    };
+  }
+
+  /*
+   * Admin همیشه دسترسی دارد.
+   */
+
+  if (
+    isAdminUser(
+      user,
+      env
+    )
+  ) {
+    return {
+      ok: true,
+      status: 200,
+      user,
+      ban: null
+    };
+  }
+
+  const ban =
+    await getActiveBan(
+      user.id,
+      env
+    );
+
+  if (ban) {
+    return {
+      ok: false,
+      status: 403,
+      user,
+      ban
+    };
+  }
+
+  return {
+    ok: true,
+    status: 200,
+    user,
+    ban: null
+  };
+}
+
 
 /* =========================================================
    NEWS TABLE
@@ -570,25 +688,58 @@ async function ensureNewsTable(env) {
     .run();
 }
 
+
 /* =========================================================
    NEWS HELPERS
 ========================================================= */
 
-function cleanNewsText(value, maxLength) {
+function cleanNewsText(
+  value,
+  maxLength
+) {
   if (typeof value !== "string") {
     return "";
   }
 
   return value
     .trim()
-    .slice(0, maxLength);
+    .slice(
+      0,
+      maxLength
+    );
 }
+
 
 function normalizeNewsStatus(value) {
   return value === "published"
     ? "published"
     : "draft";
 }
+
+
+/* =========================================================
+   REACTIONS
+========================================================= */
+
+const ALLOWED_REACTIONS = new Set([
+  "like",
+  "love",
+  "laugh",
+  "wow",
+  "angry",
+  "dislike"
+]);
+
+
+function isValidReaction(value) {
+  return (
+    typeof value === "string" &&
+    ALLOWED_REACTIONS.has(
+      value
+    )
+  );
+}
+
 
 /* =========================================================
    RANDOM RUBIKA LINK CODE
@@ -605,6 +756,7 @@ function generateLinkCode() {
     (bytes[0] % 900000)
   );
 }
+
 
 /* =========================================================
    RUBIKA SEND MESSAGE
@@ -633,8 +785,11 @@ async function sendRubikaMessage(
         },
 
         body: JSON.stringify({
-          chat_id: String(chatId),
-          text: String(text)
+          chat_id:
+            String(chatId),
+
+          text:
+            String(text)
         })
       }
     );
@@ -648,34 +803,47 @@ async function sendRubikaMessage(
   return response.json();
 }
 
+
 /* =========================================================
    MAIN WORKER
 ========================================================= */
 
 export default {
-  async fetch(request, env) {
+  async fetch(
+    request,
+    env
+  ) {
+
     const url =
-      new URL(request.url);
+      new URL(
+        request.url
+      );
+
 
     /* =====================================================
        REGISTER
     ===================================================== */
 
     if (
-      url.pathname === "/api/register" &&
-      request.method === "POST"
+      url.pathname ===
+        "/api/register" &&
+      request.method ===
+        "POST"
     ) {
       try {
+
         const body =
           await request.json();
 
         const username =
-          typeof body.username === "string"
+          typeof body.username ===
+          "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password === "string"
+          typeof body.password ===
+          "string"
             ? body.password
             : "";
 
@@ -694,7 +862,9 @@ export default {
           );
         }
 
-        if (password.length < 8) {
+        if (
+          password.length < 8
+        ) {
           return json(
             {
               success: false,
@@ -715,10 +885,14 @@ export default {
               LIMIT 1
               `
             )
-            .bind(username)
+            .bind(
+              username
+            )
             .first();
 
-        if (existingUser) {
+        if (
+          existingUser
+        ) {
           return json(
             {
               success: false,
@@ -730,7 +904,9 @@ export default {
         }
 
         const passwordHash =
-          await hashPassword(password);
+          await hashPassword(
+            password
+          );
 
         const insertResult =
           await env.DB
@@ -752,7 +928,9 @@ export default {
             .run();
 
         const userId =
-          insertResult.meta?.last_row_id;
+          insertResult
+            .meta
+            ?.last_row_id;
 
         if (!userId) {
           return json(
@@ -779,7 +957,9 @@ export default {
               (?1, 0, 1, 0)
             `
           )
-          .bind(userId)
+          .bind(
+            userId
+          )
           .run();
 
         return json(
@@ -790,7 +970,9 @@ export default {
           },
           201
         );
+
       } catch (error) {
+
         console.error(
           "REGISTER_ERROR",
           error
@@ -807,29 +989,38 @@ export default {
       }
     }
 
+
     /* =====================================================
        LOGIN
     ===================================================== */
 
     if (
-      url.pathname === "/api/login" &&
-      request.method === "POST"
+      url.pathname ===
+        "/api/login" &&
+      request.method ===
+        "POST"
     ) {
       try {
+
         const body =
           await request.json();
 
         const username =
-          typeof body.username === "string"
+          typeof body.username ===
+          "string"
             ? body.username.trim()
             : "";
 
         const password =
-          typeof body.password === "string"
+          typeof body.password ===
+          "string"
             ? body.password
             : "";
 
-        if (!username || !password) {
+        if (
+          !username ||
+          !password
+        ) {
           return json(
             {
               success: false,
@@ -853,7 +1044,9 @@ export default {
               LIMIT 1
               `
             )
-            .bind(username)
+            .bind(
+              username
+            )
             .first();
 
         if (!user) {
@@ -873,7 +1066,9 @@ export default {
             user.password_hash
           );
 
-        if (!passwordCorrect) {
+        if (
+          !passwordCorrect
+        ) {
           return json(
             {
               success: false,
@@ -898,7 +1093,9 @@ export default {
               (?1, 0, 1, 0)
             `
           )
-          .bind(user.id)
+          .bind(
+            user.id
+          )
           .run();
 
         const sessionToken =
@@ -958,10 +1155,15 @@ export default {
                 [
                   "vexon_session=" +
                     sessionToken,
+
                   "HttpOnly",
+
                   "Secure",
+
                   "SameSite=Lax",
+
                   "Path=/",
+
                   `Max-Age=${
                     SESSION_DAYS *
                     24 *
@@ -972,7 +1174,9 @@ export default {
             }
           }
         );
+
       } catch (error) {
+
         console.error(
           "LOGIN_ERROR",
           error
@@ -989,15 +1193,19 @@ export default {
       }
     }
 
+
     /* =====================================================
        CURRENT USER
     ===================================================== */
 
     if (
-      url.pathname === "/api/me" &&
-      request.method === "GET"
+      url.pathname ===
+        "/api/me" &&
+      request.method ===
+        "GET"
     ) {
       try {
+
         const user =
           await getCurrentUser(
             request,
@@ -1013,11 +1221,35 @@ export default {
           );
         }
 
+        const ban =
+          await getActiveBan(
+            user.id,
+            env
+          );
+
         return json({
           loggedIn: true,
-          user
+
+          user: {
+            ...user,
+
+            banned:
+              Boolean(
+                ban
+              ),
+
+            ban_reason:
+              ban?.reason ??
+              null,
+
+            banned_until:
+              ban?.banned_until ??
+              null
+          }
         });
+
       } catch (error) {
+
         console.error(
           "ME_ERROR",
           error
@@ -1032,14 +1264,18 @@ export default {
       }
     }
 
+
     /* =====================================================
        ADMIN STATUS
     ===================================================== */
 
     if (
-      url.pathname === "/api/admin/me" &&
-      request.method === "GET"
+      url.pathname ===
+        "/api/admin/me" &&
+      request.method ===
+        "GET"
     ) {
+
       const result =
         await requireAdmin(
           request,
@@ -1064,135 +1300,180 @@ export default {
       });
     }
 
-/* =====================================================
-   PUBLIC SINGLE NEWS
-===================================================== */
-
-const publicNewsMatch =
-  url.pathname.match(
-    /^\/api\/news\/(\d+)$/
-  );
-
-if (
-  publicNewsMatch &&
-  request.method === "GET"
-) {
-
-  try {
-
-    await ensureNewsTable(
-      env
-    );
-
-
-    const newsId =
-      Number(
-        publicNewsMatch[1]
-      );
-
-
-    if (
-      !Number.isInteger(newsId) ||
-      newsId <= 0
-    ) {
-
-      return json(
-        {
-          success: false,
-          message:
-            "شناسه خبر نامعتبر است."
-        },
-        400
-      );
-
-    }
-
-
-    const news =
-      await env.DB
-        .prepare(
-          `
-          SELECT
-            id,
-            title,
-            content,
-            image_url,
-            category,
-            author_username,
-            created_at,
-            updated_at,
-            published_at
-          FROM news
-          WHERE
-            id = ?1
-            AND status = 'published'
-          LIMIT 1
-          `
-        )
-        .bind(
-          newsId
-        )
-        .first();
-
-
-    if (!news) {
-
-      return json(
-        {
-          success: false,
-          message:
-            "این خبر پیدا نشد."
-        },
-        404
-      );
-
-    }
-
-
-    return json({
-
-      success: true,
-
-      news
-
-    });
-
-
-  } catch (error) {
-
-    console.error(
-      "PUBLIC_SINGLE_NEWS_ERROR",
-      error
-    );
-
-
-    return json(
-      {
-        success: false,
-        message:
-          "دریافت خبر انجام نشد."
-      },
-      500
-    );
-
-  }
-
-}
 
     /* =====================================================
-       PUBLIC NEWS
+       COMMUNITY STATS
     ===================================================== */
 
     if (
-      url.pathname === "/api/news" &&
-      request.method === "GET"
+      url.pathname ===
+        "/api/community/stats" &&
+      request.method ===
+        "GET"
     ) {
       try {
-        await ensureNewsTable(env);
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT COUNT(*) AS total_users
+              FROM users
+              `
+            )
+            .first();
+
+        return json({
+          success: true,
+
+          total_users:
+            Number(
+              result?.total_users ??
+              0
+            )
+        });
+
+      } catch (error) {
+
+        console.error(
+          "COMMUNITY_STATS_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            total_users: 0
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       PUBLIC SINGLE NEWS
+    ===================================================== */
+
+    const publicNewsMatch =
+      url.pathname.match(
+        /^\/api\/news\/(\d+)$/
+      );
+
+    if (
+      publicNewsMatch &&
+      request.method ===
+        "GET"
+    ) {
+      try {
+
+        await ensureNewsTable(
+          env
+        );
+
+        const newsId =
+          Number(
+            publicNewsMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            newsId
+          ) ||
+          newsId <= 0
+        ) {
+          return json(
+            {
+              success: false,
+              message:
+                "شناسه خبر نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const news =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                title,
+                content,
+                image_url,
+                category,
+                author_username,
+                created_at,
+                updated_at,
+                published_at
+              FROM news
+              WHERE
+                id = ?1
+                AND status = 'published'
+              LIMIT 1
+              `
+            )
+            .bind(
+              newsId
+            )
+            .first();
+
+        if (!news) {
+          return json(
+            {
+              success: false,
+              message:
+                "این خبر پیدا نشد."
+            },
+            404
+          );
+        }
+
+        return json({
+          success: true,
+          news
+        });
+
+      } catch (error) {
+
+        console.error(
+          "PUBLIC_SINGLE_NEWS_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            message:
+              "دریافت خبر انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       PUBLIC NEWS + REACTION COUNTS
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/news" &&
+      request.method ===
+        "GET"
+    ) {
+      try {
+
+        await ensureNewsTable(
+          env
+        );
 
         const limitValue =
           Number(
-            url.searchParams.get("limit") ?? 20
+            url.searchParams.get(
+              "limit"
+            ) ?? 20
           );
 
         const limit =
@@ -1200,8 +1481,12 @@ if (
             50,
             Math.max(
               1,
-              Number.isFinite(limitValue)
-                ? Math.floor(limitValue)
+              Number.isFinite(
+                limitValue
+              )
+                ? Math.floor(
+                    limitValue
+                  )
                 : 20
             )
           );
@@ -1228,15 +1513,94 @@ if (
               LIMIT ?1
               `
             )
-            .bind(limit)
+            .bind(
+              limit
+            )
             .all();
+
+        const news =
+          result.results ?? [];
+
+        if (!news.length) {
+          return json({
+            success: true,
+            news: []
+          });
+        }
+
+        const ids =
+          news.map(
+            item =>
+              Number(item.id)
+          );
+
+        const placeholders =
+          ids
+            .map(
+              (_, index) =>
+                `?${index + 1}`
+            )
+            .join(",");
+
+        const reactionResult =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                news_id,
+                reaction,
+                COUNT(*) AS count
+              FROM news_reactions
+              WHERE news_id IN (${placeholders})
+              GROUP BY
+                news_id,
+                reaction
+              `
+            )
+            .bind(
+              ...ids
+            )
+            .all();
+
+        const reactionMap =
+          {};
+
+        for (
+          const row of
+          reactionResult.results ?? []
+        ) {
+
+          if (
+            !reactionMap[row.news_id]
+          ) {
+            reactionMap[row.news_id] = {};
+          }
+
+          reactionMap[row.news_id][
+            row.reaction
+          ] =
+            Number(
+              row.count ?? 0
+            );
+        }
 
         return json({
           success: true,
+
           news:
-            result.results ?? []
+            news.map(
+              item => ({
+                ...item,
+
+                reactions:
+                  reactionMap[item.id] ??
+                  {}
+              })
+            )
         });
+
       } catch (error) {
+
         console.error(
           "PUBLIC_NEWS_ERROR",
           error
@@ -1252,14 +1616,405 @@ if (
       }
     }
 
+
+    /* =====================================================
+       NEWS REACTION
+    ===================================================== */
+
+    const reactionMatch =
+      url.pathname.match(
+        /^\/api\/news\/(\d+)\/reaction$/
+      );
+
+    if (
+      reactionMatch &&
+      request.method ===
+        "POST"
+    ) {
+
+      const access =
+        await requireActiveUser(
+          request,
+          env
+        );
+
+      if (!access.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              access.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "این حساب به دلیل محدودیت نمی‌تواند واکنش ثبت کند.",
+
+            banned:
+              Boolean(
+                access.ban
+              ),
+
+            banned_until:
+              access.ban?.banned_until ??
+              null
+          },
+          access.status
+        );
+      }
+
+      try {
+
+        const newsId =
+          Number(
+            reactionMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            newsId
+          ) ||
+          newsId <= 0
+        ) {
+          return json(
+            {
+              success: false,
+              message:
+                "شناسه خبر نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const body =
+          await request.json();
+
+        const reaction =
+          typeof body.reaction ===
+          "string"
+            ? body.reaction.trim()
+            : "";
+
+        if (
+          !isValidReaction(
+            reaction
+          )
+        ) {
+          return json(
+            {
+              success: false,
+              message:
+                "نوع واکنش نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const news =
+          await env.DB
+            .prepare(
+              `
+              SELECT id
+              FROM news
+              WHERE
+                id = ?1
+                AND status = 'published'
+              LIMIT 1
+              `
+            )
+            .bind(
+              newsId
+            )
+            .first();
+
+        if (!news) {
+          return json(
+            {
+              success: false,
+              message:
+                "خبر پیدا نشد."
+            },
+            404
+          );
+        }
+
+        const existing =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                reaction
+              FROM news_reactions
+              WHERE
+                news_id = ?1
+                AND user_id = ?2
+              LIMIT 1
+              `
+            )
+            .bind(
+              newsId,
+              access.user.id
+            )
+            .first();
+
+        /*
+         * اگر کاربر همان واکنش را دوباره بزند،
+         * واکنش حذف می‌شود.
+         */
+
+        if (
+          existing &&
+          existing.reaction ===
+            reaction
+        ) {
+
+          await env.DB
+            .prepare(
+              `
+              DELETE FROM news_reactions
+              WHERE id = ?1
+              `
+            )
+            .bind(
+              existing.id
+            )
+            .run();
+
+        } else if (
+          existing
+        ) {
+
+          await env.DB
+            .prepare(
+              `
+              UPDATE news_reactions
+              SET
+                reaction = ?1,
+                created_at =
+                  CURRENT_TIMESTAMP
+              WHERE id = ?2
+              `
+            )
+            .bind(
+              reaction,
+              existing.id
+            )
+            .run();
+
+        } else {
+
+          await env.DB
+            .prepare(
+              `
+              INSERT INTO news_reactions
+                (
+                  news_id,
+                  user_id,
+                  reaction,
+                  created_at
+                )
+              VALUES
+                (
+                  ?1,
+                  ?2,
+                  ?3,
+                  CURRENT_TIMESTAMP
+                )
+              `
+            )
+            .bind(
+              newsId,
+              access.user.id,
+              reaction
+            )
+            .run();
+
+        }
+
+        const counts =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                reaction,
+                COUNT(*) AS count
+              FROM news_reactions
+              WHERE news_id = ?1
+              GROUP BY reaction
+              `
+            )
+            .bind(
+              newsId
+            )
+            .all();
+
+        const reactions =
+          {};
+
+        for (
+          const row of
+          counts.results ?? []
+        ) {
+
+          reactions[row.reaction] =
+            Number(
+              row.count ?? 0
+            );
+        }
+
+        const current =
+          await env.DB
+            .prepare(
+              `
+              SELECT reaction
+              FROM news_reactions
+              WHERE
+                news_id = ?1
+                AND user_id = ?2
+              LIMIT 1
+              `
+            )
+            .bind(
+              newsId,
+              access.user.id
+            )
+            .first();
+
+        return json({
+
+          success: true,
+
+          reactions,
+
+          my_reaction:
+            current?.reaction ??
+            null
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "NEWS_REACTION_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            message:
+              "ثبت واکنش انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       PUBLIC SINGLE NEWS REACTIONS
+    ===================================================== */
+
+    const reactionReadMatch =
+      url.pathname.match(
+        /^\/api\/news\/(\d+)\/reactions$/
+      );
+
+    if (
+      reactionReadMatch &&
+      request.method ===
+        "GET"
+    ) {
+
+      try {
+
+        const newsId =
+          Number(
+            reactionReadMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            newsId
+          ) ||
+          newsId <= 0
+        ) {
+          return json(
+            {
+              success: false,
+              message:
+                "شناسه خبر نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                reaction,
+                COUNT(*) AS count
+              FROM news_reactions
+              WHERE news_id = ?1
+              GROUP BY reaction
+              `
+            )
+            .bind(
+              newsId
+            )
+            .all();
+
+        const reactions =
+          {};
+
+        for (
+          const row of
+          result.results ?? []
+        ) {
+
+          reactions[row.reaction] =
+            Number(
+              row.count ?? 0
+            );
+
+        }
+
+        return json({
+          success: true,
+          reactions
+        });
+
+      } catch (error) {
+
+        console.error(
+          "NEWS_REACTIONS_READ_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            reactions: {}
+          },
+          500
+        );
+      }
+    }
+
+
     /* =====================================================
        ADMIN NEWS LIST
     ===================================================== */
 
     if (
-      url.pathname === "/api/admin/news" &&
-      request.method === "GET"
+      url.pathname ===
+        "/api/admin/news" &&
+      request.method ===
+        "GET"
     ) {
+
       const admin =
         await requireAdmin(
           request,
@@ -1267,9 +2022,11 @@ if (
         );
 
       if (!admin.ok) {
+
         return json(
           {
             success: false,
+
             message:
               admin.status === 401
                 ? "ابتدا وارد حساب شو."
@@ -1280,7 +2037,10 @@ if (
       }
 
       try {
-        await ensureNewsTable(env);
+
+        await ensureNewsTable(
+          env
+        );
 
         const result =
           await env.DB
@@ -1310,7 +2070,9 @@ if (
           news:
             result.results ?? []
         });
+
       } catch (error) {
+
         console.error(
           "ADMIN_NEWS_LIST_ERROR",
           error
@@ -1319,6 +2081,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "دریافت اخبار انجام نشد."
           },
@@ -1327,14 +2090,18 @@ if (
       }
     }
 
+
     /* =====================================================
        ADMIN CREATE NEWS
     ===================================================== */
 
     if (
-      url.pathname === "/api/admin/news" &&
-      request.method === "POST"
+      url.pathname ===
+        "/api/admin/news" &&
+      request.method ===
+        "POST"
     ) {
+
       const admin =
         await requireAdmin(
           request,
@@ -1342,9 +2109,11 @@ if (
         );
 
       if (!admin.ok) {
+
         return json(
           {
             success: false,
+
             message:
               admin.status === 401
                 ? "ابتدا وارد حساب شو."
@@ -1355,7 +2124,10 @@ if (
       }
 
       try {
-        await ensureNewsTable(env);
+
+        await ensureNewsTable(
+          env
+        );
 
         const body =
           await request.json();
@@ -1380,7 +2152,8 @@ if (
 
         const category =
           cleanNewsText(
-            body.category || "general",
+            body.category ||
+              "general",
             50
           );
 
@@ -1389,10 +2162,14 @@ if (
             body.status
           );
 
-        if (title.length < 3) {
+        if (
+          title.length < 3
+        ) {
+
           return json(
             {
               success: false,
+
               message:
                 "عنوان خبر حداقل باید ۳ کاراکتر باشد."
             },
@@ -1400,10 +2177,14 @@ if (
           );
         }
 
-        if (content.length < 3) {
+        if (
+          content.length < 3
+        ) {
+
           return json(
             {
               success: false,
+
               message:
                 "متن خبر خالی است."
             },
@@ -1450,7 +2231,8 @@ if (
               title,
               content,
               imageUrl || null,
-              category || "general",
+              category ||
+                "general",
               status,
               admin.user.username,
               publishedAt
@@ -1460,16 +2242,21 @@ if (
         return json(
           {
             success: true,
+
             message:
-              status === "published"
+              status ===
+              "published"
                 ? "خبر منتشر شد."
                 : "خبر به‌عنوان پیش‌نویس ذخیره شد.",
+
             id:
               result.meta?.last_row_id
           },
           201
         );
+
       } catch (error) {
+
         console.error(
           "ADMIN_NEWS_CREATE_ERROR",
           error
@@ -1478,6 +2265,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "ساخت خبر انجام نشد."
           },
@@ -1485,6 +2273,7 @@ if (
         );
       }
     }
+
 
     /* =====================================================
        ADMIN UPDATE NEWS
@@ -1497,8 +2286,10 @@ if (
 
     if (
       newsIdMatch &&
-      request.method === "PUT"
+      request.method ===
+        "PUT"
     ) {
+
       const admin =
         await requireAdmin(
           request,
@@ -1506,9 +2297,11 @@ if (
         );
 
       if (!admin.ok) {
+
         return json(
           {
             success: false,
+
             message:
               admin.status === 401
                 ? "ابتدا وارد حساب شو."
@@ -1519,15 +2312,23 @@ if (
       }
 
       try {
-        await ensureNewsTable(env);
+
+        await ensureNewsTable(
+          env
+        );
 
         const newsId =
-          Number(newsIdMatch[1]);
+          Number(
+            newsIdMatch[1]
+          );
 
         if (
-          !Number.isInteger(newsId) ||
+          !Number.isInteger(
+            newsId
+          ) ||
           newsId <= 0
         ) {
+
           return json(
             {
               success: false,
@@ -1551,10 +2352,13 @@ if (
               LIMIT 1
               `
             )
-            .bind(newsId)
+            .bind(
+              newsId
+            )
             .first();
 
         if (!existing) {
+
           return json(
             {
               success: false,
@@ -1601,7 +2405,10 @@ if (
               existing.status
           );
 
-        if (title.length < 3) {
+        if (
+          title.length < 3
+        ) {
+
           return json(
             {
               success: false,
@@ -1612,7 +2419,10 @@ if (
           );
         }
 
-        if (content.length < 3) {
+        if (
+          content.length < 3
+        ) {
+
           return json(
             {
               success: false,
@@ -1630,12 +2440,18 @@ if (
           status === "published" &&
           !publishedAt
         ) {
+
           publishedAt =
             new Date().toISOString();
+
         }
 
-        if (status === "draft") {
+        if (
+          status === "draft"
+        ) {
+
           publishedAt = null;
+
         }
 
         await env.DB
@@ -1666,10 +2482,13 @@ if (
 
         return json({
           success: true,
+
           message:
             "خبر با موفقیت ویرایش شد."
         });
+
       } catch (error) {
+
         console.error(
           "ADMIN_NEWS_UPDATE_ERROR",
           error
@@ -1678,6 +2497,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "ویرایش خبر انجام نشد."
           },
@@ -1686,14 +2506,17 @@ if (
       }
     }
 
+
     /* =====================================================
        ADMIN DELETE NEWS
     ===================================================== */
 
     if (
       newsIdMatch &&
-      request.method === "DELETE"
+      request.method ===
+        "DELETE"
     ) {
+
       const admin =
         await requireAdmin(
           request,
@@ -1701,9 +2524,11 @@ if (
         );
 
       if (!admin.ok) {
+
         return json(
           {
             success: false,
+
             message:
               admin.status === 401
                 ? "ابتدا وارد حساب شو."
@@ -1714,15 +2539,23 @@ if (
       }
 
       try {
-        await ensureNewsTable(env);
+
+        await ensureNewsTable(
+          env
+        );
 
         const newsId =
-          Number(newsIdMatch[1]);
+          Number(
+            newsIdMatch[1]
+          );
 
         if (
-          !Number.isInteger(newsId) ||
+          !Number.isInteger(
+            newsId
+          ) ||
           newsId <= 0
         ) {
+
           return json(
             {
               success: false,
@@ -1743,10 +2576,13 @@ if (
               LIMIT 1
               `
             )
-            .bind(newsId)
+            .bind(
+              newsId
+            )
             .first();
 
         if (!existing) {
+
           return json(
             {
               success: false,
@@ -1764,15 +2600,20 @@ if (
             WHERE id = ?1
             `
           )
-          .bind(newsId)
+          .bind(
+            newsId
+          )
           .run();
 
         return json({
           success: true,
+
           message:
             "خبر حذف شد."
         });
+
       } catch (error) {
+
         console.error(
           "ADMIN_NEWS_DELETE_ERROR",
           error
@@ -1781,6 +2622,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "حذف خبر انجام نشد."
           },
@@ -1789,22 +2631,1066 @@ if (
       }
     }
 
+
+    /* =====================================================
+       SUPPORT — SEND MESSAGE
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/support/send" &&
+      request.method ===
+        "POST"
+    ) {
+
+      const access =
+        await requireActiveUser(
+          request,
+          env
+        );
+
+      if (!access.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              access.status === 401
+                ? "ابتدا وارد حساب VEXON شو."
+                : "این حساب به دلیل محدودیت نمی‌تواند پیام ارسال کند.",
+
+            banned:
+              Boolean(
+                access.ban
+              ),
+
+            banned_until:
+              access.ban?.banned_until ??
+              null
+          },
+          access.status
+        );
+      }
+
+      try {
+
+        const body =
+          await request.json();
+
+        const message =
+          typeof body.message ===
+          "string"
+            ? body.message
+                .trim()
+                .slice(
+                  0,
+                  5000
+                )
+            : "";
+
+        if (
+          message.length < 2
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "پیام خیلی کوتاه است."
+            },
+            400
+          );
+        }
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              INSERT INTO support_messages
+                (
+                  user_id,
+                  username,
+                  message,
+                  reply,
+                  status,
+                  created_at,
+                  replied_at
+                )
+              VALUES
+                (
+                  ?1,
+                  ?2,
+                  ?3,
+                  NULL,
+                  'new',
+                  CURRENT_TIMESTAMP,
+                  NULL
+                )
+              `
+            )
+            .bind(
+              access.user.id,
+              access.user.username,
+              message
+            )
+            .run();
+
+        return json(
+          {
+            success: true,
+
+            message:
+              "پیامت با موفقیت برای مدیریت ارسال شد. 💚",
+
+            id:
+              result.meta?.last_row_id
+          },
+          201
+        );
+
+      } catch (error) {
+
+        console.error(
+          "SUPPORT_SEND_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+
+            message:
+              "ارسال پیام انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       SUPPORT — MY MESSAGES
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/support/my" &&
+      request.method ===
+        "GET"
+    ) {
+
+      const access =
+        await requireActiveUser(
+          request,
+          env
+        );
+
+      if (!access.ok) {
+
+        return json(
+          {
+            success: false,
+
+            messages: [],
+
+            message:
+              access.status === 401
+                ? "ابتدا وارد حساب VEXON شو."
+                : "این حساب به دلیل محدودیت دسترسی ندارد."
+          },
+          access.status
+        );
+
+      }
+
+      try {
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                message,
+                reply,
+                status,
+                created_at,
+                replied_at
+              FROM support_messages
+              WHERE user_id = ?1
+              ORDER BY
+                created_at DESC,
+                id DESC
+              LIMIT 50
+              `
+            )
+            .bind(
+              access.user.id
+            )
+            .all();
+
+        return json({
+
+          success: true,
+
+          messages:
+            result.results ?? []
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "SUPPORT_MY_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            messages: []
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — SUPPORT MESSAGE LIST
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/admin/support" &&
+      request.method ===
+        "GET"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                user_id,
+                username,
+                message,
+                reply,
+                status,
+                created_at,
+                replied_at
+              FROM support_messages
+              ORDER BY
+                CASE
+                  WHEN status = 'new'
+                  THEN 0
+                  ELSE 1
+                END,
+                created_at DESC,
+                id DESC
+              LIMIT 200
+              `
+            )
+            .all();
+
+        return json({
+
+          success: true,
+
+          messages:
+            result.results ?? []
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_SUPPORT_LIST_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+
+            messages: [],
+
+            message:
+              "دریافت پیام‌ها انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — REPLY TO SUPPORT MESSAGE
+    ===================================================== */
+
+    const supportReplyMatch =
+      url.pathname.match(
+        /^\/api\/admin\/support\/(\d+)\/reply$/
+      );
+
+    if (
+      supportReplyMatch &&
+      request.method ===
+        "POST"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const messageId =
+          Number(
+            supportReplyMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            messageId
+          ) ||
+          messageId <= 0
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "شناسه پیام نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const body =
+          await request.json();
+
+        const reply =
+          typeof body.reply ===
+          "string"
+            ? body.reply
+                .trim()
+                .slice(
+                  0,
+                  5000
+                )
+            : "";
+
+        if (
+          reply.length < 1
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "متن پاسخ خالی است."
+            },
+            400
+          );
+        }
+
+        const existing =
+          await env.DB
+            .prepare(
+              `
+              SELECT id
+              FROM support_messages
+              WHERE id = ?1
+              LIMIT 1
+              `
+            )
+            .bind(
+              messageId
+            )
+            .first();
+
+        if (!existing) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "پیام پیدا نشد."
+            },
+            404
+          );
+        }
+
+        await env.DB
+          .prepare(
+            `
+            UPDATE support_messages
+            SET
+              reply = ?1,
+              status = 'replied',
+              replied_at = CURRENT_TIMESTAMP
+            WHERE id = ?2
+            `
+          )
+          .bind(
+            reply,
+            messageId
+          )
+          .run();
+
+        return json({
+
+          success: true,
+
+          message:
+            "پاسخ با موفقیت ارسال شد."
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_SUPPORT_REPLY_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+
+            message:
+              "ارسال پاسخ انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — USERS
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/admin/users" &&
+      request.method ===
+        "GET"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                u.id,
+                u.username,
+                u.created_at,
+                ps.xp,
+                ps.level,
+                ps.coins,
+                ub.id AS ban_id,
+                ub.reason AS ban_reason,
+                ub.banned_until,
+                ub.active AS ban_active
+              FROM users u
+              LEFT JOIN player_stats ps
+                ON ps.user_id = u.id
+              LEFT JOIN user_bans ub
+                ON ub.user_id = u.id
+                AND ub.active = 1
+                AND (
+                  ub.banned_until IS NULL
+                  OR ub.banned_until = ''
+                  OR ub.banned_until > CURRENT_TIMESTAMP
+                )
+              ORDER BY
+                u.id DESC
+              `
+            )
+            .all();
+
+        return json({
+
+          success: true,
+
+          users:
+            result.results ?? []
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_USERS_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            users: [],
+
+            message:
+              "دریافت کاربران انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — BANS
+    ===================================================== */
+
+    if (
+      url.pathname ===
+        "/api/admin/bans" &&
+      request.method ===
+        "GET"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const result =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                ub.id,
+                ub.user_id,
+                u.username,
+                ub.reason,
+                ub.banned_until,
+                ub.created_at,
+                ub.active
+              FROM user_bans ub
+              INNER JOIN users u
+                ON u.id = ub.user_id
+              WHERE
+                ub.active = 1
+                AND (
+                  ub.banned_until IS NULL
+                  OR ub.banned_until = ''
+                  OR ub.banned_until > CURRENT_TIMESTAMP
+                )
+              ORDER BY
+                ub.created_at DESC
+              `
+            )
+            .all();
+
+        return json({
+
+          success: true,
+
+          bans:
+            result.results ?? []
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_BANS_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+            bans: [],
+
+            message:
+              "دریافت بن‌ها انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — BAN USER
+    ===================================================== */
+
+    const banUserMatch =
+      url.pathname.match(
+        /^\/api\/admin\/users\/(\d+)\/ban$/
+      );
+
+    if (
+      banUserMatch &&
+      request.method ===
+        "POST"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const userId =
+          Number(
+            banUserMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            userId
+          ) ||
+          userId <= 0
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "شناسه کاربر نامعتبر است."
+            },
+            400
+          );
+        }
+
+        const body =
+          await request.json();
+
+        const reason =
+          typeof body.reason ===
+          "string"
+            ? body.reason
+                .trim()
+                .slice(
+                  0,
+                  500
+                )
+            : "نقض قوانین VEXON";
+
+        let bannedUntil =
+          null;
+
+        if (
+          body.banned_until &&
+          typeof body.banned_until ===
+            "string"
+        ) {
+
+          const date =
+            new Date(
+              body.banned_until
+            );
+
+          if (
+            Number.isNaN(
+              date.getTime()
+            )
+          ) {
+
+            return json(
+              {
+                success: false,
+
+                message:
+                  "تاریخ بن نامعتبر است."
+              },
+              400
+            );
+          }
+
+          if (
+            date.getTime() <=
+            Date.now()
+          ) {
+
+            return json(
+              {
+                success: false,
+
+                message:
+                  "زمان پایان بن باید در آینده باشد."
+              },
+              400
+            );
+          }
+
+          bannedUntil =
+            date.toISOString();
+
+        }
+
+        /*
+         * جلوگیری از بن کردن خود Admin
+         */
+
+        if (
+          userId ===
+          admin.user.id
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "ادمین نمی‌تواند خودش را بن کند."
+            },
+            400
+          );
+
+        }
+
+        const target =
+          await env.DB
+            .prepare(
+              `
+              SELECT
+                id,
+                username
+              FROM users
+              WHERE id = ?1
+              LIMIT 1
+              `
+            )
+            .bind(
+              userId
+            )
+            .first();
+
+        if (!target) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "کاربر پیدا نشد."
+            },
+            404
+          );
+
+        }
+
+        await env.DB
+          .prepare(
+            `
+            UPDATE user_bans
+            SET
+              active = 0
+            WHERE
+              user_id = ?1
+              AND active = 1
+            `
+          )
+          .bind(
+            userId
+          )
+          .run();
+
+        await env.DB
+          .prepare(
+            `
+            INSERT INTO user_bans
+              (
+                user_id,
+                reason,
+                banned_until,
+                created_at,
+                active
+              )
+            VALUES
+              (
+                ?1,
+                ?2,
+                ?3,
+                CURRENT_TIMESTAMP,
+                1
+              )
+            `
+          )
+          .bind(
+            userId,
+            reason,
+            bannedUntil
+          )
+          .run();
+
+        return json({
+
+          success: true,
+
+          message:
+            bannedUntil
+              ? "کاربر تا زمان مشخص‌شده بن شد."
+              : "کاربر به‌صورت دائمی بن شد.",
+
+          username:
+            target.username,
+
+          banned_until:
+            bannedUntil
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_BAN_USER_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+
+            message:
+              "بن کردن کاربر انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
+    /* =====================================================
+       ADMIN — UNBAN USER
+    ===================================================== */
+
+    const unbanUserMatch =
+      url.pathname.match(
+        /^\/api\/admin\/users\/(\d+)\/unban$/
+      );
+
+    if (
+      unbanUserMatch &&
+      request.method ===
+        "POST"
+    ) {
+
+      const admin =
+        await requireAdmin(
+          request,
+          env
+        );
+
+      if (!admin.ok) {
+
+        return json(
+          {
+            success: false,
+
+            message:
+              admin.status === 401
+                ? "ابتدا وارد حساب شو."
+                : "دسترسی ادمین ندارید."
+          },
+          admin.status
+        );
+      }
+
+      try {
+
+        const userId =
+          Number(
+            unbanUserMatch[1]
+          );
+
+        if (
+          !Number.isInteger(
+            userId
+          ) ||
+          userId <= 0
+        ) {
+
+          return json(
+            {
+              success: false,
+
+              message:
+                "شناسه کاربر نامعتبر است."
+            },
+            400
+          );
+        }
+
+        await env.DB
+          .prepare(
+            `
+            UPDATE user_bans
+            SET
+              active = 0
+            WHERE
+              user_id = ?1
+              AND active = 1
+            `
+          )
+          .bind(
+            userId
+          )
+          .run();
+
+        return json({
+
+          success: true,
+
+          message:
+            "بن کاربر برداشته شد."
+
+        });
+
+      } catch (error) {
+
+        console.error(
+          "ADMIN_UNBAN_USER_ERROR",
+          error
+        );
+
+        return json(
+          {
+            success: false,
+
+            message:
+              "رفع بن انجام نشد."
+          },
+          500
+        );
+      }
+    }
+
+
     /* =====================================================
        LOGOUT
     ===================================================== */
 
     if (
-      url.pathname === "/api/logout" &&
-      request.method === "POST"
+      url.pathname ===
+        "/api/logout" &&
+      request.method ===
+        "POST"
     ) {
+
       try {
+
         const sessionToken =
           getCookie(
             request,
             "vexon_session"
           );
 
-        if (sessionToken) {
+        if (
+          sessionToken
+        ) {
+
           const tokenHash =
             await hashSessionToken(
               sessionToken
@@ -1817,8 +3703,11 @@ if (
               WHERE token_hash = ?1
               `
             )
-            .bind(tokenHash)
+            .bind(
+              tokenHash
+            )
             .run();
+
         }
 
         return new Response(
@@ -1835,16 +3724,23 @@ if (
               "Set-Cookie":
                 [
                   "vexon_session=",
+
                   "HttpOnly",
+
                   "Secure",
+
                   "SameSite=Lax",
+
                   "Path=/",
+
                   "Max-Age=0"
                 ].join("; ")
             }
           }
         );
+
       } catch (error) {
+
         console.error(
           "LOGOUT_ERROR",
           error
@@ -1859,6 +3755,7 @@ if (
       }
     }
 
+
     /* =====================================================
        CREATE RUBIKA LINK CODE
     ===================================================== */
@@ -1866,9 +3763,12 @@ if (
     if (
       url.pathname ===
         "/api/rubika/create-code" &&
-      request.method === "POST"
+      request.method ===
+        "POST"
     ) {
+
       try {
+
         const user =
           await getCurrentUser(
             request,
@@ -1876,9 +3776,11 @@ if (
           );
 
         if (!user) {
+
           return json(
             {
               success: false,
+
               message:
                 "ابتدا وارد حساب VEXON شو."
             },
@@ -1908,10 +3810,12 @@ if (
               )
             VALUES
               (?1, ?2, ?3)
+
             ON CONFLICT(user_id)
             DO UPDATE SET
               code = excluded.code,
-              expires_at = excluded.expires_at
+              expires_at =
+                excluded.expires_at
             `
           )
           .bind(
@@ -1922,12 +3826,18 @@ if (
           .run();
 
         return json({
+
           success: true,
+
           code,
+
           expires_at:
             expiresAt
+
         });
+
       } catch (error) {
+
         console.error(
           "RUBIKA_CODE_ERROR",
           error
@@ -1936,6 +3846,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "ساخت کد اتصال روبیکا انجام نشد."
           },
@@ -1944,38 +3855,48 @@ if (
       }
     }
 
+
     /* =====================================================
        LINK RUBIKA FROM RENDER
     ===================================================== */
 
     if (
-      url.pathname === "/api/rubika/link" &&
-      request.method === "POST"
+      url.pathname ===
+        "/api/rubika/link" &&
+      request.method ===
+        "POST"
     ) {
+
       try {
+
         const receivedKey =
           request.headers.get(
             "X-VEXON-API-KEY"
           );
 
         const normalizedReceivedKey =
-          typeof receivedKey === "string"
+          typeof receivedKey ===
+          "string"
             ? receivedKey.trim()
             : "";
 
         const storedKey =
-          typeof env.VEXON_RUBIKA_API_KEY === "string"
+          typeof env.VEXON_RUBIKA_API_KEY ===
+          "string"
             ? env.VEXON_RUBIKA_API_KEY.trim()
             : "";
 
         if (
           !storedKey ||
           !normalizedReceivedKey ||
-          normalizedReceivedKey !== storedKey
+          normalizedReceivedKey !==
+            storedKey
         ) {
+
           return json(
             {
               success: false,
+
               message:
                 "Unauthorized"
             },
@@ -1987,12 +3908,14 @@ if (
           await request.json();
 
         const code =
-          typeof body.code === "string"
+          typeof body.code ===
+          "string"
             ? body.code.trim()
             : "";
 
         const rubikaUserId =
-          body.rubika_user_id !== undefined
+          body.rubika_user_id !==
+          undefined
             ? String(
                 body.rubika_user_id
               ).trim()
@@ -2002,9 +3925,11 @@ if (
           !/^\d{6}$/.test(code) ||
           !rubikaUserId
         ) {
+
           return json(
             {
               success: false,
+
               message:
                 "Invalid data"
             },
@@ -2029,9 +3954,11 @@ if (
             .first();
 
         if (!linkCode) {
+
           return json(
             {
               success: false,
+
               message:
                 "کد اتصال معتبر نیست."
             },
@@ -2042,8 +3969,10 @@ if (
         if (
           new Date(
             linkCode.expires_at
-          ).getTime() <= Date.now()
+          ).getTime() <=
+          Date.now()
         ) {
+
           await env.DB
             .prepare(
               `
@@ -2051,12 +3980,15 @@ if (
               WHERE user_id = ?1
               `
             )
-            .bind(linkCode.user_id)
+            .bind(
+              linkCode.user_id
+            )
             .run();
 
           return json(
             {
               success: false,
+
               message:
                 "کد اتصال منقضی شده است."
             },
@@ -2085,10 +4017,14 @@ if (
             )
             .first();
 
-        if (existingLink) {
+        if (
+          existingLink
+        ) {
+
           return json(
             {
               success: false,
+
               message:
                 "این حساب VEXON یا حساب روبیکا قبلاً متصل شده است."
             },
@@ -2123,15 +4059,22 @@ if (
             WHERE user_id = ?1
             `
           )
-          .bind(linkCode.user_id)
+          .bind(
+            linkCode.user_id
+          )
           .run();
 
         return json({
+
           success: true,
+
           message:
             "حساب روبیکا با موفقیت متصل شد."
+
         });
+
       } catch (error) {
+
         console.error(
           "RUBIKA_LINK_ERROR",
           error
@@ -2140,6 +4083,7 @@ if (
         return json(
           {
             success: false,
+
             message:
               "خطایی هنگام اتصال حساب رخ داد."
           },
@@ -2148,25 +4092,33 @@ if (
       }
     }
 
+
     /* =====================================================
        API TEST
     ===================================================== */
 
     if (
-      url.pathname === "/api/test" &&
-      request.method === "GET"
+      url.pathname ===
+        "/api/test" &&
+      request.method ===
+        "GET"
     ) {
+
       return json({
         success: true,
+
         message:
           "VEXON API is online!"
       });
     }
 
+
     /* =====================================================
        STATIC WEBSITE
     ===================================================== */
 
-    return env.ASSETS.fetch(request);
+    return env.ASSETS.fetch(
+      request
+    );
   }
 };
