@@ -2304,195 +2304,266 @@ export default {
 
 
         /* ===================================================
-           LEADERBOARD
-        =================================================== */
+   LEADERBOARD
+=================================================== */
 
-        if (
-            url.pathname ===
-                "/api/leaderboard" &&
+if (
+    url.pathname ===
+        "/api/leaderboard" &&
 
-            request.method ===
-                "GET"
-        ) {
+    request.method ===
+        "GET"
+) {
 
-            try {
+    try {
 
-                const type =
-                    normalizeLeaderboardType(
-                        url.searchParams.get(
-                            "type"
+        const type =
+            normalizeLeaderboardType(
+                url.searchParams.get(
+                    "type"
+                )
+            );
+
+
+        const limitValue =
+            Number(
+                url.searchParams.get(
+                    "limit"
+                ) ??
+                50
+            );
+
+
+        const limit =
+            Math.min(
+                100,
+
+                Math.max(
+                    1,
+
+                    Number.isFinite(
+                        limitValue
+                    )
+
+                        ? Math.floor(
+                            limitValue
                         )
-                    );
+
+                        : 50
+                )
+            );
 
 
-                const limitValue =
-                    Number(
-                        url.searchParams.get(
-                            "limit"
-                        ) ??
-                        50
-                    );
+        /*
+         * ابتدا بازیکنان را از D1 می‌گیریم.
+         * اگر Rubika به حساب وصل باشد،
+         * اطلاعات واقعی Render جایگزین
+         * اطلاعات D1 می‌شود.
+         */
+
+        const result =
+            await env.DB
+                .prepare(
+                    `
+                    SELECT
+                        u.id,
+                        u.username,
+
+                        COALESCE(
+                            ps.level,
+                            1
+                        ) AS d1_level,
+
+                        COALESCE(
+                            ps.coins,
+                            0
+                        ) AS d1_coins,
+
+                        rl.rubika_sender_id
+
+                    FROM users u
+
+                    LEFT JOIN player_stats ps
+                        ON ps.user_id =
+                            u.id
+
+                    LEFT JOIN rubika_links rl
+                        ON rl.user_id =
+                            u.id
+
+                    ORDER BY
+                        u.id ASC
+                    `
+                )
+                .all();
 
 
-                const limit =
-                    Math.min(
-                        100,
-
-                        Math.max(
-                            1,
-
-                            Number.isFinite(
-                                limitValue
-                            )
-
-                                ? Math.floor(
-                                    limitValue
-                                )
-
-                                : 50
-                        )
-                    );
+        const basePlayers =
+            result.results ??
+            [];
 
 
-                /*
-                 * برای جلوگیری از نمایش
-                 * XP در لیدربورد، فقط Level
-                 * یا Coins برگردانده می‌شود.
-                 */
+        /*
+         * اطلاعات واقعی بازیکنان متصل به روبیکا
+         * را از Render می‌گیریم.
+         */
 
-                if (
-                    type ===
-                    "coins"
-                ) {
+        const players =
+            await Promise.all(
 
-                    const result =
-                        await env.DB
-                            .prepare(
-                                `
-                                SELECT
-                                    u.id,
-                                    u.username,
-                                    COALESCE(
-                                        ps.coins,
-                                        0
-                                    ) AS coins,
-                                    COALESCE(
-                                        ps.level,
-                                        1
-                                    ) AS level
-                                FROM users u
-                                LEFT JOIN player_stats ps
-                                    ON ps.user_id =
-                                        u.id
-                                ORDER BY
-                                    coins DESC,
-                                    level DESC,
-                                    u.id ASC
-                                LIMIT ?1
-                                `
-                            )
-                            .bind(
-                                limit
-                            )
-                            .all();
+                basePlayers.map(
+                    async player => {
+
+                        let level =
+                            Number(
+                                player.d1_level ??
+                                1
+                            );
 
 
-                    const rows =
-                        result.results ??
-                        [];
+                        let coins =
+                            Number(
+                                player.d1_coins ??
+                                0
+                            );
 
 
-                    return json(
-                        {
+                        if (
+                            player.rubika_sender_id
+                        ) {
 
-                            success:
-                                true,
+                            try {
 
-                            type:
-                                "coins",
+                                const renderPlayer =
+                                    await getPlayerFromRender(
+                                        env,
 
-                            leaderboard:
-                                rows.map(
-                                    (
-                                        row,
-                                        index
-                                    ) => ({
+                                        player.rubika_sender_id
+                                    );
 
-                                        rank:
-                                            index +
-                                            1,
 
-                                        id:
-                                            row.id,
+                                if (
+                                    renderPlayer
+                                ) {
 
-                                        username:
-                                            row.username,
+                                    level =
+                                        Number(
+                                            renderPlayer.level ??
+                                            level
+                                        );
 
-                                        coins:
-                                            Number(
-                                                row.coins ??
-                                                0
-                                            )
 
-                                    })
-                                )
+                                    coins =
+                                        Number(
+                                            renderPlayer.coins ??
+                                            coins
+                                        );
+
+                                }
+
+                            } catch (
+                                renderError
+                            ) {
+
+                                console.error(
+                                    "LEADERBOARD_RENDER_PLAYER_ERROR",
+                                    player.id,
+                                    renderError
+                                );
+
+                            }
 
                         }
+
+
+                        return {
+
+                            id:
+                                player.id,
+
+                            username:
+                                player.username,
+
+                            level,
+
+                            coins
+
+                        };
+
+                    }
+                )
+
+            );
+
+
+        /*
+         * مرتب‌سازی
+         */
+
+        if (
+            type ===
+            "coins"
+        ) {
+
+            players.sort(
+                (
+                    a,
+                    b
+                ) => {
+
+                    if (
+                        b.coins !==
+                        a.coins
+                    ) {
+
+                        return (
+                            b.coins -
+                            a.coins
+                        );
+
+                    }
+
+
+                    if (
+                        b.level !==
+                        a.level
+                    ) {
+
+                        return (
+                            b.level -
+                            a.level
+                        );
+
+                    }
+
+
+                    return (
+                        a.id -
+                        b.id
                     );
 
                 }
+            );
 
 
-                const result =
-                    await env.DB
-                        .prepare(
-                            `
-                            SELECT
-                                u.id,
-                                u.username,
-                                COALESCE(
-                                    ps.level,
-                                    1
-                                ) AS level,
-                                COALESCE(
-                                    ps.coins,
-                                    0
-                                ) AS coins
-                            FROM users u
-                            LEFT JOIN player_stats ps
-                                ON ps.user_id =
-                                    u.id
-                            ORDER BY
-                                level DESC,
-                                coins DESC,
-                                u.id ASC
-                            LIMIT ?1
-                            `
-                        )
-                        .bind(
-                            limit
-                        )
-                        .all();
+            return json(
+                {
 
+                    success:
+                        true,
 
-                const rows =
-                    result.results ??
-                    [];
+                    type:
+                        "coins",
 
-
-                return json(
-                    {
-
-                        success:
-                            true,
-
-                        type:
-                            "level",
-
-                        leaderboard:
-                            rows.map(
+                    leaderboard:
+                        players
+                            .slice(
+                                0,
+                                limit
+                            )
+                            .map(
                                 (
-                                    row,
+                                    player,
                                     index
                                 ) => ({
 
@@ -2501,52 +2572,137 @@ export default {
                                         1,
 
                                     id:
-                                        row.id,
+                                        player.id,
 
                                     username:
-                                        row.username,
+                                        player.username,
 
-                                    level:
-                                        Number(
-                                            row.level ??
-                                            1
-                                        )
+                                    coins:
+                                        player.coins
 
                                 })
                             )
 
-                    }
-                );
+                }
+            );
+
+        }
 
 
-            } catch (error) {
+        /*
+         * Level Leaderboard
+         */
 
-                console.error(
-                    "LEADERBOARD_ERROR",
-                    error
-                );
+        players.sort(
+            (
+                a,
+                b
+            ) => {
+
+                if (
+                    b.level !==
+                    a.level
+                ) {
+
+                    return (
+                        b.level -
+                        a.level
+                    );
+
+                }
 
 
-                return json(
-                    {
+                if (
+                    b.coins !==
+                    a.coins
+                ) {
 
-                        success:
-                            false,
+                    return (
+                        b.coins -
+                        a.coins
+                    );
 
-                        leaderboard:
-                            [],
+                }
 
-                        message:
-                            "دریافت لیدربورد انجام نشد."
 
-                    },
-
-                    500
+                return (
+                    a.id -
+                    b.id
                 );
 
             }
+        );
 
-        }
+
+        return json(
+            {
+
+                success:
+                    true,
+
+                type:
+                    "level",
+
+                leaderboard:
+                    players
+                        .slice(
+                            0,
+                            limit
+                        )
+                        .map(
+                            (
+                                player,
+                                index
+                            ) => ({
+
+                                rank:
+                                    index +
+                                    1,
+
+                                id:
+                                    player.id,
+
+                                username:
+                                    player.username,
+
+                                level:
+                                    player.level
+
+                            })
+                        )
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LEADERBOARD_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+
+                success:
+                    false,
+
+                leaderboard:
+                    [],
+
+                message:
+                    "دریافت لیدربورد انجام نشد."
+
+            },
+
+            500
+        );
+
+    }
+
+}       
 
 
         /* ===================================================
