@@ -44,6 +44,10 @@
     >
 
 
+    <!-- =====================================================
+         MAIN CSS
+    ====================================================== -->
+
     <link
         rel="stylesheet"
         href="../style.css"
@@ -1195,53 +1199,60 @@
         }
 
 
+        /* =================================================
+           FINAL MESSAGE BUBBLE SIZE
+        ================================================= */
+
         .messenger-message-bubble {
 
-    display:
-        block;
+            display:
+                block !important;
 
-    width:
-        max-content;
+            width:
+                fit-content !important;
 
-    max-width:
-        min(
-            72%,
-            620px
-        );
+            max-width:
+                min(
+                    72%,
+                    620px
+                ) !important;
 
-    flex:
-        0 1 auto;
+            min-width:
+                0 !important;
 
-    padding:
-        5px
-        8px;
+            flex:
+                0 0 auto !important;
 
-    border-radius:
-        13px;
+            padding:
+                5px
+                8px !important;
 
-    line-height:
-        1.5;
+            border-radius:
+                12px;
 
-    font-size:
-        12px;
+            line-height:
+                1.5;
 
-    white-space:
-        pre-wrap;
+            font-size:
+                12px;
 
-    overflow-wrap:
-        anywhere;
+            white-space:
+                pre-wrap;
 
-    word-break:
-        break-word;
+            overflow-wrap:
+                anywhere;
 
-}
+            word-break:
+                break-word;
+
+        }
 
 
         .messenger-message-row.me
         .messenger-message-bubble {
 
-            align-self:
-                flex-start;
+            margin-left:
+                auto;
 
             background:
                 linear-gradient(
@@ -1278,8 +1289,8 @@
         .messenger-message-row.other
         .messenger-message-bubble {
 
-            align-self:
-                flex-end;
+            margin-right:
+                auto;
 
             background:
                 rgba(
@@ -1998,8 +2009,11 @@
 
             .messenger-message-bubble {
 
+                width:
+                    fit-content !important;
+
                 max-width:
-                    84%;
+                    84% !important;
 
             }
 
@@ -2092,12 +2106,18 @@
 
             .messenger-message-bubble {
 
+                width:
+                    fit-content !important;
+
                 max-width:
-                    88%;
+                    88% !important;
+
+                min-width:
+                    0 !important;
 
                 padding:
-                    5px
-                    8px;
+                    4px
+                    7px !important;
 
                 font-size:
                     11px;
@@ -2127,14 +2147,19 @@
 >
 
     <div class="nebula nebula-purple"></div>
+
     <div class="nebula nebula-green"></div>
+
     <div class="nebula nebula-blue"></div>
 
     <div class="stars stars-one"></div>
+
     <div class="stars stars-two"></div>
+
     <div class="stars stars-three"></div>
 
     <div class="planet planet-purple"></div>
+
     <div class="planet planet-blue"></div>
 
 </div>
@@ -2177,14 +2202,18 @@
                 <div
                     class="messenger-logo"
                 >
+
                     VE<span>X</span>ON
+
                 </div>
 
 
                 <div
                     class="messenger-title"
                 >
+
                     پیام‌رسان رسمی VEXON
+
                 </div>
 
             </div>
@@ -2944,10 +2973,12 @@
                                             messenger-conversation-preview
                                         "
                                     >
+
                                         ${escapeHtml(
                                             conversation.last_message ||
                                             "هنوز پیامی نیست"
                                         )}
+
                                     </div>
 
                                 </div>
@@ -2957,6 +2988,7 @@
                                     unread > 0
 
                                         ? `
+
                                             <span
                                                 class="
                                                     messenger-unread
@@ -2966,6 +2998,7 @@
                                                     unread
                                                 )}
                                             </span>
+
                                           `
 
                                         : ""
@@ -3181,16 +3214,19 @@
                                             message.content
                                         )}
 
+
                                         <span
                                             class="
                                                 messenger-message-time
                                             "
                                         >
+
                                             ${escapeHtml(
                                                 dateText(
                                                     message.created_at
                                                 )
                                             )}
+
                                         </span>
 
                                     </div>
@@ -3213,8 +3249,13 @@
                             font-size:10px;
                         "
                     >
-                        هنوز پیامی بین شما نیست.<br>
+
+                        هنوز پیامی بین شما نیست.
+
+                        <br>
+
                         اولین پیام را بفرست 👋
+
                     </div>
 
                 `;
