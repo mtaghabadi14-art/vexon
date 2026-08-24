@@ -1064,6 +1064,121 @@ export default {
       });
     }
 
+/* =====================================================
+   PUBLIC SINGLE NEWS
+===================================================== */
+
+const publicNewsMatch =
+  url.pathname.match(
+    /^\/api\/news\/(\d+)$/
+  );
+
+if (
+  publicNewsMatch &&
+  request.method === "GET"
+) {
+
+  try {
+
+    await ensureNewsTable(
+      env
+    );
+
+
+    const newsId =
+      Number(
+        publicNewsMatch[1]
+      );
+
+
+    if (
+      !Number.isInteger(newsId) ||
+      newsId <= 0
+    ) {
+
+      return json(
+        {
+          success: false,
+          message:
+            "شناسه خبر نامعتبر است."
+        },
+        400
+      );
+
+    }
+
+
+    const news =
+      await env.DB
+        .prepare(
+          `
+          SELECT
+            id,
+            title,
+            content,
+            image_url,
+            category,
+            author_username,
+            created_at,
+            updated_at,
+            published_at
+          FROM news
+          WHERE
+            id = ?1
+            AND status = 'published'
+          LIMIT 1
+          `
+        )
+        .bind(
+          newsId
+        )
+        .first();
+
+
+    if (!news) {
+
+      return json(
+        {
+          success: false,
+          message:
+            "این خبر پیدا نشد."
+        },
+        404
+      );
+
+    }
+
+
+    return json({
+
+      success: true,
+
+      news
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "PUBLIC_SINGLE_NEWS_ERROR",
+      error
+    );
+
+
+    return json(
+      {
+        success: false,
+        message:
+          "دریافت خبر انجام نشد."
+      },
+      500
+    );
+
+  }
+
+}
+
     /* =====================================================
        PUBLIC NEWS
     ===================================================== */

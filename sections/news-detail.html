@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <meta
+        name="robots"
+        content="index,follow"
+    >
+
+    <meta
+        name="description"
+        content="VEXON News"
+    >
+
+    <title>
+        VEXON | خبر
+    </title>
+
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <style>
+
+        .news-detail-page {
+            width: min(
+                950px,
+                92%
+            );
+
+            margin:
+                0 auto;
+
+            padding:
+                55px 0 100px;
+        }
+
+
+        .news-detail-card {
+
+            overflow: hidden;
+
+            padding:
+                0 0 35px;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.08);
+
+            border-radius:
+                26px;
+
+            background:
+                rgba(
+                    5,
+                    9,
+                    17,
+                    0.82
+                );
+
+            backdrop-filter:
+                blur(18px);
+
+            box-shadow:
+                0 0 45px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.06
+                );
+        }
+
+
+        .news-detail-image {
+
+            width: 100%;
+
+            max-height:
+                500px;
+
+            object-fit:
+                cover;
+
+            display:
+                block;
+        }
+
+
+        .news-detail-placeholder {
+
+            height:
+                280px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            font-size:
+                70px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,255,157,0.07),
+                    rgba(120,70,255,0.12)
+                );
+        }
+
+
+        .news-detail-content {
+
+            padding:
+                30px 35px 0;
+        }
+
+
+        .news-detail-category {
+
+            display:
+                inline-block;
+
+            padding:
+                6px 10px;
+
+            margin-bottom:
+                14px;
+
+            border-radius:
+                999px;
+
+            font-size:
+                11px;
+
+            color:
+                #bfffe8;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.14
+                );
+        }
+
+
+        .news-detail-title {
+
+            margin:
+                0 0 15px;
+
+            font-size:
+                clamp(
+                    25px,
+                    4vw,
+                    42px
+                );
+
+            line-height:
+                1.5;
+        }
+
+
+        .news-detail-meta {
+
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                10px 18px;
+
+            margin-bottom:
+                25px;
+
+            font-size:
+                11px;
+
+            opacity:
+                0.52;
+        }
+
+
+        .news-detail-text {
+
+            font-size:
+                16px;
+
+            line-height:
+                2.25;
+
+            white-space:
+                pre-line;
+
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.88
+                );
+        }
+
+
+        .news-detail-back {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            margin-bottom:
+                20px;
+
+            padding:
+                10px 15px;
+
+            border-radius:
+                12px;
+
+            color:
+                white;
+
+            text-decoration:
+                none;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
+        }
+
+
+        .news-detail-loading,
+        .news-detail-error {
+
+            padding:
+                50px 20px;
+
+            text-align:
+                center;
+
+            opacity:
+                0.65;
+        }
+
+
+        .news-detail-error {
+            color:
+                #ffbdc5;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .news-detail-page {
+
+                width:
+                    94%;
+
+                padding-top:
+                    25px;
+
+            }
+
+
+            .news-detail-content {
+
+                padding:
+                    22px 18px 0;
+
+            }
+
+
+            .news-detail-title {
+
+                font-size:
+                    25px;
+
+            }
+
+
+            .news-detail-text {
+
+                font-size:
+                    14px;
+
+                line-height:
+                    2.1;
+
+            }
+
+
+            .news-detail-placeholder {
+
+                height:
+                    200px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div
+        class="background-effects"
+        aria-hidden="true"
+    >
+
+        <div class="nebula nebula-purple"></div>
+        <div class="nebula nebula-green"></div>
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+        <div class="stars stars-two"></div>
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+        <div class="planet planet-blue"></div>
+
+    </div>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="navbar">
+
+        <a
+            href="../index.html"
+            class="logo"
+        >
+            VE<span class="logo-x">X</span>ON
+        </a>
+
+
+        <nav class="nav-links">
+
+            <a
+                href="../index.html"
+                class="nav-link"
+            >
+                <span class="desktop-v-icon">
+                    V
+                </span>
+                خانه
+            </a>
+
+
+            <a
+                href="games.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">
+                    🎮
+                </span>
+                بازی‌ها
+            </a>
+
+
+            <a
+                href="leaderboard.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">
+                    🏆
+                </span>
+                لیدربورد
+            </a>
+
+
+            <a
+                href="cafe.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">
+                    ☕
+                </span>
+                کافه بازی
+            </a>
+
+
+            <a
+                href="news.html"
+                class="nav-link active"
+            >
+                <span class="nav-icon">
+                    📢
+                </span>
+                اخبار
+            </a>
+
+
+            <a
+                href="guide.html"
+                class="nav-link"
+            >
+                <span class="nav-icon">
+                    ?
+                </span>
+                راهنما
+            </a>
+
+        </nav>
+
+
+        <a
+            href="login.html"
+            class="header-profile"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+
+            <div class="header-player-info">
+
+                <strong>
+                    ...
+                </strong>
+
+
+                <div
+                    class="header-xp-bar"
+                    style="display:none;"
+                >
+
+                    <div
+                        class="header-xp-fill"
+                    ></div>
+
+                </div>
+
+
+                <span>
+                    در حال بررسی حساب...
+                </span>
+
+            </div>
+
+
+            <b>
+                ‹
+            </b>
+
+        </a>
+
+    </header>
+
+
+    <!-- =========================
+         NEWS DETAIL
+    ========================== -->
+
+    <main
+        class="news-detail-page"
+    >
+
+        <a
+            href="news.html"
+            class="news-detail-back"
+        >
+            ← برگشت به اخبار
+        </a>
+
+
+        <article
+            id="news-detail"
+            class="news-detail-card"
+        >
+
+            <div
+                class="news-detail-loading"
+            >
+                ⏳ در حال دریافت خبر...
+            </div>
+
+        </article>
+
+    </main>
+
+
+    <!-- =========================
+         MOBILE NAV
+    ========================== -->
+
+    <nav class="mobile-bottom-nav">
+
+        <a
+            href="games.html"
+            class="mobile-nav-item"
+        >
+            <span>🎮</span>
+            <small>بازی‌ها</small>
+        </a>
+
+
+        <a
+            href="cafe.html"
+            class="mobile-nav-item"
+        >
+            <span>☕</span>
+            <small>کافه</small>
+        </a>
+
+
+        <a
+            href="../index.html"
+            class="mobile-nav-item"
+        >
+            <span class="home-v-icon">
+                V
+            </span>
+            <small>خانه</small>
+        </a>
+
+
+        <a
+            href="news.html"
+            class="mobile-nav-item mobile-home active"
+        >
+            <span>📢</span>
+            <small>اخبار</small>
+        </a>
+
+
+        <a
+            href="profile.html"
+            class="mobile-nav-item"
+        >
+            <span>⚙️</span>
+            <small>تنظیمات</small>
+        </a>
+
+    </nav>
+
+
+    <script src="../script.js"></script>
+
+
+    <script>
+
+    (async function () {
+
+        "use strict";
+
+
+        const detail =
+            document.getElementById(
+                "news-detail"
+            );
+
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const id =
+            params.get("id");
+
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        function formatDate(
+            value
+        ) {
+
+            if (!value) {
+                return "";
+            }
+
+
+            try {
+
+                return new Intl.DateTimeFormat(
+                    "fa-IR",
+                    {
+                        dateStyle:
+                            "full",
+                        timeStyle:
+                            "short"
+                    }
+                ).format(
+                    new Date(value)
+                );
+
+            } catch {
+
+                return value;
+
+            }
+
+        }
+
+
+        if (!id) {
+
+            detail.innerHTML = `
+                <div class="news-detail-error">
+                    ❌ شناسه خبر پیدا نشد.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/news/${encodeURIComponent(
+                        id
+                    )}`,
+                    {
+                        method:
+                            "GET",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success ||
+                !data.news
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "خبر پیدا نشد."
+                );
+
+            }
+
+
+            const news =
+                data.news;
+
+
+            document.title =
+                `VEXON | ${news.title}`;
+
+
+            const image =
+                news.image_url
+                    ? `
+                        <img
+                            class="news-detail-image"
+                            src="${escapeHtml(
+                                news.image_url
+                            )}"
+                            alt="${escapeHtml(
+                                news.title
+                            )}"
+                        >
+                      `
+                    : `
+                        <div
+                            class="news-detail-placeholder"
+                        >
+                            📢
+                        </div>
+                      `;
+
+
+            detail.innerHTML = `
+
+                ${image}
+
+                <div
+                    class="news-detail-content"
+                >
+
+                    <span
+                        class="news-detail-category"
+                    >
+                        🏷️ ${escapeHtml(
+                            news.category ||
+                            "عمومی"
+                        )}
+                    </span>
+
+
+                    <h1
+                        class="news-detail-title"
+                    >
+                        ${escapeHtml(
+                            news.title
+                        )}
+                    </h1>
+
+
+                    <div
+                        class="news-detail-meta"
+                    >
+
+                        ${
+                            news.author_username
+                                ? `
+                                    <span>
+                                        👤 ${escapeHtml(
+                                            news.author_username
+                                        )}
+                                    </span>
+                                  `
+                                : ""
+                        }
+
+
+                        <span>
+                            📅 ${escapeHtml(
+                                formatDate(
+                                    news.published_at ||
+                                    news.created_at
+                                )
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="news-detail-text"
+                    >
+                        ${escapeHtml(
+                            news.content
+                        )}
+                    </div>
+
+                </div>
+
+            `;
+
+
+        } catch (error) {
+
+            console.error(
+                "NEWS_DETAIL_ERROR:",
+                error
+            );
+
+
+            detail.innerHTML = `
+
+                <div
+                    class="news-detail-error"
+                >
+
+                    ❌
+                    ${escapeHtml(
+                        error.message ||
+                        "دریافت خبر ناموفق بود."
+                    )}
+
+                    <br><br>
+
+                    <a
+                        href="news.html"
+                        class="news-detail-back"
+                    >
+                        ← برگشت به اخبار
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+    })();
+
+    </script>
+
+</body>
+
+</html>
