@@ -20,7 +20,9 @@
         content="#03040a"
     >
 
-    <title>VEXON ADMIN</title>
+    <title>
+        VEXON ADMIN
+    </title>
 
     <link
         rel="stylesheet"
@@ -41,9 +43,18 @@
         .admin-page {
             position: relative;
             z-index: 2;
-            width: min(1200px, 92%);
-            margin: 0 auto;
-            padding: 40px 0 100px;
+
+            width:
+                min(
+                    1200px,
+                    92%
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                40px 0 100px;
         }
 
 
@@ -52,77 +63,152 @@
         ========================================= */
 
         .admin-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
+            display:
+                flex;
 
-            margin-bottom: 20px;
-            padding: 20px 22px;
+            align-items:
+                center;
 
-            border: 1px solid rgba(0,255,157,0.15);
-            border-radius: 22px;
+            justify-content:
+                space-between;
+
+            gap:
+                20px;
+
+            margin-bottom:
+                20px;
+
+            padding:
+                20px 22px;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.15
+                );
+
+            border-radius:
+                22px;
 
             background:
-                rgba(6,10,18,0.82);
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.82
+                );
 
             backdrop-filter:
-                blur(18px);
+                blur(
+                    18px
+                );
 
             box-shadow:
-                0 0 30px rgba(0,255,157,0.06);
+                0 0 30px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.06
+                );
         }
 
 
         .admin-brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                14px;
         }
 
 
         .admin-brand-icon {
-            width: 50px;
-            height: 50px;
+            width:
+                50px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height:
+                50px;
 
-            border-radius: 15px;
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                15px;
 
             background:
                 linear-gradient(
                     135deg,
-                    rgba(0,255,157,0.16),
-                    rgba(116,77,255,0.16)
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.16
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.16
+                    )
                 );
 
             border:
                 1px solid
-                rgba(0,255,157,0.2);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.2
+                );
 
-            font-size: 25px;
+            font-size:
+                25px;
         }
 
 
         .admin-brand h1 {
-            margin: 0;
-            font-size: 22px;
+            margin:
+                0;
+
+            font-size:
+                22px;
         }
 
 
         .admin-brand p {
-            margin: 4px 0 0;
-            opacity: 0.65;
-            font-size: 12px;
+            margin:
+                4px 0 0;
+
+            opacity:
+                0.65;
+
+            font-size:
+                12px;
         }
 
 
         .admin-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            display:
+                flex;
+
+            gap:
+                8px;
+
+            flex-wrap:
+                wrap;
         }
 
 
@@ -131,15 +217,23 @@
         ========================================= */
 
         .admin-button {
-            border: none;
-            border-radius: 12px;
+            border:
+                none;
 
-            padding: 11px 15px;
+            border-radius:
+                12px;
 
-            font-family: inherit;
-            font-weight: 700;
+            padding:
+                11px 15px;
 
-            cursor: pointer;
+            font-family:
+                inherit;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
 
             transition:
                 transform 0.2s ease,
@@ -148,19 +242,28 @@
 
 
         .admin-button:hover {
-            transform: translateY(-2px);
+            transform:
+                translateY(
+                    -2px
+                );
         }
 
 
         .admin-button:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-            transform: none;
+            opacity:
+                0.55;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
         }
 
 
         .admin-button-primary {
-            color: #04110b;
+            color:
+                #04110b;
 
             background:
                 linear-gradient(
@@ -172,26 +275,48 @@
 
 
         .admin-button-secondary {
-            color: white;
+            color:
+                white;
 
             background:
-                rgba(255,255,255,0.07);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
 
             border:
                 1px solid
-                rgba(255,255,255,0.08);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
         }
 
 
         .admin-button-danger {
-            color: white;
+            color:
+                white;
 
             background:
-                rgba(255,63,90,0.12);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.12
+                );
 
             border:
                 1px solid
-                rgba(255,63,90,0.18);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.18
+                );
         }
 
 
@@ -200,34 +325,61 @@
         ========================================= */
 
         .admin-tabs {
-            display: grid;
+            display:
+                grid;
+
             grid-template-columns:
-                repeat(3, 1fr);
+                repeat(
+                    3,
+                    1fr
+                );
 
-            gap: 10px;
+            gap:
+                10px;
 
-            margin-bottom: 20px;
+            margin-bottom:
+                20px;
         }
 
 
         .admin-tab {
-            border: 1px solid
-                rgba(255,255,255,0.07);
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
 
-            border-radius: 16px;
+            border-radius:
+                16px;
 
             background:
-                rgba(255,255,255,0.035);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
 
-            color: white;
+            color:
+                white;
 
-            padding: 14px 12px;
+            padding:
+                14px 12px;
 
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 800;
+            font-family:
+                inherit;
 
-            cursor: pointer;
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
 
             transition:
                 background 0.2s ease,
@@ -237,51 +389,97 @@
 
 
         .admin-tab:hover {
-            transform: translateY(-2px);
+            transform:
+                translateY(
+                    -2px
+                );
         }
 
 
         .admin-tab.active {
             border-color:
-                rgba(0,255,157,0.25);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.25
+                );
 
             background:
                 linear-gradient(
                     135deg,
-                    rgba(0,255,157,0.10),
-                    rgba(116,77,255,0.07)
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.10
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.07
+                    )
                 );
 
             box-shadow:
                 0 0 25px
-                rgba(0,255,157,0.05);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.05
+                );
         }
 
 
         .admin-tab-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display:
+                inline-flex;
 
-            min-width: 20px;
-            height: 20px;
+            align-items:
+                center;
 
-            margin-right: 6px;
-            padding: 0 6px;
+            justify-content:
+                center;
 
-            border-radius: 999px;
+            min-width:
+                20px;
 
-            font-size: 9px;
+            height:
+                20px;
+
+            margin-right:
+                6px;
+
+            padding:
+                0 6px;
+
+            border-radius:
+                999px;
+
+            font-size:
+                9px;
 
             background:
-                rgba(255,63,90,0.16);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.16
+                );
 
             color:
                 #ffc0c8;
 
             border:
                 1px solid
-                rgba(255,63,90,0.20);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.20
+                );
         }
 
 
@@ -290,12 +488,14 @@
         ========================================= */
 
         .admin-section {
-            display: none;
+            display:
+                none;
         }
 
 
         .admin-section.active {
-            display: block;
+            display:
+                block;
         }
 
 
@@ -304,46 +504,75 @@
         ========================================= */
 
         .admin-dashboard {
-            display: grid;
+            display:
+                grid;
+
             grid-template-columns:
-                repeat(4, 1fr);
+                repeat(
+                    4,
+                    1fr
+                );
 
-            gap: 14px;
+            gap:
+                14px;
 
-            margin-bottom: 20px;
+            margin-bottom:
+                20px;
         }
 
 
         .admin-stat-card {
-            padding: 20px;
+            padding:
+                20px;
 
-            border-radius: 20px;
+            border-radius:
+                20px;
 
             background:
-                rgba(6,10,18,0.74);
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.74
+                );
 
             border:
                 1px solid
-                rgba(255,255,255,0.07);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
 
             backdrop-filter:
-                blur(14px);
+                blur(
+                    14px
+                );
         }
 
 
         .admin-stat-label {
-            display: block;
+            display:
+                block;
 
-            font-size: 11px;
-            opacity: 0.58;
+            font-size:
+                11px;
 
-            margin-bottom: 7px;
+            opacity:
+                0.58;
+
+            margin-bottom:
+                7px;
         }
 
 
         .admin-stat-value {
-            font-size: 26px;
-            font-weight: 900;
+            font-size:
+                26px;
+
+            font-weight:
+                900;
         }
 
 
@@ -352,31 +581,48 @@
         ========================================= */
 
         .admin-layout {
-            display: grid;
+            display:
+                grid;
 
             grid-template-columns:
                 1fr 1.4fr;
 
-            gap: 18px;
+            gap:
+                18px;
 
-            align-items: start;
+            align-items:
+                start;
         }
 
 
         .admin-panel {
-            padding: 22px;
+            padding:
+                22px;
 
-            border-radius: 22px;
+            border-radius:
+                22px;
 
             background:
-                rgba(6,10,18,0.78);
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.78
+                );
 
             border:
                 1px solid
-                rgba(255,255,255,0.07);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
 
             backdrop-filter:
-                blur(16px);
+                blur(
+                    16px
+                );
         }
 
 
@@ -384,7 +630,8 @@
             margin:
                 0 0 18px;
 
-            font-size: 18px;
+            font-size:
+                18px;
         }
 
 
@@ -393,20 +640,29 @@
         ========================================= */
 
         .admin-form {
-            display: grid;
-            gap: 13px;
+            display:
+                grid;
+
+            gap:
+                13px;
         }
 
 
         .admin-field {
-            display: grid;
-            gap: 7px;
+            display:
+                grid;
+
+            gap:
+                7px;
         }
 
 
         .admin-field label {
-            font-size: 11px;
-            opacity: 0.72;
+            font-size:
+                11px;
+
+            opacity:
+                0.72;
         }
 
 
@@ -414,33 +670,55 @@
         .admin-field textarea,
         .admin-field select {
 
-            width: 100%;
-            box-sizing: border-box;
+            width:
+                100%;
 
-            border-radius: 12px;
+            box-sizing:
+                border-box;
+
+            border-radius:
+                12px;
 
             border:
                 1px solid
-                rgba(255,255,255,0.09);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.09
+                );
 
             background:
-                rgba(255,255,255,0.045);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.045
+                );
 
-            color: white;
+            color:
+                white;
 
             padding:
                 11px 12px;
 
-            font-family: inherit;
-            font-size: 13px;
+            font-family:
+                inherit;
 
-            outline: none;
+            font-size:
+                13px;
+
+            outline:
+                none;
         }
 
 
         .admin-field textarea {
-            min-height: 170px;
-            resize: vertical;
+            min-height:
+                170px;
+
+            resize:
+                vertical;
         }
 
 
@@ -449,20 +727,36 @@
         .admin-field select:focus {
 
             border-color:
-                rgba(0,255,157,0.42);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.42
+                );
 
             box-shadow:
                 0 0 0 3px
-                rgba(0,255,157,0.07);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.07
+                );
         }
 
 
         .admin-form-actions {
-            display: flex;
-            gap: 9px;
-            flex-wrap: wrap;
+            display:
+                flex;
 
-            margin-top: 4px;
+            gap:
+                9px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                4px;
         }
 
 
@@ -471,7 +765,8 @@
         ========================================= */
 
         .admin-message {
-            display: none;
+            display:
+                none;
 
             padding:
                 10px 12px;
@@ -488,32 +783,54 @@
 
 
         .admin-message.success {
-            display: block;
+            display:
+                block;
 
             color:
                 #b8ffe4;
 
             background:
-                rgba(0,255,157,0.08);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.08
+                );
 
             border:
                 1px solid
-                rgba(0,255,157,0.14);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.14
+                );
         }
 
 
         .admin-message.error {
-            display: block;
+            display:
+                block;
 
             color:
                 #ffc1c9;
 
             background:
-                rgba(255,63,90,0.08);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.08
+                );
 
             border:
                 1px solid
-                rgba(255,63,90,0.14);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.14
+                );
         }
 
 
@@ -522,77 +839,125 @@
         ========================================= */
 
         .admin-news-list {
-            display: grid;
-            gap: 12px;
+            display:
+                grid;
+
+            gap:
+                12px;
         }
 
 
         .admin-news-item {
-            padding: 15px;
+            padding:
+                15px;
 
-            border-radius: 16px;
+            border-radius:
+                16px;
 
             background:
-                rgba(255,255,255,0.035);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
 
             border:
                 1px solid
-                rgba(255,255,255,0.06);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
         }
 
 
         .admin-news-head {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
+            display:
+                flex;
 
-            gap: 10px;
+            align-items:
+                flex-start;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
         }
 
 
         .admin-news-title {
-            margin: 0;
+            margin:
+                0;
 
-            font-size: 14px;
-            line-height: 1.7;
+            font-size:
+                14px;
+
+            line-height:
+                1.7;
         }
 
 
         .admin-news-category {
-            display: inline-block;
+            display:
+                inline-block;
 
-            margin-top: 4px;
+            margin-top:
+                4px;
 
-            font-size: 10px;
-            opacity: 0.52;
+            font-size:
+                10px;
+
+            opacity:
+                0.52;
         }
 
 
         .admin-news-status {
-            flex-shrink: 0;
+            flex-shrink:
+                0;
 
-            padding: 5px 8px;
+            padding:
+                5px 8px;
 
-            border-radius: 999px;
+            border-radius:
+                999px;
 
-            font-size: 9px;
-            font-weight: 800;
+            font-size:
+                9px;
+
+            font-weight:
+                800;
         }
 
 
         .admin-news-status.published {
-            color: #aaffd9;
+            color:
+                #aaffd9;
 
             background:
-                rgba(0,255,157,0.08);
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.08
+                );
         }
 
 
         .admin-news-status.draft {
-            color: #ddd;
+            color:
+                #ddd;
 
             background:
-                rgba(255,255,255,0.07);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
         }
 
 
@@ -600,12 +965,17 @@
             margin:
                 9px 0 0;
 
-            font-size: 11px;
-            line-height: 1.9;
+            font-size:
+                11px;
 
-            opacity: 0.62;
+            line-height:
+                1.9;
 
-            display: block;
+            opacity:
+                0.62;
+
+            display:
+                block;
 
             max-height:
                 5.7em;
@@ -616,23 +986,38 @@
 
 
         .admin-news-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
+            display:
+                flex;
 
-            margin-top: 11px;
+            flex-wrap:
+                wrap;
 
-            font-size: 9px;
-            opacity: 0.43;
+            gap:
+                9px;
+
+            margin-top:
+                11px;
+
+            font-size:
+                9px;
+
+            opacity:
+                0.43;
         }
 
 
         .admin-news-actions {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
+            display:
+                flex;
 
-            margin-top: 12px;
+            gap:
+                7px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                12px;
         }
 
 
@@ -641,97 +1026,156 @@
         ========================================= */
 
         .admin-user-list {
-            display: grid;
-            gap: 11px;
+            display:
+                grid;
+
+            gap:
+                11px;
         }
 
 
         .admin-user-item {
-            padding: 15px;
+            padding:
+                15px;
 
-            border-radius: 16px;
+            border-radius:
+                16px;
 
             border:
                 1px solid
-                rgba(255,255,255,0.06);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
 
             background:
-                rgba(255,255,255,0.035);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
         }
 
 
         .admin-user-head {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
+            display:
+                flex;
 
-            gap: 10px;
+            align-items:
+                flex-start;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
         }
 
 
         .admin-user-name {
-            margin: 0;
+            margin:
+                0;
 
-            font-size: 14px;
+            font-size:
+                14px;
         }
 
 
         .admin-user-id {
-            display: block;
+            display:
+                block;
 
-            margin-top: 4px;
+            margin-top:
+                4px;
 
-            font-size: 9px;
-            opacity: 0.4;
+            font-size:
+                9px;
+
+            opacity:
+                0.4;
         }
 
 
         .admin-user-stats {
-            display: flex;
-            flex-wrap: wrap;
+            display:
+                flex;
 
-            gap: 8px 12px;
+            flex-wrap:
+                wrap;
 
-            margin-top: 10px;
+            gap:
+                8px 12px;
 
-            font-size: 10px;
-            opacity: 0.55;
+            margin-top:
+                10px;
+
+            font-size:
+                10px;
+
+            opacity:
+                0.55;
         }
 
 
         .admin-user-ban {
-            margin-top: 10px;
+            margin-top:
+                10px;
 
-            padding: 10px;
+            padding:
+                10px;
 
-            border-radius: 11px;
+            border-radius:
+                11px;
 
-            font-size: 10px;
-            line-height: 1.9;
+            font-size:
+                10px;
+
+            line-height:
+                1.9;
 
             color:
                 #ffc2cb;
 
             background:
-                rgba(255,63,90,0.07);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.07
+                );
 
             border:
                 1px solid
-                rgba(255,63,90,0.12);
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.12
+                );
         }
 
 
         .admin-user-actions {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
+            display:
+                flex;
 
-            margin-top: 12px;
+            gap:
+                7px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                12px;
         }
 
 
         .admin-small-button {
-            border: none;
+            border:
+                none;
 
             padding:
                 7px 10px;
@@ -752,7 +1196,12 @@
                 pointer;
 
             background:
-                rgba(255,255,255,0.06);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
 
             color:
                 white;
@@ -761,7 +1210,12 @@
 
         .admin-small-button:hover {
             background:
-                rgba(255,255,255,0.10);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.10
+                );
         }
 
 
@@ -789,11 +1243,21 @@
                 14px;
 
             background:
-                rgba(0,0,0,0.13);
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.13
+                );
 
             border:
                 1px solid
-                rgba(255,255,255,0.05);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.05
+                );
         }
 
 
@@ -884,6 +1348,7 @@
 
         .ban-field input:focus,
         .ban-field select:focus {
+
             border-color:
                 rgba(
                     0,
@@ -895,6 +1360,7 @@
 
 
         .ban-form-actions {
+
             display:
                 flex;
 
@@ -906,12 +1372,6 @@
 
             margin-top:
                 10px;
-        }
-
-
-        .ban-cancel-button {
-            display:
-                none;
         }
 
 
@@ -955,6 +1415,7 @@
 
 
         .admin-support-item.new {
+
             border-color:
                 rgba(
                     0,
@@ -966,6 +1427,7 @@
 
 
         .admin-support-head {
+
             display:
                 flex;
 
@@ -981,6 +1443,7 @@
 
 
         .admin-support-user {
+
             font-size:
                 13px;
 
@@ -990,6 +1453,7 @@
 
 
         .admin-support-date {
+
             display:
                 block;
 
@@ -1005,6 +1469,7 @@
 
 
         .admin-support-status {
+
             flex-shrink:
                 0;
 
@@ -1023,6 +1488,7 @@
 
 
         .admin-support-status.new {
+
             color:
                 #aaffd9;
 
@@ -1037,6 +1503,7 @@
 
 
         .admin-support-status.replied {
+
             color:
                 #d6d6ff;
 
@@ -1051,6 +1518,7 @@
 
 
         .admin-support-message {
+
             margin:
                 13px 0 0;
 
@@ -1080,6 +1548,7 @@
 
 
         .admin-support-reply {
+
             margin-top:
                 10px;
 
@@ -1118,6 +1587,7 @@
 
 
         .admin-support-reply-form {
+
             display:
                 grid;
 
@@ -1130,6 +1600,7 @@
 
 
         .admin-support-reply-form textarea {
+
             width:
                 100%;
 
@@ -1179,23 +1650,13 @@
         }
 
 
-        .admin-support-reply-form textarea:focus {
-            border-color:
-                rgba(
-                    0,
-                    255,
-                    157,
-                    0.28
-                );
-        }
-
-
         /* =========================================
            LOADING / EMPTY
         ========================================= */
 
         .admin-loading,
         .admin-empty {
+
             padding:
                 25px;
 
@@ -1211,6 +1672,7 @@
 
 
         .admin-hidden {
+
             display:
                 none !important;
         }
@@ -1220,73 +1682,100 @@
            RESPONSIVE
         ========================================= */
 
-        @media (max-width: 1000px) {
+        @media (
+            max-width: 1000px
+        ) {
 
             .admin-dashboard {
+
                 grid-template-columns:
-                    repeat(2, 1fr);
+                    repeat(
+                        2,
+                        1fr
+                    );
+
             }
 
 
             .admin-layout {
+
                 grid-template-columns:
                     1fr;
+
             }
 
         }
 
 
-        @media (max-width: 700px) {
+        @media (
+            max-width: 700px
+        ) {
 
             .admin-tabs {
+
                 grid-template-columns:
                     1fr;
+
             }
 
 
             .admin-topbar {
+
                 align-items:
                     flex-start;
 
                 flex-direction:
                     column;
+
             }
 
 
             .admin-actions {
+
                 width:
                     100%;
+
             }
 
 
             .admin-button {
+
                 flex:
                     1;
+
             }
 
         }
 
 
-        @media (max-width: 500px) {
+        @media (
+            max-width: 500px
+        ) {
 
             .admin-page {
+
                 width:
                     94%;
 
                 padding-top:
                     20px;
+
             }
 
 
             .admin-dashboard {
+
                 grid-template-columns:
                     1fr;
+
             }
 
 
             .admin-panel {
+
                 padding:
                     17px;
+
             }
 
         }
@@ -1331,9 +1820,13 @@
     class="admin-page"
 >
 
-    <div class="admin-panel">
+    <div
+        class="admin-panel"
+    >
 
-        <div class="admin-loading">
+        <div
+            class="admin-loading"
+        >
             🔐 در حال بررسی دسترسی ادمین...
         </div>
 
@@ -1356,13 +1849,20 @@
          TOP BAR
     ================================================== -->
 
-    <section class="admin-topbar">
+    <section
+        class="admin-topbar"
+    >
 
-        <div class="admin-brand">
+        <div
+            class="admin-brand"
+        >
 
-            <div class="admin-brand-icon">
+            <div
+                class="admin-brand-icon"
+            >
                 👑
             </div>
+
 
             <div>
 
@@ -1370,7 +1870,10 @@
                     VEXON ADMIN
                 </h1>
 
-                <p id="admin-welcome">
+
+                <p
+                    id="admin-welcome"
+                >
                     پنل مدیریت
                 </p>
 
@@ -1379,7 +1882,9 @@
         </div>
 
 
-        <div class="admin-actions">
+        <div
+            class="admin-actions"
+        >
 
             <button
                 type="button"
@@ -1416,7 +1921,9 @@
          TABS
     ================================================== -->
 
-    <nav class="admin-tabs">
+    <nav
+        class="admin-tabs"
+    >
 
         <button
             type="button"
@@ -1457,7 +1964,7 @@
 
 
     <!-- =================================================
-         SECTION 1 — NEWS
+         NEWS
     ================================================== -->
 
     <section
@@ -1465,13 +1972,24 @@
         class="admin-section active"
     >
 
-        <div class="admin-dashboard">
 
-            <div class="admin-stat-card">
+        <div
+            class="admin-dashboard"
+        >
 
-                <span class="admin-stat-label">
+
+            <!-- NEWS -->
+
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     📰 کل اخبار
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1483,11 +2001,18 @@
             </div>
 
 
-            <div class="admin-stat-card">
+            <!-- PUBLISHED -->
 
-                <span class="admin-stat-label">
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     ✅ منتشرشده
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1499,11 +2024,18 @@
             </div>
 
 
-            <div class="admin-stat-card">
+            <!-- DRAFT -->
 
-                <span class="admin-stat-label">
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     📝 پیش‌نویس
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1515,11 +2047,18 @@
             </div>
 
 
-            <div class="admin-stat-card">
+            <!-- MESSAGES -->
 
-                <span class="admin-stat-label">
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     💬 پیام جدید
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1530,15 +2069,93 @@
 
             </div>
 
+
+            <!-- USERS -->
+
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
+                    👥 ثبت‌نام‌شده‌ها
+                </span>
+
+
+                <strong
+                    class="admin-stat-value"
+                    id="stat-users"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
+            <!-- TOTAL VISITS -->
+
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
+                    👀 بازدید کل
+                </span>
+
+
+                <strong
+                    class="admin-stat-value"
+                    id="stat-visits"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
+            <!-- TODAY VISITS -->
+
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
+                    📅 بازدید امروز
+                </span>
+
+
+                <strong
+                    class="admin-stat-value"
+                    id="stat-today-visits"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
         </div>
 
 
-        <div class="admin-layout">
+        <div
+            class="admin-layout"
+        >
 
 
-            <div class="admin-panel">
+            <!-- CREATE / EDIT NEWS -->
 
-                <h2 id="form-title">
+            <div
+                class="admin-panel"
+            >
+
+                <h2
+                    id="form-title"
+                >
                     📝 خبر جدید
                 </h2>
 
@@ -1554,11 +2171,16 @@
                     >
 
 
-                    <div class="admin-field">
+                    <div
+                        class="admin-field"
+                    >
 
-                        <label for="news-title">
+                        <label
+                            for="news-title"
+                        >
                             عنوان خبر
                         </label>
+
 
                         <input
                             id="news-title"
@@ -1571,33 +2193,52 @@
                     </div>
 
 
-                    <div class="admin-field">
+                    <div
+                        class="admin-field"
+                    >
 
-                        <label for="news-category">
+                        <label
+                            for="news-category"
+                        >
                             دسته‌بندی
                         </label>
+
 
                         <select
                             id="news-category"
                         >
 
-                            <option value="general">
+                            <option
+                                value="general"
+                            >
                                 عمومی
                             </option>
 
-                            <option value="game">
+
+                            <option
+                                value="game"
+                            >
                                 بازی
                             </option>
 
-                            <option value="update">
+
+                            <option
+                                value="update"
+                            >
                                 بروزرسانی
                             </option>
 
-                            <option value="event">
+
+                            <option
+                                value="event"
+                            >
                                 مسابقات
                             </option>
 
-                            <option value="announcement">
+
+                            <option
+                                value="announcement"
+                            >
                                 اطلاعیه
                             </option>
 
@@ -1606,11 +2247,16 @@
                     </div>
 
 
-                    <div class="admin-field">
+                    <div
+                        class="admin-field"
+                    >
 
-                        <label for="news-image">
+                        <label
+                            for="news-image"
+                        >
                             آدرس تصویر
                         </label>
+
 
                         <input
                             id="news-image"
@@ -1622,11 +2268,16 @@
                     </div>
 
 
-                    <div class="admin-field">
+                    <div
+                        class="admin-field"
+                    >
 
-                        <label for="news-content">
+                        <label
+                            for="news-content"
+                        >
                             متن خبر
                         </label>
+
 
                         <textarea
                             id="news-content"
@@ -1638,21 +2289,31 @@
                     </div>
 
 
-                    <div class="admin-field">
+                    <div
+                        class="admin-field"
+                    >
 
-                        <label for="news-status">
+                        <label
+                            for="news-status"
+                        >
                             وضعیت
                         </label>
+
 
                         <select
                             id="news-status"
                         >
 
-                            <option value="draft">
+                            <option
+                                value="draft"
+                            >
                                 📝 پیش‌نویس
                             </option>
 
-                            <option value="published">
+
+                            <option
+                                value="published"
+                            >
                                 ✅ انتشار
                             </option>
 
@@ -1667,7 +2328,9 @@
                     ></div>
 
 
-                    <div class="admin-form-actions">
+                    <div
+                        class="admin-form-actions"
+                    >
 
                         <button
                             type="submit"
@@ -1692,7 +2355,11 @@
             </div>
 
 
-            <div class="admin-panel">
+            <!-- NEWS LIST -->
+
+            <div
+                class="admin-panel"
+            >
 
                 <h2>
                     📰 اخبار VEXON
@@ -1704,7 +2371,9 @@
                     class="admin-news-list"
                 >
 
-                    <div class="admin-loading">
+                    <div
+                        class="admin-loading"
+                    >
                         در حال دریافت اخبار...
                     </div>
 
@@ -1718,7 +2387,7 @@
 
 
     <!-- =================================================
-         SECTION 2 — BAN
+         BAN
     ================================================== -->
 
     <section
@@ -1726,13 +2395,21 @@
         class="admin-section"
     >
 
-        <div class="admin-dashboard">
 
-            <div class="admin-stat-card">
+        <div
+            class="admin-dashboard"
+        >
 
-                <span class="admin-stat-label">
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     👥 کل کاربران
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1744,11 +2421,16 @@
             </div>
 
 
-            <div class="admin-stat-card">
+            <div
+                class="admin-stat-card"
+            >
 
-                <span class="admin-stat-label">
+                <span
+                    class="admin-stat-label"
+                >
                     🚫 کاربران محدودشده
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1762,7 +2444,9 @@
         </div>
 
 
-        <div class="admin-panel">
+        <div
+            class="admin-panel"
+        >
 
             <h2>
                 🚫 مدیریت کاربران
@@ -1774,7 +2458,9 @@
                 class="admin-user-list"
             >
 
-                <div class="admin-loading">
+                <div
+                    class="admin-loading"
+                >
                     در حال دریافت کاربران...
                 </div>
 
@@ -1786,7 +2472,7 @@
 
 
     <!-- =================================================
-         SECTION 3 — SUPPORT
+         SUPPORT
     ================================================== -->
 
     <section
@@ -1794,13 +2480,21 @@
         class="admin-section"
     >
 
-        <div class="admin-dashboard">
 
-            <div class="admin-stat-card">
+        <div
+            class="admin-dashboard"
+        >
 
-                <span class="admin-stat-label">
+            <div
+                class="admin-stat-card"
+            >
+
+                <span
+                    class="admin-stat-label"
+                >
                     💬 کل پیام‌ها
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1812,11 +2506,16 @@
             </div>
 
 
-            <div class="admin-stat-card">
+            <div
+                class="admin-stat-card"
+            >
 
-                <span class="admin-stat-label">
+                <span
+                    class="admin-stat-label"
+                >
                     🆕 پیام‌های جدید
                 </span>
+
 
                 <strong
                     class="admin-stat-value"
@@ -1830,7 +2529,9 @@
         </div>
 
 
-        <div class="admin-panel">
+        <div
+            class="admin-panel"
+        >
 
             <h2>
                 💬 پیام‌های کاربران
@@ -1842,7 +2543,9 @@
                 class="admin-support-list"
             >
 
-                <div class="admin-loading">
+                <div
+                    class="admin-loading"
+                >
                     در حال دریافت پیام‌ها...
                 </div>
 
@@ -1851,6 +2554,7 @@
         </div>
 
     </section>
+
 
 </main>
 
@@ -1863,7 +2567,7 @@
 
 
     /* =====================================================
-       GLOBAL
+       GLOBAL ELEMENTS
     ===================================================== */
 
     const loading =
@@ -1921,7 +2625,7 @@
 
 
     /* =====================================================
-       NEWS
+       NEWS ELEMENTS
     ===================================================== */
 
     const newsForm =
@@ -2008,8 +2712,36 @@
         );
 
 
+    const statMessages =
+        document.getElementById(
+            "stat-messages"
+        );
+
+
     /* =====================================================
-       BAN
+       COMMUNITY STAT ELEMENTS
+    ===================================================== */
+
+    const statUsers =
+        document.getElementById(
+            "stat-users"
+        );
+
+
+    const statVisits =
+        document.getElementById(
+            "stat-visits"
+        );
+
+
+    const statTodayVisits =
+        document.getElementById(
+            "stat-today-visits"
+        );
+
+
+    /* =====================================================
+       BAN ELEMENTS
     ===================================================== */
 
     const userList =
@@ -2031,7 +2763,7 @@
 
 
     /* =====================================================
-       SUPPORT
+       SUPPORT ELEMENTS
     ===================================================== */
 
     const supportList =
@@ -2052,12 +2784,6 @@
         );
 
 
-    const statMessages =
-        document.getElementById(
-            "stat-messages"
-        );
-
-
     /* =====================================================
        STATE
     ===================================================== */
@@ -2065,14 +2791,18 @@
     let currentSection =
         "news";
 
+
     let newsItems =
         [];
+
 
     let users =
         [];
 
+
     let supportMessages =
         [];
+
 
     let adminUsername =
         "";
@@ -2121,6 +2851,7 @@
         adminMessage.textContent =
             text;
 
+
         adminMessage.className =
             "admin-message " +
             type;
@@ -2133,6 +2864,7 @@
         adminMessage.textContent =
             "";
 
+
         adminMessage.className =
             "admin-message";
 
@@ -2143,8 +2875,12 @@
         value
     ) {
 
-        if (!value) {
+        if (
+            !value
+        ) {
+
             return "—";
+
         }
 
 
@@ -2160,7 +2896,9 @@
                         "short"
                 }
             ).format(
-                new Date(value)
+                new Date(
+                    value
+                )
             );
 
         } catch {
@@ -2172,21 +2910,126 @@
     }
 
 
+    function formatNumber(
+        value
+    ) {
+
+        return Number(
+            value ??
+            0
+        ).toLocaleString(
+            "fa-IR"
+        );
+
+    }
+
+
     function banTypeLabel(
         value
     ) {
 
-        switch (value) {
+        switch (
+            value
+        ) {
 
             case "messages":
+
                 return "💬 محرومیت از پیام";
 
+
             case "reactions":
+
                 return "❤️ محرومیت از واکنش";
 
+
             case "full":
+
             default:
+
                 return "🚫 بن کامل سایت";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       COMMUNITY STATS
+    ===================================================== */
+
+    async function loadCommunityStats() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/community/stats",
+                    {
+                        method:
+                            "GET",
+
+                        credentials:
+                            "same-origin",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "دریافت آمار انجام نشد."
+                );
+
+            }
+
+
+            statUsers.textContent =
+                formatNumber(
+                    data.total_users
+                );
+
+
+            statVisits.textContent =
+                formatNumber(
+                    data.total_visits
+                );
+
+
+            statTodayVisits.textContent =
+                formatNumber(
+                    data.today_visits
+                );
+
+
+        } catch (error) {
+
+            console.error(
+                "ADMIN_COMMUNITY_STATS_ERROR",
+                error
+            );
+
+
+            statUsers.textContent =
+                "—";
+
+
+            statVisits.textContent =
+                "—";
+
+
+            statTodayVisits.textContent =
+                "—";
 
         }
 
@@ -2225,6 +3068,7 @@
                 window.location.href =
                     "sections/login.html";
 
+
                 return false;
 
             }
@@ -2236,17 +3080,24 @@
             ) {
 
                 loading.innerHTML = `
-                    <div class="admin-empty">
+
+                    <div
+                        class="admin-empty"
+                    >
                         ❌ این حساب دسترسی Admin ندارد.
                     </div>
+
                 `;
+
 
                 return false;
 
             }
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     "Admin check failed."
@@ -2266,6 +3117,7 @@
 
                 window.location.href =
                     "index.html";
+
 
                 return false;
 
@@ -2303,9 +3155,13 @@
 
 
             loading.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     ❌ ارتباط با سرور برقرار نشد.
                 </div>
+
             `;
 
 
@@ -2340,7 +3196,8 @@
 
                             item.classList.toggle(
                                 "active",
-                                item === tab
+                                item ===
+                                tab
                             );
 
                         }
@@ -2371,7 +3228,7 @@
 
 
     /* =====================================================
-       REFRESH
+       REFRESH CURRENT
     ===================================================== */
 
     async function refreshCurrentSection() {
@@ -2382,6 +3239,8 @@
         ) {
 
             await loadNews();
+
+            await loadCommunityStats();
 
         }
 
@@ -2415,9 +3274,13 @@
     async function loadNews() {
 
         newsList.innerHTML = `
-            <div class="admin-loading">
+
+            <div
+                class="admin-loading"
+            >
                 در حال دریافت اخبار...
             </div>
+
         `;
 
 
@@ -2466,6 +3329,7 @@
 
             renderNews();
 
+
             updateNewsStats();
 
 
@@ -2478,12 +3342,16 @@
 
 
             newsList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     ❌ ${escapeHtml(
                         error.message ||
                         "دریافت اخبار ناموفق بود."
                     )}
                 </div>
+
             `;
 
         }
@@ -2497,13 +3365,20 @@
 
     function renderNews() {
 
-        if (!newsItems.length) {
+        if (
+            !newsItems.length
+        ) {
 
             newsList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     📰 هنوز هیچ خبری ساخته نشده.
                 </div>
+
             `;
+
 
             return;
 
@@ -2540,6 +3415,7 @@
                                             )}
                                         </h3>
 
+
                                         <span
                                             class="admin-news-category"
                                         >
@@ -2553,11 +3429,14 @@
 
 
                                     <span
-                                        class="admin-news-status ${
-                                            published
-                                                ? "published"
-                                                : "draft"
-                                        }"
+                                        class="
+                                            admin-news-status
+                                            ${
+                                                published
+                                                    ? "published"
+                                                    : "draft"
+                                            }
+                                        "
                                     >
                                         ${
                                             published
@@ -2587,6 +3466,7 @@
                                             item.author_username
                                         )}
                                     </span>
+
 
                                     <span>
                                         🕒 ${escapeHtml(
@@ -2678,8 +3558,10 @@
         statTotal.textContent =
             total;
 
+
         statPublished.textContent =
             published;
+
 
         statDraft.textContent =
             draft;
@@ -2688,25 +3570,30 @@
 
 
     /* =====================================================
-       NEWS FORM RESET
+       RESET NEWS FORM
     ===================================================== */
 
     function resetNewsForm() {
 
         newsForm.reset();
 
+
         newsId.value =
             "";
+
 
         newsStatus.value =
             "draft";
 
+
         formTitle.textContent =
             "📝 خبر جدید";
+
 
         cancelEdit.classList.add(
             "admin-hidden"
         );
+
 
         hideAdminMessage();
 
@@ -2714,7 +3601,7 @@
 
 
     /* =====================================================
-       NEWS EDIT
+       EDIT NEWS
     ===================================================== */
 
     function editNews(
@@ -2733,29 +3620,38 @@
             );
 
 
-        if (!item) {
+        if (
+            !item
+        ) {
+
             return;
+
         }
 
 
         newsId.value =
             item.id;
 
+
         newsTitle.value =
             item.title ||
             "";
+
 
         newsCategory.value =
             item.category ||
             "general";
 
+
         newsImage.value =
             item.image_url ||
             "";
 
+
         newsContent.value =
             item.content ||
             "";
+
 
         newsStatus.value =
             item.status ||
@@ -2771,13 +3667,15 @@
         );
 
 
-        window.scrollTo({
-            top:
-                0,
+        window.scrollTo(
+            {
+                top:
+                    0,
 
-            behavior:
-                "smooth"
-        });
+                behavior:
+                    "smooth"
+            }
+        );
 
 
         showAdminMessage(
@@ -2789,7 +3687,7 @@
 
 
     /* =====================================================
-       NEWS SAVE
+       SAVE NEWS
     ===================================================== */
 
     async function saveNews(
@@ -2836,6 +3734,7 @@
                 "error"
             );
 
+
             return;
 
         }
@@ -2851,6 +3750,7 @@
                 "error"
             );
 
+
             return;
 
         }
@@ -2859,7 +3759,9 @@
         try {
 
             const editing =
-                Boolean(id);
+                Boolean(
+                    id
+                );
 
 
             const response =
@@ -2960,15 +3862,21 @@
             );
 
 
-        if (!item) {
+        if (
+            !item
+        ) {
+
             return;
+
         }
 
 
         const newStatus =
             item.status ===
             "published"
+
                 ? "draft"
+
                 : "published";
 
 
@@ -3053,15 +3961,23 @@
             );
 
 
-        if (!item) {
+        if (
+            !item
+        ) {
+
             return;
+
         }
 
 
-        if (
-            !window.confirm(
+        const confirmed =
+            window.confirm(
                 `آیا مطمئنی می‌خواهی خبر «${item.title}» حذف شود؟`
-            )
+            );
+
+
+        if (
+            !confirmed
         ) {
 
             return;
@@ -3146,8 +4062,12 @@
                 );
 
 
-            if (!button) {
+            if (
+                !button
+            ) {
+
                 return;
+
             }
 
 
@@ -3164,7 +4084,9 @@
                 "edit"
             ) {
 
-                editNews(id);
+                editNews(
+                    id
+                );
 
             }
 
@@ -3174,7 +4096,9 @@
                 "toggle"
             ) {
 
-                toggleNews(id);
+                toggleNews(
+                    id
+                );
 
             }
 
@@ -3184,7 +4108,9 @@
                 "delete"
             ) {
 
-                deleteNews(id);
+                deleteNews(
+                    id
+                );
 
             }
 
@@ -3211,9 +4137,13 @@
     async function loadUsers() {
 
         userList.innerHTML = `
-            <div class="admin-loading">
+
+            <div
+                class="admin-loading"
+            >
                 در حال دریافت کاربران...
             </div>
+
         `;
 
 
@@ -3272,12 +4202,16 @@
 
 
             userList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     ❌ ${escapeHtml(
                         error.message ||
                         "دریافت کاربران انجام نشد."
                     )}
                 </div>
+
             `;
 
         }
@@ -3302,11 +4236,15 @@
 
 
         banStatUsers.textContent =
-            users.length;
+            formatNumber(
+                users.length
+            );
 
 
         banStatBanned.textContent =
-            bannedUsers.length;
+            formatNumber(
+                bannedUsers.length
+            );
 
 
         if (
@@ -3314,10 +4252,15 @@
         ) {
 
             userList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     👥 هنوز کاربری وجود ندارد.
                 </div>
+
             `;
+
 
             return;
 
@@ -3378,11 +4321,13 @@
                                     ${
                                         isAdminTarget
                                             ? `
+
                                                 <span
                                                     class="admin-support-status replied"
                                                 >
                                                     👑 ADMIN
                                                 </span>
+
                                               `
                                             : ""
                                     }
@@ -3396,7 +4341,7 @@
 
                                     <span>
                                         ⭐ LV
-                                        ${Number(
+                                        ${formatNumber(
                                             user.level ??
                                             1
                                         )}
@@ -3405,7 +4350,7 @@
 
                                     <span>
                                         ⚡ XP
-                                        ${Number(
+                                        ${formatNumber(
                                             user.xp ??
                                             0
                                         )}
@@ -3414,7 +4359,7 @@
 
                                     <span>
                                         🪙
-                                        ${Number(
+                                        ${formatNumber(
                                             user.coins ??
                                             0
                                         )}
@@ -3425,7 +4370,9 @@
 
                                 ${
                                     banned
+
                                         ? `
+
                                             <div
                                                 class="admin-user-ban"
                                             >
@@ -3445,49 +4392,68 @@
 
                                                 ${
                                                     user.ban_reason
+
                                                         ? `
+
                                                             <br>
+
                                                             دلیل:
                                                             ${escapeHtml(
                                                                 user.ban_reason
                                                             )}
+
                                                           `
+
                                                         : ""
                                                 }
 
                                                 ${
                                                     user.banned_until
+
                                                         ? `
+
                                                             <br>
+
                                                             پایان:
                                                             ${escapeHtml(
                                                                 formatDate(
                                                                     user.banned_until
                                                                 )
                                                             )}
+
                                                           `
+
                                                         : `
+
                                                             <br>
+
                                                             پایان:
                                                             دائمی
+
                                                           `
                                                 }
 
                                             </div>
+
                                           `
+
                                         : `
+
                                             <div
                                                 class="admin-user-stats"
                                             >
                                                 🟢 حساب فعال
                                             </div>
+
                                           `
                                 }
 
 
                                 ${
                                     isAdminTarget
+
                                         ? ""
+
                                         : `
 
                                             <div
@@ -3527,8 +4493,6 @@
                                             </div>
 
 
-                                            <!-- BAN FORM -->
-
                                             <div
                                                 id="ban-form-${user.id}"
                                                 class="ban-form"
@@ -3557,19 +4521,28 @@
                                                             نوع محدودیت
                                                         </label>
 
+
                                                         <select
                                                             data-ban-type
                                                         >
 
-                                                            <option value="full">
+                                                            <option
+                                                                value="full"
+                                                            >
                                                                 🚫 بن کامل سایت
                                                             </option>
 
-                                                            <option value="messages">
+
+                                                            <option
+                                                                value="messages"
+                                                            >
                                                                 💬 محرومیت از پیام
                                                             </option>
 
-                                                            <option value="reactions">
+
+                                                            <option
+                                                                value="reactions"
+                                                            >
                                                                 ❤️ محرومیت از واکنش
                                                             </option>
 
@@ -3586,39 +4559,63 @@
                                                             مدت محدودیت
                                                         </label>
 
+
                                                         <select
                                                             data-ban-duration
                                                         >
 
-                                                            <option value="">
+                                                            <option
+                                                                value=""
+                                                            >
                                                                 دائمی
                                                             </option>
 
-                                                            <option value="1">
+
+                                                            <option
+                                                                value="1"
+                                                            >
                                                                 ۱ ساعت
                                                             </option>
 
-                                                            <option value="6">
+
+                                                            <option
+                                                                value="6"
+                                                            >
                                                                 ۶ ساعت
                                                             </option>
 
-                                                            <option value="24">
+
+                                                            <option
+                                                                value="24"
+                                                            >
                                                                 ۱ روز
                                                             </option>
 
-                                                            <option value="72">
+
+                                                            <option
+                                                                value="72"
+                                                            >
                                                                 ۳ روز
                                                             </option>
 
-                                                            <option value="168">
+
+                                                            <option
+                                                                value="168"
+                                                            >
                                                                 ۷ روز
                                                             </option>
 
-                                                            <option value="720">
+
+                                                            <option
+                                                                value="720"
+                                                            >
                                                                 ۳۰ روز
                                                             </option>
 
-                                                            <option value="custom">
+
+                                                            <option
+                                                                value="custom"
+                                                            >
                                                                 زمان دلخواه
                                                             </option>
 
@@ -3636,6 +4633,7 @@
                                                         <label>
                                                             مدت دلخواه بر حسب ساعت
                                                         </label>
+
 
                                                         <input
                                                             type="number"
@@ -3655,6 +4653,7 @@
                                                         <label>
                                                             دلیل
                                                         </label>
+
 
                                                         <input
                                                             type="text"
@@ -3708,10 +4707,6 @@
                 .join("");
 
 
-        /*
-         * فعال کردن نمایش مدت دلخواه
-         */
-
         userList
             .querySelectorAll(
                 "[data-ban-duration]"
@@ -3744,20 +4739,13 @@
                                 );
 
 
-                            if (
+                            customWrap.style.display =
                                 select.value ===
                                 "custom"
-                            ) {
 
-                                customWrap.style.display =
-                                    "grid";
+                                    ? "grid"
 
-                            } else {
-
-                                customWrap.style.display =
-                                    "none";
-
-                            }
+                                    : "none";
 
                         }
                     );
@@ -3769,7 +4757,7 @@
 
 
     /* =====================================================
-       BAN — OPEN FORM
+       OPEN BAN
     ===================================================== */
 
     function openBanForm(
@@ -3790,10 +4778,6 @@
 
         }
 
-
-        /*
-         * بستن فرم‌های دیگر
-         */
 
         userList
             .querySelectorAll(
@@ -3820,50 +4804,34 @@
             "block";
 
 
-        const type =
-            form.querySelector(
-                "[data-ban-type]"
-            );
-
-
-        const duration =
-            form.querySelector(
-                "[data-ban-duration]"
-            );
-
-
-        const customDuration =
-            form.querySelector(
-                "[data-custom-duration]"
-            );
-
-
-        const reason =
-            form.querySelector(
-                "[data-ban-reason]"
-            );
-
-
-        type.value =
+        form.querySelector(
+            "[data-ban-type]"
+        ).value =
             "full";
 
 
-        duration.value =
+        form.querySelector(
+            "[data-ban-duration]"
+        ).value =
             "";
 
 
-        customDuration.value =
+        form.querySelector(
+            "[data-custom-duration]"
+        ).value =
             "";
 
 
-        reason.value =
+        form.querySelector(
+            "[data-ban-reason]"
+        ).value =
             "نقض قوانین VEXON";
 
     }
 
 
     /* =====================================================
-       BAN — CANCEL FORM
+       CANCEL BAN
     ===================================================== */
 
     function cancelBanForm(
@@ -3889,7 +4857,7 @@
 
 
     /* =====================================================
-       BAN — CONFIRM
+       CONFIRM BAN
     ===================================================== */
 
     async function confirmBan(
@@ -3962,6 +4930,7 @@
                     "مدت دلخواه نامعتبر است."
                 );
 
+
                 return;
 
             }
@@ -4008,6 +4977,7 @@
                 "لطفاً دلیل محدودیت را وارد کن."
             );
 
+
             return;
 
         }
@@ -4034,23 +5004,15 @@
         }
 
 
-        const typeLabel =
-            banTypeLabel(
-                type
-            );
-
-
-        const durationLabel =
-            bannedUntil
-                ? `${hours} ساعت`
-                : "دائمی";
-
-
         const confirmed =
             window.confirm(
                 `کاربر: ${user.username}\n\n` +
-                `نوع: ${typeLabel}\n` +
-                `مدت: ${durationLabel}\n` +
+                `نوع: ${banTypeLabel(type)}\n` +
+                `مدت: ${
+                    bannedUntil
+                        ? `${hours} ساعت`
+                        : "دائمی"
+                }\n` +
                 `دلیل: ${reason}\n\n` +
                 "آیا این محدودیت اعمال شود؟"
             );
@@ -4095,6 +5057,7 @@
 
                         body:
                             JSON.stringify({
+
                                 reason:
                                     reason,
 
@@ -4103,6 +5066,7 @@
 
                                 banned_until:
                                     bannedUntil
+
                             })
                     }
                 );
@@ -4163,10 +5127,14 @@
         button
     ) {
 
-        if (
-            !window.confirm(
+        const confirmed =
+            window.confirm(
                 "آیا مطمئنی می‌خواهی محدودیت این کاربر برداشته شود؟"
-            )
+            );
+
+
+        if (
+            !confirmed
         ) {
 
             return;
@@ -4237,6 +5205,7 @@
             button.disabled =
                 false;
 
+
             button.textContent =
                 "✅ رفع محدودیت";
 
@@ -4281,7 +5250,9 @@
                 "open-ban"
             ) {
 
-                openBanForm(id);
+                openBanForm(
+                    id
+                );
 
             }
 
@@ -4291,7 +5262,9 @@
                 "cancel-ban"
             ) {
 
-                cancelBanForm(id);
+                cancelBanForm(
+                    id
+                );
 
             }
 
@@ -4332,9 +5305,13 @@
     async function loadSupport() {
 
         supportList.innerHTML = `
-            <div class="admin-loading">
+
+            <div
+                class="admin-loading"
+            >
                 در حال دریافت پیام‌ها...
             </div>
+
         `;
 
 
@@ -4393,12 +5370,16 @@
 
 
             supportList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     ❌ ${escapeHtml(
                         error.message ||
                         "دریافت پیام‌ها انجام نشد."
                     )}
                 </div>
+
             `;
 
         }
@@ -4421,15 +5402,21 @@
 
 
         supportStatTotal.textContent =
-            supportMessages.length;
+            formatNumber(
+                supportMessages.length
+            );
 
 
         supportStatNew.textContent =
-            newMessages.length;
+            formatNumber(
+                newMessages.length
+            );
 
 
         statMessages.textContent =
-            newMessages.length;
+            formatNumber(
+                newMessages.length
+            );
 
 
         if (
@@ -4438,6 +5425,7 @@
 
             supportBadge.textContent =
                 newMessages.length;
+
 
             supportBadge.style.display =
                 "inline-flex";
@@ -4455,10 +5443,15 @@
         ) {
 
             supportList.innerHTML = `
-                <div class="admin-empty">
+
+                <div
+                    class="admin-empty"
+                >
                     💬 هنوز پیامی دریافت نشده.
                 </div>
+
             `;
+
 
             return;
 
@@ -4478,11 +5471,14 @@
                         return `
 
                             <article
-                                class="admin-support-item ${
-                                    isNew
-                                        ? "new"
-                                        : ""
-                                }"
+                                class="
+                                    admin-support-item
+                                    ${
+                                        isNew
+                                            ? "new"
+                                            : ""
+                                    }
+                                "
                             >
 
                                 <div
@@ -4499,6 +5495,7 @@
                                             )}
                                         </div>
 
+
                                         <span
                                             class="admin-support-date"
                                         >
@@ -4513,11 +5510,14 @@
 
 
                                     <span
-                                        class="admin-support-status ${
-                                            isNew
-                                                ? "new"
-                                                : "replied"
-                                        }"
+                                        class="
+                                            admin-support-status
+                                            ${
+                                                isNew
+                                                    ? "new"
+                                                    : "replied"
+                                            }
+                                        "
                                     >
                                         ${
                                             isNew
@@ -4540,7 +5540,9 @@
 
                                 ${
                                     item.reply
+
                                         ? `
+
                                             <div
                                                 class="admin-support-reply"
                                             >
@@ -4549,14 +5551,17 @@
                                                     👑 پاسخ Admin:
                                                 </strong>
 
-                                                <br><br>
+                                                <br>
+                                                <br>
 
                                                 ${escapeHtml(
                                                     item.reply
                                                 )}
 
                                             </div>
+
                                           `
+
                                         : ""
                                 }
 
@@ -4655,6 +5660,7 @@
                     "متن پاسخ خالی است."
                 );
 
+
                 return;
 
             }
@@ -4696,7 +5702,8 @@
 
                             body:
                                 JSON.stringify({
-                                    reply
+                                    reply:
+                                        reply
                                 })
                         }
                     );
@@ -4739,6 +5746,7 @@
                 button.disabled =
                     false;
 
+
                 button.textContent =
                     "🚀 ارسال پاسخ";
 
@@ -4769,7 +5777,13 @@
 
     refreshCurrent.addEventListener(
         "click",
-        refreshCurrentSection
+        async () => {
+
+            await refreshCurrentSection();
+
+            await loadCommunityStats();
+
+        }
     );
 
 
@@ -4885,6 +5899,21 @@
 
 
     /* =====================================================
+       AUTO REFRESH COMMUNITY STATS
+       هر ۱۰ ثانیه
+    ===================================================== */
+
+    setInterval(
+        () => {
+
+            loadCommunityStats();
+
+        },
+        10000
+    );
+
+
+    /* =====================================================
        START
     ===================================================== */
 
@@ -4905,8 +5934,9 @@
 
         await loadNews();
 
-
         await loadSupport();
+
+        await loadCommunityStats();
 
     })();
 
@@ -4915,4 +5945,5 @@
 </script>
 
 </body>
+
 </html>

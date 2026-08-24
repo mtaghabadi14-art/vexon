@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "VEXON",
-    "alternateName": "VEXON Gaming",
-    "url": "https://s.vexongame.workers.dev/"
-}
-</script>
-
 <head>
 
     <meta charset="UTF-8">
@@ -28,11 +18,6 @@
     <meta
         name="theme-color"
         content="#03040a"
-    >
-
-    <meta
-        name="google-site-verification"
-        content="lBsb15nYDLAUkiBdRI78tJNzOSoYcCgI2d7w6-QddDs"
     >
 
     <title>
@@ -56,12 +41,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
@@ -75,675 +55,1571 @@
         href="style.css"
     >
 
+
+    <style>
+
+        /* =====================================================
+           COMMUNITY STATS
+        ===================================================== */
+
+        .community-stats-section {
+
+            width:
+                min(
+                    1100px,
+                    92%
+                );
+
+            margin:
+                10px auto 0;
+
+            padding:
+                0 0 20px;
+
+        }
+
+
+        .community-stats-card {
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                12px;
+
+            padding:
+                18px;
+
+            border-radius:
+                22px;
+
+            background:
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.74
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+
+            backdrop-filter:
+                blur(
+                    16px
+                );
+
+            box-shadow:
+                0 0 35px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.12
+                );
+
+        }
+
+
+        .community-stats-card::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            pointer-events:
+                none;
+
+            background:
+                linear-gradient(
+                    120deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.03
+                    ),
+                    transparent 45%,
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.035
+                    )
+                );
+
+        }
+
+
+        .community-stat {
+
+            position:
+                relative;
+
+            z-index:
+                1;
+
+            min-width:
+                0;
+
+            padding:
+                16px;
+
+            border-radius:
+                17px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.055
+                );
+
+        }
+
+
+        .community-stat-icon {
+
+            font-size:
+                22px;
+
+            margin-bottom:
+                8px;
+
+        }
+
+
+        .community-stat-label {
+
+            display:
+                block;
+
+            font-size:
+                10px;
+
+            opacity:
+                0.52;
+
+            margin-bottom:
+                5px;
+
+        }
+
+
+        .community-stat-value {
+
+            display:
+                block;
+
+            font-size:
+                24px;
+
+            font-weight:
+                900;
+
+            line-height:
+                1.2;
+
+        }
+
+
+        .community-stat-value.users {
+
+            color:
+                #00ff9d;
+
+            text-shadow:
+                0 0 16px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.13
+                );
+
+        }
+
+
+        .community-stat-value.visits {
+
+            color:
+                #aeb8ff;
+
+            text-shadow:
+                0 0 16px
+                rgba(
+                    116,
+                    77,
+                    255,
+                    0.15
+                );
+
+        }
+
+
+        .community-stat-value.today {
+
+            color:
+                #ffd95a;
+
+            text-shadow:
+                0 0 16px
+                rgba(
+                    255,
+                    217,
+                    90,
+                    0.13
+                );
+
+        }
+
+
+        .community-stat-note {
+
+            display:
+                block;
+
+            margin-top:
+                6px;
+
+            font-size:
+                9px;
+
+            opacity:
+                0.38;
+
+        }
+
+
+        .community-stats-status {
+
+            margin-top:
+                8px;
+
+            text-align:
+                center;
+
+            font-size:
+                9px;
+
+            opacity:
+                0.35;
+
+        }
+
+
+        /* =====================================================
+           MOBILE HEADER PROFILE
+        ===================================================== */
+
+        @media (
+            max-width: 850px
+        ) {
+
+            .navbar .header-profile {
+
+                min-width:
+                    132px;
+
+                padding:
+                    9px 11px;
+
+                gap:
+                    9px;
+
+                border-radius:
+                    15px;
+
+            }
+
+
+            .navbar .header-profile-icon {
+
+                width:
+                    42px;
+
+                height:
+                    42px;
+
+                flex:
+                    0 0 42px;
+
+                font-size:
+                    19px;
+
+                border-radius:
+                    12px;
+
+            }
+
+
+            .navbar .header-profile strong {
+
+                font-size:
+                    11px;
+
+            }
+
+
+            .navbar .header-profile span {
+
+                font-size:
+                    8px;
+
+            }
+
+
+            .navbar .header-profile b {
+
+                font-size:
+                    17px;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 520px
+        ) {
+
+            .navbar .header-profile {
+
+                min-width:
+                    118px;
+
+                padding:
+                    8px 9px;
+
+                gap:
+                    7px;
+
+            }
+
+
+            .navbar .header-profile-icon {
+
+                width:
+                    38px;
+
+                height:
+                    38px;
+
+                flex-basis:
+                    38px;
+
+                font-size:
+                    17px;
+
+                border-radius:
+                    11px;
+
+            }
+
+
+            .navbar .header-profile strong {
+
+                font-size:
+                    10px;
+
+            }
+
+
+            .navbar .header-profile span {
+
+                font-size:
+                    7px;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           COMMUNITY STATS MOBILE
+        ===================================================== */
+
+        @media (
+            max-width: 700px
+        ) {
+
+            .community-stats-section {
+
+                width:
+                    94%;
+
+            }
+
+
+            .community-stats-card {
+
+                grid-template-columns:
+                    1fr;
+
+                gap:
+                    9px;
+
+                padding:
+                    11px;
+
+                border-radius:
+                    19px;
+
+            }
+
+
+            .community-stat {
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    auto 1fr auto;
+
+                align-items:
+                    center;
+
+                gap:
+                    10px;
+
+                padding:
+                    12px;
+
+            }
+
+
+            .community-stat-icon {
+
+                margin:
+                    0;
+
+                font-size:
+                    19px;
+
+            }
+
+
+            .community-stat-label {
+
+                margin:
+                    0;
+
+            }
+
+
+            .community-stat-value {
+
+                font-size:
+                    20px;
+
+                text-align:
+                    left;
+
+            }
+
+
+            .community-stat-note {
+
+                grid-column:
+                    2 / 4;
+
+                margin:
+                    -2px 0 0;
+
+            }
+
+        }
+
+    </style>
+
 </head>
 
 
 <body>
 
 
-    <!-- =========================
-         SPACE BACKGROUND
-    ========================== -->
+<!-- =====================================================
+     SPACE BACKGROUND
+===================================================== -->
 
-    <div
-        class="background-effects"
-        aria-hidden="true"
-    >
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
 
-        <div class="nebula nebula-purple"></div>
-        <div class="nebula nebula-green"></div>
-        <div class="nebula nebula-blue"></div>
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
 
-        <div class="stars stars-one"></div>
-        <div class="stars stars-two"></div>
-        <div class="stars stars-three"></div>
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+    <div class="stars stars-three"></div>
 
-        <div class="planet planet-purple"></div>
-        <div class="planet planet-blue"></div>
+    <div class="planet planet-purple"></div>
+    <div class="planet planet-blue"></div>
 
+    <div class="city">
 
-        <div class="city">
-
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-
-        </div>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
 
     </div>
 
-
-    <!-- =========================
-         HEADER
-    ========================== -->
-
-    <header class="navbar">
+</div>
 
 
-        <!-- LOGO -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="navbar">
+
+
+    <!-- LOGO -->
+
+    <a
+        href="index.html"
+        class="logo"
+    >
+        VE<span class="logo-x">X</span>ON
+    </a>
+
+
+    <!-- DESKTOP NAV -->
+
+    <nav class="nav-links">
+
 
         <a
             href="index.html"
-            class="logo"
+            class="nav-link active"
         >
-            VE<span class="logo-x">X</span>ON
+
+            <span class="desktop-v-icon">
+                V
+            </span>
+
+            خانه
+
         </a>
 
 
-        <!-- DESKTOP NAV -->
-
-        <nav class="nav-links">
-
-            <a
-                href="index.html"
-                class="nav-link active"
-            >
-                <span class="desktop-v-icon">
-                    V
-                </span>
-                خانه
-            </a>
-
-
-            <a
-                href="sections/games.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🎮
-                </span>
-                بازی‌ها
-            </a>
-
-
-            <a
-                href="sections/leaderboard.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    🏆
-                </span>
-                لیدربورد
-            </a>
-
-
-            <a
-                href="sections/cafe.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ☕
-                </span>
-                کافه بازی
-            </a>
-
-
-            <a
-                href="sections/news.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    📢
-                </span>
-                اخبار
-            </a>
-
-
-            <a
-                href="sections/guide.html"
-                class="nav-link"
-            >
-                <span class="nav-icon">
-                    ?
-                </span>
-                راهنما
-            </a>
-
-        </nav>
-
-
-        <!-- =========================
-             ACCOUNT HEADER
-        ========================== -->
-
         <a
-            href="sections/login.html"
-            class="header-profile"
-            id="header-profile"
+            href="sections/games.html"
+            class="nav-link"
         >
 
-            <div class="header-profile-icon">
-                👤
+            <span class="nav-icon">
+                🎮
+            </span>
+
+            بازی‌ها
+
+        </a>
+
+
+        <a
+            href="sections/leaderboard.html"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                🏆
+            </span>
+
+            لیدربورد
+
+        </a>
+
+
+        <a
+            href="sections/cafe.html"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                ☕
+            </span>
+
+            کافه بازی
+
+        </a>
+
+
+        <a
+            href="sections/news.html"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                📢
+            </span>
+
+            اخبار
+
+        </a>
+
+
+        <a
+            href="sections/guide.html"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                ?
+            </span>
+
+            راهنما
+
+        </a>
+
+
+    </nav>
+
+
+    <!-- PROFILE -->
+
+    <a
+        href="sections/profile.html"
+        class="header-profile"
+    >
+
+        <div class="header-profile-icon">
+            👤
+        </div>
+
+
+        <div>
+
+            <strong>
+                پروفایل
+            </strong>
+
+
+            <span>
+                مشاهده پروفایل
+            </span>
+
+        </div>
+
+
+        <b>
+            ‹
+        </b>
+
+    </a>
+
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main>
+
+
+    <!-- =================================================
+         HERO
+    ================================================== -->
+
+    <section class="hero">
+
+
+        <!-- HERO CONTENT -->
+
+        <div class="hero-content">
+
+
+            <!-- MAIN VEXON LOGO -->
+
+            <img
+                class="vexon-main-logo"
+                src="assets/vexon-logo-transparent.png"
+                alt="VEXON"
+            >
+
+
+            <!-- NEON SLOGAN -->
+
+            <h1 class="neon-slogan">
+
+                بازی کن.
+                <span>
+                    رقابت کن.
+                </span>
+
+                <strong>
+                    برنده شو.
+                </strong>
+
+            </h1>
+
+
+            <!-- DESCRIPTION -->
+
+            <p class="hero-description">
+
+                به دنیای VEXON خوش آمدی؛
+                جایی برای بازی، رقابت و تجربه‌های جدید.
+
+            </p>
+
+
+            <!-- BUTTONS -->
+
+            <div class="hero-buttons">
+
+
+                <a
+                    href="sections/games.html"
+                    class="hero-button green-button"
+                >
+
+                    <span
+                        class="button-icon"
+                    >
+                        🎮
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            شروع بازی
+                        </strong>
+
+                        <small>
+                            همین حالا وارد دنیای بازی شو
+                        </small>
+
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="sections/cafe.html"
+                    class="hero-button purple-button"
+                >
+
+                    <span
+                        class="button-icon"
+                    >
+                        ☕
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            ورود به کافه
+                        </strong>
+
+                        <small>
+                            با دوستانت رقابت کن
+                        </small>
+
+                    </span>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VEXON BUBBLE
+        ================================================== -->
+
+        <div class="hero-visual">
+
+            <div class="bubble-glow"></div>
+
+
+            <img
+                class="vexon-bubble-image"
+                src="assets/VEXON Neon Holographic Globe.png"
+                alt="VEXON glass bubble"
+            >
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         DASHBOARD
+    ================================================== -->
+
+    <section class="dashboard-section">
+
+
+        <!-- =================================================
+             FEATURED GAMES
+        ================================================== -->
+
+        <div class="featured-games">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span
+                        class="panel-label"
+                    >
+                        ⚡ FEATURED
+                    </span>
+
+
+                    <h2>
+                        بازی‌های ویژه
+                    </h2>
+
+                </div>
+
+
+                <a
+                    href="sections/games.html"
+                    class="view-all"
+                >
+                    مشاهده همه
+                </a>
+
             </div>
 
 
-            <div class="header-player-info">
+            <!-- GAME CARDS -->
 
-                <strong id="header-profile-name">
-                    ...
-                    </strong>
+            <div class="game-cards">
 
 
-                <!-- XP BAR -->
+                <!-- GAME 1 -->
 
-                <div
-                    id="header-xp-bar"
-                    class="header-xp-bar"
-                    style="display: none;"
+                <article
+                    class="game-card green-card"
                 >
 
                     <div
-                        id="header-xp-fill"
-                        class="header-xp-fill"
-                    ></div>
-
-                </div>
-
-
-                <span id="header-profile-stats">
-                    در حال بررسی حساب...
-                </span>
-
-            </div>
+                        class="game-card-icon"
+                    >
+                        ⚡
+                    </div>
 
 
-            <b>
-                ‹
-            </b>
-
-        </a>
-
-    </header>
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main>
-
-
-        <!-- =========================
-             HERO
-        ========================== -->
-
-        <section class="hero">
-
-            <div class="hero-content">
-
-                <img
-                    class="vexon-main-logo"
-                    src="assets/vexon-logo-transparent.png"
-                    alt="VEXON"
-                >
-
-
-                <h1 class="neon-slogan">
-
-                    بازی کن.
-                    <span>رقابت کن.</span>
-                    <strong>برنده شو.</strong>
-
-                </h1>
-
-
-                <p class="hero-description">
-
-                    به دنیای VEXON خوش آمدی؛
-                    جایی برای بازی، رقابت و تجربه‌های جدید.
-
-                </p>
-
-
-                <div class="hero-buttons">
-
-                    <a
-                        href="sections/games.html"
-                        class="hero-button green-button"
+                    <div
+                        class="game-card-content"
                     >
 
-                        <span class="button-icon">
-                            🎮
+                        <span
+                            class="game-category"
+                        >
+                            SPEED
                         </span>
 
-                        <span>
 
-                            <strong>
-                                شروع بازی
-                            </strong>
-
-                            <small>
-                                همین حالا وارد دنیای بازی شو
-                            </small>
-
-                        </span>
-
-                    </a>
+                        <h3>
+                            نبرد سرعت
+                        </h3>
 
 
-                    <a
-                        href="sections/cafe.html"
-                        class="hero-button purple-button"
-                    >
-
-                        <span class="button-icon">
-                            ☕
-                        </span>
-
-                        <span>
-
-                            <strong>
-                                ورود به کافه
-                            </strong>
-
-                            <small>
-                                با دوستانت رقابت کن
-                            </small>
-
-                        </span>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- VEXON BUBBLE -->
-
-            <div class="hero-visual">
-
-                <div class="bubble-glow"></div>
-
-                <img
-                    class="vexon-bubble-image"
-                    src="assets/VEXON Neon Holographic Globe.png"
-                    alt="VEXON glass bubble"
-                >
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             DASHBOARD
-        ========================== -->
-
-        <section class="dashboard-section">
-
-
-            <div class="featured-games">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <span class="panel-label">
-                            ⚡ FEATURED
-                        </span>
-
-                        <h2>
-                            بازی‌های ویژه
-                        </h2>
+                        <p>
+                            رقابت سریع و هیجان‌انگیز
+                        </p>
 
                     </div>
 
 
                     <a
                         href="sections/games.html"
-                        class="view-all"
+                        class="game-play"
                     >
-                        مشاهده همه
+                        بازی کن
                     </a>
 
-                </div>
+                </article>
 
 
-                <div class="game-cards">
+                <!-- GAME 2 -->
+
+                <article
+                    class="game-card purple-card"
+                >
+
+                    <div
+                        class="game-card-icon"
+                    >
+                        🎯
+                    </div>
 
 
-                    <article class="game-card green-card">
+                    <div
+                        class="game-card-content"
+                    >
 
-                        <div class="game-card-icon">
-                            ⚡
-                        </div>
-
-                        <div class="game-card-content">
-
-                            <span class="game-category">
-                                SPEED
-                            </span>
-
-                            <h3>
-                                نبرد سرعت
-                            </h3>
-
-                            <p>
-                                رقابت سریع و هیجان‌انگیز
-                            </p>
-
-                        </div>
-
-                        <a
-                            href="sections/games.html"
-                            class="game-play"
+                        <span
+                            class="game-category"
                         >
-                            بازی کن
-                        </a>
-
-                    </article>
-
-
-                    <article class="game-card purple-card">
-
-                        <div class="game-card-icon">
-                            🎯
-                        </div>
-
-                        <div class="game-card-content">
-
-                            <span class="game-category">
-                                SKILL
-                            </span>
-
-                            <h3>
-                                تیراندازی
-                            </h3>
-
-                            <p>
-                                مهارت، هدف‌گیری، پیروزی
-                            </p>
-
-                        </div>
-
-                        <a
-                            href="sections/games.html"
-                            class="game-play"
-                        >
-                            بازی کن
-                        </a>
-
-                    </article>
-
-
-                    <article class="game-card blue-card">
-
-                        <div class="game-card-icon">
-                            ♞
-                        </div>
-
-                        <div class="game-card-content">
-
-                            <span class="game-category">
-                                STRATEGY
-                            </span>
-
-                            <h3>
-                                شطرنج
-                            </h3>
-
-                            <p>
-                                استراتژی، فکر، برتری
-                            </p>
-
-                        </div>
-
-                        <a
-                            href="sections/games.html"
-                            class="game-play"
-                        >
-                            بازی کن
-                        </a>
-
-                    </article>
-
-
-                    <article class="game-card gold-card">
-
-                        <div class="game-card-icon">
-                            ?
-                        </div>
-
-                        <div class="game-card-content">
-
-                            <span class="game-category">
-                                SOON
-                            </span>
-
-                            <h3>
-                                بیشتر به زودی...
-                            </h3>
-
-                            <p>
-                                بازی‌های جدید در راه هستند
-                            </p>
-
-                        </div>
-
-                        <a
-                            href="sections/news.html"
-                            class="game-play"
-                        >
-                            منتظر بمان
-                        </a>
-
-                    </article>
-
-                </div>
-
-            </div>
-
-
-            <!-- NEWS -->
-
-            <aside class="news-panel">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <span class="panel-label">
-                            📢 NEWS
+                            SKILL
                         </span>
 
-                        <h2>
-                            آخرین اخبار
-                        </h2>
+
+                        <h3>
+                            تیراندازی
+                        </h3>
+
+
+                        <p>
+                            مهارت، هدف‌گیری، پیروزی
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="sections/games.html"
+                        class="game-play"
+                    >
+                        بازی کن
+                    </a>
+
+                </article>
+
+
+                <!-- GAME 3 -->
+
+                <article
+                    class="game-card blue-card"
+                >
+
+                    <div
+                        class="game-card-icon"
+                    >
+                        ♞
+                    </div>
+
+
+                    <div
+                        class="game-card-content"
+                    >
+
+                        <span
+                            class="game-category"
+                        >
+                            STRATEGY
+                        </span>
+
+
+                        <h3>
+                            شطرنج
+                        </h3>
+
+
+                        <p>
+                            استراتژی، فکر، برتری
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="sections/games.html"
+                        class="game-play"
+                    >
+                        بازی کن
+                    </a>
+
+                </article>
+
+
+                <!-- SOON -->
+
+                <article
+                    class="game-card gold-card"
+                >
+
+                    <div
+                        class="game-card-icon"
+                    >
+                        ?
+                    </div>
+
+
+                    <div
+                        class="game-card-content"
+                    >
+
+                        <span
+                            class="game-category"
+                        >
+                            SOON
+                        </span>
+
+
+                        <h3>
+                            بیشتر به زودی...
+                        </h3>
+
+
+                        <p>
+                            بازی‌های جدید در راه هستند
+                        </p>
 
                     </div>
 
 
                     <a
                         href="sections/news.html"
-                        class="view-all"
+                        class="game-play"
                     >
-                        همه اخبار
+                        منتظر بمان
                     </a>
 
-                </div>
+                </article>
 
 
-                <div class="news-list">
+            </div>
 
-
-                    <article class="news-item">
-
-                        <div class="news-icon red">
-                            NEW
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                اضافه شدن بازی جدید!
-                            </h3>
-
-                            <p>
-                                یک بازی جدید و هیجان‌انگیز به VEXON اضافه شد.
-                            </p>
-
-                        </div>
-
-                    </article>
-
-
-                    <article class="news-item">
-
-                        <div class="news-icon purple">
-                            V
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                مسابقات VEXON
-                            </h3>
-
-                            <p>
-                                برای رقابت با بازیکنان دیگر آماده شو.
-                            </p>
-
-                        </div>
-
-                    </article>
-
-
-                    <article class="news-item">
-
-                        <div class="news-icon green">
-                            UP
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                بروزرسانی جدید
-                            </h3>
-
-                            <p>
-                                امکانات تازه‌ای به دنیای VEXON اضافه شده است.
-                            </p>
-
-                        </div>
-
-                    </article>
-
-                </div>
-
-            </aside>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
-    <footer>
-
-        <div class="footer-logo">
-            VE<span>X</span>ON
-        </div>
-
-        <p>
-            PLAY • COMPETE • LEVEL UP.
-        </p>
-
-        <div class="footer-socials">
-            <span>✈️</span>
-            <span>◎</span>
-            <span>▶</span>
         </div>
 
 
-        <a
-            href="sections/creators.html"
-            class="creators-link"
+    </section>
+
+
+    <!-- =================================================
+         COMMUNITY STATS
+    ================================================== -->
+
+    <section
+        class="community-stats-section"
+        aria-label="آمار VEXON"
+    >
+
+        <div
+            class="community-stats-card"
         >
-            👨‍💻 سازندگان VEXON
-        </a>
 
+
+            <!-- USERS -->
+
+            <div
+                class="community-stat"
+            >
+
+                <div
+                    class="community-stat-icon"
+                >
+                    👥
+                </div>
+
+
+                <div>
+
+                    <span
+                        class="community-stat-label"
+                    >
+                        بازیکنان ثبت‌نام‌شده
+                    </span>
+
+
+                    <strong
+                        id="community-users"
+                        class="community-stat-value users"
+                    >
+                        —
+                    </strong>
+
+
+                    <span
+                        class="community-stat-note"
+                    >
+                        تعداد حساب‌های VEXON
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL VISITS -->
+
+            <div
+                class="community-stat"
+            >
+
+                <div
+                    class="community-stat-icon"
+                >
+                    👀
+                </div>
+
+
+                <div>
+
+                    <span
+                        class="community-stat-label"
+                    >
+                        بازدید کل
+                    </span>
+
+
+                    <strong
+                        id="community-visits"
+                        class="community-stat-value visits"
+                    >
+                        —
+                    </strong>
+
+
+                    <span
+                        class="community-stat-note"
+                    >
+                        تعداد بازدیدهای ثبت‌شده
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TODAY -->
+
+            <div
+                class="community-stat"
+            >
+
+                <div
+                    class="community-stat-icon"
+                >
+                    📅
+                </div>
+
+
+                <div>
+
+                    <span
+                        class="community-stat-label"
+                    >
+                        بازدید امروز
+                    </span>
+
+
+                    <strong
+                        id="community-today"
+                        class="community-stat-value today"
+                    >
+                        —
+                    </strong>
+
+
+                    <span
+                        class="community-stat-note"
+                    >
+                        بازدیدهای امروز
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div
+            id="community-stats-status"
+            class="community-stats-status"
+            aria-live="polite"
+        >
+            در حال دریافت آمار VEXON...
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+
+    <div class="footer-logo">
+        VE<span>X</span>ON
+    </div>
+
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+
+    <div class="footer-socials">
+        <span>✈️</span>
+        <span>◎</span>
+        <span>▶</span>
+    </div>
+
+
+    <!-- CREATORS BUTTON -->
+
+    <a
+        href="sections/creators.html"
+        class="creators-link"
+    >
+        👨‍💻 سازندگان VEXON
+    </a>
+
+
+    <span>
+        ساخته شده با 💚 برای گیمرها
+        <br>
+        © 2026 VEXON — همه حقوق محفوظ است.
+    </span>
+
+</footer>
+
+
+<!-- =====================================================
+     MOBILE BOTTOM NAV
+===================================================== -->
+
+<nav
+    class="mobile-bottom-nav"
+>
+
+
+    <!-- CAFE -->
+
+    <a
+        href="sections/cafe.html"
+        class="mobile-nav-item"
+    >
 
         <span>
-            ساخته شده با 💚 برای گیمرها
-            <br>
-            © 2026 VEXON — همه حقوق محفوظ است.
+            ☕
         </span>
 
-    </footer>
+        <small>
+            کافه
+        </small>
+
+    </a>
 
 
-    <!-- =========================
-         MOBILE BOTTOM NAV
-    ========================== -->
+    <!-- LEADERBOARD -->
 
-    <nav class="mobile-bottom-nav">
+    <a
+        href="sections/leaderboard.html"
+        class="mobile-nav-item"
+    >
 
-        <a
-            href="sections/games.html"
-            class="mobile-nav-item"
+        <span>
+            🏆
+        </span>
+
+        <small>
+            لیدربورد
+        </small>
+
+    </a>
+
+
+    <!-- HOME -->
+
+    <a
+        href="index.html"
+        class="mobile-nav-item mobile-home active"
+    >
+
+        <span
+            class="home-v-icon"
         >
-            <span>🎮</span>
-            <small>بازی‌ها</small>
-        </a>
+            V
+        </span>
+
+        <small>
+            خانه
+        </small>
+
+    </a>
 
 
-        <a
-            href="sections/cafe.html"
-            class="mobile-nav-item"
-        >
-            <span>☕</span>
-            <small>کافه</small>
-        </a>
+    <!-- NEWS -->
+
+    <a
+        href="sections/news.html"
+        class="mobile-nav-item"
+    >
+
+        <span>
+            📢
+        </span>
+
+        <small>
+            اخبار
+        </small>
+
+    </a>
 
 
-        <a
-            href="index.html"
-            class="mobile-nav-item mobile-home active"
-        >
-            <span class="home-v-icon">
-                V
-            </span>
-            <small>خانه</small>
-        </a>
+    <!-- PROFILE -->
+
+    <a
+        href="sections/profile.html"
+        class="mobile-nav-item"
+    >
+
+        <span>
+            👤
+        </span>
+
+        <small>
+            پروفایل
+        </small>
+
+    </a>
 
 
-        <a
-            href="sections/news.html"
-            class="mobile-nav-item"
-        >
-            <span>📢</span>
-            <small>اخبار</small>
-        </a>
+</nav>
 
 
-        <a
-            href="sections/profile.html"
-            class="mobile-nav-item"
-        >
-            <span>⚙️</span>
-            <small>تنظیمات</small>
-        </a>
+<!-- =====================================================
+     SITE SCRIPT
+===================================================== -->
 
-    </nav>
+<script src="script.js"></script>
 
 
-    <!-- =========================
-         MAIN SCRIPT
-    ========================== -->
+<script>
 
-    <script src="script.js"></script>
+(function () {
+
+    "use strict";
+
+
+    const usersElement =
+        document.getElementById(
+            "community-users"
+        );
+
+
+    const visitsElement =
+        document.getElementById(
+            "community-visits"
+        );
+
+
+    const todayElement =
+        document.getElementById(
+            "community-today"
+        );
+
+
+    const statusElement =
+        document.getElementById(
+            "community-stats-status"
+        );
+
+
+    let statsTimer =
+        null;
+
+
+    /* =====================================================
+       FORMAT NUMBER
+    ===================================================== */
+
+    function formatNumber(
+        value
+    ) {
+
+        return Number(
+            value ??
+            0
+        ).toLocaleString(
+            "fa-IR"
+        );
+
+    }
+
+
+    /* =====================================================
+       LOAD STATS
+    ===================================================== */
+
+    async function loadCommunityStats() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/community/stats",
+                    {
+                        method:
+                            "GET",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "دریافت آمار انجام نشد."
+                );
+
+            }
+
+
+            usersElement.textContent =
+                formatNumber(
+                    data.total_users
+                );
+
+
+            visitsElement.textContent =
+                formatNumber(
+                    data.total_visits
+                );
+
+
+            todayElement.textContent =
+                formatNumber(
+                    data.today_visits
+                );
+
+
+            statusElement.textContent =
+                "آمار VEXON به‌صورت زنده بروزرسانی می‌شود.";
+
+        } catch (error) {
+
+            console.error(
+                "COMMUNITY_STATS_ERROR:",
+                error
+            );
+
+
+            statusElement.textContent =
+                "آمار فعلاً در دسترس نیست.";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    loadCommunityStats();
+
+
+    /* =====================================================
+       AUTO REFRESH
+    ===================================================== */
+
+    statsTimer =
+        setInterval(
+            () => {
+
+                loadCommunityStats();
+
+            },
+            10000
+        );
+
+
+    /* =====================================================
+       CLEANUP
+    ===================================================== */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (
+                statsTimer
+            ) {
+
+                clearInterval(
+                    statsTimer
+                );
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
+
+
+<!-- =====================================================
+     GLOBE / HERO SCRIPT
+===================================================== -->
+
+<script src="vexon-globe.js"></script>
+
 
 </body>
 

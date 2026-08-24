@@ -36,10 +36,12 @@ function toBase64(bytes) {
     let binary = "";
 
     for (const byte of bytes) {
+
         binary +=
             String.fromCharCode(
                 byte
             );
+
     }
 
     return btoa(binary);
@@ -54,6 +56,7 @@ function fromBase64(value) {
 
     return Uint8Array.from(
         binary,
+
         char =>
             char.charCodeAt(0)
     );
@@ -82,10 +85,18 @@ async function hashPassword(
     const keyMaterial =
         await crypto.subtle.importKey(
             "raw",
-            encoder.encode(password),
+
+            encoder.encode(
+                password
+            ),
+
             "PBKDF2",
+
             false,
-            ["deriveBits"]
+
+            [
+                "deriveBits"
+            ]
         );
 
 
@@ -150,7 +161,9 @@ async function verifyPassword(
 
 
         const iterations =
-            Number(parts[1]);
+            Number(
+                parts[1]
+            );
 
 
         const salt =
@@ -177,7 +190,9 @@ async function verifyPassword(
 
                 false,
 
-                ["deriveBits"]
+                [
+                    "deriveBits"
+                ]
             );
 
 
@@ -235,7 +250,8 @@ async function verifyPassword(
 
 
         return (
-            difference === 0
+            difference ===
+            0
         );
 
 
@@ -265,7 +281,10 @@ function createSessionToken() {
             byte =>
                 byte
                     .toString(16)
-                    .padStart(2, "0")
+                    .padStart(
+                        2,
+                        "0"
+                    )
         )
         .join("");
 
@@ -287,13 +306,18 @@ async function hashSessionToken(
 
 
     return Array.from(
-        new Uint8Array(digest)
+        new Uint8Array(
+            digest
+        )
     )
         .map(
             byte =>
                 byte
                     .toString(16)
-                    .padStart(2, "0")
+                    .padStart(
+                        2,
+                        "0"
+                    )
         )
         .join("");
 
@@ -311,7 +335,9 @@ function getCookie(
         );
 
 
-    if (!cookieHeader) {
+    if (
+        !cookieHeader
+    ) {
 
         return null;
 
@@ -336,7 +362,8 @@ function getCookie(
 
 
         if (
-            key === name
+            key ===
+            name
         ) {
 
             return (
@@ -379,7 +406,10 @@ function getNextLevelXp(
 
     return (
         levels[level] ??
-        (level * 700)
+        (
+            level *
+            700
+        )
     );
 
 }
@@ -532,8 +562,7 @@ async function getCurrentUser(
                         sessions.user_id
                 WHERE
                     sessions.token_hash = ?1
-                    AND
-                    sessions.expires_at >
+                    AND sessions.expires_at >
                         datetime('now')
                 LIMIT 1
                 `
@@ -626,14 +655,17 @@ async function getCurrentUser(
                 nextXp > 0
                     ? Math.min(
                         100,
+
                         Math.max(
                             0,
+
                             (
                                 xp /
                                 nextXp
                             ) * 100
                         )
                     )
+
                     : 0;
 
 
@@ -750,14 +782,17 @@ async function getCurrentUser(
         nextXp > 0
             ? Math.min(
                 100,
+
                 Math.max(
                     0,
+
                     (
                         xp /
                         nextXp
                     ) * 100
                 )
             )
+
             : 0;
 
 
@@ -950,7 +985,9 @@ function normalizeBanType(
     return ALLOWED_BAN_TYPES.has(
         normalized
     )
+
         ? normalized
+
         : "full";
 
 }
@@ -1068,10 +1105,6 @@ async function getUserAccess(
     }
 
 
-    /*
-     * ADMIN همیشه دسترسی دارد.
-     */
-
     if (
         isAdminUser(
             user,
@@ -1122,6 +1155,173 @@ async function getUserAccess(
 
 
 /* =========================================================
+   VISIT TRACKING
+========================================================= */
+
+/*
+ * فقط درخواست صفحه‌های HTML را به‌عنوان
+ * بازدید ثبت می‌کنیم.
+ *
+ * API، CSS، JS، عکس، فونت و فایل‌های دیگر
+ * بازدید حساب نمی‌شوند.
+ */
+
+function shouldTrackVisit(
+    request
+) {
+
+    if (
+        request.method !==
+        "GET"
+    ) {
+
+        return false;
+
+    }
+
+
+    const url =
+        new URL(
+            request.url
+        );
+
+
+    /*
+     * APIها بازدید سایت نیستند.
+     */
+
+    if (
+        url.pathname.startsWith(
+            "/api/"
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    /*
+     * فایل‌های استاتیک با پسوند زیر
+     * بازدید صفحه حساب نمی‌شوند.
+     */
+
+    const ignoredExtensions =
+        [
+            ".css",
+            ".js",
+            ".mjs",
+            ".json",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+            ".gif",
+            ".svg",
+            ".ico",
+            ".woff",
+            ".woff2",
+            ".ttf",
+            ".otf",
+            ".mp3",
+            ".mp4",
+            ".webm",
+            ".wav",
+            ".xml",
+            ".txt"
+        ];
+
+
+    const pathname =
+        url.pathname.toLowerCase();
+
+
+    if (
+        ignoredExtensions.some(
+            extension =>
+                pathname.endsWith(
+                    extension
+                )
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+async function trackVisit(
+    request,
+    env
+) {
+
+    if (
+        !shouldTrackVisit(
+            request
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        /*
+         * تاریخ امروز بر اساس UTC ثبت می‌شود.
+         * برای آمار ساده بازدید کافی است.
+         */
+
+        const visitDate =
+            new Date()
+                .toISOString()
+                .slice(
+                    0,
+                    10
+                );
+
+
+        await env.DB
+            .prepare(
+                `
+                INSERT INTO site_visits
+                    (
+                        visit_date
+                    )
+                VALUES
+                    (?1)
+                `
+            )
+            .bind(
+                visitDate
+            )
+            .run();
+
+
+    } catch (error) {
+
+        /*
+         * خطای آمار بازدید نباید
+         * باعث خراب شدن سایت شود.
+         */
+
+        console.error(
+            "VISIT_TRACK_ERROR",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    NEWS TABLE
 ========================================================= */
 
@@ -1142,15 +1342,19 @@ async function ensureNewsTable(
 
                 image_url TEXT,
 
-                category TEXT DEFAULT 'general',
+                category TEXT
+                    DEFAULT 'general',
 
-                status TEXT NOT NULL DEFAULT 'draft',
+                status TEXT NOT NULL
+                    DEFAULT 'draft',
 
                 author_username TEXT NOT NULL,
 
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP,
 
                 published_at TEXT
 
@@ -1239,7 +1443,7 @@ function isValidReaction(
 
 
 /* =========================================================
-   RUBIKA CODE
+   RUBIKA
 ========================================================= */
 
 function generateLinkCode() {
@@ -1261,10 +1465,6 @@ function generateLinkCode() {
 }
 
 
-/* =========================================================
-   RUBIKA SEND
-========================================================= */
-
 async function sendRubikaMessage(
     env,
     chatId,
@@ -1285,16 +1485,14 @@ async function sendRubikaMessage(
     const response =
         await fetch(
             `https://botapi.rubika.ir/v3/${env.RUBIKA_BOT_TOKEN}/sendMessage`,
-            {
 
+            {
                 method:
                     "POST",
 
                 headers: {
-
                     "Content-Type":
                         "application/json"
-
                 },
 
                 body:
@@ -1333,6 +1531,23 @@ async function sendRubikaMessage(
 
 
 /* =========================================================
+   LEADERBOARD HELPERS
+========================================================= */
+
+function normalizeLeaderboardType(
+    value
+) {
+
+    return (
+        value === "coins"
+            ? "coins"
+            : "level"
+    );
+
+}
+
+
+/* =========================================================
    MAIN WORKER
 ========================================================= */
 
@@ -1347,6 +1562,19 @@ export default {
             new URL(
                 request.url
             );
+
+
+        /*
+         * ثبت بازدید قبل از پاسخ.
+         *
+         * خطای آن نباید پاسخ اصلی سایت را
+         * خراب کند.
+         */
+
+        await trackVisit(
+            request,
+            env
+        );
 
 
         /* ===================================================
@@ -1879,8 +2107,10 @@ export default {
 
                     return json(
                         {
+
                             loggedIn:
                                 false
+
                         },
 
                         401
@@ -1954,6 +2184,372 @@ export default {
 
 
         /* ===================================================
+           COMMUNITY STATS
+        =================================================== */
+
+        if (
+            url.pathname ===
+                "/api/community/stats" &&
+
+            request.method ===
+                "GET"
+        ) {
+
+            try {
+
+                const userCount =
+                    await env.DB
+                        .prepare(
+                            `
+                            SELECT
+                                COUNT(*) AS total_users
+                            FROM users
+                            `
+                        )
+                        .first();
+
+
+                const totalVisits =
+                    await env.DB
+                        .prepare(
+                            `
+                            SELECT
+                                COUNT(*) AS total_visits
+                            FROM site_visits
+                            `
+                        )
+                        .first();
+
+
+                const todayVisits =
+                    await env.DB
+                        .prepare(
+                            `
+                            SELECT
+                                COUNT(*) AS today_visits
+                            FROM site_visits
+                            WHERE visit_date = ?1
+                            `
+                        )
+                        .bind(
+                            new Date()
+                                .toISOString()
+                                .slice(
+                                    0,
+                                    10
+                                )
+                        )
+                        .first();
+
+
+                return json(
+                    {
+
+                        success:
+                            true,
+
+                        total_users:
+                            Number(
+                                userCount?.total_users ??
+                                0
+                            ),
+
+                        total_visits:
+                            Number(
+                                totalVisits?.total_visits ??
+                                0
+                            ),
+
+                        today_visits:
+                            Number(
+                                todayVisits?.today_visits ??
+                                0
+                            )
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "COMMUNITY_STATS_ERROR",
+                    error
+                );
+
+
+                return json(
+                    {
+
+                        success:
+                            false,
+
+                        total_users:
+                            0,
+
+                        total_visits:
+                            0,
+
+                        today_visits:
+                            0
+
+                    },
+
+                    500
+                );
+
+            }
+
+        }
+
+
+        /* ===================================================
+           LEADERBOARD
+        =================================================== */
+
+        if (
+            url.pathname ===
+                "/api/leaderboard" &&
+
+            request.method ===
+                "GET"
+        ) {
+
+            try {
+
+                const type =
+                    normalizeLeaderboardType(
+                        url.searchParams.get(
+                            "type"
+                        )
+                    );
+
+
+                const limitValue =
+                    Number(
+                        url.searchParams.get(
+                            "limit"
+                        ) ??
+                        50
+                    );
+
+
+                const limit =
+                    Math.min(
+                        100,
+
+                        Math.max(
+                            1,
+
+                            Number.isFinite(
+                                limitValue
+                            )
+
+                                ? Math.floor(
+                                    limitValue
+                                )
+
+                                : 50
+                        )
+                    );
+
+
+                /*
+                 * برای جلوگیری از نمایش
+                 * XP در لیدربورد، فقط Level
+                 * یا Coins برگردانده می‌شود.
+                 */
+
+                if (
+                    type ===
+                    "coins"
+                ) {
+
+                    const result =
+                        await env.DB
+                            .prepare(
+                                `
+                                SELECT
+                                    u.id,
+                                    u.username,
+                                    COALESCE(
+                                        ps.coins,
+                                        0
+                                    ) AS coins,
+                                    COALESCE(
+                                        ps.level,
+                                        1
+                                    ) AS level
+                                FROM users u
+                                LEFT JOIN player_stats ps
+                                    ON ps.user_id =
+                                        u.id
+                                ORDER BY
+                                    coins DESC,
+                                    level DESC,
+                                    u.id ASC
+                                LIMIT ?1
+                                `
+                            )
+                            .bind(
+                                limit
+                            )
+                            .all();
+
+
+                    const rows =
+                        result.results ??
+                        [];
+
+
+                    return json(
+                        {
+
+                            success:
+                                true,
+
+                            type:
+                                "coins",
+
+                            leaderboard:
+                                rows.map(
+                                    (
+                                        row,
+                                        index
+                                    ) => ({
+
+                                        rank:
+                                            index +
+                                            1,
+
+                                        id:
+                                            row.id,
+
+                                        username:
+                                            row.username,
+
+                                        coins:
+                                            Number(
+                                                row.coins ??
+                                                0
+                                            )
+
+                                    })
+                                )
+
+                        }
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(
+                            `
+                            SELECT
+                                u.id,
+                                u.username,
+                                COALESCE(
+                                    ps.level,
+                                    1
+                                ) AS level,
+                                COALESCE(
+                                    ps.coins,
+                                    0
+                                ) AS coins
+                            FROM users u
+                            LEFT JOIN player_stats ps
+                                ON ps.user_id =
+                                    u.id
+                            ORDER BY
+                                level DESC,
+                                coins DESC,
+                                u.id ASC
+                            LIMIT ?1
+                            `
+                        )
+                        .bind(
+                            limit
+                        )
+                        .all();
+
+
+                const rows =
+                    result.results ??
+                    [];
+
+
+                return json(
+                    {
+
+                        success:
+                            true,
+
+                        type:
+                            "level",
+
+                        leaderboard:
+                            rows.map(
+                                (
+                                    row,
+                                    index
+                                ) => ({
+
+                                    rank:
+                                        index +
+                                        1,
+
+                                    id:
+                                        row.id,
+
+                                    username:
+                                        row.username,
+
+                                    level:
+                                        Number(
+                                            row.level ??
+                                            1
+                                        )
+
+                                })
+                            )
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "LEADERBOARD_ERROR",
+                    error
+                );
+
+
+                return json(
+                    {
+
+                        success:
+                            false,
+
+                        leaderboard:
+                            [],
+
+                        message:
+                            "دریافت لیدربورد انجام نشد."
+
+                    },
+
+                    500
+                );
+
+            }
+
+        }
+
+
+        /* ===================================================
            ADMIN STATUS
         =================================================== */
 
@@ -2007,75 +2603,6 @@ export default {
 
                 }
             );
-
-        }
-
-
-        /* ===================================================
-           COMMUNITY STATS
-        =================================================== */
-
-        if (
-            url.pathname ===
-                "/api/community/stats" &&
-
-            request.method ===
-                "GET"
-        ) {
-
-            try {
-
-                const result =
-                    await env.DB
-                        .prepare(
-                            `
-                            SELECT
-                                COUNT(*) AS total_users
-                            FROM users
-                            `
-                        )
-                        .first();
-
-
-                return json(
-                    {
-
-                        success:
-                            true,
-
-                        total_users:
-                            Number(
-                                result?.total_users ??
-                                0
-                            )
-
-                    }
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "COMMUNITY_STATS_ERROR",
-                    error
-                );
-
-
-                return json(
-                    {
-
-                        success:
-                            false,
-
-                        total_users:
-                            0
-
-                    },
-
-                    500
-                );
-
-            }
 
         }
 
@@ -2335,7 +2862,10 @@ export default {
                 const placeholders =
                     ids
                         .map(
-                            (_, index) =>
+                            (
+                                _,
+                                index
+                            ) =>
                                 `?${index + 1}`
                         )
                         .join(",");
@@ -2713,6 +3243,7 @@ export default {
                         )
                         .bind(
                             reaction,
+
                             existing.id
                         )
                         .run();
@@ -3806,7 +4337,7 @@ export default {
 
 
         /* ===================================================
-           SUPPORT — SEND
+           SUPPORT SEND
         =================================================== */
 
         if (
@@ -4019,7 +4550,7 @@ export default {
 
 
         /* ===================================================
-           SUPPORT — MY
+           SUPPORT MY
         =================================================== */
 
         if (
@@ -4195,6 +4726,7 @@ export default {
                                     WHEN status =
                                         'new'
                                     THEN 0
+
                                     ELSE 1
                                 END,
 
@@ -4264,7 +4796,6 @@ export default {
 
         if (
             supportReplyMatch &&
-
             request.method ===
                 "POST"
         ) {
@@ -4425,6 +4956,7 @@ export default {
                     )
                     .bind(
                         reply,
+
                         messageId
                     )
                     .run();
@@ -4556,11 +5088,9 @@ export default {
                                     ub.banned_until
                                         IS NULL
 
-                                    OR
-                                    ub.banned_until = ''
+                                    OR ub.banned_until = ''
 
-                                    OR
-                                    ub.banned_until >
+                                    OR ub.banned_until >
                                         CURRENT_TIMESTAMP
                                 )
 
@@ -4676,22 +5206,22 @@ export default {
                                 ub.created_at,
                                 ub.active
                             FROM user_bans ub
+
                             INNER JOIN users u
                                 ON u.id =
                                     ub.user_id
 
                             WHERE
-                                ub.active = 1
+                                ub.active =
+                                    1
 
                                 AND (
                                     ub.banned_until
                                         IS NULL
 
-                                    OR
-                                    ub.banned_until = ''
+                                    OR ub.banned_until = ''
 
-                                    OR
-                                    ub.banned_until >
+                                    OR ub.banned_until >
                                         CURRENT_TIMESTAMP
                                 )
 
@@ -4758,7 +5288,6 @@ export default {
 
         if (
             banUserMatch &&
-
             request.method ===
                 "POST"
         ) {
@@ -4919,10 +5448,6 @@ export default {
                 }
 
 
-                /*
-                 * جلوگیری از بن کردن Admin
-                 */
-
                 if (
                     userId ===
                     admin.user.id
@@ -4984,11 +5509,6 @@ export default {
                 }
 
 
-                /*
-                 * محدودیت فعال قبلی
-                 * غیرفعال می‌شود.
-                 */
-
                 await env.DB
                     .prepare(
                         `
@@ -5004,10 +5524,6 @@ export default {
                     )
                     .run();
 
-
-                /*
-                 * Ban جدید
-                 */
 
                 await env.DB
                     .prepare(
@@ -5103,7 +5619,7 @@ export default {
 
 
         /* ===================================================
-           ADMIN UNBAN USER
+           ADMIN UNBAN
         =================================================== */
 
         const unbanUserMatch =
@@ -5114,7 +5630,6 @@ export default {
 
         if (
             unbanUserMatch &&
-
             request.method ===
                 "POST"
         ) {
@@ -5353,7 +5868,7 @@ export default {
 
 
         /* ===================================================
-           CREATE RUBIKA CODE
+           RUBIKA CREATE CODE
         =================================================== */
 
         if (
@@ -5431,7 +5946,9 @@ export default {
                     )
                     .bind(
                         user.id,
+
                         code,
+
                         expiresAt
                     )
                     .run();
@@ -5480,7 +5997,7 @@ export default {
 
 
         /* ===================================================
-           LINK RUBIKA
+           RUBIKA LINK
         =================================================== */
 
         if (
@@ -5683,6 +6200,7 @@ export default {
                         )
                         .bind(
                             linkCode.user_id,
+
                             rubikaUserId
                         )
                         .first();
@@ -5724,7 +6242,9 @@ export default {
                     )
                     .bind(
                         linkCode.user_id,
+
                         rubikaUserId,
+
                         rubikaUserId
                     )
                     .run();

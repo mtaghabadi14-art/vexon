@@ -2,25 +2,1094 @@
 <html lang="fa" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VEXON | لیدربورد</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta
+        name="description"
+        content="VEXON Leaderboard؛ رتبه‌بندی بازیکنان بر اساس Level و Coins."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        VEXON | لیدربورد
+    </title>
+
+
+    <!-- =========================
+         FONT
+    ========================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+
+    <!-- =========================
+         MAIN CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <style>
+
+        /* =========================================
+           LEADERBOARD PAGE
+        ========================================= */
+
+        .leaderboard-page {
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(
+                    1050px,
+                    92%
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                55px 0 100px;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .leaderboard-title {
+            text-align:
+                center;
+
+            margin-bottom:
+                30px;
+        }
+
+
+        .leaderboard-label {
+            display:
+                inline-block;
+
+            font-family:
+                "Orbitron",
+                "Vazirmatn",
+                sans-serif;
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                1.5px;
+
+            opacity:
+                0.65;
+
+            margin-bottom:
+                9px;
+        }
+
+
+        .leaderboard-title h1 {
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    30px,
+                    6vw,
+                    48px
+                );
+
+            line-height:
+                1.35;
+        }
+
+
+        .leaderboard-title h1 span {
+            color:
+                #00ff9d;
+
+            text-shadow:
+                0 0 20px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.22
+                );
+        }
+
+
+        .leaderboard-title p {
+            max-width:
+                600px;
+
+            margin:
+                13px auto 0;
+
+            font-size:
+                13px;
+
+            line-height:
+                2;
+
+            opacity:
+                0.62;
+        }
+
+
+        /* =========================================
+           TABS
+        ========================================= */
+
+        .leaderboard-tabs {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    1fr
+                );
+
+            gap:
+                10px;
+
+            width:
+                min(
+                    550px,
+                    100%
+                );
+
+            margin:
+                0 auto 22px;
+        }
+
+
+        .leaderboard-tab {
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+
+            border-radius:
+                16px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
+
+            color:
+                white;
+
+            padding:
+                14px 12px;
+
+            font-family:
+                inherit;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform
+                    0.2s ease,
+
+                border-color
+                    0.2s ease,
+
+                background
+                    0.2s ease,
+
+                box-shadow
+                    0.2s ease;
+        }
+
+
+        .leaderboard-tab:hover {
+            transform:
+                translateY(
+                    -2px
+                );
+        }
+
+
+        .leaderboard-tab.active {
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.28
+                );
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.10
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.08
+                    )
+                );
+
+            box-shadow:
+                0 0 28px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.07
+                );
+        }
+
+
+        /* =========================================
+           PANEL
+        ========================================= */
+
+        .leaderboard-panel {
+            padding:
+                20px;
+
+            border-radius:
+                24px;
+
+            background:
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.80
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+
+            backdrop-filter:
+                blur(
+                    18px
+                );
+
+            box-shadow:
+                0 0 35px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.18
+                );
+        }
+
+
+        /* =========================================
+           TABLE HEADER
+        ========================================= */
+
+        .leaderboard-header {
+            display:
+                grid;
+
+            grid-template-columns:
+                78px
+                1fr
+                160px;
+
+            gap:
+                12px;
+
+            align-items:
+                center;
+
+            padding:
+                10px 14px 13px;
+
+            margin-bottom:
+                7px;
+
+            font-size:
+                10px;
+
+            opacity:
+                0.42;
+        }
+
+
+        .leaderboard-header-value {
+            text-align:
+                left;
+        }
+
+
+        /* =========================================
+           PLAYER LIST
+        ========================================= */
+
+        .leaderboard-list {
+            display:
+                grid;
+
+            gap:
+                8px;
+        }
+
+
+        .leaderboard-row {
+            display:
+                grid;
+
+            grid-template-columns:
+                78px
+                1fr
+                160px;
+
+            gap:
+                12px;
+
+            align-items:
+                center;
+
+            min-height:
+                70px;
+
+            padding:
+                11px 14px;
+
+            border-radius:
+                17px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.055
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.028
+                );
+
+            transition:
+                transform
+                    0.2s ease,
+
+                border-color
+                    0.2s ease,
+
+                background
+                    0.2s ease;
+        }
+
+
+        .leaderboard-row:hover {
+            transform:
+                translateY(
+                    -2px
+                );
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.14
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.045
+                );
+        }
+
+
+        .leaderboard-row.top-one {
+            border-color:
+                rgba(
+                    255,
+                    214,
+                    74,
+                    0.18
+                );
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        255,
+                        214,
+                        74,
+                        0.055
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.025
+                    )
+                );
+        }
+
+
+        .leaderboard-row.top-two {
+            border-color:
+                rgba(
+                    190,
+                    195,
+                    205,
+                    0.16
+                );
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        190,
+                        195,
+                        205,
+                        0.04
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.025
+                    )
+                );
+        }
+
+
+        .leaderboard-row.top-three {
+            border-color:
+                rgba(
+                    184,
+                    117,
+                    64,
+                    0.17
+                );
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        184,
+                        117,
+                        64,
+                        0.045
+                    ),
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.025
+                    )
+                );
+        }
+
+
+        /* =========================================
+           RANK
+        ========================================= */
+
+        .leaderboard-rank {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            font-weight:
+                900;
+        }
+
+
+        .leaderboard-medal {
+            width:
+                32px;
+
+            height:
+                32px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                11px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.055
+                );
+
+            font-size:
+                17px;
+        }
+
+
+        .leaderboard-rank-number {
+            font-size:
+                12px;
+
+            opacity:
+                0.6;
+        }
+
+
+        /* =========================================
+           USER
+        ========================================= */
+
+        .leaderboard-user {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                11px;
+
+            min-width:
+                0;
+        }
+
+
+        .leaderboard-avatar {
+            width:
+                41px;
+
+            height:
+                41px;
+
+            flex:
+                0 0 auto;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.10
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.10
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.11
+                );
+
+            font-size:
+                17px;
+        }
+
+
+        .leaderboard-user-info {
+            min-width:
+                0;
+        }
+
+
+        .leaderboard-username {
+            display:
+                block;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+
+            white-space:
+                nowrap;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+        }
+
+
+        .leaderboard-subtitle {
+            display:
+                block;
+
+            margin-top:
+                3px;
+
+            font-size:
+                9px;
+
+            opacity:
+                0.42;
+        }
+
+
+        /* =========================================
+           VALUE
+        ========================================= */
+
+        .leaderboard-value {
+            text-align:
+                left;
+
+            font-size:
+                17px;
+
+            font-weight:
+                900;
+        }
+
+
+        .leaderboard-value small {
+            font-size:
+                10px;
+
+            opacity:
+                0.55;
+
+            margin-right:
+                4px;
+        }
+
+
+        .leaderboard-value.coins {
+            color:
+                #ffd95a;
+
+            text-shadow:
+                0 0 14px
+                rgba(
+                    255,
+                    217,
+                    90,
+                    0.14
+                );
+        }
+
+
+        .leaderboard-value.level {
+            color:
+                #00ff9d;
+
+            text-shadow:
+                0 0 14px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.14
+                );
+        }
+
+
+        /* =========================================
+           LOADING / EMPTY / ERROR
+        ========================================= */
+
+        .leaderboard-state {
+            text-align:
+                center;
+
+            padding:
+                50px 20px;
+
+            opacity:
+                0.58;
+
+            font-size:
+                12px;
+
+            line-height:
+                2;
+        }
+
+
+        .leaderboard-error {
+            color:
+                #ffc0c8;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.055
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.10
+                );
+
+            border-radius:
+                16px;
+
+            margin:
+                8px;
+        }
+
+
+        /* =========================================
+           REFRESH
+        ========================================= */
+
+        .leaderboard-footer {
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            margin-top:
+                15px;
+        }
+
+
+        .leaderboard-refresh {
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
+
+            color:
+                white;
+
+            border-radius:
+                12px;
+
+            padding:
+                9px 14px;
+
+            font-family:
+                inherit;
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform
+                    0.2s ease,
+
+                background
+                    0.2s ease;
+        }
+
+
+        .leaderboard-refresh:hover {
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (
+            max-width: 700px
+        ) {
+
+            .leaderboard-page {
+                width:
+                    94%;
+
+                padding-top:
+                    28px;
+            }
+
+
+            .leaderboard-panel {
+                padding:
+                    11px;
+            }
+
+
+            .leaderboard-header,
+            .leaderboard-row {
+
+                grid-template-columns:
+                    58px
+                    1fr
+                    95px;
+
+                gap:
+                    7px;
+
+            }
+
+
+            .leaderboard-header {
+                padding:
+                    8px 9px 11px;
+            }
+
+
+            .leaderboard-row {
+                min-height:
+                    64px;
+
+                padding:
+                    9px;
+            }
+
+
+            .leaderboard-medal {
+                width:
+                    28px;
+
+                height:
+                    28px;
+
+                font-size:
+                    15px;
+            }
+
+
+            .leaderboard-rank-number {
+                font-size:
+                    10px;
+            }
+
+
+            .leaderboard-avatar {
+                width:
+                    36px;
+
+                height:
+                    36px;
+
+                border-radius:
+                    11px;
+
+                font-size:
+                    15px;
+            }
+
+
+            .leaderboard-username {
+                font-size:
+                    11px;
+            }
+
+
+            .leaderboard-subtitle {
+                font-size:
+                    8px;
+            }
+
+
+            .leaderboard-value {
+                font-size:
+                    14px;
+            }
+
+
+            .leaderboard-value small {
+                font-size:
+                    8px;
+            }
+
+        }
+
+
+        @media (
+            max-width: 420px
+        ) {
+
+            .leaderboard-header,
+            .leaderboard-row {
+
+                grid-template-columns:
+                    51px
+                    1fr
+                    80px;
+
+            }
+
+
+            .leaderboard-row {
+                min-height:
+                    60px;
+            }
+
+
+            .leaderboard-title h1 {
+                font-size:
+                    28px;
+            }
+
+
+            .leaderboard-title p {
+                font-size:
+                    11px;
+            }
+
+
+            .leaderboard-tabs {
+                gap:
+                    7px;
+            }
+
+
+            .leaderboard-tab {
+                padding:
+                    12px 9px;
+
+                font-size:
+                    11px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div class="background-effects" aria-hidden="true">
+
+<!-- =========================
+     BACKGROUND
+========================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
     <div class="nebula nebula-purple"></div>
     <div class="nebula nebula-green"></div>
     <div class="nebula nebula-blue"></div>
@@ -31,135 +1100,298 @@
 
     <div class="planet planet-purple"></div>
     <div class="planet planet-blue"></div>
+
+    <div class="city">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
 </div>
 
 
+<!-- =========================
+     HEADER
+========================== -->
+
 <header class="navbar">
 
-    <a href="../index.html" class="logo">
+    <a
+        href="../index.html"
+        class="logo"
+    >
         VE<span class="logo-x">X</span>ON
     </a>
 
+
     <nav class="nav-links">
 
-        <a href="../index.html" class="nav-link">
-            <span class="desktop-v-icon">V</span>
+        <a
+            href="../index.html"
+            class="nav-link"
+        >
+            <span class="desktop-v-icon">
+                V
+            </span>
             خانه
         </a>
 
-        <a href="games.html" class="nav-link">
-            <span class="nav-icon">🎮</span>
+
+        <a
+            href="games.html"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                🎮
+            </span>
             بازی‌ها
         </a>
 
-        <a href="leaderboard.html" class="nav-link active">
-            <span class="nav-icon">🏆</span>
+
+        <a
+            href="leaderboard.html"
+            class="nav-link active"
+        >
+            <span class="nav-icon">
+                🏆
+            </span>
             لیدربورد
         </a>
 
-        <a href="cafe.html" class="nav-link">
-            <span class="nav-icon">☕</span>
+
+        <a
+            href="cafe.html"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                ☕
+            </span>
             کافه بازی
         </a>
 
-        <a href="news.html" class="nav-link">
-            <span class="nav-icon">📢</span>
+
+        <a
+            href="news.html"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                📢
+            </span>
             اخبار
         </a>
 
-        <a href="guide.html" class="nav-link">
-            <span class="nav-icon">?</span>
+
+        <a
+            href="guide.html"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                ?
+            </span>
             راهنما
         </a>
 
     </nav>
 
-    <a href="profile.html" class="header-profile">
-        <div class="header-profile-icon">👤</div>
 
-        <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
+    <!-- ACCOUNT -->
+
+    <a
+        href="login.html"
+        class="header-profile"
+    >
+
+        <div
+            class="header-profile-icon"
+        >
+            👤
         </div>
 
-        <b>‹</b>
+
+        <div
+            class="header-player-info"
+        >
+
+            <strong>
+                ...
+            </strong>
+
+
+            <div
+                class="header-xp-bar"
+                style="display: none;"
+            >
+
+                <div
+                    class="header-xp-fill"
+                ></div>
+
+            </div>
+
+
+            <span>
+                در حال بررسی حساب...
+            </span>
+
+        </div>
+
+
+        <b>
+            ‹
+        </b>
+
     </a>
 
 </header>
 
 
+<!-- =========================
+     MAIN
+========================== -->
+
 <main>
 
-<section class="section">
-
-    <div class="section-title">
-
-        <span>🏆 LEADERBOARD</span>
-
-        <h1>بهترین بازیکنان</h1>
-
-        <p>
-            وقتی رقابت شروع شود، رتبه‌ها واقعی خواهند شد.
-        </p>
-
-    </div>
+    <section
+        class="leaderboard-page"
+    >
 
 
-    <div class="leaderboard">
+        <div
+            class="leaderboard-title"
+        >
 
-        <div class="rank rank-first">
+            <span
+                class="leaderboard-label"
+            >
+                VEXON • COMPETE
+            </span>
 
-            <span class="rank-number">_</span>
 
-            <div class="rank-avatar">👑</div>
+            <h1>
+                🏆 <span>لیدربورد</span>
+            </h1>
 
-            <div class="rank-info">
-                <strong>_</strong>
-                <span>VEXON PLAYER</span>
-            </div>
 
-            <b>_ XP</b>
+            <p>
+                با بازیکنان VEXON رقابت کن و جایگاهت را
+                در بین بهترین‌ها پیدا کن.
+            </p>
 
         </div>
 
 
-        <div class="rank">
+        <!-- =====================
+             TABS
+        ====================== -->
 
-            <span class="rank-number">_</span>
+        <div
+            class="leaderboard-tabs"
+            role="tablist"
+        >
 
-            <div class="rank-avatar">🎮</div>
+            <button
+                type="button"
+                class="leaderboard-tab active"
+                data-type="level"
+                role="tab"
+                aria-selected="true"
+            >
+                🏆 Level
+            </button>
 
-            <div class="rank-info">
-                <strong>_</strong>
-                <span>VEXON PLAYER</span>
-            </div>
 
-            <b>_ XP</b>
+            <button
+                type="button"
+                class="leaderboard-tab"
+                data-type="coins"
+                role="tab"
+                aria-selected="false"
+            >
+                🪙 Coins
+            </button>
 
         </div>
 
 
-        <div class="rank">
+        <!-- =====================
+             PANEL
+        ====================== -->
 
-            <span class="rank-number">_</span>
+        <section
+            class="leaderboard-panel"
+        >
 
-            <div class="rank-avatar">⚡</div>
 
-            <div class="rank-info">
-                <strong>_</strong>
-                <span>VEXON PLAYER</span>
+            <div
+                class="leaderboard-header"
+            >
+
+                <span>
+                    رتبه
+                </span>
+
+
+                <span>
+                    بازیکن
+                </span>
+
+
+                <span
+                    id="leaderboard-value-title"
+                    class="leaderboard-header-value"
+                >
+                    Level
+                </span>
+
             </div>
 
-            <b>_ XP</b>
+
+            <div
+                id="leaderboard-list"
+                class="leaderboard-list"
+            >
+
+                <div
+                    class="leaderboard-state"
+                >
+                    ⏳ در حال دریافت لیدربورد...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div
+            class="leaderboard-footer"
+        >
+
+            <button
+                type="button"
+                id="leaderboard-refresh"
+                class="leaderboard-refresh"
+            >
+                🔄 بروزرسانی
+            </button>
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 </main>
 
+
+<!-- =========================
+     FOOTER
+========================== -->
 
 <footer>
 
@@ -167,13 +1399,26 @@
         VE<span>X</span>ON
     </div>
 
-    <p>PLAY • COMPETE • LEVEL UP.</p>
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
 
     <div class="footer-socials">
         <span>✈️</span>
         <span>◎</span>
         <span>▶</span>
     </div>
+
+
+    <a
+        href="creators.html"
+        class="creators-link"
+    >
+        👨‍💻 سازندگان VEXON
+    </a>
+
 
     <span>
         ساخته شده با 💚 برای گیمرها
@@ -184,7 +1429,729 @@
 </footer>
 
 
+<!-- =========================
+     MOBILE NAV
+========================== -->
+
+<nav
+    class="mobile-bottom-nav"
+>
+
+    <a
+        href="cafe.html"
+        class="mobile-nav-item"
+    >
+        <span>
+            ☕
+        </span>
+
+        <small>
+            کافه
+        </small>
+    </a>
+
+
+    <a
+        href="leaderboard.html"
+        class="mobile-nav-item mobile-home active"
+    >
+        <span>
+            🏆
+        </span>
+
+        <small>
+            لیدربورد
+        </small>
+    </a>
+
+
+    <a
+        href="../index.html"
+        class="mobile-nav-item"
+    >
+
+        <span
+            class="home-v-icon"
+        >
+            V
+        </span>
+
+        <small>
+            خانه
+        </small>
+
+    </a>
+
+
+    <a
+        href="news.html"
+        class="mobile-nav-item"
+    >
+
+        <span>
+            📢
+        </span>
+
+        <small>
+            اخبار
+        </small>
+
+    </a>
+
+
+    <a
+        href="profile.html"
+        class="mobile-nav-item"
+    >
+
+        <span>
+            👤
+        </span>
+
+        <small>
+            پروفایل
+        </small>
+
+    </a>
+
+</nav>
+
+
+<!-- =========================
+     MAIN SCRIPT
+========================== -->
+
 <script src="../script.js"></script>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const list =
+        document.getElementById(
+            "leaderboard-list"
+        );
+
+
+    const tabs =
+        document.querySelectorAll(
+            ".leaderboard-tab"
+        );
+
+
+    const valueTitle =
+        document.getElementById(
+            "leaderboard-value-title"
+        );
+
+
+    const refreshButton =
+        document.getElementById(
+            "leaderboard-refresh"
+        );
+
+
+    let currentType =
+        "level";
+
+
+    let refreshTimer =
+        null;
+
+
+    /* =========================================
+       ESCAPE
+    ========================================= */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =========================================
+       RANK
+    ========================================= */
+
+    function getRankClass(
+        rank
+    ) {
+
+        if (
+            rank === 1
+        ) {
+
+            return "top-one";
+
+        }
+
+
+        if (
+            rank === 2
+        ) {
+
+            return "top-two";
+
+        }
+
+
+        if (
+            rank === 3
+        ) {
+
+            return "top-three";
+
+        }
+
+
+        return "";
+
+    }
+
+
+    function getMedal(
+        rank
+    ) {
+
+        if (
+            rank === 1
+        ) {
+
+            return "🥇";
+
+        }
+
+
+        if (
+            rank === 2
+        ) {
+
+            return "🥈";
+
+        }
+
+
+        if (
+            rank === 3
+        ) {
+
+            return "🥉";
+
+        }
+
+
+        return "🏅";
+
+    }
+
+
+    /* =========================================
+       NUMBER
+    ========================================= */
+
+    function formatNumber(
+        value
+    ) {
+
+        return Number(
+            value ??
+            0
+        ).toLocaleString(
+            "en-US"
+        );
+
+    }
+
+
+    /* =========================================
+       RENDER
+    ========================================= */
+
+    function renderLeaderboard(
+        players
+    ) {
+
+        if (
+            !players.length
+        ) {
+
+            list.innerHTML = `
+
+                <div
+                    class="leaderboard-state"
+                >
+                    🏆 هنوز بازیکنی برای نمایش وجود ندارد.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            players
+                .map(
+                    player => {
+
+                        const rank =
+                            Number(
+                                player.rank ??
+                                0
+                            );
+
+
+                        const rankClass =
+                            getRankClass(
+                                rank
+                            );
+
+
+                        const medal =
+                            getMedal(
+                                rank
+                            );
+
+
+                        const username =
+                            player.username ||
+                            "بازیکن VEXON";
+
+
+                        const value =
+                            currentType ===
+                            "coins"
+
+                                ? Number(
+                                    player.coins ??
+                                    0
+                                )
+
+                                : Number(
+                                    player.level ??
+                                    1
+                                );
+
+
+                        const valueClass =
+                            currentType ===
+                            "coins"
+
+                                ? "coins"
+
+                                : "level";
+
+
+                        const valueLabel =
+                            currentType ===
+                            "coins"
+
+                                ? "🪙"
+
+                                : "LV";
+
+
+                        return `
+
+                            <article
+                                class="leaderboard-row ${rankClass}"
+                            >
+
+                                <div
+                                    class="leaderboard-rank"
+                                >
+
+                                    <div
+                                        class="leaderboard-medal"
+                                    >
+                                        ${medal}
+                                    </div>
+
+
+                                    <span
+                                        class="leaderboard-rank-number"
+                                    >
+                                        #${rank}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="leaderboard-user"
+                                >
+
+                                    <div
+                                        class="leaderboard-avatar"
+                                    >
+                                        👤
+                                    </div>
+
+
+                                    <div
+                                        class="leaderboard-user-info"
+                                    >
+
+                                        <span
+                                            class="leaderboard-username"
+                                        >
+                                            ${escapeHtml(
+                                                username
+                                            )}
+                                        </span>
+
+
+                                        <span
+                                            class="leaderboard-subtitle"
+                                        >
+                                            بازیکن VEXON
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    class="leaderboard-value ${valueClass}"
+                                >
+
+                                    <span>
+                                        ${valueLabel}
+                                    </span>
+
+                                    <strong>
+                                        ${formatNumber(
+                                            value
+                                        )}
+                                    </strong>
+
+                                </div>
+
+                            </article>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+    }
+
+
+    /* =========================================
+       LOAD
+    ========================================= */
+
+    async function loadLeaderboard(
+        silent = false
+    ) {
+
+        if (
+            !silent
+        ) {
+
+            list.innerHTML = `
+
+                <div
+                    class="leaderboard-state"
+                >
+                    ⏳ در حال دریافت لیدربورد...
+                </div>
+
+            `;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/leaderboard?type=${encodeURIComponent(
+                        currentType
+                    )}&limit=50`,
+                    {
+                        method:
+                            "GET",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "دریافت لیدربورد انجام نشد."
+                );
+
+            }
+
+
+            const players =
+                Array.isArray(
+                    data.leaderboard
+                )
+                    ? data.leaderboard
+                    : [];
+
+
+            renderLeaderboard(
+                players
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LEADERBOARD_ERROR",
+                error
+            );
+
+
+            list.innerHTML = `
+
+                <div
+                    class="leaderboard-state leaderboard-error"
+                >
+                    ❌ ${escapeHtml(
+                        error.message ||
+                        "ارتباط با لیدربورد برقرار نشد."
+                    )}
+
+                    <br>
+
+                    لطفاً دوباره امتحان کن.
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =========================================
+       CHANGE TAB
+    ========================================= */
+
+    tabs.forEach(
+        tab => {
+
+            tab.addEventListener(
+                "click",
+                async () => {
+
+                    const type =
+                        tab.dataset.type;
+
+
+                    if (
+                        type !==
+                        "level" &&
+                        type !==
+                        "coins"
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    currentType =
+                        type;
+
+
+                    tabs.forEach(
+                        item => {
+
+                            const active =
+                                item ===
+                                tab;
+
+
+                            item.classList.toggle(
+                                "active",
+                                active
+                            );
+
+
+                            item.setAttribute(
+                                "aria-selected",
+                                String(
+                                    active
+                                )
+                            );
+
+                        }
+                    );
+
+
+                    valueTitle.textContent =
+                        type ===
+                            "coins"
+
+                            ? "Coins"
+
+                            : "Level";
+
+
+                    await loadLeaderboard();
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================================
+       REFRESH
+    ========================================= */
+
+    refreshButton.addEventListener(
+        "click",
+        async () => {
+
+            refreshButton.disabled =
+                true;
+
+            refreshButton.textContent =
+                "⏳ در حال بروزرسانی...";
+
+
+            try {
+
+                await loadLeaderboard(
+                    true
+                );
+
+            } finally {
+
+                refreshButton.disabled =
+                    false;
+
+                refreshButton.textContent =
+                    "🔄 بروزرسانی";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       FIRST LOAD
+    ========================================= */
+
+    loadLeaderboard();
+
+
+    /* =========================================
+       AUTO UPDATE
+    ========================================= */
+
+    refreshTimer =
+        setInterval(
+            () => {
+
+                loadLeaderboard(
+                    true
+                );
+
+            },
+            30000
+        );
+
+
+    /* =========================================
+       VISIBILITY
+    ========================================= */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (
+                document.visibilityState ===
+                "visible"
+            ) {
+
+                loadLeaderboard(
+                    true
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       CLEANUP
+    ========================================= */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (
+                refreshTimer
+            ) {
+
+                clearInterval(
+                    refreshTimer
+                );
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
 
 </body>
 </html>
