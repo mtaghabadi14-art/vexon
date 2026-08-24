@@ -322,26 +322,16 @@ async function initializeAuthHeader() {
                  * صفحه حساب
                  */
 
+                const isInsideSections =
+                    window.location.pathname.includes(
+                        "/sections/"
+                    );
+
+
                 headerProfile.href =
-                    "profile.html";
-
-
-                /*
-                 * اگر مسیر فعلی داخل sections
-                 * باشد، profile.html درست است.
-                 */
-
-                if (
-                    window.location.pathname
-                        .includes(
-                            "/sections/"
-                        )
-                ) {
-
-                    headerProfile.href =
-                        "profile.html";
-
-                }
+                    isInsideSections
+                        ? "profile.html"
+                        : "sections/profile.html";
 
 
                 const strong =
