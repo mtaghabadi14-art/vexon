@@ -20,7 +20,9 @@
         content="#03040a"
     >
 
-    <title>VEXON | تنظیمات حساب</title>
+    <title>
+        VEXON | تنظیمات حساب
+    </title>
 
 
     <link
@@ -32,6 +34,289 @@
         rel="stylesheet"
         href="../style.css"
     >
+
+
+    <style>
+
+        /* =========================================
+           ADMIN ACCOUNT CARD
+        ========================================= */
+
+        .admin-account-card {
+
+            display: none;
+
+            width: 100%;
+
+            margin-top: 18px;
+
+            padding: 18px;
+
+            box-sizing: border-box;
+
+            border-radius: 18px;
+
+            border:
+                1px solid
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.24
+                );
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        178,
+                        105,
+                        255,
+                        0.08
+                    ),
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.035
+                    )
+                );
+
+            box-shadow:
+                0 0 28px
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.06
+                );
+
+        }
+
+
+        .admin-account-card.visible {
+            display: block;
+        }
+
+
+        .admin-account-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .admin-account-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .admin-account-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background:
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.18
+                );
+
+            font-size: 21px;
+
+        }
+
+
+        .admin-account-title strong {
+            display: block;
+            font-size: 15px;
+        }
+
+
+        .admin-account-title span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            font-size: 11px;
+
+            opacity: 0.55;
+
+        }
+
+
+        .admin-role-badge {
+
+            padding:
+                6px 9px;
+
+            border-radius:
+                999px;
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            color:
+                #e8d8ff;
+
+            background:
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.18
+                );
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        .admin-account-description {
+
+            margin:
+                0 0 14px;
+
+            font-size:
+                12px;
+
+            line-height:
+                1.9;
+
+            opacity:
+                0.72;
+
+        }
+
+
+        .admin-account-button {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding:
+                12px 14px;
+
+            border-radius:
+                12px;
+
+            color:
+                white;
+
+            text-decoration:
+                none;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        178,
+                        105,
+                        255,
+                        0.18
+                    ),
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.10
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.20
+                );
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .admin-account-button:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 0 22px
+                rgba(
+                    178,
+                    105,
+                    255,
+                    0.10
+                );
+
+        }
+
+    </style>
 
 </head>
 
@@ -58,6 +343,10 @@
 </div>
 
 
+<!-- =========================
+     HEADER
+========================== -->
+
 <header class="navbar">
 
     <a
@@ -74,7 +363,9 @@
             href="../index.html"
             class="nav-link"
         >
-            <span class="desktop-v-icon">V</span>
+            <span class="desktop-v-icon">
+                V
+            </span>
             خانه
         </a>
 
@@ -83,7 +374,9 @@
             href="games.html"
             class="nav-link"
         >
-            <span class="nav-icon">🎮</span>
+            <span class="nav-icon">
+                🎮
+            </span>
             بازی‌ها
         </a>
 
@@ -92,7 +385,9 @@
             href="leaderboard.html"
             class="nav-link"
         >
-            <span class="nav-icon">🏆</span>
+            <span class="nav-icon">
+                🏆
+            </span>
             لیدربورد
         </a>
 
@@ -101,7 +396,9 @@
             href="cafe.html"
             class="nav-link"
         >
-            <span class="nav-icon">☕</span>
+            <span class="nav-icon">
+                ☕
+            </span>
             کافه بازی
         </a>
 
@@ -110,7 +407,9 @@
             href="news.html"
             class="nav-link"
         >
-            <span class="nav-icon">📢</span>
+            <span class="nav-icon">
+                📢
+            </span>
             اخبار
         </a>
 
@@ -119,7 +418,9 @@
             href="guide.html"
             class="nav-link"
         >
-            <span class="nav-icon">?</span>
+            <span class="nav-icon">
+                ?
+            </span>
             راهنما
         </a>
 
@@ -157,6 +458,10 @@
 
 </header>
 
+
+<!-- =========================
+     MAIN
+========================== -->
 
 <main>
 
@@ -239,6 +544,7 @@
                     👤 نام کاربری
                 </span>
 
+
                 <strong
                     id="account-username"
                 >
@@ -261,6 +567,7 @@
                     🔐 وضعیت حساب
                 </span>
 
+
                 <strong
                     style="
                         color: #00ff9d;
@@ -270,6 +577,73 @@
                 </strong>
 
             </div>
+
+        </div>
+
+
+        <!-- =========================
+             ADMIN ACCOUNT
+        ========================== -->
+
+        <div
+            id="admin-account-card"
+            class="admin-account-card"
+        >
+
+            <div
+                class="admin-account-header"
+            >
+
+                <div
+                    class="admin-account-title"
+                >
+
+                    <div
+                        class="admin-account-icon"
+                    >
+                        👑
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            حساب مدیر VEXON
+                        </strong>
+
+                        <span>
+                            دسترسی مدیریتی فعال است
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <span
+                    class="admin-role-badge"
+                >
+                    ADMIN
+                </span>
+
+            </div>
+
+
+            <p
+                class="admin-account-description"
+            >
+                این حساب دسترسی مدیریت اخبار VEXON را دارد.
+                از پنل مدیریت می‌توانی خبرهای سایت را بسازی،
+                ویرایش کنی، منتشر کنی یا حذف کنی.
+            </p>
+
+
+            <a
+                href="../admin.html"
+                class="admin-account-button"
+            >
+                👑 ورود به پنل مدیریت
+            </a>
 
         </div>
 
@@ -420,6 +794,10 @@
 </main>
 
 
+<!-- =========================
+     FOOTER
+========================== -->
+
 <footer>
 
     <div class="footer-logo">
@@ -456,6 +834,65 @@
 </footer>
 
 
+<!-- =========================
+     MOBILE NAV
+========================== -->
+
+<nav class="mobile-bottom-nav">
+
+    <a
+        href="games.html"
+        class="mobile-nav-item"
+    >
+        <span>🎮</span>
+        <small>بازی‌ها</small>
+    </a>
+
+
+    <a
+        href="cafe.html"
+        class="mobile-nav-item"
+    >
+        <span>☕</span>
+        <small>کافه</small>
+    </a>
+
+
+    <a
+        href="../index.html"
+        class="mobile-nav-item"
+    >
+        <span class="home-v-icon">
+            V
+        </span>
+        <small>خانه</small>
+    </a>
+
+
+    <a
+        href="news.html"
+        class="mobile-nav-item"
+    >
+        <span>📢</span>
+        <small>اخبار</small>
+    </a>
+
+
+    <a
+        href="profile.html"
+        class="mobile-nav-item mobile-home active"
+    >
+        <span>⚙️</span>
+        <small>تنظیمات</small>
+    </a>
+
+</nav>
+
+
+<!-- =========================
+     MAIN SCRIPT
+========================== -->
+
 <script src="../script.js"></script>
 
 
@@ -468,35 +905,48 @@
             "settings-username"
         );
 
+
     const accountUsername =
         document.getElementById(
             "account-username"
         );
+
 
     const statusElement =
         document.getElementById(
             "settings-status"
         );
 
+
+    const adminAccountCard =
+        document.getElementById(
+            "admin-account-card"
+        );
+
+
     const rubikaButton =
         document.getElementById(
             "rubika-connect-button"
         );
+
 
     const rubikaCodeArea =
         document.getElementById(
             "rubika-code-area"
         );
 
+
     const rubikaCode =
         document.getElementById(
             "rubika-code"
         );
 
+
     const rubikaMessage =
         document.getElementById(
             "rubika-message"
         );
+
 
     const logoutButton =
         document.getElementById(
@@ -506,12 +956,22 @@
 
     try {
 
+        /* =========================================
+           CURRENT USER
+        ========================================= */
+
         const response =
             await fetch(
                 "/api/me",
                 {
-                    method: "GET",
-                    credentials: "same-origin"
+                    method:
+                        "GET",
+
+                    credentials:
+                        "same-origin",
+
+                    cache:
+                        "no-store"
                 }
             );
 
@@ -530,6 +990,7 @@
                 "login.html";
 
             return;
+
         }
 
 
@@ -549,11 +1010,66 @@
             "حساب VEXON فعال ✅";
 
 
-        /*
-         * ==============================
-         * RUBIKA LINK
-         * ==============================
-         */
+        /* =========================================
+           ADMIN CHECK
+        ========================================= */
+
+        try {
+
+            const adminResponse =
+                await fetch(
+                    "/api/admin/me",
+                    {
+                        method:
+                            "GET",
+
+                        credentials:
+                            "same-origin",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            if (
+                adminResponse.ok
+            ) {
+
+                const adminData =
+                    await adminResponse.json();
+
+
+                if (
+                    adminData &&
+                    adminData.isAdmin === true
+                ) {
+
+                    adminAccountCard.classList.add(
+                        "visible"
+                    );
+
+
+                    statusElement.textContent =
+                        "حساب مدیر VEXON فعال ✅";
+
+                }
+
+            }
+
+        } catch (adminError) {
+
+            console.error(
+                "ADMIN_CHECK_ERROR",
+                adminError
+            );
+
+        }
+
+
+        /* =========================================
+           RUBIKA LINK
+        ========================================= */
 
         rubikaButton.addEventListener(
             "click",
@@ -562,11 +1078,14 @@
                 rubikaButton.disabled =
                     true;
 
+
                 rubikaButton.textContent =
                     "⏳ در حال ساخت کد...";
 
+
                 rubikaMessage.style.display =
                     "none";
+
 
                 rubikaCodeArea.style.display =
                     "none";
@@ -578,7 +1097,9 @@
                         await fetch(
                             "/api/rubika/create-code",
                             {
-                                method: "POST",
+                                method:
+                                    "POST",
+
                                 credentials:
                                     "same-origin"
                             }
@@ -598,6 +1119,7 @@
                             result.message ||
                             "ساخت کد اتصال ناموفق بود."
                         );
+
                     }
 
 
@@ -642,6 +1164,7 @@
                     rubikaButton.disabled =
                         false;
 
+
                     rubikaButton.textContent =
                         "🤖 اتصال به روبیکا";
 
@@ -651,11 +1174,9 @@
         );
 
 
-        /*
-         * ==============================
-         * LOGOUT
-         * ==============================
-         */
+        /* =========================================
+           LOGOUT
+        ========================================= */
 
         logoutButton.addEventListener(
             "click",
@@ -670,7 +1191,9 @@
                     await fetch(
                         "/api/logout",
                         {
-                            method: "POST",
+                            method:
+                                "POST",
+
                             credentials:
                                 "same-origin"
                         }
