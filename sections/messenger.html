@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html
+    lang="fa"
+    dir="rtl"
+>
 
 <head>
 
@@ -13,11 +16,6 @@
     <meta
         name="theme-color"
         content="#03040a"
-    >
-
-    <meta
-        name="description"
-        content="VEXON Messenger"
     >
 
     <title>
@@ -46,19 +44,11 @@
     >
 
 
-    <!-- =====================================================
-         MAIN VEXON CSS
-    ====================================================== -->
-
     <link
         rel="stylesheet"
         href="../style.css"
     >
 
-
-    <!-- =====================================================
-         MESSENGER STYLE
-    ====================================================== -->
 
     <style>
 
@@ -73,19 +63,14 @@
             --messenger-blue:
                 #00eaff;
 
-            --messenger-bg:
-                #03040a;
-
         }
 
 
-        /* =================================================
-           RESET
-        ================================================= */
-
         * {
+
             box-sizing:
                 border-box;
+
         }
 
 
@@ -156,18 +141,21 @@
             margin:
                 0 auto;
 
+            position:
+                relative;
+
             display:
                 flex;
 
             align-items:
                 center;
 
-            gap:
-                12px;
+            justify-content:
+                center;
 
             padding:
                 12px
-                16px;
+                65px;
 
             border:
                 1px solid
@@ -206,21 +194,29 @@
         }
 
 
+        .messenger-header
+        .vexon-global-menu-trigger {
+
+            position:
+                absolute !important;
+
+            left:
+                16px;
+
+            top:
+                50%;
+
+            transform:
+                translateY(
+                    -50%
+                );
+
+        }
+
+
         .messenger-brand {
 
-            min-width:
-                0;
-
-            flex:
-                1;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
+            text-align:
                 center;
 
         }
@@ -281,9 +277,6 @@
             margin-top:
                 4px;
 
-            text-align:
-                center;
-
             color:
                 #77778c;
 
@@ -293,19 +286,8 @@
         }
 
 
-        .messenger-header-spacer {
-
-            width:
-                43px;
-
-            flex:
-                0 0 43px;
-
-        }
-
-
         /* =================================================
-           MAIN
+           SHELL
         ================================================= */
 
         .messenger-shell {
@@ -328,7 +310,7 @@
                 flex;
 
             align-items:
-                flex-end;
+                center;
 
             justify-content:
                 space-between;
@@ -375,7 +357,7 @@
 
 
         /* =================================================
-           CONVERSATION AREA
+           CONVERSATIONS GRID
         ================================================= */
 
         .messenger-conversation-grid {
@@ -400,8 +382,8 @@
 
         .messenger-conversation-card {
 
-            position:
-                relative;
+            width:
+                100%;
 
             min-height:
                 105px;
@@ -649,6 +631,9 @@
             margin-top:
                 7px;
 
+            min-width:
+                0;
+
             overflow:
                 hidden;
 
@@ -795,7 +780,7 @@
 
 
         /* =================================================
-           FLOATING NEW CHAT
+           FLOATING NEW MESSAGE
         ================================================= */
 
         .messenger-floating-new {
@@ -818,6 +803,15 @@
             height:
                 62px;
 
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
             border:
                 1px solid
                 rgba(
@@ -828,7 +822,7 @@
                 );
 
             border-radius:
-                20px;
+                50%;
 
             background:
                 linear-gradient(
@@ -892,7 +886,7 @@
                     -5px
                 )
                 rotate(
-                    -3deg
+                    -4deg
                 );
 
             box-shadow:
@@ -916,7 +910,7 @@
 
 
         /* =================================================
-           CHAT MODAL / SCREEN
+           CHAT OVERLAY
         ================================================= */
 
         .messenger-chat-overlay {
@@ -1098,13 +1092,16 @@
         }
 
 
-        .messenger-chat-close {
+        .messenger-close-btn {
 
             width:
                 40px;
 
             height:
                 40px;
+
+            flex:
+                0 0 40px;
 
             border:
                 1px solid
@@ -1137,6 +1134,10 @@
 
         }
 
+
+        /* =================================================
+           MESSAGES
+        ================================================= */
 
         .messenger-messages {
 
@@ -1193,6 +1194,15 @@
 
         .messenger-message-bubble {
 
+            display:
+                inline-flex;
+
+            flex-direction:
+                column;
+
+            width:
+                fit-content;
+
             max-width:
                 min(
                     72%,
@@ -1200,7 +1210,8 @@
                 );
 
             padding:
-                11px 13px;
+                9px
+                12px;
 
             border-radius:
                 16px;
@@ -1287,18 +1298,18 @@
                 block;
 
             margin-top:
-                5px;
+                3px;
 
             color:
                 rgba(
                     255,
                     255,
                     255,
-                    .42
+                    .40
                 );
 
             font-size:
-                8px;
+                7px;
 
         }
 
@@ -1356,7 +1367,8 @@
                 1;
 
             padding:
-                11px 13px;
+                11px
+                13px;
 
             border:
                 1px solid
@@ -1422,6 +1434,9 @@
 
             height:
                 46px;
+
+            flex:
+                0 0 48px;
 
             border:
                 0;
@@ -1596,46 +1611,6 @@
         }
 
 
-        .messenger-close-btn {
-
-            width:
-                36px;
-
-            height:
-                36px;
-
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .07
-                );
-
-            border-radius:
-                10px;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .04
-                );
-
-            color:
-                #ffffff;
-
-            cursor:
-                pointer;
-
-            font-size:
-                18px;
-
-        }
-
-
         .messenger-user-search {
 
             width:
@@ -1797,6 +1772,9 @@
             height:
                 42px;
 
+            flex:
+                0 0 42px;
+
             display:
                 flex;
 
@@ -1805,9 +1783,6 @@
 
             justify-content:
                 center;
-
-            flex:
-                0 0 42px;
 
             border-radius:
                 12px;
@@ -1837,14 +1812,14 @@
 
         .messenger-status {
 
+            display:
+                none;
+
             margin-top:
                 10px;
 
             padding:
-                9px 10px;
-
-            display:
-                none;
+                9px;
 
             border-radius:
                 10px;
@@ -1876,45 +1851,11 @@
                     .08
                 );
 
-            border:
-                1px solid
-                rgba(
-                    255,
-                    63,
-                    90,
-                    .08
-                );
-
-        }
-
-
-        .messenger-status.success {
-
-            color:
-                #9dffcf;
-
-            background:
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .06
-                );
-
-            border:
-                1px solid
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .08
-                );
-
         }
 
 
         /* =================================================
-           RESPONSIVE
+           MOBILE
         ================================================= */
 
         @media (
@@ -1944,7 +1885,7 @@
 
                 padding:
                     9px
-                    11px;
+                    60px;
 
             }
 
@@ -1965,13 +1906,11 @@
             }
 
 
-            .messenger-header-spacer {
+            .messenger-header
+            .vexon-global-menu-trigger {
 
-                width:
-                    40px;
-
-                flex-basis:
-                    40px;
+                left:
+                    10px;
 
             }
 
@@ -1983,14 +1922,6 @@
 
                 margin-top:
                     15px;
-
-            }
-
-
-            .messenger-heading {
-
-                align-items:
-                    center;
 
             }
 
@@ -2024,9 +1955,6 @@
 
                 height:
                     58px;
-
-                border-radius:
-                    18px;
 
             }
 
@@ -2066,6 +1994,14 @@
         @media (
             max-width: 480px
         ) {
+
+            .messenger-logo {
+
+                font-size:
+                    18px;
+
+            }
+
 
             .messenger-heading h1 {
 
@@ -2133,7 +2069,8 @@
             .messenger-messages {
 
                 padding:
-                    14px 10px;
+                    14px
+                    10px;
 
             }
 
@@ -2221,22 +2158,16 @@
 
         </div>
 
-
-        <div
-            class="messenger-header-spacer"
-        ></div>
-
     </header>
 
 
     <!-- =================================================
-         MAIN
+         CONTENT
     ================================================== -->
 
     <section
         class="messenger-shell"
     >
-
 
         <div
             class="messenger-heading"
@@ -2258,10 +2189,6 @@
         </div>
 
 
-        <!-- =================================================
-             CONVERSATIONS
-        ================================================== -->
-
         <section
             id="conversation-wall"
             class="messenger-conversation-grid"
@@ -2273,7 +2200,6 @@
                     grid-column:
                         1 / -1;
                 "
-                id="conversation-loading"
             >
 
                 <div>
@@ -2297,12 +2223,11 @@
 
     </section>
 
-
 </main>
 
 
 <!-- =====================================================
-     FLOATING NEW CHAT
+     NEW CHAT BUTTON
 ===================================================== -->
 
 <button
@@ -2317,7 +2242,7 @@
 
 
 <!-- =====================================================
-     CHAT OVERLAY
+     CHAT
 ===================================================== -->
 
 <div
@@ -2329,7 +2254,6 @@
     <section
         class="messenger-chat-window"
     >
-
 
         <header
             class="messenger-chat-header"
@@ -2482,10 +2406,6 @@
 ></script>
 
 
-<!-- =====================================================
-     MESSENGER LOGIC
-===================================================== -->
-
 <script>
 
 (function () {
@@ -2494,7 +2414,7 @@
 
 
     /* =====================================================
-       HELPERS
+       ELEMENTS
     ===================================================== */
 
     const $ =
@@ -2696,6 +2616,7 @@
         let data =
             {};
 
+
         try {
 
             data =
@@ -2727,7 +2648,7 @@
 
 
     /* =====================================================
-       STATUS
+       SEARCH STATUS
     ===================================================== */
 
     function showSearchStatus(
@@ -2737,6 +2658,7 @@
 
         searchStatus.textContent =
             text;
+
 
         searchStatus.className =
             `
@@ -2806,7 +2728,9 @@
 
             await loadConversations();
 
+
             bindEvents();
+
 
             startConversationPolling();
 
@@ -2856,7 +2780,7 @@
 
 
     /* =====================================================
-       RENDER CONVERSATIONS
+       RENDER
     ===================================================== */
 
     function renderConversations() {
@@ -2947,7 +2871,9 @@
                                 >
 
                                     <div
-                                        class="messenger-conversation-top"
+                                        class="
+                                            messenger-conversation-top
+                                        "
                                     >
 
                                         <span
@@ -3043,7 +2969,7 @@
 
 
     /* =====================================================
-       OPEN CONVERSATION
+       OPEN CHAT
     ===================================================== */
 
     async function openConversation(
@@ -3111,7 +3037,7 @@
 
 
     /* =====================================================
-       CLOSE CONVERSATION
+       CLOSE CHAT
     ===================================================== */
 
     function closeConversation() {
@@ -3276,7 +3202,8 @@
 
 
     /* =====================================================
-       MESSAGE POLLING
+       FAST MESSAGE POLLING
+       Every 1 second
     ===================================================== */
 
     function startMessagePolling() {
@@ -3314,7 +3241,7 @@
                     }
 
                 },
-                3000
+                1000
             );
 
     }
@@ -3517,7 +3444,7 @@
 
 
     /* =====================================================
-       OPEN NEW CHAT
+       NEW CHAT
     ===================================================== */
 
     function openNewChat() {
@@ -3555,10 +3482,6 @@
 
     }
 
-
-    /* =====================================================
-       CLOSE NEW CHAT
-    ===================================================== */
 
     function closeNewChat() {
 
@@ -3793,32 +3716,36 @@
 
     function bindEvents() {
 
-        $("#new-chat-button")
-            .addEventListener(
-                "click",
-                openNewChat
-            );
+        $(
+            "#new-chat-button"
+        ).addEventListener(
+            "click",
+            openNewChat
+        );
 
 
-        $("#close-new-chat")
-            .addEventListener(
-                "click",
-                closeNewChat
-            );
+        $(
+            "#close-new-chat"
+        ).addEventListener(
+            "click",
+            closeNewChat
+        );
 
 
-        $("#close-chat")
-            .addEventListener(
-                "click",
-                closeConversation
-            );
+        $(
+            "#close-chat"
+        ).addEventListener(
+            "click",
+            closeConversation
+        );
 
 
-        $("#message-form")
-            .addEventListener(
-                "submit",
-                sendMessage
-            );
+        $(
+            "#message-form"
+        ).addEventListener(
+            "submit",
+            sendMessage
+        );
 
 
         messageInput.addEventListener(
@@ -3955,6 +3882,7 @@
 })();
 
 </script>
+
 
 </body>
 

@@ -1,6 +1,6 @@
 /* =========================================================
    VEXON GLOBAL NAVIGATION
-   Hamburger + Left Sidebar
+   Global Hamburger + Left Sidebar
 ========================================================= */
 
 (function () {
@@ -9,7 +9,7 @@
 
 
     /* =====================================================
-       PATH
+       PAGE PATH
     ===================================================== */
 
     const inSections =
@@ -19,13 +19,13 @@
 
 
     function pagePath(
-        rootPage,
-        sectionPage
+        rootPath,
+        sectionPath
     ) {
 
         return inSections
-            ? sectionPage
-            : rootPage;
+            ? sectionPath
+            : rootPath;
 
     }
 
@@ -37,7 +37,7 @@
     const navigationItems = [
 
         {
-            icon: "⌂",
+            type: "home",
             label: "خانه",
             href:
                 pagePath(
@@ -136,7 +136,7 @@
     style.textContent = `
 
         /* =================================================
-           REMOVE OLD MOBILE BOTTOM NAV
+           OLD MOBILE NAV = OFF
         ================================================= */
 
         .mobile-bottom-nav {
@@ -150,29 +150,178 @@
 
 
         /* =================================================
-           GLOBAL NAV BUTTON
+           MAIN NAVBAR
+        ================================================= */
+
+        .navbar {
+            position: relative !important;
+
+            min-height:
+                76px;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            justify-content:
+                center !important;
+
+            padding:
+                12px
+                65px !important;
+
+        }
+
+
+        /* =================================================
+           HIDE OLD NAVIGATION
+        ================================================= */
+
+        .navbar .nav-links {
+            display:
+                none !important;
+        }
+
+
+        /* =================================================
+           LOGO CENTER
+        ================================================= */
+
+        .navbar > .logo {
+
+            position:
+                absolute !important;
+
+            left:
+                50%;
+
+            top:
+                50%;
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                );
+
+            z-index:
+                5;
+
+            margin:
+                0 !important;
+
+        }
+
+
+        .navbar > .logo:hover {
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                )
+                scale(
+                    1.04
+                );
+
+        }
+
+
+        /* =================================================
+           PROFILE RIGHT
+        ================================================= */
+
+        .navbar .header-profile {
+
+            position:
+                absolute !important;
+
+            right:
+                16px;
+
+            top:
+                50%;
+
+            transform:
+                translateY(
+                    -50%
+                );
+
+            z-index:
+                6;
+
+            margin:
+                0 !important;
+
+        }
+
+
+        .navbar .header-profile:hover {
+
+            transform:
+                translateY(
+                    calc(
+                        -50% - 2px
+                    )
+                );
+
+        }
+
+
+        /* =================================================
+           GLOBAL HAMBURGER LEFT
         ================================================= */
 
         .vexon-global-menu-trigger {
 
-            width: 43px;
-            height: 43px;
+            position:
+                absolute !important;
 
-            flex: 0 0 43px;
+            left:
+                16px;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            top:
+                50%;
 
-            border-radius: 13px;
+            transform:
+                translateY(
+                    -50%
+                );
 
-            border: 1px solid
+            z-index:
+                7;
+
+            width:
+                43px;
+
+            height:
+                43px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            flex:
+                none;
+
+            border:
+                1px solid
                 rgba(
                     0,
                     255,
                     157,
-                    .14
+                    .18
                 );
+
+            border-radius:
+                13px;
 
             background:
                 rgba(
@@ -182,36 +331,49 @@
                     .055
                 );
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
-            font-size: 20px;
-            line-height: 1;
+            font-size:
+                20px;
 
-            cursor: pointer;
+            line-height:
+                1;
+
+            cursor:
+                pointer;
 
             box-shadow:
-                0 0 20px
+                0 0 22px
                 rgba(
                     0,
                     255,
                     157,
-                    .06
+                    .07
+                );
+
+            backdrop-filter:
+                blur(
+                    12px
                 );
 
             transition:
-                transform .22s ease,
-                background .22s ease,
-                border-color .22s ease,
-                box-shadow .22s ease;
+                transform .2s ease,
+                background .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
 
-            z-index: 20;
         }
 
 
         .vexon-global-menu-trigger:hover {
 
             transform:
-                translateY(-2px);
+                translateY(
+                    calc(
+                        -50% - 2px
+                    )
+                );
 
             background:
                 rgba(
@@ -226,7 +388,7 @@
                     0,
                     255,
                     157,
-                    .32
+                    .36
                 );
 
             box-shadow:
@@ -235,26 +397,22 @@
                     0,
                     255,
                     157,
-                    .12
+                    .14
                 );
+
         }
 
 
         .vexon-global-menu-trigger:active {
 
             transform:
-                scale(.96);
-        }
+                translateY(
+                    -50%
+                )
+                scale(
+                    .96
+                );
 
-
-        /* =================================================
-           DESKTOP NAV LINKS
-           Main buttons now live inside left drawer.
-        ================================================= */
-
-        .navbar .nav-links {
-
-            display: none !important;
         }
 
 
@@ -264,31 +422,42 @@
 
         .vexon-global-menu {
 
-            position: fixed;
+            position:
+                fixed;
 
-            inset: 0;
+            inset:
+                0;
 
-            z-index: 60000;
+            z-index:
+                60000;
 
-            visibility: hidden;
+            visibility:
+                hidden;
 
-            pointer-events: none;
+            pointer-events:
+                none;
+
         }
 
 
         .vexon-global-menu.open {
 
-            visibility: visible;
+            visibility:
+                visible;
 
-            pointer-events: auto;
+            pointer-events:
+                auto;
+
         }
 
 
         .vexon-global-menu-backdrop {
 
-            position: absolute;
+            position:
+                absolute;
 
-            inset: 0;
+            inset:
+                0;
 
             background:
                 rgba(
@@ -298,41 +467,57 @@
                     .58
                 );
 
-            opacity: 0;
+            opacity:
+                0;
 
             transition:
-                opacity .25s ease;
+                opacity .24s ease;
 
             backdrop-filter:
-                blur(3px);
+                blur(
+                    3px
+                );
+
         }
 
 
         .vexon-global-menu.open
         .vexon-global-menu-backdrop {
 
-            opacity: 1;
+            opacity:
+                1;
+
         }
 
 
         .vexon-global-drawer {
 
-            position: absolute;
+            position:
+                absolute;
 
-            top: 0;
-            bottom: 0;
-            left: 0;
+            top:
+                0;
+
+            bottom:
+                0;
+
+            left:
+                0;
 
             width:
                 min(
                     320px,
-                    84vw
+                    86vw
                 );
 
             padding:
-                24px 16px;
+                22px 15px;
 
-            overflow-y: auto;
+            overflow-y:
+                auto;
+
+            direction:
+                rtl;
 
             background:
                 linear-gradient(
@@ -341,13 +526,13 @@
                         7,
                         10,
                         19,
-                        .98
+                        .985
                     ),
                     rgba(
                         3,
                         5,
                         11,
-                        .98
+                        .985
                     )
                 );
 
@@ -361,12 +546,12 @@
                 );
 
             box-shadow:
-                20px 0 70px
+                22px 0 75px
                 rgba(
                     0,
                     0,
                     0,
-                    .45
+                    .48
                 );
 
             transform:
@@ -383,7 +568,6 @@
                     1
                 );
 
-            direction: rtl;
         }
 
 
@@ -391,7 +575,10 @@
         .vexon-global-drawer {
 
             transform:
-                translateX(0);
+                translateX(
+                    0
+                );
+
         }
 
 
@@ -401,21 +588,23 @@
 
         .vexon-global-drawer-head {
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
             justify-content:
                 space-between;
 
-            gap: 12px;
+            gap:
+                10px;
 
             padding:
-                4px 5px
-                18px;
+                2px 5px 17px;
 
             margin-bottom:
-                10px;
+                8px;
 
             border-bottom:
                 1px solid
@@ -425,6 +614,7 @@
                     255,
                     .06
                 );
+
         }
 
 
@@ -434,13 +624,17 @@
                 "Orbitron",
                 sans-serif;
 
-            font-size: 24px;
+            font-size:
+                24px;
 
-            font-weight: 900;
+            font-weight:
+                900;
 
-            letter-spacing: 3px;
+            letter-spacing:
+                3px;
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
             text-shadow:
                 0 0 14px
@@ -450,6 +644,7 @@
                     255,
                     .18
                 );
+
         }
 
 
@@ -459,24 +654,26 @@
                 #00ff9d;
 
             text-shadow:
-                0 0 10px
+                0 0 9px
                 #00ff9d,
                 0 0 22px
                 rgba(
                     0,
                     255,
                     157,
-                    .45
+                    .5
                 );
+
         }
 
 
         .vexon-global-menu-close {
 
-            width: 38px;
-            height: 38px;
+            width:
+                38px;
 
-            border-radius: 11px;
+            height:
+                38px;
 
             border:
                 1px solid
@@ -487,6 +684,9 @@
                     .07
                 );
 
+            border-radius:
+                11px;
+
             background:
                 rgba(
                     255,
@@ -495,22 +695,23 @@
                     .035
                 );
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
-            font-size: 20px;
+            font-size:
+                20px;
 
-            cursor: pointer;
+            cursor:
+                pointer;
 
             transition:
-                transform .2s ease,
-                background .2s ease;
+                background .2s ease,
+                transform .2s ease;
+
         }
 
 
         .vexon-global-menu-close:hover {
-
-            transform:
-                rotate(4deg);
 
             background:
                 rgba(
@@ -519,81 +720,103 @@
                     255,
                     .08
                 );
+
+            transform:
+                scale(
+                    1.04
+                );
+
         }
 
 
         .vexon-global-drawer-subtitle {
 
             padding:
-                0 6px 18px;
+                0 6px 17px;
 
             color:
-                #707084;
+                #6f6f83;
 
-            font-size: 9px;
+            font-size:
+                9px;
 
-            line-height: 1.8;
+            line-height:
+                1.9;
+
         }
 
 
         /* =================================================
-           DRAWER ITEMS
+           NAV LIST
         ================================================= */
 
         .vexon-global-nav-list {
 
-            display: grid;
+            display:
+                grid;
 
-            gap: 7px;
+            gap:
+                7px;
+
         }
 
 
         .vexon-global-nav-item {
 
-            width: 100%;
+            width:
+                100%;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            gap: 12px;
+            gap:
+                11px;
 
             padding:
-                12px 13px;
-
-            border-radius: 14px;
+                11px 12px;
 
             border:
                 1px solid
                 transparent;
 
+            border-radius:
+                14px;
+
             background:
                 transparent;
 
             color:
-                #b1b1c1;
+                #b4b4c4;
 
             font-family:
                 "Vazirmatn",
                 sans-serif;
 
-            font-size: 12px;
+            font-size:
+                12px;
 
-            font-weight: 700;
+            font-weight:
+                700;
 
-            text-decoration: none;
+            text-decoration:
+                none;
 
             transition:
                 color .2s ease,
                 background .2s ease,
                 border-color .2s ease,
                 transform .2s ease;
+
         }
 
 
         .vexon-global-nav-item:hover {
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
             background:
                 rgba(
@@ -615,6 +838,7 @@
                 translateX(
                     3px
                 );
+
         }
 
 
@@ -636,7 +860,7 @@
                         116,
                         77,
                         255,
-                        .06
+                        .065
                     )
                 );
 
@@ -645,41 +869,31 @@
                     0,
                     255,
                     157,
-                    .12
+                    .14
                 );
 
-            box-shadow:
-                inset 0 0 20px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .025
-                );
         }
 
 
         .vexon-global-nav-icon {
 
-            width: 40px;
-            height: 40px;
+            width:
+                40px;
 
-            flex: 0 0 40px;
+            height:
+                40px;
 
-            display: flex;
+            flex:
+                0 0 40px;
 
-            align-items: center;
-            justify-content: center;
+            display:
+                flex;
 
-            border-radius: 12px;
+            align-items:
+                center;
 
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .04
-                );
+            justify-content:
+                center;
 
             border:
                 1px solid
@@ -690,22 +904,126 @@
                     .05
                 );
 
-            font-size: 18px;
+            border-radius:
+                12px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            font-size:
+                18px;
+
         }
 
 
         .vexon-global-nav-item.active
         .vexon-global-nav-icon {
 
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
             background:
                 rgba(
                     0,
                     255,
                     157,
-                    .09
+                    .08
                 );
 
+        }
+
+
+        /* =================================================
+           HOME ICON
+        ================================================= */
+
+        .vexon-global-home-icon {
+
+            width:
+                40px;
+
+            height:
+                40px;
+
+            flex:
+                0 0 40px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                11px;
+
+            background:
+                #03040a;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .23
+                );
+
+            color:
+                #00ff9d;
+
+            font-family:
+                "Orbitron",
+                sans-serif;
+
+            font-size:
+                15px;
+
+            font-weight:
+                900;
+
+            text-shadow:
+                0 0 7px
+                #00ff9d;
+
+            box-shadow:
+                0 0 14px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .08
+                );
+
+        }
+
+
+        .vexon-global-nav-item:hover
+        .vexon-global-home-icon {
+
             border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .42
+                );
+
+            box-shadow:
+                0 0 21px
                 rgba(
                     0,
                     255,
@@ -713,33 +1031,31 @@
                     .16
                 );
 
-            box-shadow:
-                0 0 18px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .07
-                );
         }
 
 
         .vexon-global-nav-text {
 
-            flex: 1;
+            flex:
+                1;
 
-            min-width: 0;
+            min-width:
+                0;
+
         }
 
 
         .vexon-global-nav-arrow {
 
             color:
-                #515166;
+                #525267;
 
-            font-size: 19px;
+            font-size:
+                19px;
 
-            line-height: 1;
+            line-height:
+                1;
+
         }
 
 
@@ -750,6 +1066,15 @@
 
             padding:
                 13px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
 
             border-radius:
                 14px;
@@ -762,81 +1087,165 @@
                     .025
                 );
 
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .05
-                );
-
-            text-align: center;
+            text-align:
+                center;
 
             color:
-                #666679;
+                #626275;
 
-            font-size: 8px;
+            font-size:
+                8px;
 
-            line-height: 1.9;
+            line-height:
+                1.9;
+
         }
 
 
         /* =================================================
-           MESSENGER SUPPORT
+           SUPPORT BUTTON FIX
         ================================================= */
 
-        .vexon-messenger-menu-trigger {
+        #vexon-support-widget {
 
-            display: flex;
+            bottom:
+                22px !important;
+
         }
 
 
-        @media (max-width: 900px) {
+        @media (
+            max-width: 600px
+        ) {
 
-            .vexon-global-menu-trigger {
+            #vexon-support-widget {
 
-                width: 40px;
-                height: 40px;
+                bottom:
+                    16px !important;
 
-                flex-basis: 40px;
-
-                border-radius: 12px;
-
-                font-size: 18px;
             }
 
         }
 
 
-        @media (max-width: 480px) {
+        /* =================================================
+           SMALL DEVICES
+        ================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .navbar {
+
+                min-height:
+                    62px;
+
+                padding:
+                    9px
+                    60px !important;
+
+            }
+
+
+            .navbar > .logo {
+
+                font-size:
+                    21px;
+
+            }
+
+
+            .navbar .header-profile {
+
+                right:
+                    10px;
+
+            }
+
+
+            .vexon-global-menu-trigger {
+
+                left:
+                    10px;
+
+                width:
+                    40px;
+
+                height:
+                    40px;
+
+                font-size:
+                    18px;
+
+                border-radius:
+                    12px;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 480px
+        ) {
+
+            .navbar {
+
+                border-radius:
+                    14px;
+
+            }
+
+
+            .navbar > .logo {
+
+                font-size:
+                    18px;
+
+                letter-spacing:
+                    2px;
+
+            }
+
+
+            .navbar .header-profile {
+
+                right:
+                    8px;
+
+            }
+
+
+            .vexon-global-menu-trigger {
+
+                left:
+                    8px;
+
+            }
+
 
             .vexon-global-drawer {
 
                 width:
                     min(
                         320px,
-                        88vw
+                        89vw
                     );
 
                 padding:
                     18px 12px;
+
             }
 
 
             .vexon-global-drawer-logo {
 
-                font-size: 20px;
+                font-size:
+                    20px;
+
             }
 
-
-            .vexon-global-nav-item {
-
-                padding:
-                    11px;
-
-                font-size: 11px;
-            }
         }
 
     `;
@@ -848,22 +1257,8 @@
 
 
     /* =====================================================
-       CREATE GLOBAL MENU
+       CURRENT PAGE
     ===================================================== */
-
-    const menu =
-        document.createElement(
-            "div"
-        );
-
-
-    menu.className =
-        "vexon-global-menu";
-
-
-    menu.id =
-        "vexon-global-menu";
-
 
     const currentPath =
         window.location.pathname
@@ -909,6 +1304,24 @@
         }
 
     }
+
+
+    /* =====================================================
+       BUILD MENU
+    ===================================================== */
+
+    const menu =
+        document.createElement(
+            "div"
+        );
+
+
+    menu.className =
+        "vexon-global-menu";
+
+
+    menu.id =
+        "vexon-global-menu";
 
 
     menu.innerHTML = `
@@ -961,49 +1374,74 @@
                 ${
                     navigationItems
                         .map(
-                            item => `
-                                <a
-                                    class="
-                                        vexon-global-nav-item
-                                        ${
-                                            isCurrentPage(
-                                                item.href
-                                            )
-                                                ? "active"
-                                                : ""
-                                        }
-                                    "
-                                    href="${item.href}"
-                                >
+                            item => {
 
-                                    <span
+                                const icon =
+                                    item.type ===
+                                    "home"
+
+                                        ? `
+                                            <span
+                                                class="
+                                                    vexon-global-home-icon
+                                                "
+                                            >
+                                                V
+                                            </span>
+                                          `
+
+                                        : `
+                                            <span
+                                                class="
+                                                    vexon-global-nav-icon
+                                                "
+                                            >
+                                                ${item.icon}
+                                            </span>
+                                          `;
+
+
+                                return `
+
+                                    <a
                                         class="
-                                            vexon-global-nav-icon
+                                            vexon-global-nav-item
+                                            ${
+                                                isCurrentPage(
+                                                    item.href
+                                                )
+                                                    ? "active"
+                                                    : ""
+                                            }
                                         "
+                                        href="${item.href}"
                                     >
-                                        ${item.icon}
-                                    </span>
+
+                                        ${icon}
 
 
-                                    <span
-                                        class="
-                                            vexon-global-nav-text
-                                        "
-                                    >
-                                        ${item.label}
-                                    </span>
+                                        <span
+                                            class="
+                                                vexon-global-nav-text
+                                            "
+                                        >
+                                            ${item.label}
+                                        </span>
 
 
-                                    <span
-                                        class="
-                                            vexon-global-nav-arrow
-                                        "
-                                    >
-                                        ‹
-                                    </span>
+                                        <span
+                                            class="
+                                                vexon-global-nav-arrow
+                                            "
+                                        >
+                                            ‹
+                                        </span>
 
-                                </a>
-                            `
+                                    </a>
+
+                                `;
+
+                            }
                         )
                         .join("")
                 }
@@ -1029,7 +1467,7 @@
 
 
     /* =====================================================
-       OPEN/CLOSE
+       OPEN / CLOSE
     ===================================================== */
 
     function openMenu() {
@@ -1042,19 +1480,6 @@
         document.body.style.overflow =
             "hidden";
 
-
-        const firstLink =
-            menu.querySelector(
-                ".vexon-global-nav-item"
-            );
-
-
-        if (firstLink) {
-
-            firstLink.focus();
-
-        }
-
     }
 
 
@@ -1065,21 +1490,8 @@
         );
 
 
-        /*
-         * فقط اگر پیام‌رسان خودش overflow خاصی
-         * نداشته باشد، Body را برمی‌گردانیم.
-         */
-
-        if (
-            !document.body.classList.contains(
-                "vexon-lock-scroll"
-            )
-        ) {
-
-            document.body.style.overflow =
-                "";
-
-        }
+        document.body.style.overflow =
+            "";
 
     }
 
@@ -1137,79 +1549,18 @@
 
 
     /* =====================================================
-       CREATE / CONNECT TRIGGER
+       CREATE GLOBAL TRIGGER
     ===================================================== */
 
-    function connectTrigger(
-        trigger
-    ) {
-
-        if (!trigger) {
-
-            return;
-
-        }
-
-
-        if (
-            trigger.dataset.vexonNavBound ===
-            "true"
-        ) {
-
-            return;
-
-        }
-
-
-        trigger.dataset.vexonNavBound =
-            "true";
-
-
-        trigger.addEventListener(
-            "click",
-            openMenu
-        );
-
-    }
-
-
-    /* =====================================================
-       MESSENGER HEADER TRIGGER
-    ===================================================== */
-
-    const messengerTrigger =
+    let trigger =
         document.getElementById(
             "vexon-menu-trigger"
         );
 
 
-    if (
-        messengerTrigger
-    ) {
+    if (!trigger) {
 
-        connectTrigger(
-            messengerTrigger
-        );
-
-    }
-
-
-    /* =====================================================
-       NORMAL NAVBAR
-    ===================================================== */
-
-    const navbar =
-        document.querySelector(
-            ".navbar"
-        );
-
-
-    if (
-        navbar &&
-        !messengerTrigger
-    ) {
-
-        const trigger =
+        trigger =
             document.createElement(
                 "button"
             );
@@ -1217,6 +1568,10 @@
 
         trigger.type =
             "button";
+
+
+        trigger.id =
+            "vexon-menu-trigger";
 
 
         trigger.className =
@@ -1239,25 +1594,51 @@
         );
 
 
-        /*
-         * دکمه را ابتدای Navbar قرار می‌دهیم.
-         */
-
-        navbar.insertBefore(
-            trigger,
-            navbar.firstChild
-        );
+        const navbar =
+            document.querySelector(
+                ".navbar"
+            );
 
 
-        connectTrigger(
-            trigger
+        if (navbar) {
+
+            navbar.appendChild(
+                trigger
+            );
+
+        } else {
+
+            document.body.appendChild(
+                trigger
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BIND TRIGGER
+    ===================================================== */
+
+    if (
+        !trigger.dataset.vexonNavBound
+    ) {
+
+        trigger.dataset.vexonNavBound =
+            "true";
+
+
+        trigger.addEventListener(
+            "click",
+            openMenu
         );
 
     }
 
 
     /* =====================================================
-       REMOVE OLD BOTTOM NAV IF PRESENT
+       REMOVE OLD BOTTOM NAV
     ===================================================== */
 
     const oldBottomNav =
@@ -1271,27 +1652,6 @@
     ) {
 
         oldBottomNav.remove();
-
-    }
-
-
-    /* =====================================================
-       MESSENGER TOPBAR
-    ===================================================== */
-
-    const messengerMenu =
-        document.getElementById(
-            "vexon-menu-trigger"
-        );
-
-
-    if (
-        messengerMenu
-    ) {
-
-        connectTrigger(
-            messengerMenu
-        );
 
     }
 
