@@ -5,6 +5,16 @@
 
     <meta charset="UTF-8">
 
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "VEXON",
+        "alternateName": "VEXON Gaming",
+        "url": "https://s.vexongame.workers.dev/"
+    }
+    </script>
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -18,6 +28,11 @@
     <meta
         name="theme-color"
         content="#03040a"
+    >
+
+    <meta
+        name="google-site-verification"
+        content="lBsb15nYDLAUkiBdRI78tJNzOSoYcCgI2d7w6-QddDs"
     >
 
     <title>
@@ -64,6 +79,12 @@
 
         .community-stats-section {
 
+            position:
+                relative;
+
+            z-index:
+                2;
+
             width:
                 min(
                     1100px,
@@ -81,17 +102,14 @@
 
         .community-stats-card {
 
-            position:
-                relative;
-
-            overflow:
-                hidden;
-
             display:
                 grid;
 
             grid-template-columns:
-                repeat(3, 1fr);
+                repeat(
+                    2,
+                    1fr
+                );
 
             gap:
                 12px;
@@ -136,57 +154,13 @@
         }
 
 
-        .community-stats-card::before {
-
-            content:
-                "";
-
-            position:
-                absolute;
-
-            inset:
-                0;
-
-            pointer-events:
-                none;
-
-            background:
-                linear-gradient(
-                    120deg,
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        0.03
-                    ),
-                    transparent 45%,
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        0.035
-                    )
-                );
-
-        }
-
-
         .community-stat {
 
-            position:
-                relative;
-
-            z-index:
-                1;
-
-            min-width:
-                0;
-
             padding:
-                16px;
+                18px;
 
             border-radius:
-                17px;
+                18px;
 
             background:
                 rgba(
@@ -205,16 +179,60 @@
                     0.055
                 );
 
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
         }
 
 
         .community-stat-icon {
 
+            width:
+                48px;
+
+            height:
+                48px;
+
+            flex:
+                0 0 48px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        0.10
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.10
+                    )
+                );
+
             font-size:
                 22px;
-
-            margin-bottom:
-                8px;
 
         }
 
@@ -242,13 +260,13 @@
                 block;
 
             font-size:
-                24px;
-
-            font-weight:
-                900;
+                26px;
 
             line-height:
                 1.2;
+
+            font-weight:
+                900;
 
         }
 
@@ -265,23 +283,6 @@
                     255,
                     157,
                     0.13
-                );
-
-        }
-
-
-        .community-stat-value.visits {
-
-            color:
-                #aeb8ff;
-
-            text-shadow:
-                0 0 16px
-                rgba(
-                    116,
-                    77,
-                    255,
-                    0.15
                 );
 
         }
@@ -310,7 +311,7 @@
                 block;
 
             margin-top:
-                6px;
+                5px;
 
             font-size:
                 9px;
@@ -323,11 +324,11 @@
 
         .community-stats-status {
 
-            margin-top:
-                8px;
-
             text-align:
                 center;
+
+            margin-top:
+                8px;
 
             font-size:
                 9px;
@@ -339,7 +340,7 @@
 
 
         /* =====================================================
-           MOBILE HEADER PROFILE
+           MOBILE PROFILE
         ===================================================== */
 
         @media (
@@ -373,6 +374,15 @@
 
                 flex:
                     0 0 42px;
+
+                display:
+                    flex;
+
+                align-items:
+                    center;
+
+                justify-content:
+                    center;
 
                 font-size:
                     19px;
@@ -466,7 +476,7 @@
 
 
         /* =====================================================
-           COMMUNITY STATS MOBILE
+           STATS MOBILE
         ===================================================== */
 
         @media (
@@ -500,39 +510,28 @@
 
             .community-stat {
 
-                display:
-                    grid;
-
-                grid-template-columns:
-                    auto 1fr auto;
-
-                align-items:
-                    center;
-
-                gap:
-                    10px;
-
                 padding:
-                    12px;
+                    13px;
 
             }
 
 
             .community-stat-icon {
 
-                margin:
-                    0;
+                width:
+                    43px;
+
+                height:
+                    43px;
+
+                flex-basis:
+                    43px;
 
                 font-size:
                     19px;
 
-            }
-
-
-            .community-stat-label {
-
-                margin:
-                    0;
+                border-radius:
+                    12px;
 
             }
 
@@ -540,21 +539,7 @@
             .community-stat-value {
 
                 font-size:
-                    20px;
-
-                text-align:
-                    left;
-
-            }
-
-
-            .community-stat-note {
-
-                grid-column:
-                    2 / 4;
-
-                margin:
-                    -2px 0 0;
+                    22px;
 
             }
 
@@ -569,7 +554,7 @@
 
 
 <!-- =====================================================
-     SPACE BACKGROUND
+     BACKGROUND
 ===================================================== -->
 
 <div
@@ -620,7 +605,9 @@
         href="index.html"
         class="logo"
     >
+
         VE<span class="logo-x">X</span>ON
+
     </a>
 
 
@@ -723,7 +710,9 @@
         class="header-profile"
     >
 
-        <div class="header-profile-icon">
+        <div
+            class="header-profile-icon"
+        >
             👤
         </div>
 
@@ -763,12 +752,14 @@
          HERO
     ================================================== -->
 
-    <section class="hero">
+    <section
+        class="hero"
+    >
 
 
-        <!-- HERO CONTENT -->
-
-        <div class="hero-content">
+        <div
+            class="hero-content"
+        >
 
 
             <!-- MAIN VEXON LOGO -->
@@ -780,11 +771,14 @@
             >
 
 
-            <!-- NEON SLOGAN -->
+            <!-- SLOGAN -->
 
-            <h1 class="neon-slogan">
+            <h1
+                class="neon-slogan"
+            >
 
                 بازی کن.
+
                 <span>
                     رقابت کن.
                 </span>
@@ -798,7 +792,9 @@
 
             <!-- DESCRIPTION -->
 
-            <p class="hero-description">
+            <p
+                class="hero-description"
+            >
 
                 به دنیای VEXON خوش آمدی؛
                 جایی برای بازی، رقابت و تجربه‌های جدید.
@@ -808,7 +804,9 @@
 
             <!-- BUTTONS -->
 
-            <div class="hero-buttons">
+            <div
+                class="hero-buttons"
+            >
 
 
                 <a
@@ -867,16 +865,19 @@
 
             </div>
 
+
         </div>
 
 
-        <!-- =================================================
-             VEXON BUBBLE
-        ================================================== -->
+        <!-- VEXON BUBBLE -->
 
-        <div class="hero-visual">
+        <div
+            class="hero-visual"
+        >
 
-            <div class="bubble-glow"></div>
+            <div
+                class="bubble-glow"
+            ></div>
 
 
             <img
@@ -895,17 +896,21 @@
          DASHBOARD
     ================================================== -->
 
-    <section class="dashboard-section">
+    <section
+        class="dashboard-section"
+    >
 
 
-        <!-- =================================================
-             FEATURED GAMES
-        ================================================== -->
+        <!-- FEATURED GAMES -->
 
-        <div class="featured-games">
+        <div
+            class="featured-games"
+        >
 
 
-            <div class="panel-header">
+            <div
+                class="panel-header"
+            >
 
                 <div>
 
@@ -935,7 +940,9 @@
 
             <!-- GAME CARDS -->
 
-            <div class="game-cards">
+            <div
+                class="game-cards"
+            >
 
 
                 <!-- GAME 1 -->
@@ -1131,20 +1138,21 @@
 
 
     <!-- =================================================
-         COMMUNITY STATS
+         COMMUNITY ACCOUNT STATS
     ================================================== -->
 
     <section
         class="community-stats-section"
-        aria-label="آمار VEXON"
+        aria-label="آمار اکانت‌های VEXON"
     >
+
 
         <div
             class="community-stats-card"
         >
 
 
-            <!-- USERS -->
+            <!-- TOTAL ACCOUNTS -->
 
             <div
                 class="community-stat"
@@ -1162,7 +1170,7 @@
                     <span
                         class="community-stat-label"
                     >
-                        بازیکنان ثبت‌نام‌شده
+                        کل اکانت‌ها
                     </span>
 
 
@@ -1177,7 +1185,7 @@
                     <span
                         class="community-stat-note"
                     >
-                        تعداد حساب‌های VEXON
+                        تعداد کل حساب‌های VEXON
                     </span>
 
                 </div>
@@ -1185,48 +1193,7 @@
             </div>
 
 
-            <!-- TOTAL VISITS -->
-
-            <div
-                class="community-stat"
-            >
-
-                <div
-                    class="community-stat-icon"
-                >
-                    👀
-                </div>
-
-
-                <div>
-
-                    <span
-                        class="community-stat-label"
-                    >
-                        بازدید کل
-                    </span>
-
-
-                    <strong
-                        id="community-visits"
-                        class="community-stat-value visits"
-                    >
-                        —
-                    </strong>
-
-
-                    <span
-                        class="community-stat-note"
-                    >
-                        تعداد بازدیدهای ثبت‌شده
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- TODAY -->
+            <!-- TODAY ACCOUNTS -->
 
             <div
                 class="community-stat"
@@ -1244,7 +1211,7 @@
                     <span
                         class="community-stat-label"
                     >
-                        بازدید امروز
+                        اکانت‌های امروز
                     </span>
 
 
@@ -1259,7 +1226,7 @@
                     <span
                         class="community-stat-note"
                     >
-                        بازدیدهای امروز
+                        حساب‌های ساخته‌شده امروز
                     </span>
 
                 </div>
@@ -1278,6 +1245,7 @@
             در حال دریافت آمار VEXON...
         </div>
 
+
     </section>
 
 
@@ -1291,7 +1259,9 @@
 <footer>
 
 
-    <div class="footer-logo">
+    <div
+        class="footer-logo"
+    >
         VE<span>X</span>ON
     </div>
 
@@ -1301,14 +1271,24 @@
     </p>
 
 
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
+    <div
+        class="footer-socials"
+    >
+
+        <span>
+            ✈️
+        </span>
+
+        <span>
+            ◎
+        </span>
+
+        <span>
+            ▶
+        </span>
+
     </div>
 
-
-    <!-- CREATORS BUTTON -->
 
     <a
         href="sections/creators.html"
@@ -1319,10 +1299,15 @@
 
 
     <span>
+
         ساخته شده با 💚 برای گیمرها
+
         <br>
+
         © 2026 VEXON — همه حقوق محفوظ است.
+
     </span>
+
 
 </footer>
 
@@ -1385,6 +1370,7 @@
             V
         </span>
 
+
         <small>
             خانه
         </small>
@@ -1432,10 +1418,12 @@
 
 
 <!-- =====================================================
-     SITE SCRIPT
+     MAIN SCRIPT
 ===================================================== -->
 
-<script src="script.js"></script>
+<script
+    src="script.js"
+></script>
 
 
 <script>
@@ -1451,12 +1439,6 @@
         );
 
 
-    const visitsElement =
-        document.getElementById(
-            "community-visits"
-        );
-
-
     const todayElement =
         document.getElementById(
             "community-today"
@@ -1469,12 +1451,8 @@
         );
 
 
-    let statsTimer =
-        null;
-
-
     /* =====================================================
-       FORMAT NUMBER
+       NUMBER FORMAT
     ===================================================== */
 
     function formatNumber(
@@ -1482,8 +1460,7 @@
     ) {
 
         return Number(
-            value ??
-            0
+            value ?? 0
         ).toLocaleString(
             "fa-IR"
         );
@@ -1492,7 +1469,7 @@
 
 
     /* =====================================================
-       LOAD STATS
+       LOAD ACCOUNT STATS
     ===================================================== */
 
     async function loadCommunityStats() {
@@ -1535,25 +1512,19 @@
                 );
 
 
-            visitsElement.textContent =
-                formatNumber(
-                    data.total_visits
-                );
-
-
             todayElement.textContent =
                 formatNumber(
-                    data.today_visits
+                    data.today_users
                 );
 
 
             statusElement.textContent =
-                "آمار VEXON به‌صورت زنده بروزرسانی می‌شود.";
+                "آمار هر ۱۰ ثانیه بروزرسانی می‌شود.";
 
         } catch (error) {
 
             console.error(
-                "COMMUNITY_STATS_ERROR:",
+                "COMMUNITY_STATS_ERROR",
                 error
             );
 
@@ -1567,7 +1538,7 @@
 
 
     /* =====================================================
-       START
+       FIRST LOAD
     ===================================================== */
 
     loadCommunityStats();
@@ -1577,36 +1548,9 @@
        AUTO REFRESH
     ===================================================== */
 
-    statsTimer =
-        setInterval(
-            () => {
-
-                loadCommunityStats();
-
-            },
-            10000
-        );
-
-
-    /* =====================================================
-       CLEANUP
-    ===================================================== */
-
-    window.addEventListener(
-        "beforeunload",
-        () => {
-
-            if (
-                statsTimer
-            ) {
-
-                clearInterval(
-                    statsTimer
-                );
-
-            }
-
-        }
+    setInterval(
+        loadCommunityStats,
+        10000
     );
 
 })();
@@ -1615,10 +1559,12 @@
 
 
 <!-- =====================================================
-     GLOBE / HERO SCRIPT
+     GLOBE
 ===================================================== -->
 
-<script src="vexon-globe.js"></script>
+<script
+    src="vexon-globe.js"
+></script>
 
 
 </body>
