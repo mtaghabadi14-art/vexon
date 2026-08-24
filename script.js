@@ -1921,7 +1921,7 @@ function initializeSupportWidget() {
                         14px;
 
                     bottom:
-                        14px;
+                        70px;
 
                 }
 
