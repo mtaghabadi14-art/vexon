@@ -20,30 +20,17 @@
         content="#03040a"
     >
 
-    <title>
-        VEXON ADMIN
-    </title>
-
-
-    <!-- =========================
-         FONTS
-    ========================== -->
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-    >
-
-
-    <!-- =========================
-         MAIN CSS
-    ========================== -->
+    <title>VEXON ADMIN</title>
 
     <link
         rel="stylesheet"
         href="style.css"
     >
 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
     <style>
 
@@ -83,8 +70,7 @@
                 blur(18px);
 
             box-shadow:
-                0 0 30px
-                rgba(0,255,157,0.06);
+                0 0 30px rgba(0,255,157,0.06);
         }
 
 
@@ -162,8 +148,14 @@
 
 
         .admin-button:hover {
-            transform:
-                translateY(-2px);
+            transform: translateY(-2px);
+        }
+
+
+        .admin-button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
         }
 
 
@@ -204,7 +196,7 @@
 
 
         /* =========================================
-           ADMIN NAV TABS
+           TABS
         ========================================= */
 
         .admin-tabs {
@@ -245,8 +237,7 @@
 
 
         .admin-tab:hover {
-            transform:
-                translateY(-2px);
+            transform: translateY(-2px);
         }
 
 
@@ -276,7 +267,6 @@
             height: 20px;
 
             margin-right: 6px;
-
             padding: 0 6px;
 
             border-radius: 999px;
@@ -296,7 +286,7 @@
 
 
         /* =========================================
-           SECTION
+           SECTIONS
         ========================================= */
 
         .admin-section {
@@ -315,7 +305,6 @@
 
         .admin-dashboard {
             display: grid;
-
             grid-template-columns:
                 repeat(4, 1fr);
 
@@ -346,7 +335,6 @@
             display: block;
 
             font-size: 11px;
-
             opacity: 0.58;
 
             margin-bottom: 7px;
@@ -355,7 +343,6 @@
 
         .admin-stat-value {
             font-size: 26px;
-
             font-weight: 900;
         }
 
@@ -419,7 +406,6 @@
 
         .admin-field label {
             font-size: 11px;
-
             opacity: 0.72;
         }
 
@@ -429,7 +415,6 @@
         .admin-field select {
 
             width: 100%;
-
             box-sizing: border-box;
 
             border-radius: 12px;
@@ -447,7 +432,6 @@
                 11px 12px;
 
             font-family: inherit;
-
             font-size: 13px;
 
             outline: none;
@@ -456,7 +440,6 @@
 
         .admin-field textarea {
             min-height: 170px;
-
             resize: vertical;
         }
 
@@ -476,9 +459,7 @@
 
         .admin-form-actions {
             display: flex;
-
             gap: 9px;
-
             flex-wrap: wrap;
 
             margin-top: 4px;
@@ -486,7 +467,7 @@
 
 
         /* =========================================
-           MESSAGES / STATUS
+           MESSAGE
         ========================================= */
 
         .admin-message {
@@ -562,12 +543,8 @@
 
         .admin-news-head {
             display: flex;
-
-            align-items:
-                flex-start;
-
-            justify-content:
-                space-between;
+            align-items: flex-start;
+            justify-content: space-between;
 
             gap: 10px;
         }
@@ -576,49 +553,35 @@
         .admin-news-title {
             margin: 0;
 
-            font-size:
-                14px;
-
-            line-height:
-                1.7;
+            font-size: 14px;
+            line-height: 1.7;
         }
 
 
         .admin-news-category {
-            display:
-                inline-block;
+            display: inline-block;
 
             margin-top: 4px;
 
-            font-size:
-                10px;
-
-            opacity:
-                0.52;
+            font-size: 10px;
+            opacity: 0.52;
         }
 
 
         .admin-news-status {
-            flex-shrink:
-                0;
+            flex-shrink: 0;
 
-            padding:
-                5px 8px;
+            padding: 5px 8px;
 
-            border-radius:
-                999px;
+            border-radius: 999px;
 
-            font-size:
-                9px;
-
-            font-weight:
-                800;
+            font-size: 9px;
+            font-weight: 800;
         }
 
 
         .admin-news-status.published {
-            color:
-                #aaffd9;
+            color: #aaffd9;
 
             background:
                 rgba(0,255,157,0.08);
@@ -626,8 +589,7 @@
 
 
         .admin-news-status.draft {
-            color:
-                #ddd;
+            color: #ddd;
 
             background:
                 rgba(255,255,255,0.07);
@@ -638,17 +600,12 @@
             margin:
                 9px 0 0;
 
-            font-size:
-                11px;
+            font-size: 11px;
+            line-height: 1.9;
 
-            line-height:
-                1.9;
+            opacity: 0.62;
 
-            opacity:
-                0.62;
-
-            display:
-                block;
+            display: block;
 
             max-height:
                 5.7em;
@@ -659,38 +616,23 @@
 
 
         .admin-news-meta {
-            display:
-                flex;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
 
-            flex-wrap:
-                wrap;
+            margin-top: 11px;
 
-            gap:
-                9px;
-
-            margin-top:
-                11px;
-
-            font-size:
-                9px;
-
-            opacity:
-                0.43;
+            font-size: 9px;
+            opacity: 0.43;
         }
 
 
         .admin-news-actions {
-            display:
-                flex;
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
 
-            gap:
-                7px;
-
-            flex-wrap:
-                wrap;
-
-            margin-top:
-                12px;
+            margin-top: 12px;
         }
 
 
@@ -705,143 +647,91 @@
 
 
         .admin-user-item {
-            padding:
-                15px;
+            padding: 15px;
 
-            border-radius:
-                16px;
+            border-radius: 16px;
 
             border:
                 1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.06
-                );
+                rgba(255,255,255,0.06);
 
             background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.035
-                );
+                rgba(255,255,255,0.035);
         }
 
 
         .admin-user-head {
             display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
 
-            align-items:
-                flex-start;
-
-            justify-content:
-                space-between;
-
-            gap:
-                10px;
+            gap: 10px;
         }
 
 
         .admin-user-name {
-            margin:
-                0;
+            margin: 0;
 
-            font-size:
-                14px;
+            font-size: 14px;
         }
 
 
         .admin-user-id {
-            display:
-                block;
+            display: block;
 
-            margin-top:
-                4px;
+            margin-top: 4px;
 
-            font-size:
-                9px;
-
-            opacity:
-                0.4;
+            font-size: 9px;
+            opacity: 0.4;
         }
 
 
         .admin-user-stats {
-            display:
-                flex;
+            display: flex;
+            flex-wrap: wrap;
 
-            flex-wrap:
-                wrap;
+            gap: 8px 12px;
 
-            gap:
-                8px 12px;
+            margin-top: 10px;
 
-            margin-top:
-                10px;
-
-            font-size:
-                10px;
-
-            opacity:
-                0.55;
+            font-size: 10px;
+            opacity: 0.55;
         }
 
 
         .admin-user-ban {
-            margin-top:
-                10px;
+            margin-top: 10px;
 
-            padding:
-                9px 10px;
+            padding: 10px;
 
-            border-radius:
-                11px;
+            border-radius: 11px;
 
-            font-size:
-                10px;
+            font-size: 10px;
+            line-height: 1.9;
 
             color:
                 #ffc2cb;
 
             background:
-                rgba(
-                    255,
-                    63,
-                    90,
-                    0.07
-                );
+                rgba(255,63,90,0.07);
 
             border:
                 1px solid
-                rgba(
-                    255,
-                    63,
-                    90,
-                    0.12
-                );
+                rgba(255,63,90,0.12);
         }
 
 
         .admin-user-actions {
-            display:
-                flex;
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
 
-            gap:
-                7px;
-
-            flex-wrap:
-                wrap;
-
-            margin-top:
-                12px;
+            margin-top: 12px;
         }
 
 
         .admin-small-button {
-            border:
-                none;
+            border: none;
 
             padding:
                 7px 10px;
@@ -862,12 +752,7 @@
                 pointer;
 
             background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.06
-                );
+                rgba(255,255,255,0.06);
 
             color:
                 white;
@@ -876,12 +761,157 @@
 
         .admin-small-button:hover {
             background:
+                rgba(255,255,255,0.10);
+        }
+
+
+        .admin-small-button:disabled {
+            opacity:
+                0.5;
+
+            cursor:
+                not-allowed;
+        }
+
+
+        /* =========================================
+           BAN FORM
+        ========================================= */
+
+        .ban-form {
+            margin-top:
+                14px;
+
+            padding:
+                14px;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(0,0,0,0.13);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.05);
+        }
+
+
+        .ban-form-title {
+            margin:
+                0 0 12px;
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+        }
+
+
+        .ban-form-grid {
+            display:
+                grid;
+
+            gap:
+                10px;
+        }
+
+
+        .ban-field {
+            display:
+                grid;
+
+            gap:
+                6px;
+        }
+
+
+        .ban-field label {
+            font-size:
+                10px;
+
+            opacity:
+                0.65;
+        }
+
+
+        .ban-field input,
+        .ban-field select {
+
+            width:
+                100%;
+
+            box-sizing:
+                border-box;
+
+            border-radius:
+                10px;
+
+            border:
+                1px solid
                 rgba(
                     255,
                     255,
                     255,
-                    0.10
+                    0.08
                 );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.04
+                );
+
+            color:
+                white;
+
+            padding:
+                9px 10px;
+
+            font-family:
+                inherit;
+
+            font-size:
+                11px;
+
+            outline:
+                none;
+        }
+
+
+        .ban-field input:focus,
+        .ban-field select:focus {
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.28
+                );
+        }
+
+
+        .ban-form-actions {
+            display:
+                flex;
+
+            gap:
+                7px;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                10px;
+        }
+
+
+        .ban-cancel-button {
+            display:
+                none;
         }
 
 
@@ -931,15 +961,6 @@
                     255,
                     157,
                     0.17
-                );
-
-            box-shadow:
-                0 0 22px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    0.035
                 );
         }
 
@@ -1444,16 +1465,11 @@
         class="admin-section active"
     >
 
-
-        <div
-            class="admin-dashboard"
-        >
+        <div class="admin-dashboard">
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     📰 کل اخبار
                 </span>
 
@@ -1469,9 +1485,7 @@
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     ✅ منتشرشده
                 </span>
 
@@ -1487,9 +1501,7 @@
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     📝 پیش‌نویس
                 </span>
 
@@ -1505,9 +1517,7 @@
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     💬 پیام جدید
                 </span>
 
@@ -1526,13 +1536,9 @@
         <div class="admin-layout">
 
 
-            <!-- CREATE / EDIT -->
-
             <div class="admin-panel">
 
-                <h2
-                    id="form-title"
-                >
+                <h2 id="form-title">
                     📝 خبر جدید
                 </h2>
 
@@ -1550,9 +1556,7 @@
 
                     <div class="admin-field">
 
-                        <label
-                            for="news-title"
-                        >
+                        <label for="news-title">
                             عنوان خبر
                         </label>
 
@@ -1569,9 +1573,7 @@
 
                     <div class="admin-field">
 
-                        <label
-                            for="news-category"
-                        >
+                        <label for="news-category">
                             دسته‌بندی
                         </label>
 
@@ -1606,9 +1608,7 @@
 
                     <div class="admin-field">
 
-                        <label
-                            for="news-image"
-                        >
+                        <label for="news-image">
                             آدرس تصویر
                         </label>
 
@@ -1624,9 +1624,7 @@
 
                     <div class="admin-field">
 
-                        <label
-                            for="news-content"
-                        >
+                        <label for="news-content">
                             متن خبر
                         </label>
 
@@ -1642,9 +1640,7 @@
 
                     <div class="admin-field">
 
-                        <label
-                            for="news-status"
-                        >
+                        <label for="news-status">
                             وضعیت
                         </label>
 
@@ -1671,9 +1667,7 @@
                     ></div>
 
 
-                    <div
-                        class="admin-form-actions"
-                    >
+                    <div class="admin-form-actions">
 
                         <button
                             type="submit"
@@ -1698,8 +1692,6 @@
             </div>
 
 
-            <!-- NEWS LIST -->
-
             <div class="admin-panel">
 
                 <h2>
@@ -1712,9 +1704,7 @@
                     class="admin-news-list"
                 >
 
-                    <div
-                        class="admin-loading"
-                    >
+                    <div class="admin-loading">
                         در حال دریافت اخبار...
                     </div>
 
@@ -1736,16 +1726,11 @@
         class="admin-section"
     >
 
-
-        <div
-            class="admin-dashboard"
-        >
+        <div class="admin-dashboard">
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     👥 کل کاربران
                 </span>
 
@@ -1761,10 +1746,8 @@
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
-                    🚫 کاربران بن‌شده
+                <span class="admin-stat-label">
+                    🚫 کاربران محدودشده
                 </span>
 
                 <strong
@@ -1811,16 +1794,11 @@
         class="admin-section"
     >
 
-
-        <div
-            class="admin-dashboard"
-        >
+        <div class="admin-dashboard">
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     💬 کل پیام‌ها
                 </span>
 
@@ -1836,9 +1814,7 @@
 
             <div class="admin-stat-card">
 
-                <span
-                    class="admin-stat-label"
-                >
+                <span class="admin-stat-label">
                     🆕 پیام‌های جدید
                 </span>
 
@@ -1887,7 +1863,7 @@
 
 
     /* =====================================================
-       GLOBAL ELEMENTS
+       GLOBAL
     ===================================================== */
 
     const loading =
@@ -1945,7 +1921,7 @@
 
 
     /* =====================================================
-       NEWS ELEMENTS
+       NEWS
     ===================================================== */
 
     const newsForm =
@@ -2033,7 +2009,7 @@
 
 
     /* =====================================================
-       BAN ELEMENTS
+       BAN
     ===================================================== */
 
     const userList =
@@ -2055,7 +2031,7 @@
 
 
     /* =====================================================
-       SUPPORT ELEMENTS
+       SUPPORT
     ===================================================== */
 
     const supportList =
@@ -2089,14 +2065,17 @@
     let currentSection =
         "news";
 
+    let newsItems =
+        [];
 
-    let newsItems = [];
+    let users =
+        [];
 
+    let supportMessages =
+        [];
 
-    let users = [];
-
-
-    let supportMessages = [];
+    let adminUsername =
+        "";
 
 
     /* =====================================================
@@ -2176,6 +2155,7 @@
                 {
                     dateStyle:
                         "medium",
+
                     timeStyle:
                         "short"
                 }
@@ -2186,6 +2166,27 @@
         } catch {
 
             return value;
+
+        }
+
+    }
+
+
+    function banTypeLabel(
+        value
+    ) {
+
+        switch (value) {
+
+            case "messages":
+                return "💬 محرومیت از پیام";
+
+            case "reactions":
+                return "❤️ محرومیت از واکنش";
+
+            case "full":
+            default:
+                return "🚫 بن کامل سایت";
 
         }
 
@@ -2271,8 +2272,13 @@
             }
 
 
+            adminUsername =
+                data.username ||
+                "";
+
+
             welcome.textContent =
-                `خوش آمدی ${data.username} 👑`;
+                `خوش آمدی ${adminUsername} 👑`;
 
 
             loading.classList.add(
@@ -2311,7 +2317,7 @@
 
 
     /* =====================================================
-       TAB SWITCH
+       TABS
     ===================================================== */
 
     tabs.forEach(
@@ -2346,6 +2352,7 @@
 
                             section.classList.toggle(
                                 "active",
+
                                 section.id ===
                                 `section-${target}`
                             );
@@ -2364,7 +2371,7 @@
 
 
     /* =====================================================
-       REFRESH CURRENT SECTION
+       REFRESH
     ===================================================== */
 
     async function refreshCurrentSection() {
@@ -2402,7 +2409,7 @@
 
 
     /* =====================================================
-       NEWS — LOAD
+       NEWS LOAD
     ===================================================== */
 
     async function loadNews() {
@@ -2432,35 +2439,6 @@
                 );
 
 
-            if (
-                response.status ===
-                401
-            ) {
-
-                window.location.href =
-                    "sections/login.html";
-
-                return;
-
-            }
-
-
-            if (
-                response.status ===
-                403
-            ) {
-
-                newsList.innerHTML = `
-                    <div class="admin-empty">
-                        ❌ دسترسی ادمین ندارید.
-                    </div>
-                `;
-
-                return;
-
-            }
-
-
             const data =
                 await response.json();
 
@@ -2488,7 +2466,6 @@
 
             renderNews();
 
-
             updateNewsStats();
 
 
@@ -2515,7 +2492,7 @@
 
 
     /* =====================================================
-       NEWS — RENDER
+       NEWS RENDER
     ===================================================== */
 
     function renderNews() {
@@ -2538,7 +2515,7 @@
                 .map(
                     item => {
 
-                        const isPublished =
+                        const published =
                             item.status ===
                             "published";
 
@@ -2577,18 +2554,16 @@
 
                                     <span
                                         class="admin-news-status ${
-                                            isPublished
+                                            published
                                                 ? "published"
                                                 : "draft"
                                         }"
                                     >
-
                                         ${
-                                            isPublished
+                                            published
                                                 ? "✅ منتشر شده"
                                                 : "📝 پیش‌نویس"
                                         }
-
                                     </span>
 
                                 </div>
@@ -2645,7 +2620,7 @@
                                         data-id="${item.id}"
                                     >
                                         ${
-                                            isPublished
+                                            published
                                                 ? "📝 پیش‌نویس"
                                                 : "✅ انتشار"
                                         }
@@ -2675,7 +2650,7 @@
 
 
     /* =====================================================
-       NEWS — STATS
+       NEWS STATS
     ===================================================== */
 
     function updateNewsStats() {
@@ -2703,10 +2678,8 @@
         statTotal.textContent =
             total;
 
-
         statPublished.textContent =
             published;
-
 
         statDraft.textContent =
             draft;
@@ -2715,7 +2688,7 @@
 
 
     /* =====================================================
-       NEWS — RESET
+       NEWS FORM RESET
     ===================================================== */
 
     function resetNewsForm() {
@@ -2741,7 +2714,7 @@
 
 
     /* =====================================================
-       NEWS — EDIT
+       NEWS EDIT
     ===================================================== */
 
     function editNews(
@@ -2769,7 +2742,8 @@
             item.id;
 
         newsTitle.value =
-            item.title || "";
+            item.title ||
+            "";
 
         newsCategory.value =
             item.category ||
@@ -2798,7 +2772,9 @@
 
 
         window.scrollTo({
-            top: 0,
+            top:
+                0,
+
             behavior:
                 "smooth"
         });
@@ -2813,7 +2789,7 @@
 
 
     /* =====================================================
-       NEWS — SAVE
+       NEWS SAVE
     ===================================================== */
 
     async function saveNews(
@@ -2920,7 +2896,9 @@
                 await response.json();
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     data.message ||
@@ -2930,6 +2908,9 @@
             }
 
 
+            resetNewsForm();
+
+
             showAdminMessage(
                 data.message ||
                 "خبر ذخیره شد.",
@@ -2937,10 +2918,8 @@
             );
 
 
-            resetNewsForm();
-
-
             await loadNews();
+
 
         } catch (error) {
 
@@ -2962,7 +2941,7 @@
 
 
     /* =====================================================
-       NEWS — TOGGLE
+       NEWS TOGGLE
     ===================================================== */
 
     async function toggleNews(
@@ -3026,7 +3005,9 @@
                 await response.json();
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     data.message ||
@@ -3037,6 +3018,7 @@
 
 
             await loadNews();
+
 
         } catch (error) {
 
@@ -3052,7 +3034,7 @@
 
 
     /* =====================================================
-       NEWS — DELETE
+       NEWS DELETE
     ===================================================== */
 
     async function deleteNews(
@@ -3076,14 +3058,14 @@
         }
 
 
-        const confirmed =
-            window.confirm(
+        if (
+            !window.confirm(
                 `آیا مطمئنی می‌خواهی خبر «${item.title}» حذف شود؟`
-            );
+            )
+        ) {
 
-
-        if (!confirmed) {
             return;
+
         }
 
 
@@ -3109,7 +3091,9 @@
                 await response.json();
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     data.message ||
@@ -3139,7 +3123,7 @@
 
             showAdminMessage(
                 error.message ||
-                "خطایی رخ داد.",
+                "خطایی هنگام حذف رخ داد.",
                 "error"
             );
 
@@ -3149,7 +3133,7 @@
 
 
     /* =====================================================
-       NEWS — EVENTS
+       NEWS EVENTS
     ===================================================== */
 
     newsList.addEventListener(
@@ -3176,7 +3160,8 @@
 
 
             if (
-                action === "edit"
+                action ===
+                "edit"
             ) {
 
                 editNews(id);
@@ -3185,7 +3170,8 @@
 
 
             if (
-                action === "toggle"
+                action ===
+                "toggle"
             ) {
 
                 toggleNews(id);
@@ -3194,7 +3180,8 @@
 
 
             if (
-                action === "delete"
+                action ===
+                "delete"
             ) {
 
                 deleteNews(id);
@@ -3218,7 +3205,7 @@
 
 
     /* =====================================================
-       BAN — LOAD USERS
+       USERS LOAD
     ===================================================== */
 
     async function loadUsers() {
@@ -3275,6 +3262,7 @@
 
             renderUsers();
 
+
         } catch (error) {
 
             console.error(
@@ -3298,7 +3286,7 @@
 
 
     /* =====================================================
-       BAN — RENDER USERS
+       USERS RENDER
     ===================================================== */
 
     function renderUsers() {
@@ -3321,7 +3309,9 @@
             bannedUsers.length;
 
 
-        if (!users.length) {
+        if (
+            !users.length
+        ) {
 
             userList.innerHTML = `
                 <div class="admin-empty">
@@ -3348,13 +3338,14 @@
 
                         const isAdminTarget =
                             user.username ===
-                            "ADMIN_STAR";
+                            adminUsername;
 
 
                         return `
 
                             <article
                                 class="admin-user-item"
+                                data-user-id="${user.id}"
                             >
 
                                 <div
@@ -3371,15 +3362,18 @@
                                             )}
                                         </h3>
 
+
                                         <span
                                             class="admin-user-id"
                                         >
-                                            ID: ${escapeHtml(
+                                            ID:
+                                            ${escapeHtml(
                                                 user.id
                                             )}
                                         </span>
 
                                     </div>
+
 
                                     ${
                                         isAdminTarget
@@ -3401,30 +3395,29 @@
                                 >
 
                                     <span>
-                                        ⭐ LV ${
-                                            Number(
-                                                user.level ??
-                                                1
-                                            )
-                                        }
+                                        ⭐ LV
+                                        ${Number(
+                                            user.level ??
+                                            1
+                                        )}
                                     </span>
 
-                                    <span>
-                                        ⚡ XP ${
-                                            Number(
-                                                user.xp ??
-                                                0
-                                            )
-                                        }
-                                    </span>
 
                                     <span>
-                                        🪙 ${
-                                            Number(
-                                                user.coins ??
-                                                0
-                                            )
-                                        }
+                                        ⚡ XP
+                                        ${Number(
+                                            user.xp ??
+                                            0
+                                        )}
+                                    </span>
+
+
+                                    <span>
+                                        🪙
+                                        ${Number(
+                                            user.coins ??
+                                            0
+                                        )}
                                     </span>
 
                                 </div>
@@ -3436,7 +3429,19 @@
                                             <div
                                                 class="admin-user-ban"
                                             >
-                                                🚫 بن شده
+
+                                                🚫 محدودیت فعال
+
+                                                <br>
+
+                                                نوع:
+                                                <strong>
+                                                    ${escapeHtml(
+                                                        banTypeLabel(
+                                                            user.ban_type
+                                                        )
+                                                    )}
+                                                </strong>
 
                                                 ${
                                                     user.ban_reason
@@ -3454,7 +3459,7 @@
                                                     user.banned_until
                                                         ? `
                                                             <br>
-                                                            تا:
+                                                            پایان:
                                                             ${escapeHtml(
                                                                 formatDate(
                                                                     user.banned_until
@@ -3463,6 +3468,7 @@
                                                           `
                                                         : `
                                                             <br>
+                                                            پایان:
                                                             دائمی
                                                           `
                                                 }
@@ -3483,35 +3489,213 @@
                                     isAdminTarget
                                         ? ""
                                         : `
+
                                             <div
                                                 class="admin-user-actions"
                                             >
 
                                                 ${
                                                     banned
+
                                                         ? `
+
                                                             <button
                                                                 type="button"
                                                                 class="admin-small-button"
                                                                 data-user-action="unban"
                                                                 data-id="${user.id}"
                                                             >
-                                                                ✅ رفع بن
+                                                                ✅ رفع محدودیت
                                                             </button>
+
                                                           `
+
                                                         : `
+
                                                             <button
                                                                 type="button"
                                                                 class="admin-small-button"
-                                                                data-user-action="ban"
+                                                                data-user-action="open-ban"
                                                                 data-id="${user.id}"
                                                             >
-                                                                🚫 بن کاربر
+                                                                🚫 اعمال محدودیت
                                                             </button>
+
                                                           `
                                                 }
 
                                             </div>
+
+
+                                            <!-- BAN FORM -->
+
+                                            <div
+                                                id="ban-form-${user.id}"
+                                                class="ban-form"
+                                                style="display:none;"
+                                            >
+
+                                                <p
+                                                    class="ban-form-title"
+                                                >
+                                                    🚫 محدودیت برای
+                                                    ${escapeHtml(
+                                                        user.username
+                                                    )}
+                                                </p>
+
+
+                                                <div
+                                                    class="ban-form-grid"
+                                                >
+
+                                                    <div
+                                                        class="ban-field"
+                                                    >
+
+                                                        <label>
+                                                            نوع محدودیت
+                                                        </label>
+
+                                                        <select
+                                                            data-ban-type
+                                                        >
+
+                                                            <option value="full">
+                                                                🚫 بن کامل سایت
+                                                            </option>
+
+                                                            <option value="messages">
+                                                                💬 محرومیت از پیام
+                                                            </option>
+
+                                                            <option value="reactions">
+                                                                ❤️ محرومیت از واکنش
+                                                            </option>
+
+                                                        </select>
+
+                                                    </div>
+
+
+                                                    <div
+                                                        class="ban-field"
+                                                    >
+
+                                                        <label>
+                                                            مدت محدودیت
+                                                        </label>
+
+                                                        <select
+                                                            data-ban-duration
+                                                        >
+
+                                                            <option value="">
+                                                                دائمی
+                                                            </option>
+
+                                                            <option value="1">
+                                                                ۱ ساعت
+                                                            </option>
+
+                                                            <option value="6">
+                                                                ۶ ساعت
+                                                            </option>
+
+                                                            <option value="24">
+                                                                ۱ روز
+                                                            </option>
+
+                                                            <option value="72">
+                                                                ۳ روز
+                                                            </option>
+
+                                                            <option value="168">
+                                                                ۷ روز
+                                                            </option>
+
+                                                            <option value="720">
+                                                                ۳۰ روز
+                                                            </option>
+
+                                                            <option value="custom">
+                                                                زمان دلخواه
+                                                            </option>
+
+                                                        </select>
+
+                                                    </div>
+
+
+                                                    <div
+                                                        class="ban-field"
+                                                        data-custom-duration-wrap
+                                                        style="display:none;"
+                                                    >
+
+                                                        <label>
+                                                            مدت دلخواه بر حسب ساعت
+                                                        </label>
+
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            step="1"
+                                                            placeholder="مثلاً 12"
+                                                            data-custom-duration
+                                                        >
+
+                                                    </div>
+
+
+                                                    <div
+                                                        class="ban-field"
+                                                    >
+
+                                                        <label>
+                                                            دلیل
+                                                        </label>
+
+                                                        <input
+                                                            type="text"
+                                                            maxlength="500"
+                                                            value="نقض قوانین VEXON"
+                                                            data-ban-reason
+                                                            placeholder="دلیل محدودیت..."
+                                                        >
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div
+                                                    class="ban-form-actions"
+                                                >
+
+                                                    <button
+                                                        type="button"
+                                                        class="admin-small-button"
+                                                        data-user-action="confirm-ban"
+                                                        data-id="${user.id}"
+                                                    >
+                                                        🚫 اعمال محدودیت
+                                                    </button>
+
+
+                                                    <button
+                                                        type="button"
+                                                        class="admin-small-button"
+                                                        data-user-action="cancel-ban"
+                                                        data-id="${user.id}"
+                                                    >
+                                                        ❌ لغو
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
                                           `
                                 }
 
@@ -3523,62 +3707,247 @@
                 )
                 .join("");
 
+
+        /*
+         * فعال کردن نمایش مدت دلخواه
+         */
+
+        userList
+            .querySelectorAll(
+                "[data-ban-duration]"
+            )
+            .forEach(
+                select => {
+
+                    select.addEventListener(
+                        "change",
+                        () => {
+
+                            const form =
+                                select.closest(
+                                    ".ban-form"
+                                );
+
+
+                            if (
+                                !form
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const customWrap =
+                                form.querySelector(
+                                    "[data-custom-duration-wrap]"
+                                );
+
+
+                            if (
+                                select.value ===
+                                "custom"
+                            ) {
+
+                                customWrap.style.display =
+                                    "grid";
+
+                            } else {
+
+                                customWrap.style.display =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
     }
 
 
     /* =====================================================
-       BAN — BAN USER
+       BAN — OPEN FORM
     ===================================================== */
 
-    async function banUser(
+    function openBanForm(
         userId
     ) {
 
-        const reason =
-            window.prompt(
-                "دلیل بن را وارد کن:",
-                "نقض قوانین VEXON"
+        const form =
+            document.getElementById(
+                `ban-form-${userId}`
             );
 
 
         if (
-            reason ===
-            null
+            !form
         ) {
+
             return;
+
         }
 
 
-        const duration =
-            window.prompt(
-                "مدت بن را بر حسب ساعت وارد کن.\nبرای بن دائمی خالی بگذار.",
-                ""
+        /*
+         * بستن فرم‌های دیگر
+         */
+
+        userList
+            .querySelectorAll(
+                ".ban-form"
+            )
+            .forEach(
+                item => {
+
+                    if (
+                        item !==
+                        form
+                    ) {
+
+                        item.style.display =
+                            "none";
+
+                    }
+
+                }
             );
+
+
+        form.style.display =
+            "block";
+
+
+        const type =
+            form.querySelector(
+                "[data-ban-type]"
+            );
+
+
+        const duration =
+            form.querySelector(
+                "[data-ban-duration]"
+            );
+
+
+        const customDuration =
+            form.querySelector(
+                "[data-custom-duration]"
+            );
+
+
+        const reason =
+            form.querySelector(
+                "[data-ban-reason]"
+            );
+
+
+        type.value =
+            "full";
+
+
+        duration.value =
+            "";
+
+
+        customDuration.value =
+            "";
+
+
+        reason.value =
+            "نقض قوانین VEXON";
+
+    }
+
+
+    /* =====================================================
+       BAN — CANCEL FORM
+    ===================================================== */
+
+    function cancelBanForm(
+        userId
+    ) {
+
+        const form =
+            document.getElementById(
+                `ban-form-${userId}`
+            );
+
+
+        if (
+            form
+        ) {
+
+            form.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BAN — CONFIRM
+    ===================================================== */
+
+    async function confirmBan(
+        userId,
+        button
+    ) {
+
+        const form =
+            document.getElementById(
+                `ban-form-${userId}`
+            );
+
+
+        if (
+            !form
+        ) {
+
+            return;
+
+        }
+
+
+        const type =
+            form.querySelector(
+                "[data-ban-type]"
+            ).value;
+
+
+        const duration =
+            form.querySelector(
+                "[data-ban-duration]"
+            ).value;
+
+
+        const customDuration =
+            form.querySelector(
+                "[data-custom-duration]"
+            );
+
+
+        const reason =
+            form.querySelector(
+                "[data-ban-reason]"
+            ).value.trim();
+
+
+        let hours =
+            null;
 
 
         if (
             duration ===
-            null
-        ) {
-            return;
-        }
-
-
-        let bannedUntil =
-            null;
-
-
-        const normalizedDuration =
-            duration.trim();
-
-
-        if (
-            normalizedDuration
+            "custom"
         ) {
 
-            const hours =
+            hours =
                 Number(
-                    normalizedDuration
+                    customDuration.value
                 );
 
 
@@ -3590,13 +3959,34 @@
             ) {
 
                 alert(
-                    "مدت بن نامعتبر است."
+                    "مدت دلخواه نامعتبر است."
                 );
 
                 return;
 
             }
 
+        } else if (
+            duration !==
+            ""
+        ) {
+
+            hours =
+                Number(
+                    duration
+                );
+
+        }
+
+
+        let bannedUntil =
+            null;
+
+
+        if (
+            hours !==
+            null
+        ) {
 
             bannedUntil =
                 new Date(
@@ -3608,6 +3998,79 @@
                 ).toISOString();
 
         }
+
+
+        if (
+            !reason
+        ) {
+
+            alert(
+                "لطفاً دلیل محدودیت را وارد کن."
+            );
+
+            return;
+
+        }
+
+
+        const user =
+            users.find(
+                item =>
+                    String(
+                        item.id
+                    ) ===
+                    String(
+                        userId
+                    )
+            );
+
+
+        if (
+            !user
+        ) {
+
+            return;
+
+        }
+
+
+        const typeLabel =
+            banTypeLabel(
+                type
+            );
+
+
+        const durationLabel =
+            bannedUntil
+                ? `${hours} ساعت`
+                : "دائمی";
+
+
+        const confirmed =
+            window.confirm(
+                `کاربر: ${user.username}\n\n` +
+                `نوع: ${typeLabel}\n` +
+                `مدت: ${durationLabel}\n` +
+                `دلیل: ${reason}\n\n` +
+                "آیا این محدودیت اعمال شود؟"
+            );
+
+
+        if (
+            !confirmed
+        ) {
+
+            return;
+
+        }
+
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "⏳ در حال اعمال...";
 
 
         try {
@@ -3633,7 +4096,10 @@
                         body:
                             JSON.stringify({
                                 reason:
-                                    reason.trim(),
+                                    reason,
+
+                                ban_type:
+                                    type,
 
                                 banned_until:
                                     bannedUntil
@@ -3653,7 +4119,7 @@
 
                 throw new Error(
                     data.message ||
-                    "بن کردن انجام نشد."
+                    "اعمال محدودیت انجام نشد."
                 );
 
             }
@@ -3661,12 +4127,27 @@
 
             await loadUsers();
 
+
         } catch (error) {
+
+            console.error(
+                "BAN_CONFIRM_ERROR",
+                error
+            );
+
 
             alert(
                 error.message ||
-                "خطایی رخ داد."
+                "خطایی هنگام اعمال محدودیت رخ داد."
             );
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "🚫 اعمال محدودیت";
 
         }
 
@@ -3674,22 +4155,31 @@
 
 
     /* =====================================================
-       BAN — UNBAN USER
+       UNBAN
     ===================================================== */
 
     async function unbanUser(
-        userId
+        userId,
+        button
     ) {
 
-        const confirmed =
-            window.confirm(
-                "آیا مطمئنی می‌خواهی بن این کاربر برداشته شود؟"
-            );
+        if (
+            !window.confirm(
+                "آیا مطمئنی می‌خواهی محدودیت این کاربر برداشته شود؟"
+            )
+        ) {
 
-
-        if (!confirmed) {
             return;
+
         }
+
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "⏳ در حال انجام...";
 
 
         try {
@@ -3721,7 +4211,7 @@
 
                 throw new Error(
                     data.message ||
-                    "رفع بن انجام نشد."
+                    "رفع محدودیت انجام نشد."
                 );
 
             }
@@ -3729,12 +4219,26 @@
 
             await loadUsers();
 
+
         } catch (error) {
+
+            console.error(
+                "UNBAN_ERROR",
+                error
+            );
+
 
             alert(
                 error.message ||
-                "خطایی رخ داد."
+                "خطایی هنگام رفع محدودیت رخ داد."
             );
+
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "✅ رفع محدودیت";
 
         }
 
@@ -3742,7 +4246,7 @@
 
 
     /* =====================================================
-       BAN — EVENTS
+       USER EVENTS
     ===================================================== */
 
     userList.addEventListener(
@@ -3755,8 +4259,12 @@
                 );
 
 
-            if (!button) {
+            if (
+                !button
+            ) {
+
                 return;
+
             }
 
 
@@ -3769,19 +4277,47 @@
 
 
             if (
-                action === "ban"
+                action ===
+                "open-ban"
             ) {
 
-                banUser(id);
+                openBanForm(id);
 
             }
 
 
             if (
-                action === "unban"
+                action ===
+                "cancel-ban"
             ) {
 
-                unbanUser(id);
+                cancelBanForm(id);
+
+            }
+
+
+            if (
+                action ===
+                "confirm-ban"
+            ) {
+
+                confirmBan(
+                    id,
+                    button
+                );
+
+            }
+
+
+            if (
+                action ===
+                "unban"
+            ) {
+
+                unbanUser(
+                    id,
+                    button
+                );
 
             }
 
@@ -3790,7 +4326,7 @@
 
 
     /* =====================================================
-       SUPPORT — LOAD
+       SUPPORT LOAD
     ===================================================== */
 
     async function loadSupport() {
@@ -3871,7 +4407,7 @@
 
 
     /* =====================================================
-       SUPPORT — RENDER
+       SUPPORT RENDER
     ===================================================== */
 
     function renderSupport() {
@@ -3983,13 +4519,11 @@
                                                 : "replied"
                                         }"
                                     >
-
                                         ${
                                             isNew
                                                 ? "🆕 جدید"
                                                 : "✅ پاسخ داده شده"
                                         }
-
                                     </span>
 
                                 </div>
@@ -4074,7 +4608,7 @@
 
 
     /* =====================================================
-       SUPPORT — REPLY
+       SUPPORT REPLY
     ===================================================== */
 
     supportList.addEventListener(
@@ -4087,8 +4621,12 @@
                 );
 
 
-            if (!form) {
+            if (
+                !form
+            ) {
+
                 return;
+
             }
 
 
@@ -4110,7 +4648,7 @@
 
 
             if (
-                reply.length < 1
+                !reply
             ) {
 
                 alert(
@@ -4183,11 +4721,18 @@
 
                 await loadSupport();
 
+
             } catch (error) {
+
+                console.error(
+                    "SUPPORT_REPLY_ERROR",
+                    error
+                );
+
 
                 alert(
                     error.message ||
-                    "خطایی رخ داد."
+                    "خطایی هنگام ارسال پاسخ رخ داد."
                 );
 
 
@@ -4204,7 +4749,7 @@
 
 
     /* =====================================================
-       BACK HOME
+       HOME
     ===================================================== */
 
     backHome.addEventListener(
@@ -4268,7 +4813,7 @@
 
 
     /* =====================================================
-       PERIODIC SUPPORT CHECK
+       AUTO REFRESH SUPPORT
     ===================================================== */
 
     setInterval(
@@ -4292,8 +4837,12 @@
                     );
 
 
-                if (!response.ok) {
+                if (
+                    !response.ok
+                ) {
+
                     return;
+
                 }
 
 
@@ -4305,7 +4854,9 @@
                     !data ||
                     !data.success
                 ) {
+
                     return;
+
                 }
 
 
@@ -4318,7 +4869,6 @@
 
 
                 renderSupport();
-
 
             } catch (error) {
 
@@ -4344,18 +4894,17 @@
             await checkAdmin();
 
 
-        if (!isAdmin) {
+        if (
+            !isAdmin
+        ) {
+
             return;
+
         }
 
 
         await loadNews();
 
-
-        /*
-         * پیام‌ها را هم از اول
-         * می‌گیریم تا badge آماده باشد.
-         */
 
         await loadSupport();
 
@@ -4366,5 +4915,4 @@
 </script>
 
 </body>
-
 </html>

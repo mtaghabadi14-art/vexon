@@ -30,10 +30,6 @@
     </title>
 
 
-    <!-- =========================
-         FONTS
-    ========================== -->
-
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -50,26 +46,17 @@
         rel="stylesheet"
     >
 
-
-    <!-- =========================
-         CSS
-    ========================== -->
-
     <link
         rel="stylesheet"
         href="../style.css"
     >
 
 
-    <!-- =========================
-         NEWS PAGE EXTRA STYLE
-    ========================== -->
-
     <style>
 
         .news-list {
             display: grid;
-            gap: 16px;
+            gap: 18px;
         }
 
 
@@ -79,10 +66,7 @@
         }
 
 
-        /* خبر قابل کلیک */
-
         .news-clickable {
-
             display: block;
 
             color: inherit;
@@ -95,66 +79,48 @@
                 transform 0.2s ease,
                 border-color 0.2s ease,
                 box-shadow 0.2s ease;
-
         }
 
 
         .news-clickable:hover {
-
             transform:
                 translateY(-3px);
-
         }
 
 
         .news-clickable:active {
-
             transform:
                 scale(0.99);
-
         }
 
 
         .news-item-image {
-
             width: 100%;
 
-            max-height:
-                260px;
+            max-height: 260px;
 
-            object-fit:
-                cover;
+            object-fit: cover;
 
-            display:
-                block;
+            display: block;
 
-            margin-bottom:
-                16px;
+            margin-bottom: 16px;
 
-            border-radius:
-                16px;
-
+            border-radius: 16px;
         }
 
 
         .news-item-content {
-
-            min-width:
-                0;
-
+            min-width: 0;
         }
 
 
         .news-item-title {
-
             margin:
                 0 0 8px;
-
         }
 
 
         .news-item-text {
-
             white-space:
                 pre-line;
 
@@ -163,12 +129,10 @@
 
             opacity:
                 0.82;
-
         }
 
 
         .news-item-meta {
-
             display:
                 flex;
 
@@ -186,12 +150,11 @@
 
             opacity:
                 0.5;
-
         }
 
 
-        .news-empty {
-
+        .news-empty,
+        .news-loading {
             text-align:
                 center;
 
@@ -200,12 +163,10 @@
 
             opacity:
                 0.6;
-
         }
 
 
         .news-error {
-
             text-align:
                 center;
 
@@ -234,26 +195,10 @@
 
             border-radius:
                 18px;
-
-        }
-
-
-        .news-loading {
-
-            text-align:
-                center;
-
-            padding:
-                35px 20px;
-
-            opacity:
-                0.6;
-
         }
 
 
         .news-image-placeholder {
-
             min-height:
                 100px;
 
@@ -303,6 +248,177 @@
 
             opacity:
                 0.7;
+        }
+
+
+        /* =========================================
+           REACTIONS
+        ========================================= */
+
+        .news-reactions {
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                7px;
+
+            margin-top:
+                16px;
+
+            padding-top:
+                13px;
+
+            border-top:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
+        }
+
+
+        .news-reaction {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                5px;
+
+            min-width:
+                48px;
+
+            justify-content:
+                center;
+
+            padding:
+                7px 9px;
+
+            border-radius:
+                999px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
+
+            color:
+                white;
+
+            font-family:
+                inherit;
+
+            font-size:
+                12px;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform 0.18s ease,
+                background 0.18s ease,
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+
+        .news-reaction:hover {
+            transform:
+                translateY(-2px);
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.07
+                );
+        }
+
+
+        .news-reaction.active {
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.36
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.09
+                );
+
+            box-shadow:
+                0 0 14px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    0.08
+                );
+        }
+
+
+        .news-reaction:disabled {
+            opacity:
+                0.55;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
+        }
+
+
+        .news-reaction-count {
+            min-width:
+                12px;
+
+            text-align:
+                center;
+
+            opacity:
+                0.8;
+        }
+
+
+        .news-reaction-login {
+            margin-top:
+                8px;
+
+            width:
+                100%;
+
+            font-size:
+                10px;
+
+            opacity:
+                0.48;
 
         }
 
@@ -315,7 +431,7 @@
 
 
     <!-- =========================
-         SPACE BACKGROUND
+         BACKGROUND
     ========================== -->
 
     <div
@@ -360,9 +476,6 @@
 
     <header class="navbar">
 
-
-        <!-- LOGO -->
-
         <a
             href="../index.html"
             class="logo"
@@ -371,21 +484,16 @@
         </a>
 
 
-        <!-- DESKTOP NAV -->
-
         <nav class="nav-links">
 
             <a
                 href="../index.html"
                 class="nav-link"
             >
-
                 <span class="desktop-v-icon">
                     V
                 </span>
-
                 خانه
-
             </a>
 
 
@@ -393,13 +501,10 @@
                 href="games.html"
                 class="nav-link"
             >
-
                 <span class="nav-icon">
                     🎮
                 </span>
-
                 بازی‌ها
-
             </a>
 
 
@@ -407,13 +512,10 @@
                 href="leaderboard.html"
                 class="nav-link"
             >
-
                 <span class="nav-icon">
                     🏆
                 </span>
-
                 لیدربورد
-
             </a>
 
 
@@ -421,13 +523,10 @@
                 href="cafe.html"
                 class="nav-link"
             >
-
                 <span class="nav-icon">
                     ☕
                 </span>
-
                 کافه بازی
-
             </a>
 
 
@@ -435,13 +534,10 @@
                 href="news.html"
                 class="nav-link active"
             >
-
                 <span class="nav-icon">
                     📢
                 </span>
-
                 اخبار
-
             </a>
 
 
@@ -449,21 +545,16 @@
                 href="guide.html"
                 class="nav-link"
             >
-
                 <span class="nav-icon">
                     ?
                 </span>
-
                 راهنما
-
             </a>
 
         </nav>
 
 
-        <!-- =========================
-             ACCOUNT
-        ========================== -->
+        <!-- ACCOUNT -->
 
         <a
             href="login.html"
@@ -519,10 +610,6 @@
         <section class="section">
 
 
-            <!-- =========================
-                 TITLE
-            ========================== -->
-
             <div class="section-title">
 
                 <span>
@@ -539,10 +626,6 @@
 
             </div>
 
-
-            <!-- =========================
-                 DYNAMIC NEWS LIST
-            ========================== -->
 
             <div
                 id="news-list"
@@ -597,20 +680,12 @@
 
     <nav class="mobile-bottom-nav">
 
-
         <a
             href="games.html"
             class="mobile-nav-item"
         >
-
-            <span>
-                🎮
-            </span>
-
-            <small>
-                بازی‌ها
-            </small>
-
+            <span>🎮</span>
+            <small>بازی‌ها</small>
         </a>
 
 
@@ -618,15 +693,8 @@
             href="cafe.html"
             class="mobile-nav-item"
         >
-
-            <span>
-                ☕
-            </span>
-
-            <small>
-                کافه
-            </small>
-
+            <span>☕</span>
+            <small>کافه</small>
         </a>
 
 
@@ -634,15 +702,10 @@
             href="../index.html"
             class="mobile-nav-item"
         >
-
             <span class="home-v-icon">
                 V
             </span>
-
-            <small>
-                خانه
-            </small>
-
+            <small>خانه</small>
         </a>
 
 
@@ -650,15 +713,8 @@
             href="news.html"
             class="mobile-nav-item mobile-home active"
         >
-
-            <span>
-                📢
-            </span>
-
-            <small>
-                اخبار
-            </small>
-
+            <span>📢</span>
+            <small>اخبار</small>
         </a>
 
 
@@ -666,30 +722,15 @@
             href="profile.html"
             class="mobile-nav-item"
         >
-
-            <span>
-                ⚙️
-            </span>
-
-            <small>
-                تنظیمات
-            </small>
-
+            <span>⚙️</span>
+            <small>تنظیمات</small>
         </a>
 
     </nav>
 
 
-    <!-- =========================
-         MAIN VEXON SCRIPT
-    ========================== -->
-
     <script src="../script.js"></script>
 
-
-    <!-- =========================
-         NEWS API
-    ========================== -->
 
     <script>
 
@@ -717,6 +758,63 @@
             null;
 
 
+        /*
+         * وضعیت ورود کاربر
+         */
+
+        let loggedIn =
+            false;
+
+
+        let myReactions =
+            {};
+
+
+        /* =========================================
+           REACTION DEFINITIONS
+        ========================================= */
+
+        const reactions = [
+
+            {
+                key: "love",
+                emoji: "❤️",
+                title: "عاشقش شدم"
+            },
+
+            {
+                key: "like",
+                emoji: "👍",
+                title: "پسندیدم"
+            },
+
+            {
+                key: "laugh",
+                emoji: "😂",
+                title: "خنده‌دار"
+            },
+
+            {
+                key: "wow",
+                emoji: "😮",
+                title: "واو"
+            },
+
+            {
+                key: "angry",
+                emoji: "😡",
+                title: "عصبانی"
+            },
+
+            {
+                key: "dislike",
+                emoji: "👎",
+                title: "نپسندیدم"
+            }
+
+        ];
+
+
         /* =========================================
            ESCAPE HTML
         ========================================= */
@@ -728,93 +826,26 @@
             return String(
                 value ?? ""
             )
-
                 .replace(
                     /&/g,
                     "&amp;"
                 )
-
                 .replace(
                     /</g,
                     "&lt;"
                 )
-
                 .replace(
                     />/g,
                     "&gt;"
                 )
-
                 .replace(
                     /"/g,
                     "&quot;"
                 )
-
                 .replace(
                     /'/g,
                     "&#039;"
                 );
-
-        }
-
-
-        /* =========================================
-           CATEGORY ICON
-        ========================================= */
-
-        function categoryIcon(
-            category
-        ) {
-
-            const icons = {
-
-                general: "📢",
-
-                game: "🎮",
-
-                update: "🔄",
-
-                event: "🏆",
-
-                announcement: "📣"
-
-            };
-
-
-            return (
-                icons[category] ||
-                "📢"
-            );
-
-        }
-
-
-        /* =========================================
-           CATEGORY COLOR
-        ========================================= */
-
-        function categoryClass(
-            category
-        ) {
-
-            const classes = {
-
-                general: "red",
-
-                game: "purple",
-
-                update: "green",
-
-                event: "gold",
-
-                announcement: "blue"
-
-            };
-
-
-            return (
-                classes[category] ||
-                "red"
-            );
 
         }
 
@@ -854,6 +885,135 @@
 
 
         /* =========================================
+           CATEGORY ICON
+        ========================================= */
+
+        function categoryIcon(
+            category
+        ) {
+
+            const icons = {
+
+                general:
+                    "📢",
+
+                game:
+                    "🎮",
+
+                update:
+                    "🔄",
+
+                event:
+                    "🏆",
+
+                announcement:
+                    "📣"
+
+            };
+
+
+            return (
+                icons[category] ||
+                "📢"
+            );
+
+        }
+
+
+        /* =========================================
+           CATEGORY COLOR
+        ========================================= */
+
+        function categoryClass(
+            category
+        ) {
+
+            const classes = {
+
+                general:
+                    "red",
+
+                game:
+                    "purple",
+
+                update:
+                    "green",
+
+                event:
+                    "gold",
+
+                announcement:
+                    "blue"
+
+            };
+
+
+            return (
+                classes[category] ||
+                "red"
+            );
+
+        }
+
+
+        /* =========================================
+           CHECK LOGIN
+        ========================================= */
+
+        async function checkLogin() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/me",
+                        {
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    loggedIn =
+                        false;
+
+                    return;
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                loggedIn =
+                    Boolean(
+                        data &&
+                        data.loggedIn &&
+                        data.user
+                    );
+
+            } catch {
+
+                loggedIn =
+                    false;
+
+            }
+
+        }
+
+
+        /* =========================================
            NEWS SIGNATURE
         ========================================= */
 
@@ -867,10 +1027,119 @@
                         [
                             item.id,
                             item.updated_at,
-                            item.published_at
+                            item.published_at,
+                            JSON.stringify(
+                                item.reactions ||
+                                {}
+                            )
                         ].join(":")
                 )
                 .join("|");
+
+        }
+
+
+        /* =========================================
+           REACTION BUTTONS
+        ========================================= */
+
+        function renderReactionButtons(
+            item
+        ) {
+
+            const reactionCounts =
+                item.reactions ||
+                {};
+
+
+            const currentReaction =
+                myReactions[item.id] ||
+                null;
+
+
+            const buttons =
+                reactions
+                    .map(
+                        reaction => {
+
+                            const count =
+                                Number(
+                                    reactionCounts[
+                                        reaction.key
+                                    ] ||
+                                    0
+                                );
+
+
+                            const active =
+                                currentReaction ===
+                                reaction.key;
+
+
+                            return `
+
+                                <button
+                                    type="button"
+                                    class="news-reaction ${
+                                        active
+                                            ? "active"
+                                            : ""
+                                    }"
+                                    data-reaction="${reaction.key}"
+                                    data-news-id="${item.id}"
+                                    title="${reaction.title}"
+                                    ${
+                                        !loggedIn
+                                            ? "disabled"
+                                            : ""
+                                    }
+                                >
+
+                                    <span>
+                                        ${reaction.emoji}
+                                    </span>
+
+                                    <span
+                                        class="news-reaction-count"
+                                    >
+                                        ${count}
+                                    </span>
+
+                                </button>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+
+            return `
+
+                <div
+                    class="news-reactions"
+                    data-reactions-for="${item.id}"
+                >
+
+                    ${buttons}
+
+
+                    ${
+                        !loggedIn
+                            ? `
+                                <div
+                                    class="news-reaction-login"
+                                >
+                                    برای ثبت واکنش،
+                                    وارد حساب VEXON شو.
+                                </div>
+                              `
+                            : ""
+                    }
+
+                </div>
+
+            `;
 
         }
 
@@ -886,7 +1155,9 @@
             if (!news.length) {
 
                 newsList.innerHTML = `
-                    <div class="news-empty">
+                    <div
+                        class="news-empty"
+                    >
                         📰 هنوز خبری منتشر نشده است.
                     </div>
                 `;
@@ -899,7 +1170,7 @@
             newsList.innerHTML =
                 news
                     .map(
-                        (item) => {
+                        item => {
 
                             const category =
                                 item.category ||
@@ -931,7 +1202,8 @@
                                             )}"
                                             loading="lazy"
                                             onerror="
-                                                this.outerHTML = '<div class=&quot;news-image-placeholder&quot;>📢</div>';
+                                                this.outerHTML =
+                                                '<div class=&quot;news-image-placeholder&quot;>📢</div>';
                                             "
                                         >
                                       `
@@ -951,92 +1223,100 @@
                                 );
 
 
-                            /*
-                             * هر خبر لینک به صفحه
-                             * جزئیات خودش دارد.
-                             */
-
                             return `
-                                <a
-                                    class="news-item news-clickable"
-                                    href="news-detail.html?id=${encodeURIComponent(
-                                        item.id
-                                    )}"
+
+                                <article
+                                    class="news-item"
                                 >
 
-                                    ${image}
-
-
-                                    <div
-                                        class="news-icon ${colorClass}"
-                                    >
-                                        ${icon}
-                                    </div>
-
-
-                                    <div
-                                        class="news-item-content"
+                                    <a
+                                        class="news-clickable"
+                                        href="news-detail.html?id=${encodeURIComponent(
+                                            item.id
+                                        )}"
                                     >
 
-                                        <h3
-                                            class="news-item-title"
-                                        >
-                                            ${escapeHtml(
-                                                item.title
-                                            )}
-                                        </h3>
-
-
-                                        <p
-                                            class="news-item-text"
-                                        >
-                                            ${escapeHtml(
-                                                item.content
-                                            )}
-                                        </p>
+                                        ${image}
 
 
                                         <div
-                                            class="news-item-meta"
+                                            class="news-icon ${colorClass}"
+                                        >
+                                            ${icon}
+                                        </div>
+
+
+                                        <div
+                                            class="news-item-content"
                                         >
 
-                                            <span>
-                                                🏷️ ${escapeHtml(
-                                                    category
+                                            <h3
+                                                class="news-item-title"
+                                            >
+                                                ${escapeHtml(
+                                                    item.title
                                                 )}
-                                            </span>
+                                            </h3>
 
 
-                                            ${
-                                                item.author_username
-                                                    ? `
-                                                        <span>
-                                                            👤 ${escapeHtml(
-                                                                item.author_username
-                                                            )}
-                                                        </span>
-                                                      `
-                                                    : ""
-                                            }
+                                            <p
+                                                class="news-item-text"
+                                            >
+                                                ${escapeHtml(
+                                                    item.content
+                                                )}
+                                            </p>
 
 
-                                            ${
-                                                date
-                                                    ? `
-                                                        <span>
-                                                            📅 ${escapeHtml(
-                                                                date
-                                                            )}
-                                                        </span>
-                                                      `
-                                                    : ""
-                                            }
+                                            <div
+                                                class="news-item-meta"
+                                            >
+
+                                                <span>
+                                                    🏷️ ${escapeHtml(
+                                                        category
+                                                    )}
+                                                </span>
+
+
+                                                ${
+                                                    item.author_username
+                                                        ? `
+                                                            <span>
+                                                                👤 ${escapeHtml(
+                                                                    item.author_username
+                                                                )}
+                                                            </span>
+                                                          `
+                                                        : ""
+                                                }
+
+
+                                                ${
+                                                    date
+                                                        ? `
+                                                            <span>
+                                                                📅 ${escapeHtml(
+                                                                    date
+                                                                )}
+                                                            </span>
+                                                          `
+                                                        : ""
+                                                }
+
+                                            </div>
 
                                         </div>
 
-                                    </div>
+                                    </a>
 
-                                </a>
+
+                                    ${renderReactionButtons(
+                                        item
+                                    )}
+
+                                </article>
+
                             `;
 
                         }
@@ -1060,7 +1340,9 @@
             ) {
 
                 newsList.innerHTML = `
-                    <div class="news-loading">
+                    <div
+                        class="news-loading"
+                    >
                         ⏳ در حال دریافت آخرین اخبار VEXON...
                     </div>
                 `;
@@ -1083,7 +1365,9 @@
                     );
 
 
-                if (!response.ok) {
+                if (
+                    !response.ok
+                ) {
 
                     throw new Error(
                         "NEWS_API_ERROR"
@@ -1122,11 +1406,6 @@
                     );
 
 
-                /*
-                 * اگر هیچ چیز تغییر نکرده،
-                 * DOM را دوباره نساز.
-                 */
-
                 if (
                     signature ===
                     lastNewsSignature
@@ -1154,17 +1433,14 @@
                 );
 
 
-                /*
-                 * اگر قبلاً خبرها نمایش داده
-                 * شده‌اند، صفحه خالی نشود.
-                 */
-
                 if (
                     !lastNewsSignature
                 ) {
 
                     newsList.innerHTML = `
-                        <div class="news-error">
+                        <div
+                            class="news-error"
+                        >
                             ❌ ارتباط با سرور اخبار برقرار نشد.
                             <br>
                             لطفاً چند لحظه دیگر دوباره امتحان کن.
@@ -1179,10 +1455,271 @@
 
 
         /* =========================================
+           REACTION CLICK
+        ========================================= */
+
+        newsList.addEventListener(
+            "click",
+            async event => {
+
+                const button =
+                    event.target.closest(
+                        ".news-reaction"
+                    );
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                event.stopPropagation();
+
+
+                if (!loggedIn) {
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                const newsId =
+                    button.dataset.newsId;
+
+
+                const reaction =
+                    button.dataset.reaction;
+
+
+                if (
+                    !newsId ||
+                    !reaction
+                ) {
+
+                    return;
+
+                }
+
+
+                const allButtons =
+                    newsList.querySelectorAll(
+                        `[data-news-id="${CSS.escape(
+                            newsId
+                        )}"]`
+                    );
+
+
+                allButtons.forEach(
+                    item => {
+
+                        item.disabled =
+                            true;
+
+                    }
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/news/${encodeURIComponent(
+                                newsId
+                            )}/reaction`,
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        reaction
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        response.status ===
+                        401
+                    ) {
+
+                        window.location.href =
+                            "login.html";
+
+                        return;
+
+                    }
+
+
+                    if (
+                        response.status ===
+                        403
+                    ) {
+
+                        alert(
+                            data.message ||
+                            "این حساب اجازه واکنش دادن ندارد."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "ثبت واکنش ناموفق بود."
+                        );
+
+                    }
+
+
+                    myReactions[newsId] =
+                        data.my_reaction ||
+                        null;
+
+
+                    /*
+                     * بدون درخواست دوباره کل صفحه،
+                     * فقط شمارنده‌ها و حالت دکمه‌ها
+                     * همان خبر را آپدیت می‌کنیم.
+                     */
+
+                    const reactionContainer =
+                        newsList.querySelector(
+                            `[data-reactions-for="${CSS.escape(
+                                newsId
+                            )}"]`
+                        );
+
+
+                    if (
+                        reactionContainer
+                    ) {
+
+                        reactions.forEach(
+                            item => {
+
+                                const reactionButton =
+                                    reactionContainer.querySelector(
+                                        `[data-reaction="${item.key}"]`
+                                    );
+
+
+                                if (!reactionButton) {
+                                    return;
+                                }
+
+
+                                const count =
+                                    Number(
+                                        data.reactions?.[
+                                            item.key
+                                        ] ||
+                                        0
+                                    );
+
+
+                                const countElement =
+                                    reactionButton.querySelector(
+                                        ".news-reaction-count"
+                                    );
+
+
+                                if (
+                                    countElement
+                                ) {
+
+                                    countElement.textContent =
+                                        count;
+
+                                }
+
+
+                                reactionButton.classList.toggle(
+                                    "active",
+                                    data.my_reaction ===
+                                        item.key
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    /*
+                     * امضای قبلی را تغییر می‌دهیم
+                     * تا Refresh خودکار مجدداً لازم نباشد.
+                     */
+
+                    lastNewsSignature =
+                        "";
+
+                } catch (error) {
+
+                    console.error(
+                        "NEWS_REACTION_ERROR:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message ||
+                        "ثبت واکنش انجام نشد."
+                    );
+
+                } finally {
+
+                    allButtons.forEach(
+                        item => {
+
+                            item.disabled =
+                                !loggedIn;
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =========================================
            FIRST LOAD
         ========================================= */
 
-        loadNews();
+        (async function start() {
+
+            await checkLogin();
+
+            await loadNews();
+
+        })();
 
 
         /* =========================================
@@ -1191,9 +1728,11 @@
 
         newsUpdateTimer =
             setInterval(
-                () => {
+                async () => {
 
-                    loadNews(
+                    await checkLogin();
+
+                    await loadNews(
                         true
                     );
 
@@ -1203,19 +1742,21 @@
 
 
         /* =========================================
-           UPDATE WHEN RETURNING TO TAB
+           UPDATE WHEN RETURNING
         ========================================= */
 
         document.addEventListener(
             "visibilitychange",
-            () => {
+            async () => {
 
                 if (
                     document.visibilityState ===
                     "visible"
                 ) {
 
-                    loadNews(
+                    await checkLogin();
+
+                    await loadNews(
                         true
                     );
 
@@ -1227,9 +1768,11 @@
 
         window.addEventListener(
             "focus",
-            () => {
+            async () => {
 
-                loadNews(
+                await checkLogin();
+
+                await loadNews(
                     true
                 );
 

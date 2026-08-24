@@ -2,14 +2,112 @@
    VEXON PAGE LOADER
 ========================================================= */
 
-const app = document.querySelector("#app");
+const app =
+    document.querySelector("#app");
+
+
+/* =========================================================
+   FULL BAN CHECK
+========================================================= */
+
+async function checkFullBan() {
+
+    try {
+
+        /*
+         * اگر همین الان banned.html هستیم،
+         * دوباره Redirect نمی‌کنیم.
+         */
+
+        if (
+            window.location.pathname.endsWith(
+                "/banned.html"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    method:
+                        "GET",
+
+                    credentials:
+                        "same-origin",
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data ||
+            !data.loggedIn ||
+            !data.user
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * فقط Full Ban
+         * باعث انتقال به banned.html می‌شود.
+         */
+
+        if (
+            data.user.banned === true &&
+            data.user.ban_type === "full"
+        ) {
+
+            window.location.href =
+                window.location.pathname.includes(
+                    "/sections/"
+                )
+                    ? "../banned.html"
+                    : "banned.html";
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "FULL_BAN_CHECK_ERROR:",
+            error
+        );
+
+    }
+
+}
 
 
 /* =========================================================
    LOAD HTML SECTION
 ========================================================= */
 
-async function loadSection(file) {
+async function loadSection(
+    file
+) {
 
     try {
 
@@ -17,12 +115,15 @@ async function loadSection(file) {
             await fetch(
                 `sections/${file}.html`,
                 {
-                    cache: "no-store"
+                    cache:
+                        "no-store"
                 }
             );
 
 
-        if (!response.ok) {
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 `Failed to load ${file}.html`
@@ -35,11 +136,16 @@ async function loadSection(file) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
 
         return `
-            <div class="section-error">
+
+            <div
+                class="section-error"
+            >
 
                 <strong>
                     خطا در بارگذاری VEXON
@@ -50,6 +156,7 @@ async function loadSection(file) {
                 </span>
 
             </div>
+
         `;
 
     }
@@ -58,7 +165,7 @@ async function loadSection(file) {
 
 
 /* =========================================================
-   LOAD ALL SECTIONS
+   LOAD VEXON
 ========================================================= */
 
 async function loadVexon() {
@@ -66,7 +173,7 @@ async function loadVexon() {
     /*
      * index.html اصلی #app ندارد.
      * بنابراین اگر روی index هستیم،
-     * فقط Header و Community را مدیریت می‌کنیم.
+     * فقط بخش‌های Standalone را فعال می‌کنیم.
      */
 
     if (!app) {
@@ -94,13 +201,17 @@ async function loadVexon() {
         await Promise.all(
             sections.map(
                 section =>
-                    loadSection(section)
+                    loadSection(
+                        section
+                    )
             )
         );
 
 
     app.innerHTML =
-        loadedSections.join("\n");
+        loadedSections.join(
+            "\n"
+        );
 
 
     initializeVexon();
@@ -109,7 +220,7 @@ async function loadVexon() {
 
 
 /* =========================================================
-   INITIALIZE STANDALONE
+   STANDALONE
 ========================================================= */
 
 function initializeStandaloneVexon() {
@@ -128,7 +239,7 @@ function initializeStandaloneVexon() {
 
 
 /* =========================================================
-   INITIALIZE VEXON
+   VEXON
 ========================================================= */
 
 function initializeVexon() {
@@ -162,7 +273,9 @@ async function initializeAuthHeader() {
         );
 
 
-    if (!headerProfiles.length) {
+    if (
+        !headerProfiles.length
+    ) {
 
         return;
 
@@ -170,9 +283,7 @@ async function initializeAuthHeader() {
 
 
     /*
-     * حالت اولیه:
-     * تا وقتی API پاسخ نداده،
-     * متن کوتاه و بدون پرش نمایش می‌دهیم.
+     * حالت اولیه
      */
 
     headerProfiles.forEach(
@@ -183,10 +294,12 @@ async function initializeAuthHeader() {
                     "strong"
                 );
 
+
             const span =
                 headerProfile.querySelector(
                     "span"
                 );
+
 
             const xpBar =
                 headerProfile.querySelector(
@@ -194,7 +307,9 @@ async function initializeAuthHeader() {
                 );
 
 
-            if (strong) {
+            if (
+                strong
+            ) {
 
                 strong.textContent =
                     "...";
@@ -202,7 +317,9 @@ async function initializeAuthHeader() {
             }
 
 
-            if (span) {
+            if (
+                span
+            ) {
 
                 span.textContent =
                     "در حال بررسی حساب...";
@@ -210,7 +327,9 @@ async function initializeAuthHeader() {
             }
 
 
-            if (xpBar) {
+            if (
+                xpBar
+            ) {
 
                 xpBar.style.display =
                     "none";
@@ -239,7 +358,9 @@ async function initializeAuthHeader() {
             );
 
 
-        if (!response.ok) {
+        if (
+            !response.ok
+        ) {
 
             setGuestHeader(
                 headerProfiles
@@ -269,25 +390,57 @@ async function initializeAuthHeader() {
         }
 
 
+        /*
+         * Full Ban
+         */
+
+        if (
+            data.user.banned === true &&
+            data.user.ban_type === "full"
+        ) {
+
+            if (
+                !window.location.pathname.endsWith(
+                    "/banned.html"
+                )
+            ) {
+
+                window.location.href =
+                    window.location.pathname.includes(
+                        "/sections/"
+                    )
+                        ? "../banned.html"
+                        : "banned.html";
+
+                return;
+
+            }
+
+        }
+
+
         const user =
             data.user;
 
 
         const level =
             Number(
-                user.level ?? 1
+                user.level ??
+                1
             );
 
 
         const xp =
             Number(
-                user.xp ?? 0
+                user.xp ??
+                0
             );
 
 
         const coins =
             Number(
-                user.coins ?? 0
+                user.coins ??
+                0
             );
 
 
@@ -302,16 +455,20 @@ async function initializeAuthHeader() {
 
         const progress =
             nextXp > 0
+
                 ? Math.min(
                     100,
+
                     Math.max(
                         0,
+
                         (
                             xp /
                             nextXp
                         ) * 100
                     )
                 )
+
                 : 0;
 
 
@@ -358,7 +515,9 @@ async function initializeAuthHeader() {
                     );
 
 
-                if (strong) {
+                if (
+                    strong
+                ) {
 
                     strong.textContent =
                         user.username ||
@@ -367,7 +526,9 @@ async function initializeAuthHeader() {
                 }
 
 
-                if (span) {
+                if (
+                    span
+                ) {
 
                     span.textContent =
                         `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
@@ -380,7 +541,9 @@ async function initializeAuthHeader() {
                 }
 
 
-                if (xpBar) {
+                if (
+                    xpBar
+                ) {
 
                     xpBar.style.display =
                         "block";
@@ -388,7 +551,9 @@ async function initializeAuthHeader() {
                 }
 
 
-                if (xpFill) {
+                if (
+                    xpFill
+                ) {
 
                     xpFill.style.width =
                         "0%";
@@ -443,14 +608,14 @@ function setGuestHeader(
     headerProfiles.forEach(
         headerProfile => {
 
-            /*
-             * اگر این صفحه در sections است
-             */
-
-            headerProfile.href =
+            const isInsideSections =
                 window.location.pathname.includes(
                     "/sections/"
-                )
+                );
+
+
+            headerProfile.href =
+                isInsideSections
                     ? "login.html"
                     : "sections/login.html";
 
@@ -473,7 +638,9 @@ function setGuestHeader(
                 );
 
 
-            if (strong) {
+            if (
+                strong
+            ) {
 
                 strong.textContent =
                     "ورود / ثبت‌نام";
@@ -481,7 +648,9 @@ function setGuestHeader(
             }
 
 
-            if (span) {
+            if (
+                span
+            ) {
 
                 span.textContent =
                     "ورود به حساب";
@@ -494,7 +663,9 @@ function setGuestHeader(
             }
 
 
-            if (xpBar) {
+            if (
+                xpBar
+            ) {
 
                 xpBar.style.display =
                     "none";
@@ -511,7 +682,9 @@ function setGuestHeader(
    NEXT LEVEL XP
 ========================================================= */
 
-function getNextLevelXp(level) {
+function getNextLevelXp(
+    level
+) {
 
     const levels = {
 
@@ -618,7 +791,9 @@ function initializeNavigation() {
         );
 
 
-    if (!sections.length) {
+    if (
+        !sections.length
+    ) {
 
         return;
 
@@ -656,7 +831,9 @@ function initializeNavigation() {
 
                                 link.classList.toggle(
                                     "active",
-                                    href === `#${id}`
+
+                                    href ===
+                                        `#${id}`
                                 );
 
                             }
@@ -681,6 +858,7 @@ function initializeNavigation() {
                                     (
                                         id ===
                                             "games-all" &&
+
                                         href ===
                                             "#games"
                                     )
@@ -693,8 +871,10 @@ function initializeNavigation() {
                 );
 
             },
+
             {
-                threshold: 0.2,
+                threshold:
+                    0.2,
 
                 rootMargin:
                     "-20% 0px -55% 0px"
@@ -749,7 +929,9 @@ function initializeScrollReveal() {
     );
 
 
-    if (!revealElements.length) {
+    if (
+        !revealElements.length
+    ) {
 
         return;
 
@@ -758,7 +940,10 @@ function initializeScrollReveal() {
 
     const revealObserver =
         new IntersectionObserver(
-            (entries, observer) => {
+            (
+                entries,
+                observer
+            ) => {
 
                 entries.forEach(
                     entry => {
@@ -785,8 +970,10 @@ function initializeScrollReveal() {
                 );
 
             },
+
             {
-                threshold: 0.12
+                threshold:
+                    0.12
             }
         );
 
@@ -843,7 +1030,9 @@ function initializeSmoothNavigation() {
                             );
 
 
-                        if (!target) {
+                        if (
+                            !target
+                        ) {
 
                             return;
 
@@ -959,7 +1148,8 @@ function initializeParallax() {
         event => {
 
             if (
-                window.innerWidth <= 850
+                window.innerWidth <=
+                850
             ) {
 
                 return;
@@ -1016,10 +1206,6 @@ function initializeParallax() {
 
 function initializeSupportWidget() {
 
-    /*
-     * جلوگیری از ساخت چند Widget
-     */
-
     if (
         document.getElementById(
             "vexon-support-widget"
@@ -1032,13 +1218,27 @@ function initializeSupportWidget() {
 
 
     /*
-     * روی بعضی صفحات مثل Admin
-     * فعلاً Widget عمومی لازم نیست.
+     * Admin Widget لازم ندارد.
      */
 
     if (
         window.location.pathname.includes(
             "admin.html"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * banned.html هم Widget لازم ندارد.
+     */
+
+    if (
+        window.location.pathname.endsWith(
+            "/banned.html"
         )
     ) {
 
@@ -1063,13 +1263,17 @@ function initializeSupportWidget() {
 
             #vexon-support-widget {
 
-                position: fixed;
+                position:
+                    fixed;
 
-                right: 22px;
+                right:
+                    22px;
 
-                bottom: 22px;
+                bottom:
+                    22px;
 
-                z-index: 99999;
+                z-index:
+                    99999;
 
                 font-family:
                     "Vazirmatn",
@@ -1080,13 +1284,17 @@ function initializeSupportWidget() {
 
             #vexon-support-button {
 
-                width: 58px;
+                width:
+                    58px;
 
-                height: 58px;
+                height:
+                    58px;
 
-                border-radius: 50%;
+                border-radius:
+                    50%;
 
-                border: 1px solid
+                border:
+                    1px solid
                     rgba(
                         0,
                         255,
@@ -1111,17 +1319,23 @@ function initializeSupportWidget() {
                         )
                     );
 
-                color: white;
+                color:
+                    white;
 
-                font-size: 24px;
+                font-size:
+                    24px;
 
-                cursor: pointer;
+                cursor:
+                    pointer;
 
-                display: flex;
+                display:
+                    flex;
 
-                align-items: center;
+                align-items:
+                    center;
 
-                justify-content: center;
+                justify-content:
+                    center;
 
                 box-shadow:
                     0 0 28px
@@ -1161,11 +1375,14 @@ function initializeSupportWidget() {
 
             #vexon-support-panel {
 
-                position: absolute;
+                position:
+                    absolute;
 
-                right: 0;
+                right:
+                    0;
 
-                bottom: 72px;
+                bottom:
+                    72px;
 
                 width:
                     min(
@@ -1188,13 +1405,17 @@ function initializeSupportWidget() {
                 overflow:
                     hidden;
 
-                display: none;
+                display:
+                    none;
 
-                flex-direction: column;
+                flex-direction:
+                    column;
 
-                border-radius: 22px;
+                border-radius:
+                    22px;
 
-                border: 1px solid
+                border:
+                    1px solid
                     rgba(
                         0,
                         255,
@@ -1227,7 +1448,8 @@ function initializeSupportWidget() {
 
             #vexon-support-panel.open {
 
-                display: flex;
+                display:
+                    flex;
 
                 animation:
                     vexonSupportOpen
@@ -1240,7 +1462,8 @@ function initializeSupportWidget() {
 
                 from {
 
-                    opacity: 0;
+                    opacity:
+                        0;
 
                     transform:
                         translateY(
@@ -1252,9 +1475,11 @@ function initializeSupportWidget() {
 
                 }
 
+
                 to {
 
-                    opacity: 1;
+                    opacity:
+                        1;
 
                     transform:
                         translateY(0)
@@ -1267,14 +1492,17 @@ function initializeSupportWidget() {
 
             .vexon-support-header {
 
-                display: flex;
+                display:
+                    flex;
 
-                align-items: center;
+                align-items:
+                    center;
 
                 justify-content:
                     space-between;
 
-                gap: 10px;
+                gap:
+                    10px;
 
                 padding:
                     16px;
@@ -1293,7 +1521,8 @@ function initializeSupportWidget() {
 
             .vexon-support-header strong {
 
-                display: block;
+                display:
+                    block;
 
                 font-size:
                     14px;
@@ -1303,7 +1532,8 @@ function initializeSupportWidget() {
 
             .vexon-support-header span {
 
-                display: block;
+                display:
+                    block;
 
                 margin-top:
                     3px;
@@ -1325,7 +1555,8 @@ function initializeSupportWidget() {
                 height:
                     32px;
 
-                border: none;
+                border:
+                    none;
 
                 border-radius:
                     10px;
@@ -1338,18 +1569,22 @@ function initializeSupportWidget() {
                         0.06
                     );
 
-                color: white;
+                color:
+                    white;
 
-                cursor: pointer;
+                cursor:
+                    pointer;
 
             }
 
 
             #vexon-support-body {
 
-                flex: 1;
+                flex:
+                    1;
 
-                overflow-y: auto;
+                overflow-y:
+                    auto;
 
                 padding:
                     14px;
@@ -1676,7 +1911,9 @@ function initializeSupportWidget() {
             }
 
 
-            @media (max-width: 600px) {
+            @media (
+                max-width: 600px
+            ) {
 
                 #vexon-support-widget {
 
@@ -1763,7 +2000,9 @@ function initializeSupportWidget() {
 
             <div
                 id="vexon-support-compose"
-                style="display:none;"
+                style="
+                    display:none;
+                "
             >
 
                 <div
@@ -1808,7 +2047,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       ELEMENTS
+       SUPPORT ELEMENTS
     ===================================================== */
 
     const button =
@@ -1859,17 +2098,20 @@ function initializeSupportWidget() {
         );
 
 
-    /* =====================================================
-       STATE
-    ===================================================== */
-
     let isLoggedIn =
         false;
+
 
     let isBanned =
         false;
 
-    let supportMessages = [];
+
+    let banType =
+        null;
+
+
+    let supportMessages =
+        [];
 
 
     /* =====================================================
@@ -1881,7 +2123,8 @@ function initializeSupportWidget() {
     ) {
 
         return String(
-            value ?? ""
+            value ??
+            ""
         )
             .replace(
                 /&/g,
@@ -1908,15 +2151,19 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       FORMAT DATE
+       DATE
     ===================================================== */
 
     function formatSupportDate(
         value
     ) {
 
-        if (!value) {
+        if (
+            !value
+        ) {
+
             return "";
+
         }
 
 
@@ -1927,11 +2174,14 @@ function initializeSupportWidget() {
                 {
                     dateStyle:
                         "short",
+
                     timeStyle:
                         "short"
                 }
             ).format(
-                new Date(value)
+                new Date(
+                    value
+                )
             );
 
         } catch {
@@ -1944,7 +2194,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       SHOW STATUS
+       STATUS
     ===================================================== */
 
     function showSupportStatus(
@@ -1969,7 +2219,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       OPEN
+       OPEN / CLOSE
     ===================================================== */
 
     button.addEventListener(
@@ -1983,6 +2233,7 @@ function initializeSupportWidget() {
 
             panel.setAttribute(
                 "aria-hidden",
+
                 panel.classList.contains(
                     "open"
                 )
@@ -1995,7 +2246,12 @@ function initializeSupportWidget() {
                 panel.classList.contains(
                     "open"
                 ) &&
-                isLoggedIn
+                isLoggedIn &&
+                !(
+                    isBanned &&
+                    banType ===
+                        "full"
+                )
             ) {
 
                 loadSupportMessages();
@@ -2005,10 +2261,6 @@ function initializeSupportWidget() {
         }
     );
 
-
-    /* =====================================================
-       CLOSE
-    ===================================================== */
 
     closeButton.addEventListener(
         "click",
@@ -2052,7 +2304,9 @@ function initializeSupportWidget() {
                 );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 renderGuestSupport();
 
@@ -2088,8 +2342,29 @@ function initializeSupportWidget() {
                 );
 
 
-            renderLoggedInSupport();
+            banType =
+                data.user.ban_type ??
+                null;
 
+
+            /*
+             * Full Ban:
+             * این حالت توسط checkFullBan
+             * Redirect می‌شود.
+             */
+
+            if (
+                isBanned &&
+                banType ===
+                    "full"
+            ) {
+
+                return;
+
+            }
+
+
+            renderLoggedInSupport();
 
         } catch (error) {
 
@@ -2107,7 +2382,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       GUEST SUPPORT
+       GUEST
     ===================================================== */
 
     function renderGuestSupport() {
@@ -2136,7 +2411,9 @@ function initializeSupportWidget() {
                         window.location.pathname.includes(
                             "/sections/"
                         )
+
                             ? "login.html"
+
                             : "sections/login.html"
                     }"
                 >
@@ -2151,16 +2428,24 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       LOGGED IN SUPPORT
+       LOGGED IN
     ===================================================== */
 
     function renderLoggedInSupport() {
 
-        compose.style.display =
-            "block";
+        /*
+         * محرومیت از پیام
+         */
 
+        if (
+            isBanned &&
+            banType ===
+                "messages"
+        ) {
 
-        if (isBanned) {
+            compose.style.display =
+                "block";
+
 
             input.disabled =
                 true;
@@ -2171,30 +2456,36 @@ function initializeSupportWidget() {
 
 
             showSupportStatus(
-                "🚫 این حساب فعلاً اجازه ارسال پیام ندارد.",
+                "💬 این حساب از ارسال پیام محروم شده است.",
                 true
             );
 
-        } else {
 
-            input.disabled =
-                false;
-
-
-            sendButton.disabled =
-                false;
-
-
-            status.style.display =
-                "none";
+            return;
 
         }
+
+
+        input.disabled =
+            false;
+
+
+        sendButton.disabled =
+            false;
+
+
+        compose.style.display =
+            "block";
+
+
+        status.style.display =
+            "none";
 
     }
 
 
     /* =====================================================
-       SUPPORT ERROR
+       ERROR
     ===================================================== */
 
     function renderSupportError() {
@@ -2209,6 +2500,7 @@ function initializeSupportWidget() {
 
         `;
 
+
         compose.style.display =
             "none";
 
@@ -2216,13 +2508,17 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       LOAD MESSAGES
+       LOAD USER MESSAGES
     ===================================================== */
 
     async function loadSupportMessages() {
 
-        if (!isLoggedIn) {
+        if (
+            !isLoggedIn
+        ) {
+
             return;
+
         }
 
 
@@ -2249,35 +2545,7 @@ function initializeSupportWidget() {
 
 
             if (
-                response.status ===
-                403
-            ) {
-
-                isBanned =
-                    true;
-
-
-                renderLoggedInSupport();
-
-
-                body.innerHTML = `
-
-                    <div
-                        class="vexon-support-empty"
-                    >
-                        🚫 حساب شما محدود شده است.
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-
-            if (
-                !response.ok ||
-                !data.success
+                !response.ok
             ) {
 
                 throw new Error(
@@ -2322,7 +2590,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       RENDER MESSAGES
+       RENDER USER MESSAGES
     ===================================================== */
 
     function renderSupportMessages() {
@@ -2336,9 +2604,13 @@ function initializeSupportWidget() {
                 <div
                     class="vexon-support-empty"
                 >
+
                     💚 هنوز پیامی برای مدیریت نفرستادی.
+
                     <br><br>
+
                     اولین پیامت رو همینجا بفرست.
+
                 </div>
 
             `;
@@ -2372,6 +2644,7 @@ function initializeSupportWidget() {
 
                                 ${
                                     item.reply
+
                                         ? `
 
                                             <div
@@ -2391,6 +2664,7 @@ function initializeSupportWidget() {
                                             </div>
 
                                           `
+
                                         : ""
                                 }
 
@@ -2408,7 +2682,9 @@ function initializeSupportWidget() {
                                     ${
                                         item.status ===
                                         "replied"
+
                                             ? " • ✅ پاسخ داده شد"
+
                                             : " • ⏳ در انتظار پاسخ"
                                     }
 
@@ -2422,9 +2698,6 @@ function initializeSupportWidget() {
                 )
                 .join("");
 
-
-        body.scrollTop =
-            body.scrollHeight;
 
     }
 
@@ -2446,6 +2719,7 @@ function initializeSupportWidget() {
             if (
                 event.key ===
                     "Enter" &&
+
                 (
                     event.ctrlKey ||
                     event.metaKey
@@ -2464,7 +2738,9 @@ function initializeSupportWidget() {
 
     async function sendSupportMessage() {
 
-        if (!isLoggedIn) {
+        if (
+            !isLoggedIn
+        ) {
 
             renderGuestSupport();
 
@@ -2473,12 +2749,28 @@ function initializeSupportWidget() {
         }
 
 
-        if (isBanned) {
+        if (
+            isBanned &&
+            (
+                banType ===
+                    "full" ||
+
+                banType ===
+                    "messages"
+            )
+        ) {
 
             showSupportStatus(
-                "🚫 این حساب اجازه ارسال پیام ندارد.",
+                banType ===
+                    "full"
+
+                    ? "🚫 این حساب محدود شده است."
+
+                    : "💬 این حساب از ارسال پیام محروم شده است.",
+
                 true
             );
+
 
             return;
 
@@ -2490,13 +2782,15 @@ function initializeSupportWidget() {
 
 
         if (
-            text.length < 2
+            text.length <
+            2
         ) {
 
             showSupportStatus(
                 "پیامت خیلی کوتاهه.",
                 true
             );
+
 
             return;
 
@@ -2547,7 +2841,14 @@ function initializeSupportWidget() {
             ) {
 
                 isBanned =
-                    true;
+                    Boolean(
+                        data.banned
+                    );
+
+
+                banType =
+                    data.ban_type ??
+                    null;
 
 
                 renderLoggedInSupport();
@@ -2600,13 +2901,23 @@ function initializeSupportWidget() {
                     error.message ||
                     "ارسال پیام انجام نشد."
                 ),
+
                 true
             );
 
         } finally {
 
             sendButton.disabled =
-                isBanned;
+                (
+                    isBanned &&
+                    (
+                        banType ===
+                            "full" ||
+
+                        banType ===
+                            "messages"
+                    )
+                );
 
 
             sendButton.textContent =
@@ -2618,7 +2929,7 @@ function initializeSupportWidget() {
 
 
     /* =====================================================
-       START SUPPORT
+       SUPPORT START
     ===================================================== */
 
     checkSupportAuth();
@@ -2626,7 +2937,7 @@ function initializeSupportWidget() {
 
     /*
      * وقتی کاربر از Login برمی‌گردد،
-     * Widget دوباره حساب را بررسی می‌کند.
+     * وضعیت حساب را دوباره بررسی می‌کنیم.
      */
 
     window.addEventListener(
@@ -2640,9 +2951,7 @@ function initializeSupportWidget() {
 
 
     /*
-     * پاسخ‌های جدید Admin را بدون Refresh
-     * هر 15 ثانیه بررسی می‌کنیم،
-     * فقط وقتی Widget باز است.
+     * پاسخ Admin بدون Refresh
      */
 
     setInterval(
@@ -2652,7 +2961,12 @@ function initializeSupportWidget() {
                 panel.classList.contains(
                     "open"
                 ) &&
-                isLoggedIn
+                isLoggedIn &&
+                !(
+                    isBanned &&
+                    banType ===
+                        "full"
+                )
             ) {
 
                 loadSupportMessages();
@@ -2670,4 +2984,10 @@ function initializeSupportWidget() {
    START VEXON
 ========================================================= */
 
-loadVexon();
+(async function startVexon() {
+
+    await checkFullBan();
+
+    await loadVexon();
+
+})();

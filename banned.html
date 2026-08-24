@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        VEXON | دسترسی محدود شده
+    </title>
+
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <style>
+
+        body {
+            min-height: 100vh;
+        }
+
+
+        .banned-page {
+
+            position: relative;
+
+            z-index: 5;
+
+            min-height: 100vh;
+
+            width: min(
+                700px,
+                92%
+            );
+
+            margin: 0 auto;
+
+            padding:
+                30px 0 80px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            box-sizing: border-box;
+
+        }
+
+
+        .banned-card {
+
+            width: 100%;
+
+            padding:
+                32px 26px;
+
+            border-radius: 28px;
+
+            background:
+                rgba(
+                    6,
+                    10,
+                    18,
+                    0.84
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.18
+                );
+
+            backdrop-filter:
+                blur(18px);
+
+            box-shadow:
+                0 0 50px
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.07
+                );
+
+            text-align:
+                center;
+
+        }
+
+
+        .banned-icon {
+
+            width:
+                92px;
+
+            height:
+                92px;
+
+            margin:
+                0 auto 18px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                28px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        255,
+                        63,
+                        90,
+                        0.14
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        0.10
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.20
+                );
+
+            font-size:
+                44px;
+
+            box-shadow:
+                0 0 30px
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.08
+                );
+
+        }
+
+
+        .banned-label {
+
+            display:
+                inline-block;
+
+            margin-bottom:
+                10px;
+
+            padding:
+                6px 10px;
+
+            border-radius:
+                999px;
+
+            color:
+                #ffc0c8;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.12
+                );
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .banned-card h1 {
+
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    25px,
+                    5vw,
+                    38px
+                );
+
+            line-height:
+                1.4;
+
+        }
+
+
+        .banned-card h1 span {
+
+            display:
+                block;
+
+            margin-top:
+                3px;
+
+            color:
+                #ff7584;
+
+        }
+
+
+        .banned-description {
+
+            max-width:
+                520px;
+
+            margin:
+                16px auto 0;
+
+            font-size:
+                13px;
+
+            line-height:
+                2.1;
+
+            opacity:
+                0.68;
+
+        }
+
+
+        .banned-info {
+
+            margin-top:
+                24px;
+
+            display:
+                grid;
+
+            gap:
+                10px;
+
+            text-align:
+                right;
+
+        }
+
+
+        .banned-info-row {
+
+            display:
+                flex;
+
+            align-items:
+                flex-start;
+
+            justify-content:
+                space-between;
+
+            gap:
+                18px;
+
+            padding:
+                14px;
+
+            border-radius:
+                15px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.035
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.055
+                );
+
+        }
+
+
+        .banned-info-row span {
+
+            font-size:
+                11px;
+
+            opacity:
+                0.52;
+
+            flex-shrink:
+                0;
+
+        }
+
+
+        .banned-info-row strong {
+
+            font-size:
+                12px;
+
+            line-height:
+                1.8;
+
+            text-align:
+                left;
+
+            max-width:
+                70%;
+
+        }
+
+
+        #ban-reason {
+
+            white-space:
+                pre-line;
+
+            color:
+                #ffd7dc;
+
+        }
+
+
+        #ban-until {
+
+            color:
+                #d7ffe9;
+
+        }
+
+
+        .banned-actions {
+
+            display:
+                flex;
+
+            gap:
+                10px;
+
+            justify-content:
+                center;
+
+            flex-wrap:
+                wrap;
+
+            margin-top:
+                22px;
+
+        }
+
+
+        .banned-button {
+
+            border:
+                none;
+
+            border-radius:
+                12px;
+
+            padding:
+                12px 18px;
+
+            font-family:
+                inherit;
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
+
+            text-decoration:
+                none;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .banned-button:hover {
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        .banned-button-secondary {
+
+            color:
+                white;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.06
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
+
+        }
+
+
+        .banned-button-danger {
+
+            color:
+                white;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.12
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.18
+                );
+
+            box-shadow:
+                0 0 20px
+                rgba(
+                    255,
+                    63,
+                    90,
+                    0.05
+                );
+
+        }
+
+
+        #banned-status {
+
+            margin-top:
+                16px;
+
+            min-height:
+                20px;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.8;
+
+            opacity:
+                0.7;
+
+        }
+
+
+        .banned-footer {
+
+            margin-top:
+                24px;
+
+            font-size:
+                10px;
+
+            opacity:
+                0.35;
+
+            line-height:
+                1.9;
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .banned-card {
+
+                padding:
+                    25px 17px;
+
+                border-radius:
+                    22px;
+
+            }
+
+
+            .banned-info-row {
+
+                flex-direction:
+                    column;
+
+                gap:
+                    5px;
+
+            }
+
+
+            .banned-info-row strong {
+
+                max-width:
+                    100%;
+
+                text-align:
+                    right;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     BACKGROUND
+========================== -->
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+    <div class="planet planet-blue"></div>
+
+</div>
+
+
+<!-- =========================
+     BANNED PAGE
+========================== -->
+
+<main class="banned-page">
+
+    <section class="banned-card">
+
+
+        <div class="banned-icon">
+            🚫
+        </div>
+
+
+        <span class="banned-label">
+            VEXON MODERATION
+        </span>
+
+
+        <h1>
+
+            دسترسی حساب
+
+            <span>
+                محدود شده است
+            </span>
+
+        </h1>
+
+
+        <p
+            class="banned-description"
+        >
+            دسترسی کامل این حساب توسط مدیریت VEXON
+            محدود شده است. تا پایان محدودیت،
+            امکان استفاده از امکانات تعاملی سایت وجود ندارد.
+        </p>
+
+
+        <!-- =========================
+             BAN INFO
+        ========================== -->
+
+        <div
+            class="banned-info"
+        >
+
+
+            <div
+                class="banned-info-row"
+            >
+
+                <span>
+                    👤 حساب
+                </span>
+
+                <strong
+                    id="ban-username"
+                >
+                    در حال بارگذاری...
+                </strong>
+
+            </div>
+
+
+            <div
+                class="banned-info-row"
+            >
+
+                <span>
+                    🚫 نوع محدودیت
+                </span>
+
+                <strong
+                    id="ban-type"
+                >
+                    بن کامل سایت
+                </strong>
+
+            </div>
+
+
+            <div
+                class="banned-info-row"
+            >
+
+                <span>
+                    📋 دلیل
+                </span>
+
+                <strong
+                    id="ban-reason"
+                >
+                    در حال بارگذاری...
+                </strong>
+
+            </div>
+
+
+            <div
+                class="banned-info-row"
+            >
+
+                <span>
+                    ⏱ پایان محدودیت
+                </span>
+
+                <strong
+                    id="ban-until"
+                >
+                    در حال بارگذاری...
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+
+        <div
+            class="banned-actions"
+        >
+
+            <a
+                href="index.html"
+                class="banned-button banned-button-secondary"
+            >
+                🏠 صفحه اصلی
+            </a>
+
+
+            <button
+                type="button"
+                id="banned-logout"
+                class="banned-button banned-button-danger"
+            >
+                🚪 خروج از حساب
+            </button>
+
+        </div>
+
+
+        <div
+            id="banned-status"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+
+        <div
+            class="banned-footer"
+        >
+            اگر فکر می‌کنی این محدودیت اشتباه است،
+            می‌توانی پس از رفع محدودیت با مدیریت VEXON
+            از طریق سیستم پیام تماس بگیری.
+        </div>
+
+
+    </section>
+
+</main>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const usernameElement =
+        document.getElementById(
+            "ban-username"
+        );
+
+
+    const typeElement =
+        document.getElementById(
+            "ban-type"
+        );
+
+
+    const reasonElement =
+        document.getElementById(
+            "ban-reason"
+        );
+
+
+    const untilElement =
+        document.getElementById(
+            "ban-until"
+        );
+
+
+    const statusElement =
+        document.getElementById(
+            "banned-status"
+        );
+
+
+    const logoutButton =
+        document.getElementById(
+            "banned-logout"
+        );
+
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+
+            return "دائمی";
+
+        }
+
+
+        try {
+
+            return new Intl.DateTimeFormat(
+                "fa-IR",
+                {
+                    dateStyle:
+                        "full",
+
+                    timeStyle:
+                        "short"
+                }
+            ).format(
+                new Date(value)
+            );
+
+        } catch {
+
+            return value;
+
+        }
+
+    }
+
+
+    function banTypeLabel(
+        value
+    ) {
+
+        switch (value) {
+
+            case "messages":
+
+                return "💬 محرومیت از ارسال پیام";
+
+
+            case "reactions":
+
+                return "❤️ محرومیت از واکنش به اخبار";
+
+
+            case "full":
+
+            default:
+
+                return "🚫 بن کامل سایت";
+
+        }
+
+    }
+
+
+    function showStatus(
+        text,
+        isError = false
+    ) {
+
+        statusElement.textContent =
+            text;
+
+
+        statusElement.style.color =
+            isError
+                ? "#ffb7c1"
+                : "#b8ffe4";
+
+    }
+
+
+    async function loadBanInfo() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/me",
+                    {
+                        method:
+                            "GET",
+
+                        credentials:
+                            "same-origin",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            /*
+             * کاربر لاگین نیست.
+             */
+
+            if (
+                !response.ok ||
+                !data ||
+                !data.loggedIn ||
+                !data.user
+            ) {
+
+                window.location.href =
+                    "sections/login.html";
+
+                return;
+
+            }
+
+
+            const user =
+                data.user;
+
+
+            /*
+             * اگر اصلاً Ban فعال نیست،
+             * صفحه اصلی را نشان بده.
+             */
+
+            if (
+                !user.banned
+            ) {
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            /*
+             * این صفحه مخصوص Full Ban است.
+             */
+
+            if (
+                user.ban_type !==
+                "full"
+            ) {
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            usernameElement.textContent =
+                user.username ||
+                "بازیکن VEXON";
+
+
+            typeElement.textContent =
+                banTypeLabel(
+                    user.ban_type
+                );
+
+
+            reasonElement.textContent =
+                user.ban_reason ||
+                "نقض قوانین VEXON";
+
+
+            untilElement.textContent =
+                formatDate(
+                    user.banned_until
+                );
+
+
+        } catch (error) {
+
+            console.error(
+                "BANNED_PAGE_ERROR",
+                error
+            );
+
+
+            showStatus(
+                "❌ دریافت اطلاعات محدودیت انجام نشد.",
+                true
+            );
+
+        }
+
+    }
+
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            logoutButton.disabled =
+                true;
+
+
+            logoutButton.textContent =
+                "⏳ در حال خروج...";
+
+
+            try {
+
+                await fetch(
+                    "/api/logout",
+                    {
+                        method:
+                            "POST",
+
+                        credentials:
+                            "same-origin"
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "BANNED_LOGOUT_ERROR",
+                    error
+                );
+
+
+            } finally {
+
+                window.location.href =
+                    "sections/login.html";
+
+            }
+
+        }
+    );
+
+
+    loadBanInfo();
+
+})();
+
+</script>
+
+
+</body>
+</html>
