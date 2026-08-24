@@ -5,253 +5,1133 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <meta
         name="description"
         content="VEXON News؛ آخرین اخبار و اتفاقات VEXON."
     >
 
-    <meta name="theme-color" content="#03040a">
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
 
-    <title>VEXON | اخبار</title>
+    <meta
+        name="robots"
+        content="index,follow"
+    >
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>
+        VEXON | اخبار
+    </title>
+
+
+    <!-- =========================
+         FONTS
+    ========================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="../style.css">
+
+    <!-- =========================
+         CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+
+    <!-- =========================
+         NEWS PAGE EXTRA STYLE
+    ========================== -->
+
+    <style>
+
+        .news-list {
+            display: grid;
+            gap: 16px;
+        }
+
+
+        .news-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .news-item-image {
+            width: 100%;
+            max-height: 260px;
+
+            object-fit: cover;
+
+            display: block;
+
+            margin-bottom: 16px;
+
+            border-radius: 16px;
+        }
+
+
+        .news-item-content {
+            min-width: 0;
+        }
+
+
+        .news-item-title {
+            margin:
+                0 0 8px;
+        }
+
+
+        .news-item-text {
+            white-space: pre-line;
+
+            line-height: 2;
+
+            opacity: 0.82;
+        }
+
+
+        .news-item-meta {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px 14px;
+
+            margin-top: 12px;
+
+            font-size: 11px;
+
+            opacity: 0.5;
+        }
+
+
+        .news-empty {
+            text-align: center;
+
+            padding: 40px 20px;
+
+            opacity: 0.6;
+        }
+
+
+        .news-error {
+            text-align: center;
+
+            padding: 30px 20px;
+
+            color: #ffc0c8;
+
+            background:
+                rgba(255, 60, 90, 0.06);
+
+            border:
+                1px solid
+                rgba(255, 60, 90, 0.12);
+
+            border-radius: 18px;
+        }
+
+
+        .news-loading {
+            text-align: center;
+
+            padding: 35px 20px;
+
+            opacity: 0.6;
+        }
+
+
+        .news-image-placeholder {
+            min-height: 100px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 16px;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,255,157,0.05),
+                    rgba(110,70,255,0.08)
+                );
+
+            border:
+                1px solid
+                rgba(255,255,255,0.05);
+
+            font-size: 34px;
+
+            opacity: 0.7;
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="background-effects" aria-hidden="true">
 
-    <div class="nebula nebula-purple"></div>
-    <div class="nebula nebula-green"></div>
-    <div class="nebula nebula-blue"></div>
+    <!-- =========================
+         SPACE BACKGROUND
+    ========================== -->
 
-    <div class="stars stars-one"></div>
-    <div class="stars stars-two"></div>
-    <div class="stars stars-three"></div>
+    <div
+        class="background-effects"
+        aria-hidden="true"
+    >
 
-    <div class="planet planet-purple"></div>
-    <div class="planet planet-blue"></div>
+        <div class="nebula nebula-purple"></div>
+        <div class="nebula nebula-green"></div>
+        <div class="nebula nebula-blue"></div>
 
-    <div class="city">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span>
+        <div class="stars stars-one"></div>
+        <div class="stars stars-two"></div>
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+        <div class="planet planet-blue"></div>
+
+
+        <div class="city">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
     </div>
 
-</div>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="navbar">
 
 
-<header class="navbar">
+        <!-- LOGO -->
 
-    <a href="../index.html" class="logo">
-        VE<span class="logo-x">X</span>ON
-    </a>
-
-    <nav class="nav-links">
-
-        <a href="../index.html" class="nav-link">
-            <span class="desktop-v-icon">V</span>
-            خانه
+        <a
+            href="../index.html"
+            class="logo"
+        >
+            VE<span class="logo-x">X</span>ON
         </a>
 
-        <a href="games.html" class="nav-link">
-            <span class="nav-icon">🎮</span>
-            بازی‌ها
+
+        <!-- DESKTOP NAV -->
+
+        <nav class="nav-links">
+
+            <a
+                href="../index.html"
+                class="nav-link"
+            >
+
+                <span class="desktop-v-icon">
+                    V
+                </span>
+
+                خانه
+
+            </a>
+
+
+            <a
+                href="games.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    🎮
+                </span>
+
+                بازی‌ها
+
+            </a>
+
+
+            <a
+                href="leaderboard.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    🏆
+                </span>
+
+                لیدربورد
+
+            </a>
+
+
+            <a
+                href="cafe.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ☕
+                </span>
+
+                کافه بازی
+
+            </a>
+
+
+            <a
+                href="news.html"
+                class="nav-link active"
+            >
+
+                <span class="nav-icon">
+                    📢
+                </span>
+
+                اخبار
+
+            </a>
+
+
+            <a
+                href="guide.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ?
+                </span>
+
+                راهنما
+
+            </a>
+
+        </nav>
+
+
+        <!-- =========================
+             ACCOUNT
+        ========================== -->
+
+        <a
+            href="login.html"
+            class="header-profile"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+
+            <div class="header-player-info">
+
+                <strong>
+                    ...
+                </strong>
+
+
+                <div
+                    class="header-xp-bar"
+                    style="display: none;"
+                >
+
+                    <div
+                        class="header-xp-fill"
+                    ></div>
+
+                </div>
+
+
+                <span>
+                    در حال بررسی حساب...
+                </span>
+
+            </div>
+
+
+            <b>
+                ‹
+            </b>
+
         </a>
 
-        <a href="leaderboard.html" class="nav-link">
-            <span class="nav-icon">🏆</span>
-            لیدربورد
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main>
+
+        <section class="section">
+
+
+            <!-- =========================
+                 TITLE
+            ========================== -->
+
+            <div class="section-title">
+
+                <span>
+                    📢 VEXON NEWS
+                </span>
+
+                <h1>
+                    آخرین اخبار
+                </h1>
+
+                <p>
+                    آخرین اتفاقات، بازی‌ها و قابلیت‌های جدید VEXON.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 DYNAMIC NEWS LIST
+            ========================== -->
+
+            <div
+                id="news-list"
+                class="news-list"
+            >
+
+                <div
+                    class="news-loading"
+                >
+                    ⏳ در حال دریافت آخرین اخبار VEXON...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="footer-logo">
+            VE<span>X</span>ON
+        </div>
+
+        <p>
+            PLAY • COMPETE • LEVEL UP.
+        </p>
+
+        <div class="footer-socials">
+            <span>✈️</span>
+            <span>◎</span>
+            <span>▶</span>
+        </div>
+
+        <span>
+            ساخته شده با 💚 برای گیمرها
+            <br>
+            © 2026 VEXON — همه حقوق محفوظ است.
+        </span>
+
+    </footer>
+
+
+    <!-- =========================
+         MOBILE NAV
+    ========================== -->
+
+    <nav class="mobile-bottom-nav">
+
+
+        <a
+            href="games.html"
+            class="mobile-nav-item"
+        >
+
+            <span>
+                🎮
+            </span>
+
+            <small>
+                بازی‌ها
+            </small>
+
         </a>
 
-        <a href="cafe.html" class="nav-link">
-            <span class="nav-icon">☕</span>
-            کافه بازی
+
+        <a
+            href="cafe.html"
+            class="mobile-nav-item"
+        >
+
+            <span>
+                ☕
+            </span>
+
+            <small>
+                کافه
+            </small>
+
         </a>
 
-        <a href="news.html" class="nav-link active">
-            <span class="nav-icon">📢</span>
-            اخبار
+
+        <a
+            href="../index.html"
+            class="mobile-nav-item"
+        >
+
+            <span class="home-v-icon">
+                V
+            </span>
+
+            <small>
+                خانه
+            </small>
+
         </a>
 
-        <a href="guide.html" class="nav-link">
-            <span class="nav-icon">?</span>
-            راهنما
+
+        <a
+            href="news.html"
+            class="mobile-nav-item mobile-home active"
+        >
+
+            <span>
+                📢
+            </span>
+
+            <small>
+                اخبار
+            </small>
+
+        </a>
+
+
+        <a
+            href="profile.html"
+            class="mobile-nav-item"
+        >
+
+            <span>
+                ⚙️
+            </span>
+
+            <small>
+                تنظیمات
+            </small>
+
         </a>
 
     </nav>
 
-    <a href="profile.html" class="header-profile">
 
-        <div class="header-profile-icon">👤</div>
+    <!-- =========================
+         MAIN VEXON SCRIPT
+    ========================== -->
 
-        <div>
-            <strong>پروفایل</strong>
-            <span>مشاهده پروفایل</span>
-        </div>
-
-        <b>‹</b>
-
-    </a>
-
-</header>
+    <script src="../script.js"></script>
 
 
-<main>
+    <!-- =========================
+         NEWS API
+    ========================== -->
 
-<section class="section">
+    <script>
 
-    <div class="section-title">
+    (function () {
 
-        <span>📢 VEXON NEWS</span>
-
-        <h1>آخرین اخبار</h1>
-
-        <p>
-            آخرین اتفاقات، بازی‌ها و قابلیت‌های جدید VEXON.
-        </p>
-
-    </div>
+        "use strict";
 
 
-    <div class="news-list">
-
-        <article class="news-item">
-
-            <div class="news-icon red">
-                NEW
-            </div>
-
-            <div>
-                <h3>
-                    اضافه شدن بازی جدید!
-                </h3>
-
-                <p>
-                    یک بازی جدید به VEXON اضافه شد.
-                </p>
-
-                <small>اخبار VEXON</small>
-            </div>
-
-        </article>
+        const newsList =
+            document.getElementById(
+                "news-list"
+            );
 
 
-        <article class="news-item">
-
-            <div class="news-icon gold">
-                🏆
-            </div>
-
-            <div>
-                <h3>
-                    شروع فصل جدید لیدربورد
-                </h3>
-
-                <p>
-                    فصل جدید رقابت‌ها آماده است.
-                </p>
-
-                <small>رقابت‌ها</small>
-            </div>
-
-        </article>
+        if (!newsList) {
+            return;
+        }
 
 
-        <article class="news-item">
-
-            <div class="news-icon green">
-                🎁
-            </div>
-
-            <div>
-                <h3>
-                    امکانات جدید در راه است
-                </h3>
-
-                <p>
-                    قابلیت‌های جدید VEXON به‌زودی اضافه خواهند شد.
-                </p>
-
-                <small>به‌روزرسانی</small>
-            </div>
-
-        </article>
-
-    </div>
-
-</section>
-
-</main>
+        let lastNewsSignature =
+            "";
 
 
-<footer>
-
-    <div class="footer-logo">
-        VE<span>X</span>ON
-    </div>
-
-    <p>
-        PLAY • COMPETE • LEVEL UP.
-    </p>
-
-    <div class="footer-socials">
-        <span>✈️</span>
-        <span>◎</span>
-        <span>▶</span>
-    </div>
-
-    <span>
-        ساخته شده با 💚 برای گیمرها
-        <br>
-        © 2026 VEXON — همه حقوق محفوظ است.
-    </span>
-
-</footer>
+        let newsUpdateTimer =
+            null;
 
 
-<nav class="mobile-bottom-nav">
+        /* =========================================
+           ESCAPE HTML
+        ========================================= */
 
-    <a href="games.html" class="mobile-nav-item">
-        <span>🎮</span>
-        <small>بازی‌ها</small>
-    </a>
+        function escapeHtml(
+            value
+        ) {
 
-    <a href="cafe.html" class="mobile-nav-item">
-        <span>☕</span>
-        <small>کافه</small>
-    </a>
+            return String(
+                value ?? ""
+            )
 
-    <a href="../index.html" class="mobile-nav-item">
-        <span class="home-v-icon">V</span>
-        <small>خانه</small>
-    </a>
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
 
-    <a href="news.html" class="mobile-nav-item mobile-home active">
-        <span>📢</span>
-        <small>اخبار</small>
-    </a>
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
 
-    <a href="profile.html" class="mobile-nav-item">
-        <span>👤</span>
-        <small>پروفایل</small>
-    </a>
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
 
-</nav>
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
 
 
-<script src="../script.js"></script>
+        /* =========================================
+           CATEGORY
+        ========================================= */
+
+        function categoryIcon(
+            category
+        ) {
+
+            const icons = {
+
+                general: "📢",
+                game: "🎮",
+                update: "🔄",
+                event: "🏆",
+                announcement: "📣"
+
+            };
+
+
+            return (
+                icons[category] ||
+                "📢"
+            );
+
+        }
+
+
+        /* =========================================
+           CATEGORY CLASS
+        ========================================= */
+
+        function categoryClass(
+            category
+        ) {
+
+            const classes = {
+
+                general: "red",
+                game: "purple",
+                update: "green",
+                event: "gold",
+                announcement: "blue"
+
+            };
+
+
+            return (
+                classes[category] ||
+                "red"
+            );
+
+        }
+
+
+        /* =========================================
+           DATE
+        ========================================= */
+
+        function formatDate(
+            value
+        ) {
+
+            if (!value) {
+                return "";
+            }
+
+
+            try {
+
+                return new Intl.DateTimeFormat(
+                    "fa-IR",
+                    {
+                        dateStyle:
+                            "medium"
+                    }
+                ).format(
+                    new Date(value)
+                );
+
+            } catch {
+
+                return "";
+
+            }
+
+        }
+
+
+        /* =========================================
+           NEWS SIGNATURE
+        ========================================= */
+
+        function createSignature(
+            news
+        ) {
+
+            return news
+                .map(
+                    item =>
+                        [
+                            item.id,
+                            item.updated_at,
+                            item.published_at
+                        ].join(":")
+                )
+                .join("|");
+
+        }
+
+
+        /* =========================================
+           RENDER NEWS
+        ========================================= */
+
+        function renderNews(
+            news
+        ) {
+
+            if (!news.length) {
+
+                newsList.innerHTML = `
+                    <div class="news-empty">
+                        📰 هنوز خبری منتشر نشده است.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            newsList.innerHTML =
+                news
+                    .map(
+                        (item) => {
+
+                            const category =
+                                item.category ||
+                                "general";
+
+
+                            const icon =
+                                categoryIcon(
+                                    category
+                                );
+
+
+                            const colorClass =
+                                categoryClass(
+                                    category
+                                );
+
+
+                            const image =
+                                item.image_url
+                                    ? `
+                                        <img
+                                            class="news-item-image"
+                                            src="${escapeHtml(
+                                                item.image_url
+                                            )}"
+                                            alt="${escapeHtml(
+                                                item.title
+                                            )}"
+                                            loading="lazy"
+                                            onerror="
+                                                this.outerHTML = '<div class=&quot;news-image-placeholder&quot;>📢</div>';
+                                            "
+                                        >
+                                      `
+                                    : `
+                                        <div
+                                            class="news-image-placeholder"
+                                        >
+                                            ${icon}
+                                        </div>
+                                      `;
+
+
+                            const date =
+                                formatDate(
+                                    item.published_at ||
+                                    item.created_at
+                                );
+
+
+                            return `
+                                <article
+                                    class="news-item"
+                                >
+
+                                    ${image}
+
+
+                                    <div
+                                        class="news-icon ${colorClass}"
+                                    >
+                                        ${icon}
+                                    </div>
+
+
+                                    <div
+                                        class="news-item-content"
+                                    >
+
+                                        <h3
+                                            class="news-item-title"
+                                        >
+                                            ${escapeHtml(
+                                                item.title
+                                            )}
+                                        </h3>
+
+
+                                        <p
+                                            class="news-item-text"
+                                        >
+                                            ${escapeHtml(
+                                                item.content
+                                            )}
+                                        </p>
+
+
+                                        <div
+                                            class="news-item-meta"
+                                        >
+
+                                            <span>
+                                                🏷️ ${escapeHtml(
+                                                    category
+                                                )}
+                                            </span>
+
+                                            ${
+                                                item.author_username
+                                                    ? `
+                                                        <span>
+                                                            👤 ${escapeHtml(
+                                                                item.author_username
+                                                            )}
+                                                        </span>
+                                                      `
+                                                    : ""
+                                            }
+
+                                            ${
+                                                date
+                                                    ? `
+                                                        <span>
+                                                            📅 ${escapeHtml(
+                                                                date
+                                                            )}
+                                                        </span>
+                                                      `
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </article>
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+        /* =========================================
+           LOAD NEWS
+        ========================================= */
+
+        async function loadNews(
+            silent = false
+        ) {
+
+            if (
+                !silent &&
+                !lastNewsSignature
+            ) {
+
+                newsList.innerHTML = `
+                    <div class="news-loading">
+                        ⏳ در حال دریافت آخرین اخبار VEXON...
+                    </div>
+                `;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/news?limit=50",
+                        {
+                            method:
+                                "GET",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "NEWS_API_ERROR"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !data ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        "NEWS_DATA_ERROR"
+                    );
+
+                }
+
+
+                const news =
+                    Array.isArray(
+                        data.news
+                    )
+                        ? data.news
+                        : [];
+
+
+                const signature =
+                    createSignature(
+                        news
+                    );
+
+
+                /*
+                 * فقط اگر واقعاً چیزی
+                 * تغییر کرده باشد، DOM را
+                 * دوباره می‌سازیم.
+                 */
+
+                if (
+                    signature ===
+                    lastNewsSignature
+                ) {
+
+                    return;
+
+                }
+
+
+                lastNewsSignature =
+                    signature;
+
+
+                renderNews(
+                    news
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "VEXON_NEWS_ERROR:",
+                    error
+                );
+
+
+                /*
+                 * اگر قبلاً خبرها نمایش داده
+                 * شده‌اند، صفحه را خالی نکن.
+                 */
+
+                if (
+                    !lastNewsSignature
+                ) {
+
+                    newsList.innerHTML = `
+                        <div class="news-error">
+                            ❌ ارتباط با سرور اخبار برقرار نشد.
+                            <br>
+                            لطفاً چند لحظه دیگر دوباره امتحان کن.
+                        </div>
+                    `;
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================================
+           FIRST LOAD
+        ========================================= */
+
+        loadNews();
+
+
+        /* =========================================
+           LIVE NEWS UPDATE
+        ========================================= */
+
+        newsUpdateTimer =
+            setInterval(
+                () => {
+
+                    loadNews(
+                        true
+                    );
+
+                },
+                10000
+            );
+
+
+        /* =========================================
+           UPDATE WHEN RETURNING TO TAB
+        ========================================= */
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+
+                    loadNews(
+                        true
+                    );
+
+                }
+
+            }
+        );
+
+
+        window.addEventListener(
+            "focus",
+            () => {
+
+                loadNews(
+                    true
+                );
+
+            }
+        );
+
+
+        /* =========================================
+           CLEANUP
+        ========================================= */
+
+        window.addEventListener(
+            "beforeunload",
+            () => {
+
+                if (
+                    newsUpdateTimer
+                ) {
+
+                    clearInterval(
+                        newsUpdateTimer
+                    );
+
+                }
+
+            }
+        );
+
+    })();
+
+    </script>
 
 </body>
+
 </html>
