@@ -1,0 +1,8 @@
+{
+    "name": "pgame-site",
+    "main": "worker.js",
+    "compatibility_date": "2026-08-29",
+    "assets": {
+        "directory": "."
+    }
+}

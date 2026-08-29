@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="تنظیمات حساب PGame." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | تنظیمات حساب
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main>
+   <section class="profile-section">
+    <div class="profile-page-content">
+     <span class="section-label">
+      ⚙️ PGAME ACCOUNT
+     </span>
+     <h1>
+      تنظیمات حساب،
+      <span>
+       حساب PGame تو.
+      </span>
+     </h1>
+     <p>
+      اینجا می&zwnj;توانی تنظیمات حساب و اتصال&zwnj;های PGame را مدیریت کنی.
+     </p>
+    </div>
+    <div class="profile-big-card">
+     <div class="profile-big-avatar">
+      ⚙️
+     </div>
+     <strong id="settings-username">
+      در حال بارگذاری...
+     </strong>
+     <span id="settings-status">
+      حساب PGame
+     </span>
+     <div style="width:100%;margin-top:22px;padding:16px;border-radius:16px;border:1px solid rgba(0,255,157,.15);background:rgba(0,255,157,.035);text-align:right">
+      <div style="display:flex;justify-content:space-between;gap:12px">
+       <span>
+        👤 نام کاربری
+       </span>
+       <strong id="account-username">
+        &mdash;
+       </strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:12px;margin-top:10px">
+       <span>
+        🔐 وضعیت
+       </span>
+       <strong style="color:#00ff9d">
+        فعال
+       </strong>
+      </div>
+     </div>
+     <div style="margin-top:16px;padding:16px;border-radius:16px;border:1px solid rgba(0,255,157,.15);background:rgba(0,255,157,.035);text-align:right">
+      <strong>
+       🤖 اتصال روبیکا
+      </strong>
+      <p style="font-size:11px;line-height:1.8;color:#8b8b9f">
+       حساب PGame خودت را به
+       <b>
+        @bangame56bot
+       </b>
+       وصل کن.
+      </p>
+      <button class="auth-button" id="rubika-connect-button" style="width:100%" type="button">
+       🤖 ساخت کد اتصال
+      </button>
+      <div id="rubika-code-area" style="display:none;margin-top:14px;text-align:center">
+       <div id="rubika-code" style="font:900 28px monospace;letter-spacing:6px;color:#00ff9d">
+        ------
+       </div>
+       <small>
+        ⏱ اعتبار کد: ۱۰ دقیقه
+       </small>
+      </div>
+      <div id="rubika-message" style="margin-top:8px;font-size:10px">
+      </div>
+     </div>
+     <button class="auth-secondary-button" id="logout-button" style="width:100%;margin-top:16px" type="button">
+      🚪 خروج از حساب
+     </button>
+    </div>
+   </section>
+  </main>
+  <script>
+   (async()=>{try{const r=await fetch('/api/me',{cache:'no-store'});const d=await r.json();if(!r.ok||!d.loggedIn) return location.href='login.html';document.getElementById('settings-username').textContent=d.user.username;document.getElementById('account-username').textContent=d.user.username;document.getElementById('settings-status').textContent='حساب PGame فعال ✅';document.getElementById('rubika-connect-button').addEventListener('click',async()=>{const b=document.getElementById('rubika-connect-button'),a=document.getElementById('rubika-code-area'),c=document.getElementById('rubika-code'),m=document.getElementById('rubika-message');b.disabled=true;b.textContent='⏳ در حال ساخت...';try{const r=await fetch('/api/rubika/create-code',{method:'POST'}),x=await r.json();if(!r.ok||!x.success)throw new Error(x.message||'خطا');c.textContent=x.code;a.style.display='block';m.textContent='✅ کد را برای @bangame56bot بفرست.'}catch(e){m.textContent='❌ '+e.message}finally{b.disabled=false;b.textContent='🤖 ساخت کد اتصال'}});document.getElementById('logout-button').onclick=async()=>{await fetch('/api/logout',{method:'POST'}).catch(()=>{});location.href='login.html'};}catch{location.href='login.html'}})()
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>

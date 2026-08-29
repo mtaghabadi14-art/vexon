@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="noindex,nofollow" name="robots"/>
+  <title>
+   PGame | دسترسی محدود شده
+  </title>
+  <link href="style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+  </div>
+  <main class="banned-page">
+   <section class="banned-card">
+    <div class="banned-icon">
+     🚫
+    </div>
+    <span class="banned-label">
+     PGAME MODERATION
+    </span>
+    <h1>
+     دسترسی حساب
+     <span>
+      محدود شده است
+     </span>
+    </h1>
+    <p class="banned-description">
+     دسترسی کامل این حساب توسط مدیریت PGame محدود شده است.
+    </p>
+    <div class="banned-info">
+     <div class="banned-info-row">
+      <span>
+       👤 حساب
+      </span>
+      <strong id="ban-username">
+       در حال بارگذاری...
+      </strong>
+     </div>
+     <div class="banned-info-row">
+      <span>
+       🚫 نوع محدودیت
+      </span>
+      <strong id="ban-type">
+       بن کامل سایت
+      </strong>
+     </div>
+     <div class="banned-info-row">
+      <span>
+       📋 دلیل
+      </span>
+      <strong id="ban-reason">
+       در حال بارگذاری...
+      </strong>
+     </div>
+     <div class="banned-info-row">
+      <span>
+       ⏱ پایان محدودیت
+      </span>
+      <strong id="ban-until">
+       در حال بارگذاری...
+      </strong>
+     </div>
+    </div>
+    <div class="banned-actions">
+     <a class="banned-button" href="index.html">
+      🏠 صفحه اصلی
+     </a>
+     <button class="banned-button" id="banned-logout" type="button">
+      🚪 خروج از حساب
+     </button>
+    </div>
+    <div id="banned-status" style="margin-top:12px;font-size:10px">
+    </div>
+   </section>
+  </main>
+  <script>
+   (async()=>{const s=document.getElementById('banned-status');try{const r=await fetch('/api/me',{cache:'no-store'}),d=await r.json();if(!r.ok||!d.loggedIn)return location.href='sections/login.html';if(!d.user.banned)return location.href='index.html';if(d.user.ban_type!=='full')return location.href='index.html';document.getElementById('ban-username').textContent=d.user.username;document.getElementById('ban-type').textContent=d.user.ban_type==='full'?'🚫 بن کامل سایت':d.user.ban_type;document.getElementById('ban-reason').textContent=d.user.ban_reason||'نقض قوانین PGame';document.getElementById('ban-until').textContent=d.user.banned_until?new Date(d.user.banned_until).toLocaleString('fa-IR'):'دائمی';}catch{s.textContent='❌ دریافت اطلاعات محدودیت انجام نشد.'}document.getElementById('banned-logout').onclick=async()=>{await fetch('/api/logout',{method:'POST'}).catch(()=>{});location.href='sections/login.html'}})()
+  </script>
+ </body>
+</html>

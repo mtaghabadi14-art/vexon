@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="PGame News؛ آخرین اخبار و اتفاقات PGame." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | اخبار
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main class="news-page">
+   <section class="section">
+    <div class="section-title">
+     <span>
+      📢 PGAME NEWS
+     </span>
+     <h1>
+      آخرین اخبار
+     </h1>
+     <p>
+      آخرین اتفاقات، بازی&zwnj;ها و قابلیت&zwnj;های جدید PGame.
+     </p>
+    </div>
+    <div class="news-list" id="news-list">
+     <div class="news-loading">
+      ⏳ در حال دریافت آخرین اخبار PGame...
+     </div>
+    </div>
+   </section>
+  </main>
+  <script>
+   (function(){const list=document.getElementById('news-list');let loggedIn=false,myReactions={};const reactions=[['love','❤️'],['like','👍'],['laugh','😂'],['wow','😮'],['angry','😡'],['dislike','👎']];const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));function buttons(n){const rc=n.reactions||{};return `<div class="news-reactions">${reactions.map(([k,e])=>`<button class="news-reaction ${myReactions[n.id]===k?'active':''}" data-news-id="${n.id}" data-reaction="${k}" ${loggedIn?'':'disabled'}>${e} <span>${Number(rc[k]||0)}</span></button>`).join('')}${loggedIn?'':'<div class="news-reaction-login">برای ثبت واکنش، وارد حساب PGame شو.</div>'}</div>`}function render(news){if(!news.length){list.innerHTML='<div class="news-empty">📰 هنوز خبری منتشر نشده است.</div>';return}list.innerHTML=news.map(n=>`<article class="news-item"><a class="news-clickable" href="news-detail.html?id=${encodeURIComponent(n.id)}">${n.image_url?`<img class="news-item-image" src="${esc(n.image_url)}" alt="${esc(n.title)}">`:''}<div class="news-icon">📢</div><h3 class="news-item-title">${esc(n.title)}</h3><p class="news-item-text">${esc(n.content)}</p><div class="news-item-meta"><span>🏷️ ${esc(n.category||'general')}</span><span>👤 ${esc(n.author_username||'')}</span><span>📅 ${esc(new Date(n.published_at||n.created_at).toLocaleDateString('fa-IR'))}</span></div></a>${buttons(n)}</article>`).join('')}async function load(){try{const me=await fetch('/api/me').then(r=>r.json()).catch(()=>({}));loggedIn=!!me.loggedIn;const r=await fetch('/api/news?limit=50');const d=await r.json();if(!r.ok||!d.success)throw 0;render(d.news||[])}catch{list.innerHTML='<div class="news-error">❌ ارتباط با سرور اخبار برقرار نشد.</div>'}}list.addEventListener('click',async e=>{const b=e.target.closest('.news-reaction');if(!b)return;e.preventDefault();e.stopPropagation();if(!loggedIn)return location.href='login.html';const id=b.dataset.newsId,k=b.dataset.reaction;const r=await fetch('/api/news/'+id+'/reaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reaction:k})});const d=await r.json();if(r.status===401)return location.href='login.html';if(!r.ok){alert(d.message||'ثبت واکنش ناموفق بود.');return}myReactions[id]=d.my_reaction||null;await load()});load();setInterval(load,10000)})();
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /sections/login.html
+Disallow: /sections/register.html
+Disallow: /sections/profile.html
+
+Sitemap: https://s.vexongame.workers.dev/sitemap.xml

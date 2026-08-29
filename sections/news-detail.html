@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="PGame News." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | خبر
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main class="news-detail-page">
+   <a class="banned-button" href="news.html" style="display:inline-block;margin-bottom:18px">
+    &larr; برگشت به اخبار
+   </a>
+   <article class="news-detail-card" id="news-detail">
+    <div class="news-detail-content">
+     در حال دریافت خبر...
+    </div>
+   </article>
+  </main>
+  <script>
+   (async()=>{const box=document.getElementById('news-detail');const id=new URLSearchParams(location.search).get('id');if(!id){box.innerHTML='<div class="news-detail-content">❌ شناسه خبر پیدا نشد.</div>';return}try{const r=await fetch('/api/news/'+encodeURIComponent(id));const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||'خبر پیدا نشد.');const n=d.news;document.title='PGame | '+n.title;box.innerHTML=`${n.image_url?`<img class="news-detail-image" src="${String(n.image_url).replace(/"/g,'&quot;')}" alt="">`:''}<div class="news-detail-content"><span class="news-detail-category">🏷️ ${String(n.category||'عمومی')}</span><h1 class="news-detail-title">${String(n.title)}</h1><div class="news-detail-meta"><span>👤 ${String(n.author_username||'')}</span><span>📅 ${new Date(n.published_at||n.created_at).toLocaleString('fa-IR')}</span></div><div class="news-detail-text">${String(n.content).replace(/\n/g,'<br>')}</div></div>`}catch(e){box.innerHTML='<div class="news-detail-content">❌ '+String(e.message)+'</div>'}})()
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>

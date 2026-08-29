@@ -1,0 +1,3526 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="PGame؛ دنیای بازی، رقابت و سرگرمی."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        PGame | Play • Compete • Level Up.
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        /* =========================================================
+           HEADER OVERRIDE
+        ========================================================= */
+
+        @media (min-width: 901px) {
+
+            .navbar {
+
+                width:
+                    calc(100% - 30px) !important;
+
+                max-width:
+                    none !important;
+
+                min-height:
+                    86px !important;
+
+                padding:
+                    22px
+                    28px !important;
+            }
+
+        }
+
+
+        /* =========================================================
+           ROADMAP
+        ========================================================= */
+
+        .home-roadmap-section {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                min(
+                    1600px,
+                    97%
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                40px
+                0
+                85px;
+        }
+
+
+        .home-roadmap-title {
+
+            text-align:
+                center;
+
+            margin-bottom:
+                35px;
+        }
+
+
+        .home-roadmap-title > span {
+
+            display:
+                inline-block;
+
+            font-family:
+                Orbitron,
+                Vazirmatn,
+                sans-serif;
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                1.5px;
+
+            opacity:
+                .65;
+
+            margin-bottom:
+                8px;
+        }
+
+
+        .home-roadmap-title h2 {
+
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    29px,
+                    5vw,
+                    46px
+                );
+
+            font-weight:
+                900;
+
+            text-shadow:
+                0 0 24px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .11
+                );
+        }
+
+
+        .home-roadmap-title p {
+
+            margin:
+                10px
+                auto
+                0;
+
+            max-width:
+                820px;
+
+            color:
+                #9a9ab0;
+
+            font-size:
+                12px;
+
+            line-height:
+                2;
+        }
+
+
+        /* =========================================================
+           MAP
+        ========================================================= */
+
+        .pgame-feature-map {
+
+            position:
+                relative;
+
+            width:
+                min(
+                    1380px,
+                    100%
+                );
+
+            height:
+                980px;
+
+            margin:
+                0 auto;
+        }
+
+
+        /* =========================================================
+           DESKTOP SVG
+        ========================================================= */
+
+        .pgame-feature-lines-desktop {
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            z-index:
+                1;
+
+            pointer-events:
+                none;
+
+            overflow:
+                visible;
+        }
+
+
+        /* =========================================================
+           MOBILE SVG
+        ========================================================= */
+
+        .pgame-feature-lines-mobile {
+
+            display:
+                none;
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            z-index:
+                1;
+
+            pointer-events:
+                none;
+
+            overflow:
+                visible;
+        }
+
+
+        /* =========================================================
+           DESKTOP LINE STYLE
+        ========================================================= */
+
+        .pgame-road-line {
+
+            fill:
+                none;
+
+            stroke-width:
+                2.5;
+
+            stroke-linecap:
+                round;
+
+            stroke-linejoin:
+                round;
+
+            vector-effect:
+                non-scaling-stroke;
+
+            stroke-dasharray:
+                9 6;
+
+            animation:
+                pgame-flow
+                4s
+                linear
+                infinite;
+
+            filter:
+                url(#pgame-road-glow);
+        }
+
+
+        .pgame-road-green {
+            stroke:
+                url(#pgame-green);
+        }
+
+
+        .pgame-road-purple {
+            stroke:
+                url(#pgame-purple);
+        }
+
+
+        .pgame-road-cyan {
+            stroke:
+                url(#pgame-cyan);
+        }
+
+
+        .pgame-road-gold {
+            stroke:
+                url(#pgame-gold);
+        }
+
+
+        .pgame-road-red {
+            stroke:
+                url(#pgame-red);
+        }
+
+
+        .pgame-road-point {
+
+            fill:
+                #fff;
+
+            filter:
+                url(#pgame-road-glow);
+
+            animation:
+                pgame-point
+                1.8s
+                ease-in-out
+                infinite;
+        }
+
+
+        .pgame-road-core {
+
+            fill:
+                #fff;
+
+            stroke:
+                var(--green);
+
+            stroke-width:
+                2;
+
+            filter:
+                url(#pgame-road-glow);
+
+            animation:
+                pgame-core
+                2.2s
+                ease-in-out
+                infinite;
+        }
+
+
+        @keyframes pgame-flow {
+
+            to {
+
+                stroke-dashoffset:
+                    -60;
+            }
+
+        }
+
+
+        @keyframes pgame-point {
+
+            0%,
+            100% {
+
+                opacity:
+                    .45;
+            }
+
+            50% {
+
+                opacity:
+                    1;
+            }
+
+        }
+
+
+        @keyframes pgame-core {
+
+            0%,
+            100% {
+
+                opacity:
+                    .70;
+            }
+
+            50% {
+
+                opacity:
+                    1;
+            }
+
+        }
+
+
+        /* =========================================================
+           FEATURE NODES
+        ========================================================= */
+
+        .pgame-feature-nodes {
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            z-index:
+                3;
+        }
+
+
+        .mobile-feature-nodes {
+
+            display:
+                none;
+        }
+
+
+        .pgame-feature-node {
+
+            position:
+                absolute;
+
+            width:
+                150px;
+
+            min-height:
+                136px;
+
+            padding:
+                13px
+                11px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                8px;
+
+            text-align:
+                center;
+
+            border-radius:
+                21px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(
+                        10,
+                        14,
+                        25,
+                        .97
+                    ),
+                    rgba(
+                        5,
+                        8,
+                        16,
+                        .90
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            backdrop-filter:
+                blur(15px);
+
+            box-shadow:
+                0 18px 44px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .30
+                ),
+
+                inset
+                0 0 25px
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .015
+                );
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                );
+
+            transition:
+                transform
+                .25s
+                ease,
+
+                border-color
+                .25s
+                ease,
+
+                box-shadow
+                .25s
+                ease;
+        }
+
+
+        .pgame-feature-node:hover {
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                )
+                translateY(
+                    -5px
+                )
+                scale(
+                    1.025
+                );
+        }
+
+
+        /* =========================================================
+           DESKTOP CARD POSITIONS
+        ========================================================= */
+
+        .desktop-feature-nodes .node-1 {
+
+            left:
+                12%;
+
+            top:
+                11%;
+        }
+
+
+        .desktop-feature-nodes .node-2 {
+
+            left:
+                7%;
+
+            top:
+                30%;
+        }
+
+
+        .desktop-feature-nodes .node-3 {
+
+            left:
+                10%;
+
+            top:
+                50%;
+        }
+
+
+        .desktop-feature-nodes .node-4 {
+
+            left:
+                7%;
+
+            top:
+                70%;
+        }
+
+
+        .desktop-feature-nodes .node-5 {
+
+            left:
+                12%;
+
+            top:
+                89%;
+        }
+
+
+        .desktop-feature-nodes .node-6 {
+
+            left:
+                25%;
+
+            top:
+                16%;
+        }
+
+
+        .desktop-feature-nodes .node-7 {
+
+            left:
+                25%;
+
+            top:
+                84%;
+        }
+
+
+        .desktop-feature-nodes .node-8 {
+
+            left:
+                75%;
+
+            top:
+                16%;
+        }
+
+
+        .desktop-feature-nodes .node-9 {
+
+            left:
+                88%;
+
+            top:
+                11%;
+        }
+
+
+        .desktop-feature-nodes .node-10 {
+
+            left:
+                93%;
+
+            top:
+                30%;
+        }
+
+
+        .desktop-feature-nodes .node-11 {
+
+            left:
+                90%;
+
+            top:
+                50%;
+        }
+
+
+        .desktop-feature-nodes .node-12 {
+
+            left:
+                93%;
+
+            top:
+                70%;
+        }
+
+
+        .desktop-feature-nodes .node-13 {
+
+            left:
+                88%;
+
+            top:
+                89%;
+        }
+
+
+        .desktop-feature-nodes .node-14 {
+
+            left:
+                75%;
+
+            top:
+                84%;
+        }
+
+
+        .desktop-feature-nodes .node-15 {
+
+            left:
+                75%;
+
+            top:
+                50%;
+        }
+
+
+        /* =========================================================
+           CONTROLLER
+        ========================================================= */
+
+        .pgame-feature-core {
+
+            left:
+                50%;
+
+            top:
+                50%;
+
+            width:
+                205px;
+
+            min-height:
+                190px;
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .38
+                );
+
+            box-shadow:
+
+                0 0 55px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .13
+                ),
+
+                0 25px 70px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .42
+                );
+        }
+
+
+        .pgame-core-glow {
+
+            position:
+                absolute;
+
+            width:
+                170px;
+
+            height:
+                170px;
+
+            border-radius:
+                50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .15
+                    ),
+                    transparent
+                    70%
+                );
+
+            filter:
+                blur(
+                    8px
+                );
+        }
+
+
+        .pgame-core-icon {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                68px;
+
+            height:
+                68px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                19px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--blue)
+                );
+
+            color:
+                #03110c;
+
+            font-size:
+                30px;
+
+            box-shadow:
+                0 0 30px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .34
+                );
+        }
+
+
+        .pgame-core-title {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            margin:
+                0;
+
+            font-family:
+                Orbitron,
+                Vazirmatn,
+                sans-serif;
+
+            font-size:
+                17px;
+
+            font-weight:
+                900;
+        }
+
+
+        .pgame-core-text {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            margin:
+                0;
+
+            color:
+                #8fa7a9;
+
+            font-size:
+                8px;
+
+            line-height:
+                1.8;
+        }
+
+
+        /* =========================================================
+           CARD CONTENT
+        ========================================================= */
+
+        .feature-node-icon {
+
+            width:
+                47px;
+
+            height:
+                47px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            font-size:
+                21px;
+
+            flex-shrink:
+                0;
+        }
+
+
+        .feature-node-content h3 {
+
+            margin:
+                0;
+
+            font-size:
+                11px;
+
+            font-weight:
+                900;
+
+            line-height:
+                1.55;
+        }
+
+
+        .feature-node-content p {
+
+            margin:
+                4px
+                0
+                0;
+
+            color:
+                #818398;
+
+            font-size:
+                7.5px;
+
+            line-height:
+                1.9;
+        }
+
+
+        /* =========================================================
+           COLORS
+        ========================================================= */
+
+        .node-green {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .22
+                );
+        }
+
+
+        .node-purple {
+
+            border-color:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .25
+                );
+        }
+
+
+        .node-cyan {
+
+            border-color:
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .23
+                );
+        }
+
+
+        .node-gold {
+
+            border-color:
+                rgba(
+                    255,
+                    217,
+                    90,
+                    .23
+                );
+        }
+
+
+        .node-red {
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .23
+                );
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .home-roadmap-section {
+
+                width:
+                    94%;
+
+                padding:
+                    25px
+                    0
+                    70px;
+            }
+
+
+            .home-roadmap-title {
+
+                margin-bottom:
+                    24px;
+            }
+
+
+            .home-roadmap-title h2 {
+
+                font-size:
+                    28px;
+            }
+
+
+            .home-roadmap-title p {
+
+                font-size:
+                    10px;
+            }
+
+
+            .pgame-feature-map {
+
+                width:
+                    min(
+                        390px,
+                        100%
+                    );
+
+                height:
+                    2700px;
+
+                margin:
+                    0 auto;
+            }
+
+
+            .pgame-feature-lines-desktop {
+
+                display:
+                    none;
+            }
+
+
+            .pgame-feature-lines-mobile {
+
+                display:
+                    block;
+            }
+
+
+            .desktop-feature-nodes {
+
+                display:
+                    none;
+            }
+
+
+            .mobile-feature-nodes {
+
+                display:
+                    block;
+            }
+
+
+            .pgame-feature-node {
+
+                width:
+                    168px;
+
+                min-height:
+                    112px;
+
+                padding:
+                    11px
+                    9px;
+
+                border-radius:
+                    19px;
+
+                gap:
+                    7px;
+            }
+
+
+            .feature-node-icon {
+
+                width:
+                    41px;
+
+                height:
+                    41px;
+
+                border-radius:
+                    13px;
+
+                font-size:
+                    19px;
+            }
+
+
+            .feature-node-content h3 {
+
+                font-size:
+                    10px;
+            }
+
+
+            .feature-node-content p {
+
+                font-size:
+                    6.7px;
+
+                line-height:
+                    1.8;
+            }
+
+
+            /* =============================================
+               EXACT MOBILE POSITIONS
+            ============================================== */
+
+
+            .mobile-feature-nodes .node-1 {
+
+                left:
+                    26% !important;
+
+                top:
+                    3%;
+            }
+
+
+            .mobile-feature-nodes .node-2 {
+
+                left:
+                    74% !important;
+
+                top:
+                    9%;
+            }
+
+
+            .mobile-feature-nodes .node-3 {
+
+                left:
+                    26% !important;
+
+                top:
+                    15%;
+            }
+
+
+            .mobile-feature-nodes .node-4 {
+
+                left:
+                    74% !important;
+
+                top:
+                    21%;
+            }
+
+
+            .mobile-feature-nodes .node-5 {
+
+                left:
+                    26% !important;
+
+                top:
+                    27%;
+            }
+
+
+            .mobile-feature-nodes .node-6 {
+
+                left:
+                    74% !important;
+
+                top:
+                    33%;
+            }
+
+
+            .mobile-feature-nodes .node-7 {
+
+                left:
+                    26% !important;
+
+                top:
+                    39%;
+            }
+
+
+            .mobile-feature-nodes .node-8 {
+
+                left:
+                    74% !important;
+
+                top:
+                    45%;
+            }
+
+
+            .mobile-feature-nodes .node-9 {
+
+                left:
+                    26% !important;
+
+                top:
+                    51%;
+            }
+
+
+            .mobile-feature-nodes .node-10 {
+
+                left:
+                    74% !important;
+
+                top:
+                    57%;
+            }
+
+
+            .mobile-feature-nodes .node-11 {
+
+                left:
+                    26% !important;
+
+                top:
+                    63%;
+            }
+
+
+            .mobile-feature-nodes .node-12 {
+
+                left:
+                    74% !important;
+
+                top:
+                    69%;
+            }
+
+
+            .mobile-feature-nodes .node-13 {
+
+                left:
+                    26% !important;
+
+                top:
+                    75%;
+            }
+
+
+            .mobile-feature-nodes .node-14 {
+
+                left:
+                    74% !important;
+
+                top:
+                    81%;
+            }
+
+
+            .mobile-feature-nodes .node-15 {
+
+                left:
+                    26% !important;
+
+                top:
+                    87%;
+            }
+
+
+            /* =============================================
+               CONTROLLER AFTER ALL CARDS
+            ============================================== */
+
+            .mobile-feature-nodes .pgame-feature-core {
+
+                left:
+                    50% !important;
+
+                top:
+                    96% !important;
+
+                width:
+                    180px;
+
+                min-height:
+                    145px;
+
+                z-index:
+                    5;
+            }
+
+
+            .pgame-core-icon {
+
+                width:
+                    56px;
+
+                height:
+                    56px;
+
+                border-radius:
+                    16px;
+
+                font-size:
+                    25px;
+            }
+
+
+            .pgame-core-title {
+
+                font-size:
+                    14px;
+            }
+
+
+            .pgame-core-text {
+
+                font-size:
+                    7px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .pgame-feature-map {
+
+                height:
+                    2580px;
+            }
+
+
+            .pgame-feature-node {
+
+                width:
+                    162px;
+
+                min-height:
+                    106px;
+            }
+
+
+            .feature-node-icon {
+
+                width:
+                    39px;
+
+                height:
+                    39px;
+
+                font-size:
+                    18px;
+            }
+
+
+            .feature-node-content p {
+
+                font-size:
+                    6.4px;
+            }
+
+        }
+
+
+        @media (max-width: 520px) {
+
+            .pgame-feature-map {
+
+                height:
+                    2480px;
+            }
+
+
+            .pgame-feature-node {
+
+                width:
+                    156px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================== -->
+
+    <div
+        class="background-effects"
+        aria-hidden="true"
+    >
+
+        <div class="nebula nebula-purple"></div>
+        <div class="nebula nebula-green"></div>
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+        <div class="stars stars-two"></div>
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+        <div class="planet planet-blue"></div>
+
+        <div class="city">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="navbar">
+
+
+        <button
+            type="button"
+            id="vexon-menu-trigger"
+            class="vexon-global-menu-trigger"
+            aria-label="باز کردن منوی PGame"
+            title="منوی PGame"
+        >
+            ☰
+        </button>
+
+
+        <a
+            href="index.html"
+            class="logo"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </a>
+
+
+        <nav class="nav-links"></nav>
+
+
+        <a
+            href="sections/profile.html"
+            class="header-profile"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+
+            <div>
+
+                <strong>
+                    پروفایل
+                </strong>
+
+                <span>
+                    مشاهده پروفایل
+                </span>
+
+            </div>
+
+
+            <b>
+                ‹
+            </b>
+
+        </a>
+
+
+    </header>
+
+
+    <main>
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section class="hero">
+
+
+            <div class="hero-content">
+
+
+                <img
+                    class="vexon-main-logo"
+                    src="assets/Neon PGame Gaming Banner.png"
+                    alt="PGame Gaming Banner"
+                >
+
+
+                <h1 class="neon-slogan">
+
+                    بازی کن.
+
+                    <span>
+                        رقابت کن.
+                    </span>
+
+                    <strong>
+                        برنده شو.
+                    </strong>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    به دنیای PGame خوش آمدی؛
+                    جایی برای بازی، رقابت و تجربه‌های جدید.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+
+                    <a
+                        href="sections/games.html"
+                        class="hero-button green-button"
+                    >
+
+                        <span class="button-icon">
+                            🎮
+                        </span>
+
+
+                        <span>
+
+                            <strong>
+                                شروع بازی
+                            </strong>
+
+
+                            <small>
+                                همین حالا وارد دنیای بازی شو
+                            </small>
+
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="sections/cafe.html"
+                        class="hero-button purple-button"
+                    >
+
+                        <span class="button-icon">
+                            ☕
+                        </span>
+
+
+                        <span>
+
+                            <strong>
+                                ورود به کافه
+                            </strong>
+
+
+                            <small>
+                                با دوستانت رقابت کن
+                            </small>
+
+                        </span>
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="hero-visual">
+
+
+                <div class="bubble-glow"></div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             PGAME UNIVERSE
+        ====================================================== -->
+
+        <section
+            class="home-roadmap-section"
+            aria-label="ویژگی‌های PGame"
+        >
+
+
+            <div class="home-roadmap-title">
+
+
+                <span>
+                    🌐 PGAME UNIVERSE
+                </span>
+
+
+                <h2>
+                    دنیای PGame
+                </h2>
+
+
+                <p>
+                    تمام قابلیت‌های PGame در یک شبکه نئونی
+                    به یک هسته مرکزی متصل شده‌اند.
+                </p>
+
+
+            </div>
+
+
+            <div class="pgame-feature-map">
+
+
+                <!-- =================================================
+                     DESKTOP CONNECTIONS
+                ================================================== -->
+
+                <svg
+                    class="
+                        pgame-feature-lines-desktop
+                    "
+                    viewBox="0 0 1380 980"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
+
+
+                    <defs>
+
+
+                        <filter
+                            id="pgame-road-glow"
+                            x="-100%"
+                            y="-100%"
+                            width="300%"
+                            height="300%"
+                        >
+
+                            <feGaussianBlur
+                                stdDeviation="3.5"
+                                result="blur"
+                            />
+
+
+                            <feMerge>
+
+                                <feMergeNode in="blur" />
+
+                                <feMergeNode
+                                    in="SourceGraphic"
+                                />
+
+                            </feMerge>
+
+                        </filter>
+
+
+                        <linearGradient
+                            id="pgame-green"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#00ff9d"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#00eaff"
+                            />
+
+                        </linearGradient>
+
+
+                        <linearGradient
+                            id="pgame-purple"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#744dff"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#dc5cff"
+                            />
+
+                        </linearGradient>
+
+
+                        <linearGradient
+                            id="pgame-cyan"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#00eaff"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#2188ff"
+                            />
+
+                        </linearGradient>
+
+
+                        <linearGradient
+                            id="pgame-gold"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#ffd95a"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#ff9b00"
+                            />
+
+                        </linearGradient>
+
+
+                        <linearGradient
+                            id="pgame-red"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#ff3f5a"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#ff784d"
+                            />
+
+                        </linearGradient>
+
+
+                    </defs>
+
+
+                    <!-- =================================================
+                         LEFT ROUTES
+                    ================================================== -->
+
+
+                    <path
+                        d="
+                            M165 108
+                            H295
+                            L420 260
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-green
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M95 294
+                            H250
+                            L400 360
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-purple
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M125 490
+                            H285
+                            L430 450
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-cyan
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M95 686
+                            H250
+                            L400 620
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-gold
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M165 872
+                            H295
+                            L420 720
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-red
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M345 170
+                            L430 250
+                            L520 350
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-cyan
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M345 810
+                            L430 730
+                            L520 630
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-purple
+                        "
+                    />
+
+
+                    <!-- =================================================
+                         RIGHT ROUTES
+                    ================================================== -->
+
+
+                    <path
+                        d="
+                            M1035 170
+                            L950 250
+                            L860 350
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-red
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1215 108
+                            H1085
+                            L960 260
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-green
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1285 294
+                            H1130
+                            L980 360
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-purple
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1255 490
+                            H1095
+                            L950 450
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-cyan
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1285 686
+                            H1130
+                            L980 620
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-gold
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1215 872
+                            H1085
+                            L960 720
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-red
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1035 810
+                            L950 730
+                            L860 630
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-green
+                        "
+                    />
+
+
+                    <path
+                        d="
+                            M1080 490
+                            H920
+                            L790 490
+                            L690 490
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-gold
+                        "
+                    />
+
+
+                    <circle
+                        cx="690"
+                        cy="490"
+                        r="9"
+                        class="pgame-road-core"
+                    />
+
+
+                    <circle
+                        cx="295"
+                        cy="108"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="250"
+                        cy="294"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="285"
+                        cy="490"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="250"
+                        cy="686"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="295"
+                        cy="872"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="1085"
+                        cy="108"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="1130"
+                        cy="294"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="1095"
+                        cy="490"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="1130"
+                        cy="686"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="1085"
+                        cy="872"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                </svg>
+
+
+                <!-- =================================================
+                     MOBILE SVG
+                ================================================== -->
+
+                <svg
+                    class="
+                        pgame-feature-lines-mobile
+                    "
+                    viewBox="0 0 700 2700"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
+
+
+                    <defs>
+
+
+                        <filter
+                            id="pgame-mobile-glow"
+                            x="-100%"
+                            y="-100%"
+                            width="300%"
+                            height="300%"
+                        >
+
+                            <feGaussianBlur
+                                stdDeviation="3.5"
+                                result="blur"
+                            />
+
+
+                            <feMerge>
+
+                                <feMergeNode
+                                    in="blur"
+                                />
+
+                                <feMergeNode
+                                    in="SourceGraphic"
+                                />
+
+                            </feMerge>
+
+                        </filter>
+
+
+                    </defs>
+
+
+                    <!--
+                        مسیر کاملاً پیوسته:
+                        کارت ۱
+                        ↓
+                        کارت ۲
+                        ↓
+                        ...
+                        ↓
+                        کارت ۱۵
+                        ↓
+                        🎮 PGame
+                    -->
+
+                    <path
+                        d="
+                            M175 42
+
+                            V82
+                            H525
+                            V175
+
+                            H175
+                            V337
+
+                            H525
+                            V499
+
+                            H175
+                            V661
+
+                            H525
+                            V823
+
+                            H175
+                            V985
+
+                            H525
+                            V1147
+
+                            H175
+                            V1309
+
+                            H525
+                            V1471
+
+                            H175
+                            V1633
+
+                            H525
+                            V1795
+
+                            H175
+                            V1957
+
+                            H525
+                            V2119
+
+                            H175
+                            V2281
+
+                            H525
+                            V2443
+
+                            H175
+                            V2605
+
+                            H350
+                            V2665
+                        "
+                        class="
+                            pgame-road-line
+                            pgame-road-green
+                        "
+                        style="
+                            filter:url(#pgame-mobile-glow);
+                            stroke-width:3;
+                        "
+                    />
+
+
+                    <!-- خط دوم بسیار ظریف -->
+
+                    <path
+                        d="
+                            M175 42
+
+                            V82
+                            H525
+                            V175
+
+                            H175
+                            V337
+
+                            H525
+                            V499
+
+                            H175
+                            V661
+
+                            H525
+                            V823
+
+                            H175
+                            V985
+
+                            H525
+                            V1147
+
+                            H175
+                            V1309
+
+                            H525
+                            V1471
+
+                            H175
+                            V1633
+
+                            H525
+                            V1795
+
+                            H175
+                            V1957
+
+                            H525
+                            V2119
+
+                            H175
+                            V2281
+
+                            H525
+                            V2443
+
+                            H175
+                            V2605
+
+                            H350
+                            V2665
+                        "
+                        class="
+                            pgame-road-line
+                        "
+                        style="
+                            stroke:#00eaff;
+                            opacity:.28;
+                            stroke-width:1;
+                            stroke-dasharray:3 8;
+                            filter:none;
+                            animation:none;
+                        "
+                    />
+
+
+                    <!-- نقاط اتصال -->
+
+                    <circle
+                        cx="175"
+                        cy="42"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="175"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="337"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="499"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="661"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="823"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="985"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="1147"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="1309"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="1471"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="1633"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="1795"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="1957"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="2119"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="175"
+                        cy="2281"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="525"
+                        cy="2443"
+                        r="4"
+                        class="pgame-road-point"
+                    />
+
+
+                    <circle
+                        cx="350"
+                        cy="2665"
+                        r="8"
+                        class="pgame-road-core"
+                    />
+
+
+                </svg>
+
+
+                <!-- =================================================
+                     DESKTOP CARDS
+                ================================================== -->
+
+                <div
+                    class="
+                        pgame-feature-nodes
+                        desktop-feature-nodes
+                    "
+                >
+
+
+                    <article class="pgame-feature-node node-1 node-green">
+
+                        <div class="feature-node-icon">
+                            🏆
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                لیدربورد
+                            </h3>
+
+                            <p>
+                                رتبه‌ات را بین بازیکنان ببین
+                                و برای رسیدن به جایگاه بالاتر تلاش کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-2 node-purple">
+
+                        <div class="feature-node-icon">
+                            ⚔️
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                رقابت
+                            </h3>
+
+                            <p>
+                                با دیگر گیمرها رقابت کن
+                                و مهارتت را به نمایش بگذار.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-3 node-cyan">
+
+                        <div class="feature-node-icon">
+                            🎯
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                مأموریت‌ها
+                            </h3>
+
+                            <p>
+                                چالش‌ها را انجام بده
+                                و امتیاز بیشتری کسب کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-4 node-gold">
+
+                        <div class="feature-node-icon">
+                            🪙
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                سکه و جوایز
+                            </h3>
+
+                            <p>
+                                فعالیت کن، سکه جمع کن
+                                و پاداش دریافت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-5 node-red">
+
+                        <div class="feature-node-icon">
+                            🔥
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                رویدادها
+                            </h3>
+
+                            <p>
+                                در رویدادهای ویژه شرکت کن
+                                و فرصت‌های جدید بساز.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-6 node-cyan">
+
+                        <div class="feature-node-icon">
+                            ⭐
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                دستاوردها
+                            </h3>
+
+                            <p>
+                                موفقیت‌هایت را ثبت کن
+                                و افتخارات تازه به دست بیاور.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-7 node-purple">
+
+                        <div class="feature-node-icon">
+                            👥
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                دوستان
+                            </h3>
+
+                            <p>
+                                دوستان جدید پیدا کن
+                                و با آن‌ها بازی و رقابت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-8 node-red">
+
+                        <div class="feature-node-icon">
+                            📰
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                اخبار
+                            </h3>
+
+                            <p>
+                                تازه‌ترین خبرهای دنیای گیم
+                                و اتفاقات PGame را دنبال کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-9 node-green">
+
+                        <div class="feature-node-icon">
+                            💬
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                پیام‌رسان
+                            </h3>
+
+                            <p>
+                                با دوستانت گفتگو کن
+                                و تجربه‌هایت را به اشتراک بگذار.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-10 node-purple">
+
+                        <div class="feature-node-icon">
+                            🎮
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                بازی‌ها
+                            </h3>
+
+                            <p>
+                                بازی‌های موردعلاقه‌ات را پیدا کن
+                                و تجربه‌های تازه داشته باش.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-11 node-cyan">
+
+                        <div class="feature-node-icon">
+                            ☕
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                کافه
+                            </h3>
+
+                            <p>
+                                با گیمرهای دیگر آشنا شو
+                                و در فضای اجتماعی همراه باش.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-12 node-gold">
+
+                        <div class="feature-node-icon">
+                            🛒
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                فروشگاه
+                            </h3>
+
+                            <p>
+                                آیتم‌ها و امکانات مختلف
+                                را بررسی و انتخاب کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-13 node-red">
+
+                        <div class="feature-node-icon">
+                            🔔
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                اعلان‌ها
+                            </h3>
+
+                            <p>
+                                از پیام‌ها و اتفاقات مهم
+                                PGame باخبر بمان.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-14 node-green">
+
+                        <div class="feature-node-icon">
+                            📊
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                آمار و پیشرفت
+                            </h3>
+
+                            <p>
+                                عملکردت را بررسی کن
+                                و مسیر رشدت را دنبال کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-15 node-gold">
+
+                        <div class="feature-node-icon">
+                            🛡️
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                امنیت حساب
+                            </h3>
+
+                            <p>
+                                از اطلاعات حسابت محافظت کن
+                                و با خیال راحت از PGame استفاده کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- DESKTOP CONTROLLER -->
+
+                    <article
+                        class="
+                            pgame-feature-node
+                            pgame-feature-core
+                        "
+                    >
+
+                        <div class="pgame-core-glow"></div>
+
+                        <div class="pgame-core-icon">
+                            🎮
+                        </div>
+
+                        <h3 class="pgame-core-title">
+                            PGame
+                        </h3>
+
+                        <p class="pgame-core-text">
+                            Play • Compete • Level Up
+                        </p>
+
+                    </article>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     MOBILE CARDS
+                ================================================== -->
+
+                <div
+                    class="
+                        pgame-feature-nodes
+                        mobile-feature-nodes
+                    "
+                >
+
+
+                    <article class="pgame-feature-node node-1 node-green">
+
+                        <div class="feature-node-icon">
+                            🏆
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                لیدربورد
+                            </h3>
+
+                            <p>
+                                رتبه‌ات را ببین
+                                و برای پیشرفت تلاش کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-2 node-purple">
+
+                        <div class="feature-node-icon">
+                            ⚔️
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                رقابت
+                            </h3>
+
+                            <p>
+                                با گیمرهای دیگر رقابت
+                                و مهارتت را ثابت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-3 node-cyan">
+
+                        <div class="feature-node-icon">
+                            🎯
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                مأموریت‌ها
+                            </h3>
+
+                            <p>
+                                چالش‌ها را کامل کن
+                                و امتیاز جمع کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-4 node-gold">
+
+                        <div class="feature-node-icon">
+                            🪙
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                سکه و جوایز
+                            </h3>
+
+                            <p>
+                                سکه جمع کن
+                                و پاداش دریافت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-5 node-red">
+
+                        <div class="feature-node-icon">
+                            🔥
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                رویدادها
+                            </h3>
+
+                            <p>
+                                در رویدادهای ویژه
+                                PGame شرکت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-6 node-cyan">
+
+                        <div class="feature-node-icon">
+                            ⭐
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                دستاوردها
+                            </h3>
+
+                            <p>
+                                موفقیت‌هایت را ثبت
+                                و افتخاراتت را بساز.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-7 node-purple">
+
+                        <div class="feature-node-icon">
+                            👥
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                دوستان
+                            </h3>
+
+                            <p>
+                                دوستان جدید پیدا کن
+                                و با آن‌ها بازی کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-8 node-red">
+
+                        <div class="feature-node-icon">
+                            📰
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                اخبار
+                            </h3>
+
+                            <p>
+                                خبرهای تازه دنیای گیم
+                                را دنبال کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-9 node-green">
+
+                        <div class="feature-node-icon">
+                            💬
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                پیام‌رسان
+                            </h3>
+
+                            <p>
+                                با دوستانت گفتگو کن
+                                و تجربه‌ها را به اشتراک بگذار.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-10 node-purple">
+
+                        <div class="feature-node-icon">
+                            🎮
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                بازی‌ها
+                            </h3>
+
+                            <p>
+                                بازی‌های جدید پیدا کن
+                                و تجربه‌های تازه داشته باش.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-11 node-cyan">
+
+                        <div class="feature-node-icon">
+                            ☕
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                کافه
+                            </h3>
+
+                            <p>
+                                با دیگر گیمرها آشنا شو
+                                و گفتگو کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-12 node-gold">
+
+                        <div class="feature-node-icon">
+                            🛒
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                فروشگاه
+                            </h3>
+
+                            <p>
+                                آیتم‌ها و امکانات مختلف
+                                را بررسی کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-13 node-red">
+
+                        <div class="feature-node-icon">
+                            🔔
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                اعلان‌ها
+                            </h3>
+
+                            <p>
+                                اتفاقات مهم PGame
+                                را از دست نده.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-14 node-green">
+
+                        <div class="feature-node-icon">
+                            📊
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                آمار و پیشرفت
+                            </h3>
+
+                            <p>
+                                عملکردت را بررسی
+                                و مسیر رشدت را دنبال کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="pgame-feature-node node-15 node-gold">
+
+                        <div class="feature-node-icon">
+                            🛡️
+                        </div>
+
+                        <div class="feature-node-content">
+
+                            <h3>
+                                امنیت حساب
+                            </h3>
+
+                            <p>
+                                از اطلاعات حسابت
+                                محافظت کن.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- MOBILE CONTROLLER -->
+
+                    <article
+                        class="
+                            pgame-feature-node
+                            pgame-feature-core
+                        "
+                    >
+
+                        <div class="pgame-core-glow"></div>
+
+                        <div class="pgame-core-icon">
+                            🎮
+                        </div>
+
+                        <h3 class="pgame-core-title">
+                            PGame
+                        </h3>
+
+                        <p class="pgame-core-text">
+                            Play • Compete • Level Up
+                        </p>
+
+                    </article>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             COMMUNITY
+        ====================================================== -->
+
+        <section
+            class="
+                section
+                home-community-section
+            "
+        >
+
+
+            <div class="section-title">
+
+                <span>
+                    🌐 PGAME COMMUNITY
+                </span>
+
+                <h2>
+                    جامعه PGame
+                </h2>
+
+                <p>
+                    تعداد بازیکنان و اکانت‌های ساخته‌شده را ببین.
+                </p>
+
+            </div>
+
+
+            <div class="games-grid">
+
+
+                <div class="game-box">
+
+                    <span class="game-tag">
+                        کل اکانت‌ها
+                    </span>
+
+                    <h3
+                        id="community-users"
+                    >
+                        —
+                    </h3>
+
+                    <p>
+                        تعداد کل حساب‌های PGame
+                    </p>
+
+                </div>
+
+
+                <div class="game-box">
+
+                    <span class="game-tag">
+                        اکانت‌های امروز
+                    </span>
+
+                    <h3
+                        id="community-today"
+                    >
+                        —
+                    </h3>
+
+                    <p>
+                        حساب‌های ساخته‌شده امروز
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                id="community-stats-status"
+                class="community-stats-status"
+            ></div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer>
+
+
+        <div class="footer-logo">
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </div>
+
+
+        <p>
+            PLAY • COMPETE • LEVEL UP.
+        </p>
+
+
+        <div class="footer-socials">
+
+            <span>
+                ✈️
+            </span>
+
+            <span>
+                ◎
+            </span>
+
+            <span>
+                ▶
+            </span>
+
+        </div>
+
+
+        <a
+            href="sections/creators.html"
+            class="creators-link"
+        >
+            👨‍💻 سازندگان PGame
+        </a>
+
+
+        <div>
+
+            ساخته شده با 💚 برای گیمرها
+
+            <br>
+
+            © 2026 PGame — همه حقوق محفوظ است.
+
+        </div>
+
+
+    </footer>
+
+
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================== -->
+
+    <script src="script.js"></script>
+
+    <script src="vexon-nav.js"></script>
+
+
+    <script>
+
+        (function () {
+
+            "use strict";
+
+
+            const usersElement =
+                document.getElementById(
+                    "community-users"
+                );
+
+
+            const todayElement =
+                document.getElementById(
+                    "community-today"
+                );
+
+
+            const statusElement =
+                document.getElementById(
+                    "community-stats-status"
+                );
+
+
+            function formatNumber(value) {
+
+                return Number(
+                    value ?? 0
+                ).toLocaleString(
+                    "fa-IR"
+                );
+
+            }
+
+
+            async function loadCommunityStats() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/community/stats",
+                            {
+                                method:
+                                    "GET",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "دریافت آمار انجام نشد."
+                        );
+
+                    }
+
+
+                    usersElement.textContent =
+                        formatNumber(
+                            data.total_users
+                        );
+
+
+                    todayElement.textContent =
+                        formatNumber(
+                            data.today_users
+                        );
+
+
+                    statusElement.textContent =
+                        "آمار هر ۱۰ ثانیه بروزرسانی می‌شود.";
+
+
+                } catch (error) {
+
+                    console.error(
+                        "COMMUNITY_STATS_ERROR",
+                        error
+                    );
+
+
+                    statusElement.textContent =
+                        "آمار فعلاً در دسترس نیست.";
+
+                }
+
+            }
+
+
+            loadCommunityStats();
+
+
+            setInterval(
+                loadCommunityStats,
+                10000
+            );
+
+
+        })();
+
+    </script>
+
+
+</body>
+
+</html>

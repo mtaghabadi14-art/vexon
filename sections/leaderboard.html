@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="PGame Leaderboard؛ رتبه&zwnj;بندی بازیکنان." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | لیدربورد
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main>
+   <section class="leaderboard-page">
+    <div class="leaderboard-title">
+     <span class="leaderboard-label">
+      PGAME &bull; COMPETE
+     </span>
+     <h1>
+      🏆
+      <span>
+       لیدربورد
+      </span>
+     </h1>
+     <p>
+      با بازیکنان PGame رقابت کن و جایگاهت را در بین بهترین&zwnj;ها پیدا کن.
+     </p>
+    </div>
+    <div class="leaderboard-tabs">
+     <button class="leaderboard-tab active" data-type="level">
+      🏆 Level
+     </button>
+     <button class="leaderboard-tab" data-type="coins">
+      🪙 Coins
+     </button>
+    </div>
+    <section class="leaderboard-panel">
+     <div class="leaderboard-header">
+      <span>
+       رتبه
+      </span>
+      <span>
+       بازیکن
+      </span>
+      <span id="value-title" style="text-align:left">
+       Level
+      </span>
+     </div>
+     <div id="leaderboard-list">
+     </div>
+    </section>
+    <div style="text-align:center;margin-top:14px">
+     <button class="leaderboard-tab" id="refresh">
+      🔄 بروزرسانی
+     </button>
+    </div>
+   </section>
+  </main>
+  <script>
+   (function(){let type='level';const list=document.getElementById('leaderboard-list');const title=document.getElementById('value-title');const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));async function load(){list.innerHTML='<div class="leaderboard-state">⏳ در حال دریافت لیدربورد...</div>';try{const r=await fetch('/api/leaderboard?type='+type+'&limit=50');const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||'خطا');const p=d.leaderboard||[];list.innerHTML=p.map(x=>`<article class="leaderboard-row"><div>#${x.rank}</div><div class="leaderboard-user"><div class="leaderboard-avatar">👤</div><div><span class="leaderboard-username">${esc(x.username)}</span><small class="leaderboard-subtitle">بازیکن PGame</small></div></div><div class="leaderboard-value ${type==='coins'?'coins':'level'}">${type==='coins'?'🪙 '+Number(x.coins||0).toLocaleString('en-US'):'LV '+Number(x.level||1)}</div></article>`).join('')||'<div class="leaderboard-state">🏆 هنوز بازیکنی برای نمایش وجود ندارد.</div>'}catch(e){list.innerHTML='<div class="leaderboard-state">❌ '+esc(e.message)+'</div>'}}document.querySelectorAll('.leaderboard-tab[data-type]').forEach(b=>b.onclick=()=>{type=b.dataset.type;document.querySelectorAll('.leaderboard-tab[data-type]').forEach(x=>x.classList.toggle('active',x===b));title.textContent=type==='coins'?'Coins':'Level';load()});document.getElementById('refresh').onclick=load;load();setInterval(load,30000)})();
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>

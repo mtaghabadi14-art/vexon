@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="ورود به حساب PGame." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | ورود
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main>
+   <section class="auth-section">
+    <div class="auth-card">
+     <div class="auth-logo">
+      P
+      <span style="color:#744dff">
+       G
+      </span>
+     </div>
+     <span class="auth-label">
+      ✦ PGAME ACCOUNT
+     </span>
+     <h1>
+      ورود
+     </h1>
+     <p class="auth-description">
+      دوباره وارد دنیای PGame شو.
+     </p>
+     <form class="auth-form" id="login-form">
+      <label for="login-username">
+       نام کاربری
+      </label>
+      <div class="auth-input-wrap">
+       <span>
+        👤
+       </span>
+       <input autocomplete="username" id="login-username" placeholder="نام کاربری" required="" type="text"/>
+      </div>
+      <label for="login-password">
+       رمز عبور
+      </label>
+      <div class="auth-input-wrap">
+       <span>
+        🔒
+       </span>
+       <input autocomplete="current-password" id="login-password" placeholder="رمز عبور" required="" type="password"/>
+      </div>
+      <button class="auth-button" type="submit">
+       🚀 ورود به PGame
+      </button>
+     </form>
+     <div class="auth-divider">
+      <span>
+      </span>
+      <small>
+       حساب نداری؟
+      </small>
+      <span>
+      </span>
+     </div>
+     <a class="auth-secondary-button" href="register.html">
+      ساخت حساب جدید
+     </a>
+    </div>
+   </section>
+  </main>
+  <script>
+   document.getElementById('login-form').addEventListener('submit',async e=>{e.preventDefault();const username=document.getElementById('login-username').value.trim(),password=document.getElementById('login-password').value;try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});const d=await r.json();if(!r.ok){alert(d.message||'ورود ناموفق بود.');return}alert(d.message||'ورود موفق بود.');location.href='profile.html'}catch{alert('ارتباط با سرور برقرار نشد.')}})
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>

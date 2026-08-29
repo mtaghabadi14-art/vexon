@@ -1,0 +1,7 @@
+{
+    "name": "PGAME_SITE",
+    "private": true,
+    "devDependencies": {
+        "wrangler": "^4.125.0"
+    }
+}

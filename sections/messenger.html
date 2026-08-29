@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+  <meta content="پیام&zwnj;رسان رسمی PGame." name="description"/>
+  <meta content="#03040a" name="theme-color"/>
+  <title>
+   PGame | پیام&zwnj;رسان
+  </title>
+  <link href="../style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-hidden="true" class="background-effects">
+   <div class="nebula nebula-purple">
+   </div>
+   <div class="nebula nebula-green">
+   </div>
+   <div class="nebula nebula-blue">
+   </div>
+   <div class="stars stars-one">
+   </div>
+   <div class="stars stars-two">
+   </div>
+   <div class="stars stars-three">
+   </div>
+   <div class="planet planet-purple">
+   </div>
+   <div class="planet planet-blue">
+   </div>
+  </div>
+  <header class="navbar">
+   <a class="logo" href="../index.html">
+    <span class="logo-p">
+     P
+    </span>
+    <span class="logo-rest">
+     Game
+    </span>
+   </a>
+   <nav class="nav-links">
+   </nav>
+   <a class="header-profile" href="profile.html">
+    <div class="header-profile-icon">
+     👤
+    </div>
+    <div class="header-player-info">
+     <strong>
+      ...
+     </strong>
+     <span>
+      در حال بررسی حساب...
+     </span>
+    </div>
+    <b>
+     &lsaquo;
+    </b>
+   </a>
+  </header>
+  <main class="messenger-page" style="position:relative;z-index:2">
+   <section style="width:min(1200px,94%);margin:20px auto">
+    <div style="display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:14px">
+     <div>
+      <span class="section-label">
+       💬 PGAME MESSENGER
+      </span>
+      <h1 style="margin:0">
+       پیام&zwnj;رسان
+      </h1>
+      <p style="color:#77778c;font-size:10px">
+       با بازیکنان PGame گفتگو کن.
+      </p>
+     </div>
+     <button class="hero-button" id="new-chat-button">
+      ✎ گفتگوی جدید
+     </button>
+    </div>
+    <div class="games-grid" id="conversation-wall">
+     <div class="game-box" style="grid-column:1/-1;text-align:center">
+      ⏳ در حال دریافت گفتگوها...
+     </div>
+    </div>
+   </section>
+  </main>
+  <div id="chat-overlay" style="display:none;position:fixed;inset:0;z-index:90000;background:rgba(0,0,0,.7);padding:18px">
+   <section style="width:min(1050px,100%);height:100%;margin:auto;display:flex;flex-direction:column;background:#05080f;border:1px solid rgba(255,255,255,.08);border-radius:22px;overflow:hidden">
+    <header style="display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)">
+     <button class="admin-button admin-button-secondary" id="close-chat">
+      &times;
+     </button>
+     <div>
+      <strong id="chat-title">
+       گفتگو
+      </strong>
+      <span style="display:block;font-size:8px;color:#77778c">
+       گفتگوی خصوصی PGame
+      </span>
+     </div>
+    </header>
+    <div id="message-list" style="flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:8px">
+    </div>
+    <form id="message-form" style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,.06)">
+     <textarea id="message-input" maxlength="4000" placeholder="پیامت را بنویس..." rows="1" style="flex:1;resize:none;border-radius:13px;padding:10px;background:rgba(255,255,255,.04);color:#fff;border:1px solid rgba(255,255,255,.08)"></textarea>
+     <button class="auth-button" type="submit">
+      ➤
+     </button>
+    </form>
+   </section>
+  </div>
+  <div id="new-chat-overlay" style="display:none;position:fixed;inset:0;z-index:91000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:18px">
+   <section class="admin-panel" style="width:min(520px,100%)">
+    <div style="display:flex;justify-content:space-between">
+     <h2 style="margin:0">
+      ✎ شروع گفتگوی جدید
+     </h2>
+     <button class="admin-button admin-button-secondary" id="close-new-chat">
+      &times;
+     </button>
+    </div>
+    <input class="admin-form" id="user-search" placeholder="نام کاربری را جستجو کن..." style="margin-top:12px;width:100%;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff"/>
+    <div class="admin-list" id="user-results" style="margin-top:12px">
+    </div>
+   </section>
+  </div>
+  <script>
+   (function(){let me=null,currentId=null,currentName='';const wall=document.getElementById('conversation-wall'),overlay=document.getElementById('chat-overlay'),newOverlay=document.getElementById('new-chat-overlay'),messages=document.getElementById('message-list');const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));async function auth(){const r=await fetch('/api/me');const d=await r.json();if(!r.ok||!d.loggedIn){location.href='login.html';return false}me=d.user;return true}async function loadConvs(){const r=await fetch('/api/messenger/conversations');const d=await r.json();if(!r.ok){wall.innerHTML='<div class="game-box" style="grid-column:1/-1;text-align:center">❌ '+esc(d.message||'دریافت گفتگوها ناموفق بود.')+'</div>';return}const c=d.conversations||[];wall.innerHTML=c.length?c.map(x=>`<button class="game-box" style="text-align:right;cursor:pointer" data-open="${x.id}" data-name="${esc(x.other_username)}"><div style="font-size:25px">👤</div><h3>${esc(x.other_username)}</h3><p>${esc(x.last_message||'هنوز پیامی ارسال نشده')}</p>${Number(x.unread_count||0)?`<span style="color:#00ff9d">${x.unread_count} پیام خوانده‌نشده</span>`:''}</button>`).join(''):'<div class="game-box" style="grid-column:1/-1;text-align:center">💬 هنوز گفتگویی نداری.</div>'}async function openChat(id,name){currentId=id;currentName=name;document.getElementById('chat-title').textContent=name;overlay.style.display='block';await loadMessages();await fetch('/api/messenger/conversations/'+id+'/read',{method:'POST'}); }async function loadMessages(){const r=await fetch('/api/messenger/conversations/'+currentId+'/messages');const d=await r.json();messages.innerHTML=(d.messages||[]).map(m=>`<div style="align-self:${m.sender_id===me.id?'flex-start':'flex-end'};max-width:82%;padding:8px 10px;border-radius:11px;background:${m.sender_id===me.id?'rgba(0,255,157,.12)':'rgba(255,255,255,.05)'}"><div>${esc(m.content)}</div><small style="opacity:.4;font-size:7px">${esc(new Date(m.created_at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}))}</small></div>`).join('')||'<div style="text-align:center;opacity:.4">هنوز پیامی نیست.</div>';messages.scrollTop=messages.scrollHeight}wall.onclick=e=>{const b=e.target.closest('[data-open]');if(b)openChat(b.dataset.open,b.dataset.name)};document.getElementById('close-chat').onclick=()=>overlay.style.display='none';document.getElementById('message-form').onsubmit=async e=>{e.preventDefault();const i=document.getElementById('message-input'),content=i.value.trim();if(!content)return;await fetch('/api/messenger/conversations/'+currentId+'/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content})});i.value='';await loadMessages();await loadConvs()};document.getElementById('new-chat-button').onclick=()=>{newOverlay.style.display='flex';document.getElementById('user-search').focus()};document.getElementById('close-new-chat').onclick=()=>newOverlay.style.display='none';let timer;document.getElementById('user-search').oninput=e=>{clearTimeout(timer);const q=e.target.value.trim();if(q.length<2){document.getElementById('user-results').innerHTML='';return}timer=setTimeout(async()=>{const r=await fetch('/api/messenger/users/search?q='+encodeURIComponent(q)),d=await r.json();document.getElementById('user-results').innerHTML=(d.users||[]).map(u=>`<button class="game-box" style="text-align:right" data-user="${u.id}" data-name="${esc(u.username)}">👤 ${esc(u.username)}</button>`).join('')||'کاربری پیدا نشد.'},250)};document.getElementById('user-results').onclick=async e=>{const b=e.target.closest('[data-user]');if(!b)return;const r=await fetch('/api/messenger/conversations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:Number(b.dataset.user)})});const d=await r.json();if(r.ok&&d.success){newOverlay.style.display='none';await loadConvs();openChat(d.conversation.id,d.conversation.other_username)}};(async()=>{if(await auth())await loadConvs();})();setInterval(()=>{if(currentId&&overlay.style.display!=='none')loadMessages();loadConvs()},15000)})();
+  </script>
+  <footer>
+   <div class="footer-logo">
+            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+        </div>
+   <p>
+    PLAY &bull; COMPETE &bull; LEVEL UP.
+   </p>
+   <div class="footer-socials">
+    <span>
+     ✈️
+    </span>
+    <span>
+     ◎
+    </span>
+    <span>
+     ▶
+    </span>
+   </div>
+   <span>
+    ساخته شده با 💚 برای گیمرها
+    <br/>
+    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
+   </span>
+  </footer>
+  <script src="../script.js">
+  </script>
+  <script src="../vexon-nav.js">
+  </script>
+ </body>
+</html>
