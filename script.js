@@ -3904,7 +3904,12 @@ document.addEventListener(
              * در Messenger خودش تشخیص می‌دهد
              * و اجرا نمی‌شود.
              */
-            initializeSupportWidget();
+            if (
+                !location.pathname.includes("/messenger") &&
+                !location.pathname.includes("messenger.html")
+            ) {
+                initializeSupportWidget();
+            }
 
 
             /*
