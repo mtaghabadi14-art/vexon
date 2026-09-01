@@ -2442,34 +2442,6 @@ export default {
                 - Support
                 - Admin APIs
             */
-
-        }
-        catch (
-            error
-        ) {
-
-            console.error(
-                "PGAME_WORKER_ERROR",
-                error
-            );
-
-
-            return json(
-                {
-                    success:
-                        false,
-
-                    message:
-                        "خطای داخلی سرور رخ داد."
-                },
-                500
-            );
-
-        }
-
-    }
-
-};
 /* =========================================================
    NEWS
 ========================================================= */
@@ -6725,3 +6697,21 @@ if (
 return env.ASSETS.fetch(
     request
 );
+  } catch (e) {
+
+    console.error(
+        "PGAME_WORKER_ERROR",
+        e
+    );
+
+    return json(
+        {
+            success: false,
+            message: "خطای داخلی سرور رخ داد."
+        },
+        500
+    );
+
+  }
+
+}};
