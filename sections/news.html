@@ -1,112 +1,1058 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-  <meta content="PGame News؛ آخرین اخبار و اتفاقات PGame." name="description"/>
-  <meta content="#03040a" name="theme-color"/>
-  <title>
-   PGame | اخبار
-  </title>
-  <link href="../style.css" rel="stylesheet"/>
- </head>
- <body>
-  <div aria-hidden="true" class="background-effects">
-   <div class="nebula nebula-purple">
-   </div>
-   <div class="nebula nebula-green">
-   </div>
-   <div class="nebula nebula-blue">
-   </div>
-   <div class="stars stars-one">
-   </div>
-   <div class="stars stars-two">
-   </div>
-   <div class="stars stars-three">
-   </div>
-   <div class="planet planet-purple">
-   </div>
-   <div class="planet planet-blue">
-   </div>
-  </div>
-  <header class="navbar">
-   <a class="logo" href="../index.html">
-    <span class="logo-p">
-     P
-    </span>
-    <span class="logo-rest">
-     Game
-    </span>
-   </a>
-   <nav class="nav-links">
-   </nav>
-   <a class="header-profile" href="profile.html">
-    <div class="header-profile-icon">
-     👤
-    </div>
-    <div class="header-player-info">
-     <strong>
-      ...
-     </strong>
-     <span>
-      در حال بررسی حساب...
-     </span>
-    </div>
-    <b>
-     &lsaquo;
-    </b>
-   </a>
-  </header>
-  <main class="news-page">
-   <section class="section">
-    <div class="section-title">
-     <span>
-      📢 PGAME NEWS
-     </span>
-     <h1>
-      آخرین اخبار
-     </h1>
-     <p>
-      آخرین اتفاقات، بازی&zwnj;ها و قابلیت&zwnj;های جدید PGame.
-     </p>
-    </div>
-    <div class="news-list" id="news-list">
-     <div class="news-loading">
-      ⏳ در حال دریافت آخرین اخبار PGame...
-     </div>
-    </div>
-   </section>
-  </main>
-  <script>
-   (function(){const list=document.getElementById('news-list');let loggedIn=false,myReactions={};const reactions=[['love','❤️'],['like','👍'],['laugh','😂'],['wow','😮'],['angry','😡'],['dislike','👎']];const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));function buttons(n){const rc=n.reactions||{};return `<div class="news-reactions">${reactions.map(([k,e])=>`<button class="news-reaction ${myReactions[n.id]===k?'active':''}" data-news-id="${n.id}" data-reaction="${k}" ${loggedIn?'':'disabled'}>${e} <span>${Number(rc[k]||0)}</span></button>`).join('')}${loggedIn?'':'<div class="news-reaction-login">برای ثبت واکنش، وارد حساب PGame شو.</div>'}</div>`}function render(news){if(!news.length){list.innerHTML='<div class="news-empty">📰 هنوز خبری منتشر نشده است.</div>';return}list.innerHTML=news.map(n=>`<article class="news-item"><a class="news-clickable" href="news-detail.html?id=${encodeURIComponent(n.id)}">${n.image_url?`<img class="news-item-image" src="${esc(n.image_url)}" alt="${esc(n.title)}">`:''}<div class="news-icon">📢</div><h3 class="news-item-title">${esc(n.title)}</h3><p class="news-item-text">${esc(n.content)}</p><div class="news-item-meta"><span>🏷️ ${esc(n.category||'general')}</span><span>👤 ${esc(n.author_username||'')}</span><span>📅 ${esc(new Date(n.published_at||n.created_at).toLocaleDateString('fa-IR'))}</span></div></a>${buttons(n)}</article>`).join('')}async function load(){try{const me=await fetch('/api/me').then(r=>r.json()).catch(()=>({}));loggedIn=!!me.loggedIn;const r=await fetch('/api/news?limit=50');const d=await r.json();if(!r.ok||!d.success)throw 0;render(d.news||[])}catch{list.innerHTML='<div class="news-error">❌ ارتباط با سرور اخبار برقرار نشد.</div>'}}list.addEventListener('click',async e=>{const b=e.target.closest('.news-reaction');if(!b)return;e.preventDefault();e.stopPropagation();if(!loggedIn)return location.href='login.html';const id=b.dataset.newsId,k=b.dataset.reaction;const r=await fetch('/api/news/'+id+'/reaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reaction:k})});const d=await r.json();if(r.status===401)return location.href='login.html';if(!r.ok){alert(d.message||'ثبت واکنش ناموفق بود.');return}myReactions[id]=d.my_reaction||null;await load()});load();setInterval(load,10000)})();
-  </script>
-  <footer>
-   <div class="footer-logo">
-            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="PGame News؛ آخرین اخبار و نظرسنجی‌های PGame."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>PGame | اخبار</title>
+
+    <link href="../style.css" rel="stylesheet">
+
+    <style>
+
+        .news-reactions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 14px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .news-reaction {
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.035);
+            color: #fff;
+            border-radius: 12px;
+            padding: 7px 10px;
+            cursor: pointer;
+            transition:
+                transform .18s ease,
+                background .18s ease,
+                border-color .18s ease;
+        }
+
+        .news-reaction:hover {
+            transform: translateY(-2px);
+        }
+
+        .news-reaction.active {
+            border-color: rgba(0,255,157,.45);
+            background: rgba(0,255,157,.10);
+            box-shadow: 0 0 15px rgba(0,255,157,.08);
+        }
+
+        .news-reaction:disabled {
+            cursor: not-allowed;
+            opacity: .55;
+        }
+
+        .news-reaction-login {
+            width: 100%;
+            color: #8c8ca0;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .polls-section {
+            margin-top: 30px;
+        }
+
+        .poll-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .poll-card {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(6,10,18,.72);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .poll-question {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .poll-meta {
+            margin-top: 6px;
+            color: #77788c;
+            font-size: 10px;
+        }
+
+        .poll-options {
+            display: grid;
+            gap: 9px;
+            margin-top: 14px;
+        }
+
+        .poll-option {
+            width: 100%;
+            text-align: right;
+            padding: 11px 13px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.03);
+            color: #fff;
+            cursor: pointer;
+            transition:
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+        }
+
+        .poll-option:hover {
+            transform: translateY(-1px);
+        }
+
+        .poll-option.selected {
+            border-color: rgba(0,255,157,.40);
+            background: rgba(0,255,157,.08);
+        }
+
+        .poll-option:disabled {
+            cursor: default;
+        }
+
+        .poll-bar {
+            height: 7px;
+            margin-top: 8px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(255,255,255,.06);
+        }
+
+        .poll-bar-fill {
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                90deg,
+                #00ff9d,
+                #00eaff
+            );
+            transition: width .35s ease;
+        }
+
+        .poll-option-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .poll-option-percent {
+            color: #9a9ab0;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .poll-voted {
+            margin-top: 12px;
+            color: #00ff9d;
+            font-size: 10px;
+        }
+
+        .poll-login {
+            margin-top: 12px;
+            color: #ffcf68;
+            font-size: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div aria-hidden="true" class="background-effects">
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+    <div class="planet planet-blue"></div>
+</div>
+
+<header class="navbar">
+
+    <a class="logo" href="../index.html">
+        <span class="logo-p">P</span>
+        <span class="logo-rest">Game</span>
+    </a>
+
+    <nav class="nav-links"></nav>
+
+    <a class="header-profile" href="profile.html">
+
+        <div class="header-profile-icon">
+            👤
         </div>
-   <p>
-    PLAY &bull; COMPETE &bull; LEVEL UP.
-   </p>
-   <div class="footer-socials">
+
+        <div class="header-player-info">
+
+            <strong id="header-username">
+                ...
+            </strong>
+
+            <span>
+                در حال بررسی حساب...
+            </span>
+
+        </div>
+
+        <b>&lsaquo;</b>
+
+    </a>
+
+</header>
+
+<main class="news-page">
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <span>
+                📢 PGAME NEWS
+            </span>
+
+            <h1>
+                آخرین اخبار
+            </h1>
+
+            <p>
+                آخرین اتفاقات، بازی‌ها و قابلیت‌های جدید PGame.
+            </p>
+
+        </div>
+
+        <div
+            class="news-list"
+            id="news-list"
+        >
+            <div class="news-loading">
+                ⏳ در حال دریافت آخرین اخبار PGame...
+            </div>
+        </div>
+
+    </section>
+
+
+    <section class="section polls-section">
+
+        <div class="section-title">
+
+            <span>
+                📊 PGAME POLLS
+            </span>
+
+            <h2>
+                نظرسنجی‌ها
+            </h2>
+
+            <p>
+                نظر خودت را ثبت کن و ببین بقیه گیمرها چه انتخابی داشته‌اند.
+            </p>
+
+        </div>
+
+        <div
+            class="poll-list"
+            id="poll-list"
+        >
+            <div class="news-loading">
+                ⏳ در حال دریافت نظرسنجی‌ها...
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+        <span class="logo-p">P</span>
+        <span class="logo-rest">Game</span>
+    </div>
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+    <div class="footer-socials">
+        <span>✈️</span>
+        <span>◎</span>
+        <span>▶</span>
+    </div>
+
     <span>
-     ✈️
+        ساخته شده با 💚 برای گیمرها
+        <br>
+        © 2026 PGame — همه حقوق محفوظ است.
     </span>
-    <span>
-     ◎
-    </span>
-    <span>
-     ▶
-    </span>
-   </div>
-   <span>
-    ساخته شده با 💚 برای گیمرها
-    <br/>
-    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
-   </span>
-  </footer>
-  <script src="../script.js">
-  </script>
-  <script src="../vexon-nav.js">
-  </script>
- </body>
+
+</footer>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+    const newsList =
+        document.getElementById("news-list");
+
+    const pollList =
+        document.getElementById("poll-list");
+
+    let loggedIn = false;
+
+    let myReactions = {};
+
+    let votedPolls = {};
+
+
+    const reactions = [
+        ["love", "❤️"],
+        ["like", "👍"],
+        ["laugh", "😂"],
+        ["wow", "😮"],
+        ["angry", "😡"],
+        ["dislike", "👎"]
+    ];
+
+
+    function esc(value) {
+
+        return String(value ?? "")
+            .replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "\"": "&quot;",
+                "'": "&#039;"
+            })[char]);
+
+    }
+
+
+    function renderReactionButtons(news) {
+
+        const counts =
+            news.reactions || {};
+
+        return `
+            <div class="news-reactions">
+
+                ${reactions.map(
+                    ([key, emoji]) => `
+                        <button
+                            class="
+                                news-reaction
+                                ${myReactions[news.id] === key ? "active" : ""}
+                            "
+                            data-news-id="${news.id}"
+                            data-reaction="${key}"
+                            ${loggedIn ? "" : "disabled"}
+                            type="button"
+                        >
+                            ${emoji}
+                            <span>
+                                ${Number(counts[key] || 0)}
+                            </span>
+                        </button>
+                    `
+                ).join("")}
+
+                ${
+                    loggedIn
+                        ? ""
+                        : `
+                            <div class="news-reaction-login">
+                                برای ثبت واکنش، وارد حساب PGame شو.
+                            </div>
+                        `
+                }
+
+            </div>
+        `;
+
+    }
+
+
+    function renderNews(news) {
+
+        if (!news.length) {
+
+            newsList.innerHTML =
+                `
+                <div class="news-empty">
+                    📰 هنوز خبری منتشر نشده است.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        newsList.innerHTML =
+            news.map(item => {
+
+                const image =
+                    item.image_url
+                        ? `
+                            <img
+                                class="news-item-image"
+                                src="${esc(item.image_url)}"
+                                alt="${esc(item.title)}"
+                            >
+                          `
+                        : "";
+
+
+                return `
+                    <article class="news-item">
+
+                        <a
+                            class="news-clickable"
+                            href="news-detail.html?id=${encodeURIComponent(item.id)}"
+                        >
+
+                            ${image}
+
+                            <div class="news-icon">
+                                📢
+                            </div>
+
+                            <h3 class="news-item-title">
+                                ${esc(item.title)}
+                            </h3>
+
+                            <p class="news-item-text">
+                                ${esc(item.content)}
+                            </p>
+
+                            <div class="news-item-meta">
+
+                                <span>
+                                    🏷️ ${esc(item.category || "general")}
+                                </span>
+
+                                <span>
+                                    👤 ${esc(item.author_username || "")}
+                                </span>
+
+                                <span>
+                                    📅 ${esc(
+                                        new Date(
+                                            item.published_at ||
+                                            item.created_at
+                                        ).toLocaleDateString("fa-IR")
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </a>
+
+                        ${renderReactionButtons(item)}
+
+                    </article>
+                `;
+
+            }).join("");
+
+    }
+
+
+    async function loadNews() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/news?limit=50",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "دریافت اخبار ناموفق بود."
+                );
+
+            }
+
+
+            renderNews(
+                data.news || []
+            );
+
+
+            myReactions = {};
+
+            for (
+                const item
+                of data.news || []
+            ) {
+
+                if (item.my_reaction) {
+
+                    myReactions[item.id] =
+                        item.my_reaction;
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "NEWS_LOAD_ERROR",
+                error
+            );
+
+
+            newsList.innerHTML =
+                `
+                <div class="news-error">
+                    ❌ ارتباط با سرور اخبار برقرار نشد.
+                </div>
+                `;
+
+        }
+
+    }
+
+
+    function renderPolls(polls) {
+
+        if (!polls.length) {
+
+            pollList.innerHTML =
+                `
+                <div class="news-empty">
+                    📊 هنوز نظرسنجیری منتشر نشده است.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        pollList.innerHTML =
+            polls.map(poll => {
+
+                const total =
+                    Number(
+                        poll.total_votes || 0
+                    );
+
+                const voted =
+                    votedPolls[poll.id] ||
+                    poll.my_option_id ||
+                    null;
+
+
+                return `
+                    <article
+                        class="poll-card"
+                        data-poll-id="${poll.id}"
+                    >
+
+                        <h3 class="poll-question">
+                            ${esc(poll.question)}
+                        </h3>
+
+                        <div class="poll-meta">
+                            👥 ${total.toLocaleString("fa-IR")} رأی
+                        </div>
+
+                        <div class="poll-options">
+
+                            ${(poll.options || [])
+                                .map(option => {
+
+                                    const votes =
+                                        Number(
+                                            option.votes || 0
+                                        );
+
+                                    const percent =
+                                        total > 0
+                                            ? Math.round(
+                                                votes /
+                                                total *
+                                                100
+                                            )
+                                            : 0;
+
+                                    return `
+                                        <button
+                                            type="button"
+                                            class="
+                                                poll-option
+                                                ${voted === option.id ? "selected" : ""}
+                                            "
+                                            data-poll-id="${poll.id}"
+                                            data-option-id="${option.id}"
+                                            ${voted ? "disabled" : ""}
+                                        >
+
+                                            <div class="poll-option-row">
+
+                                                <span>
+                                                    ${esc(option.option_text)}
+                                                </span>
+
+                                                <span class="poll-option-percent">
+                                                    ${percent}%
+                                                </span>
+
+                                            </div>
+
+                                            <div class="poll-bar">
+
+                                                <div
+                                                    class="poll-bar-fill"
+                                                    style="width:${percent}%"
+                                                ></div>
+
+                                            </div>
+
+                                        </button>
+                                    `;
+
+                                }).join("")}
+
+                        </div>
+
+                        ${
+                            voted
+                                ? `
+                                    <div class="poll-voted">
+                                        ✅ رأی شما ثبت شده است.
+                                    </div>
+                                `
+                                : loggedIn
+                                    ? ""
+                                    : `
+                                        <div class="poll-login">
+                                            برای رأی دادن وارد حساب PGame شو.
+                                        </div>
+                                      `
+                        }
+
+                    </article>
+                `;
+
+            }).join("");
+
+    }
+
+
+    async function loadPolls() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/polls",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "دریافت نظرسنجی‌ها ناموفق بود."
+                );
+
+            }
+
+
+            votedPolls = {};
+
+            for (
+                const poll
+                of data.polls || []
+            ) {
+
+                if (poll.my_option_id) {
+
+                    votedPolls[poll.id] =
+                        poll.my_option_id;
+
+                }
+
+            }
+
+
+            renderPolls(
+                data.polls || []
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "POLLS_LOAD_ERROR",
+                error
+            );
+
+
+            pollList.innerHTML =
+                `
+                <div class="news-error">
+                    ❌ نظرسنجی‌ها فعلاً در دسترس نیستند.
+                </div>
+                `;
+
+        }
+
+    }
+
+
+    newsList.addEventListener(
+        "click",
+        async event => {
+
+            const button =
+                event.target.closest(
+                    ".news-reaction"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (!loggedIn) {
+
+                location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const newsId =
+                button.dataset.newsId;
+
+            const reaction =
+                button.dataset.reaction;
+
+
+            try {
+
+                button.disabled =
+                    true;
+
+
+                const response =
+                    await fetch(
+                        `/api/news/${encodeURIComponent(newsId)}/reaction`,
+                        {
+                            method: "POST",
+
+                            credentials: "same-origin",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                reaction
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.status === 401) {
+
+                    location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "ثبت واکنش ناموفق بود."
+                    );
+
+                }
+
+
+                myReactions[newsId] =
+                    data.my_reaction ||
+                    null;
+
+
+                await loadNews();
+
+
+            } catch (error) {
+
+                console.error(
+                    "REACTION_ERROR",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "ثبت واکنش ناموفق بود."
+                );
+
+
+            } finally {
+
+                button.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+
+    pollList.addEventListener(
+        "click",
+        async event => {
+
+            const button =
+                event.target.closest(
+                    ".poll-option"
+                );
+
+
+            if (!button || button.disabled) {
+                return;
+            }
+
+
+            if (!loggedIn) {
+
+                location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+
+            const pollId =
+                button.dataset.pollId;
+
+            const optionId =
+                button.dataset.optionId;
+
+
+            try {
+
+                button.disabled =
+                    true;
+
+
+                const response =
+                    await fetch(
+                        `/api/polls/${encodeURIComponent(pollId)}/vote`,
+                        {
+                            method: "POST",
+
+                            credentials: "same-origin",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                option_id:
+                                    Number(optionId)
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.status === 401) {
+
+                    location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "ثبت رأی ناموفق بود."
+                    );
+
+                }
+
+
+                votedPolls[pollId] =
+                    Number(optionId);
+
+
+                await loadPolls();
+
+
+            } catch (error) {
+
+                console.error(
+                    "POLL_VOTE_ERROR",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "ثبت رأی ناموفق بود."
+                );
+
+            }
+
+        }
+    );
+
+
+    async function initialize() {
+
+        try {
+
+            const meResponse =
+                await fetch(
+                    "/api/me",
+                    {
+                        cache:
+                            "no-store"
+                    }
+                );
+
+
+            const me =
+                await meResponse.json();
+
+
+            loggedIn =
+                !!me.loggedIn;
+
+
+            if (
+                me.loggedIn &&
+                me.user?.username
+            ) {
+
+                document.getElementById(
+                    "header-username"
+                ).textContent =
+                    me.user.username;
+
+            }
+
+
+        } catch {
+
+            loggedIn =
+                false;
+
+        }
+
+
+        await Promise.all([
+            loadNews(),
+            loadPolls()
+        ]);
+
+    }
+
+
+    initialize();
+
+
+    setInterval(
+        () => {
+            loadNews();
+            loadPolls();
+        },
+        10000
+    );
+
+})();
+
+</script>
+
+
+<script src="../script.js"></script>
+<script src="../vexon-nav.js"></script>
+
+</body>
 </html>

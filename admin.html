@@ -1,137 +1,2183 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-  <meta content="noindex,nofollow" name="robots"/>
-  <title>
-   PGame ADMIN
-  </title>
-  <link href="style.css" rel="stylesheet"/>
-  <style>
-   .admin-page{position:relative;z-index:2;width:min(1200px,92%);margin:0 auto;padding:30px 0}.admin-topbar,.admin-panel{background:rgba(6,10,18,.78);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:18px}.admin-topbar{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}.admin-actions{display:flex;gap:8px;flex-wrap:wrap}.admin-button{border:0;border-radius:11px;padding:10px 13px;cursor:pointer}.admin-button-primary{background:linear-gradient(90deg,#00ff9d,#00eaff);color:#03110c}.admin-button-secondary{background:rgba(255,255,255,.06);color:#fff}.admin-button-danger{background:rgba(255,63,90,.12);color:#fff}.admin-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}.admin-tab{border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:#fff;padding:11px;border-radius:13px}.admin-tab.active{border-color:rgba(0,255,157,.24);background:rgba(0,255,157,.08)}.admin-section{display:none}.admin-section.active{display:block}.admin-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:16px}.admin-form{display:grid;gap:9px}.admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:10px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#fff}.admin-form textarea{min-height:180px}.admin-list{display:grid;gap:10px}.admin-item{padding:13px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}@media(max-width:850px){.admin-grid{grid-template-columns:1fr}.admin-topbar{flex-direction:column;align-items:stretch}}@media(max-width:650px){.admin-tabs{grid-template-columns:1fr}}
-  </style>
- </head>
- <body>
-  <div class="background-effects">
-   <div class="nebula nebula-purple">
-   </div>
-   <div class="nebula nebula-green">
-   </div>
-   <div class="nebula nebula-blue">
-   </div>
-  </div>
-  <main class="admin-page" id="admin-loading">
-   <div class="admin-panel">
-    🔐 در حال بررسی دسترسی ادمین...
-   </div>
-  </main>
-  <main class="admin-page" id="admin-app" style="display:none">
-   <section class="admin-topbar">
-    <div>
-     <h1 style="margin:0;font-size:22px">
-      PGame ADMIN
-     </h1>
-     <p id="admin-welcome" style="margin:4px 0 0;color:#89899d;font-size:11px">
-     </p>
-    </div>
-    <div class="admin-actions">
-     <button class="admin-button admin-button-secondary" id="back-home">
-      🏠 سایت
-     </button>
-     <button class="admin-button admin-button-secondary" id="refresh-current">
-      🔄 بروزرسانی
-     </button>
-     <button class="admin-button admin-button-danger" id="admin-logout">
-      🚪 خروج
-     </button>
-    </div>
-   </section>
-   <nav class="admin-tabs">
-    <button class="admin-tab active" data-section="news">
-     📰 اخبار
-    </button>
-    <button class="admin-tab" data-section="ban">
-     🚫 بن کردن
-    </button>
-    <button class="admin-tab" data-section="support">
-     💬 پیام&zwnj;ها
-    </button>
-   </nav>
-   <section class="admin-section active" id="section-news">
-    <div class="admin-grid">
-     <div class="admin-panel">
-      <h2>
-       📝 خبر جدید
-      </h2>
-      <form class="admin-form" id="news-form">
-       <input id="news-id" type="hidden"/>
-       <input id="news-title" placeholder="عنوان خبر" required=""/>
-       <select id="news-category">
-        <option value="general">
-         عمومی
-        </option>
-        <option value="game">
-         بازی
-        </option>
-        <option value="update">
-         بروزرسانی
-        </option>
-        <option value="event">
-         مسابقات
-        </option>
-        <option value="announcement">
-         اطلاعیه
-        </option>
-       </select>
-       <input id="news-image" placeholder="آدرس تصویر" type="url"/>
-       <textarea id="news-content" placeholder="متن خبر" required=""></textarea>
-       <select id="news-status">
-        <option value="draft">
-         📝 پیش&zwnj;نویس
-        </option>
-        <option value="published">
-         ✅ انتشار
-        </option>
-       </select>
-       <button class="admin-button admin-button-primary">
-        💾 ذخیره خبر
-       </button>
-      </form>
-     </div>
-     <div class="admin-panel">
-      <h2>
-       📰 اخبار PGame
-      </h2>
-      <div class="admin-list" id="news-list">
-       در حال دریافت...
-      </div>
-     </div>
-    </div>
-   </section>
-   <section class="admin-section" id="section-ban">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow"
+    >
+
+    <title>
+        PGame ADMIN
+    </title>
+
+    <link
+        href="style.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        .admin-page {
+            position: relative;
+            z-index: 2;
+            width: min(1200px,92%);
+            margin: 0 auto;
+            padding: 30px 0;
+        }
+
+        .admin-topbar,
+        .admin-panel {
+            background: rgba(6,10,18,.78);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 20px;
+            padding: 18px;
+        }
+
+        .admin-topbar {
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            align-items:center;
+            margin-bottom:18px;
+        }
+
+        .admin-actions {
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+
+        .admin-button {
+            border:0;
+            border-radius:11px;
+            padding:10px 13px;
+            cursor:pointer;
+        }
+
+        .admin-button-primary {
+            background:linear-gradient(
+                90deg,
+                #00ff9d,
+                #00eaff
+            );
+            color:#03110c;
+        }
+
+        .admin-button-secondary {
+            background:rgba(255,255,255,.06);
+            color:#fff;
+        }
+
+        .admin-button-danger {
+            background:rgba(255,63,90,.12);
+            color:#fff;
+        }
+
+        .admin-tabs {
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:9px;
+            margin-bottom:18px;
+        }
+
+        .admin-tab {
+            border:1px solid rgba(255,255,255,.06);
+            background:rgba(255,255,255,.03);
+            color:#fff;
+            padding:11px;
+            border-radius:13px;
+            cursor:pointer;
+        }
+
+        .admin-tab.active {
+            border-color:rgba(0,255,157,.24);
+            background:rgba(0,255,157,.08);
+        }
+
+        .admin-section {
+            display:none;
+        }
+
+        .admin-section.active {
+            display:block;
+        }
+
+        .admin-grid {
+            display:grid;
+            grid-template-columns:1fr 1.4fr;
+            gap:16px;
+        }
+
+        .admin-form {
+            display:grid;
+            gap:9px;
+        }
+
+        .admin-form input,
+        .admin-form textarea,
+        .admin-form select {
+            width:100%;
+            padding:10px;
+            border-radius:11px;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(255,255,255,.035);
+            color:#fff;
+            box-sizing:border-box;
+        }
+
+        .admin-form textarea {
+            min-height:180px;
+        }
+
+        .admin-list {
+            display:grid;
+            gap:10px;
+        }
+
+        .admin-item {
+            padding:13px;
+            border-radius:14px;
+            background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.06);
+        }
+
+        .poll-option-editor {
+            display:flex;
+            gap:8px;
+            margin-top:7px;
+        }
+
+        .poll-option-editor input {
+            flex:1;
+        }
+
+        @media(max-width:850px) {
+
+            .admin-grid {
+                grid-template-columns:1fr;
+            }
+
+            .admin-topbar {
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .admin-tabs {
+                grid-template-columns:1fr 1fr;
+            }
+
+        }
+
+        @media(max-width:520px) {
+
+            .admin-tabs {
+                grid-template-columns:1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="background-effects">
+
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-green"></div>
+    <div class="nebula nebula-blue"></div>
+
+</div>
+
+
+<main
+    class="admin-page"
+    id="admin-loading"
+>
+
     <div class="admin-panel">
-     <h2>
-      🚫 مدیریت کاربران
-     </h2>
-     <div class="admin-list" id="user-list">
-      در حال دریافت...
-     </div>
+        🔐 در حال بررسی دسترسی ادمین...
     </div>
-   </section>
-   <section class="admin-section" id="section-support">
-    <div class="admin-panel">
-     <h2>
-      💬 پیام&zwnj;های کاربران
-     </h2>
-     <div class="admin-list" id="support-list">
-      در حال دریافت...
-     </div>
-    </div>
-   </section>
-  </main>
-  <script>
-   (async()=>{const loading=document.getElementById('admin-loading'),app=document.getElementById('admin-app');let section='news',news=[],users=[],supports=[];const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));async function admin(){const r=await fetch('/api/admin/me',{cache:'no-store'});if(r.status===401)return location.href='sections/login.html';if(!r.ok){loading.textContent='❌ دسترسی ادمین ندارید.';return false}const d=await r.json();if(!d.isAdmin)return false;document.getElementById('admin-welcome').textContent=`خوش آمدی ${d.username} 👑`;loading.style.display='none';app.style.display='block';return true}async function loadNews(){const r=await fetch('/api/admin/news',{cache:'no-store'}),d=await r.json();news=d.news||[];document.getElementById('news-list').innerHTML=news.map(n=>`<article class="admin-item"><b>${esc(n.title)}</b><div style="font-size:10px;opacity:.5;margin-top:5px">${esc(n.category||'general')} • ${n.status==='published'?'✅ منتشر شده':'📝 پیش‌نویس'}</div><p style="font-size:11px;line-height:1.9;opacity:.7">${esc(n.content)}</p><button class="admin-button admin-button-secondary" data-edit="${n.id}">✏️ ویرایش</button><button class="admin-button admin-button-secondary" data-toggle="${n.id}">${n.status==='published'?'📝 پیش‌نویس':'✅ انتشار'}</button><button class="admin-button admin-button-danger" data-delete="${n.id}">🗑️ حذف</button></article>`).join('')||'هنوز خبری ساخته نشده.'}async function loadUsers(){const r=await fetch('/api/admin/users'),d=await r.json();users=d.users||[];document.getElementById('user-list').innerHTML=users.map(u=>`<article class="admin-item"><b>👤 ${esc(u.username)}</b><div style="font-size:10px;opacity:.5">ID: ${u.id} • LV ${u.level??1} • XP ${u.xp??0} • 🪙 ${u.coins??0}</div>${Number(u.ban_active)===1?`<p style="color:#ffc0c8;font-size:10px">🚫 ${esc(u.ban_reason||'محدودیت فعال')} • ${esc(u.ban_type||'full')}</p><button class="admin-button admin-button-secondary" data-unban="${u.id}">✅ رفع محدودیت</button>`:`<button class="admin-button admin-button-danger" data-ban="${u.id}">🚫 بن ۲۴ ساعته</button>`}</article>`).join('')||'کاربری وجود ندارد.'}async function loadSupport(){const r=await fetch('/api/admin/support'),d=await r.json();supports=d.messages||[];document.getElementById('support-list').innerHTML=supports.map(s=>`<article class="admin-item"><b>👤 ${esc(s.username)}</b><div style="font-size:10px;opacity:.5">${esc(s.created_at)}</div><p style="font-size:11px">${esc(s.message)}</p>${s.reply?`<div style="font-size:10px;color:#b8ffe4">👑 ${esc(s.reply)}</div>`:''}<form data-reply="${s.id}" style="display:grid;gap:7px;margin-top:8px"><textarea placeholder="پاسخ" style="width:100%;min-height:70px">${esc(s.reply||'')}</textarea><button class="admin-button admin-button-primary">${s.reply?'✏️ بروزرسانی':'🚀 ارسال پاسخ'}</button></form></article>`).join('')||'پیامی دریافت نشده.'}async function refresh(){if(section==='news')await loadNews();if(section==='ban')await loadUsers();if(section==='support')await loadSupport()}document.querySelectorAll('.admin-tab').forEach(t=>t.onclick=async()=>{document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');section=t.dataset.section;document.querySelectorAll('.admin-section').forEach(x=>x.classList.toggle('active',x.id==='section-'+section));await refresh()});document.getElementById('news-form').onsubmit=async e=>{e.preventDefault();const id=document.getElementById('news-id').value,p={title:document.getElementById('news-title').value,content:document.getElementById('news-content').value,image_url:document.getElementById('news-image').value,category:document.getElementById('news-category').value,status:document.getElementById('news-status').value};await fetch(id?'/api/admin/news/'+id:'/api/admin/news',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});e.target.reset();document.getElementById('news-id').value='';await loadNews()};document.getElementById('news-list').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.edit||b.dataset.toggle||b.dataset.delete;if(b.dataset.edit){const n=news.find(x=>String(x.id)===String(id));if(n){document.getElementById('news-id').value=n.id;document.getElementById('news-title').value=n.title;document.getElementById('news-content').value=n.content;document.getElementById('news-image').value=n.image_url||'';document.getElementById('news-category').value=n.category||'general';document.getElementById('news-status').value=n.status}}else if(b.dataset.toggle){const n=news.find(x=>String(x.id)===String(id));await fetch('/api/admin/news/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:n.status==='published'?'draft':'published'})});await loadNews()}else if(b.dataset.delete){if(confirm('حذف شود؟')){await fetch('/api/admin/news/'+id,{method:'DELETE'});await loadNews()}}};document.getElementById('user-list').onclick=async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.unban){await fetch('/api/admin/users/'+b.dataset.unban+'/unban',{method:'POST'});await loadUsers()}if(b.dataset.ban){await fetch('/api/admin/users/'+b.dataset.ban+'/ban',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ban_type:'full',banned_until:new Date(Date.now()+86400000).toISOString(),reason:'نقض قوانین PGame'})});await loadUsers()}};document.getElementById('support-list').onsubmit=async e=>{const f=e.target.closest('form');if(!f)return;e.preventDefault();await fetch('/api/admin/support/'+f.dataset.reply+'/reply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reply:f.querySelector('textarea').value})});await loadSupport()};document.getElementById('refresh-current').onclick=refresh;document.getElementById('back-home').onclick=()=>location.href='index.html';document.getElementById('admin-logout').onclick=async()=>{await fetch('/api/logout',{method:'POST'});location.href='sections/login.html'};if(await admin()){await refresh()}})()
-  </script>
- </body>
+
+</main>
+
+
+<main
+    class="admin-page"
+    id="admin-app"
+    style="display:none"
+>
+
+
+    <section class="admin-topbar">
+
+        <div>
+
+            <h1
+                style="
+                    margin:0;
+                    font-size:22px;
+                "
+            >
+                PGame ADMIN
+            </h1>
+
+            <p
+                id="admin-welcome"
+                style="
+                    margin:4px 0 0;
+                    color:#89899d;
+                    font-size:11px;
+                "
+            ></p>
+
+        </div>
+
+
+        <div class="admin-actions">
+
+            <button
+                class="admin-button admin-button-secondary"
+                id="back-home"
+                type="button"
+            >
+                🏠 سایت
+            </button>
+
+            <button
+                class="admin-button admin-button-secondary"
+                id="refresh-current"
+                type="button"
+            >
+                🔄 بروزرسانی
+            </button>
+
+            <button
+                class="admin-button admin-button-danger"
+                id="admin-logout"
+                type="button"
+            >
+                🚪 خروج
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <nav class="admin-tabs">
+
+        <button
+            class="admin-tab active"
+            data-section="news"
+            type="button"
+        >
+            📰 اخبار
+        </button>
+
+        <button
+            class="admin-tab"
+            data-section="polls"
+            type="button"
+        >
+            📊 نظرسنجی‌ها
+        </button>
+
+        <button
+            class="admin-tab"
+            data-section="ban"
+            type="button"
+        >
+            🚫 کاربران
+        </button>
+
+        <button
+            class="admin-tab"
+            data-section="support"
+            type="button"
+        >
+            💬 پیام‌ها
+        </button>
+
+    </nav>
+
+
+    <!-- =========================================================
+         NEWS
+    ========================================================== -->
+
+    <section
+        class="admin-section active"
+        id="section-news"
+    >
+
+        <div class="admin-grid">
+
+            <div class="admin-panel">
+
+                <h2>
+                    📝 خبر جدید
+                </h2>
+
+                <form
+                    class="admin-form"
+                    id="news-form"
+                >
+
+                    <input
+                        id="news-id"
+                        type="hidden"
+                    >
+
+                    <input
+                        id="news-title"
+                        placeholder="عنوان خبر"
+                        required
+                    >
+
+                    <select id="news-category">
+
+                        <option value="general">
+                            عمومی
+                        </option>
+
+                        <option value="game">
+                            بازی
+                        </option>
+
+                        <option value="update">
+                            بروزرسانی
+                        </option>
+
+                        <option value="event">
+                            مسابقات
+                        </option>
+
+                        <option value="announcement">
+                            اطلاعیه
+                        </option>
+
+                    </select>
+
+                    <input
+                        id="news-image"
+                        placeholder="آدرس تصویر"
+                        type="url"
+                    >
+
+                    <textarea
+                        id="news-content"
+                        placeholder="متن خبر"
+                        required
+                    ></textarea>
+
+                    <select id="news-status">
+
+                        <option value="draft">
+                            📝 پیش‌نویس
+                        </option>
+
+                        <option value="published">
+                            ✅ انتشار
+                        </option>
+
+                    </select>
+
+                    <button
+                        class="admin-button admin-button-primary"
+                        type="submit"
+                    >
+                        💾 ذخیره خبر
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div class="admin-panel">
+
+                <h2>
+                    📰 اخبار PGame
+                </h2>
+
+                <div
+                    class="admin-list"
+                    id="news-list"
+                >
+                    در حال دریافت...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         POLLS
+    ========================================================== -->
+
+    <section
+        class="admin-section"
+        id="section-polls"
+    >
+
+        <div class="admin-grid">
+
+            <div class="admin-panel">
+
+                <h2>
+                    📊 نظرسنجی جدید
+                </h2>
+
+
+                <form
+                    class="admin-form"
+                    id="poll-form"
+                >
+
+                    <input
+                        id="poll-id"
+                        type="hidden"
+                    >
+
+
+                    <input
+                        id="poll-question"
+                        placeholder="سؤال نظرسنجی"
+                        required
+                    >
+
+
+                    <div>
+
+                        <strong>
+                            گزینه‌ها
+                        </strong>
+
+
+                        <div
+                            id="poll-options-editor"
+                            style="margin-top:8px"
+                        ></div>
+
+
+                        <button
+                            class="admin-button admin-button-secondary"
+                            id="add-poll-option"
+                            type="button"
+                            style="margin-top:9px"
+                        >
+                            ➕ افزودن گزینه
+                        </button>
+
+                    </div>
+
+
+                    <select id="poll-status">
+
+                        <option value="draft">
+                            📝 پیش‌نویس
+                        </option>
+
+                        <option value="published">
+                            ✅ انتشار
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        class="admin-button admin-button-primary"
+                        type="submit"
+                    >
+                        💾 ذخیره نظرسنجی
+                    </button>
+
+
+                </form>
+
+            </div>
+
+
+            <div class="admin-panel">
+
+                <h2>
+                    📊 نظرسنجی‌های PGame
+                </h2>
+
+                <div
+                    class="admin-list"
+                    id="poll-list"
+                >
+                    در حال دریافت...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         USERS
+    ========================================================== -->
+
+    <section
+        class="admin-section"
+        id="section-ban"
+    >
+
+        <div class="admin-panel">
+
+            <h2>
+                🚫 مدیریت کاربران
+            </h2>
+
+            <div
+                class="admin-list"
+                id="user-list"
+            >
+                در حال دریافت...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         SUPPORT
+    ========================================================== -->
+
+    <section
+        class="admin-section"
+        id="section-support"
+    >
+
+        <div class="admin-panel">
+
+            <h2>
+                💬 پیام‌های کاربران
+            </h2>
+
+            <div
+                class="admin-list"
+                id="support-list"
+            >
+                در حال دریافت...
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+(async function () {
+
+    "use strict";
+
+
+    const loading =
+        document.getElementById(
+            "admin-loading"
+        );
+
+
+    const app =
+        document.getElementById(
+            "admin-app"
+        );
+
+
+    let currentSection =
+        "news";
+
+
+    let news = [];
+
+    let polls = [];
+
+    let users = [];
+
+    let supports = [];
+
+
+    const esc =
+        value =>
+            String(value ?? "")
+                .replace(
+                    /[&<>"']/g,
+                    char => ({
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                        "\"": "&quot;",
+                        "'": "&#039;"
+                    })[char]
+                );
+
+
+    function showError(message) {
+
+        alert(
+            message ||
+            "عملیات ناموفق بود."
+        );
+
+    }
+
+
+    async function adminCheck() {
+
+        const response =
+            await fetch(
+                "/api/admin/me",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (
+            response.status ===
+            401
+        ) {
+
+            location.href =
+                "sections/login.html";
+
+            return false;
+
+        }
+
+
+        if (!response.ok) {
+
+            loading.innerHTML =
+                "❌ دسترسی ادمین ندارید.";
+
+            return false;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.isAdmin) {
+
+            loading.innerHTML =
+                "❌ دسترسی ادمین ندارید.";
+
+            return false;
+
+        }
+
+
+        document.getElementById(
+            "admin-welcome"
+        ).textContent =
+            `خوش آمدی ${data.username} 👑`;
+
+
+        loading.style.display =
+            "none";
+
+
+        app.style.display =
+            "block";
+
+
+        return true;
+
+    }
+
+
+    /* =========================================================
+       NEWS
+    ========================================================== */
+
+    async function loadNews() {
+
+        const response =
+            await fetch(
+                "/api/admin/news",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "دریافت اخبار ناموفق بود."
+            );
+
+        }
+
+
+        news =
+            data.news || [];
+
+
+        const list =
+            document.getElementById(
+                "news-list"
+            );
+
+
+        list.innerHTML =
+            news.map(item => `
+
+                <article class="admin-item">
+
+                    <b>
+                        ${esc(item.title)}
+                    </b>
+
+                    <div
+                        style="
+                            font-size:10px;
+                            opacity:.5;
+                            margin-top:5px;
+                        "
+                    >
+                        ${esc(item.category || "general")}
+                        •
+                        ${
+                            item.status === "published"
+                                ? "✅ منتشر شده"
+                                : "📝 پیش‌نویس"
+                        }
+                    </div>
+
+                    <p
+                        style="
+                            font-size:11px;
+                            line-height:1.9;
+                            opacity:.7;
+                        "
+                    >
+                        ${esc(item.content)}
+                    </p>
+
+                    <button
+                        class="admin-button admin-button-secondary"
+                        data-edit-news="${item.id}"
+                        type="button"
+                    >
+                        ✏️ ویرایش
+                    </button>
+
+                    <button
+                        class="admin-button admin-button-secondary"
+                        data-toggle-news="${item.id}"
+                        type="button"
+                    >
+                        ${
+                            item.status === "published"
+                                ? "📝 پیش‌نویس"
+                                : "✅ انتشار"
+                        }
+                    </button>
+
+                    <button
+                        class="admin-button admin-button-danger"
+                        data-delete-news="${item.id}"
+                        type="button"
+                    >
+                        🗑️ حذف
+                    </button>
+
+                </article>
+
+            `).join("") ||
+            "هنوز خبری ساخته نشده.";
+
+    }
+
+
+    /* =========================================================
+       POLLS
+    ========================================================== */
+
+    function addPollOption(value = "") {
+
+        const editor =
+            document.getElementById(
+                "poll-options-editor"
+            );
+
+
+        const wrapper =
+            document.createElement(
+                "div"
+            );
+
+
+        wrapper.className =
+            "poll-option-editor";
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.className =
+            "poll-option-input";
+
+
+        input.placeholder =
+            "متن گزینه";
+
+
+        input.value =
+            value;
+
+
+        const removeButton =
+            document.createElement(
+                "button"
+            );
+
+
+        removeButton.type =
+            "button";
+
+
+        removeButton.className =
+            "admin-button admin-button-danger";
+
+
+        removeButton.textContent =
+            "🗑️";
+
+
+        removeButton.onclick =
+            () => wrapper.remove();
+
+
+        wrapper.appendChild(
+            input
+        );
+
+
+        wrapper.appendChild(
+            removeButton
+        );
+
+
+        editor.appendChild(
+            wrapper
+        );
+
+    }
+
+
+    function resetPollForm() {
+
+        document.getElementById(
+            "poll-id"
+        ).value = "";
+
+
+        document.getElementById(
+            "poll-question"
+        ).value = "";
+
+
+        document.getElementById(
+            "poll-status"
+        ).value =
+            "draft";
+
+
+        document.getElementById(
+            "poll-options-editor"
+        ).innerHTML =
+            "";
+
+
+        addPollOption();
+
+        addPollOption();
+
+    }
+
+
+    function fillPollForm(poll) {
+
+        document.getElementById(
+            "poll-id"
+        ).value =
+            poll.id;
+
+
+        document.getElementById(
+            "poll-question"
+        ).value =
+            poll.question;
+
+
+        document.getElementById(
+            "poll-status"
+        ).value =
+            poll.status;
+
+
+        document.getElementById(
+            "poll-options-editor"
+        ).innerHTML =
+            "";
+
+
+        for (
+            const option
+            of poll.options || []
+        ) {
+
+            addPollOption(
+                option.option_text
+            );
+
+        }
+
+    }
+
+
+    async function loadPolls() {
+
+        const response =
+            await fetch(
+                "/api/admin/polls",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "دریافت نظرسنجی‌ها ناموفق بود."
+            );
+
+        }
+
+
+        polls =
+            data.polls || [];
+
+
+        const list =
+            document.getElementById(
+                "poll-list"
+            );
+
+
+        list.innerHTML =
+            polls.map(poll => {
+
+                const totalVotes =
+                    Number(
+                        poll.total_votes || 0
+                    );
+
+
+                return `
+
+                    <article class="admin-item">
+
+                        <b>
+                            ${esc(poll.question)}
+                        </b>
+
+                        <div
+                            style="
+                                font-size:10px;
+                                opacity:.5;
+                                margin-top:5px;
+                            "
+                        >
+                            ${
+                                poll.status === "published"
+                                    ? "✅ منتشر شده"
+                                    : "📝 پیش‌نویس"
+                            }
+
+                            •
+                            👥 ${totalVotes.toLocaleString("fa-IR")} رأی
+                        </div>
+
+
+                        <div
+                            style="
+                                margin-top:9px;
+                                font-size:11px;
+                                line-height:1.9;
+                            "
+                        >
+
+                            ${(poll.options || [])
+                                .map(option => `
+                                    <div>
+                                        •
+                                        ${esc(option.option_text)}
+                                        —
+                                        ${Number(option.votes || 0)}
+                                        رأی
+                                    </div>
+                                `)
+                                .join("")}
+
+                        </div>
+
+
+                        <button
+                            class="admin-button admin-button-secondary"
+                            data-edit-poll="${poll.id}"
+                            type="button"
+                        >
+                            ✏️ ویرایش
+                        </button>
+
+
+                        <button
+                            class="admin-button admin-button-secondary"
+                            data-toggle-poll="${poll.id}"
+                            type="button"
+                        >
+                            ${
+                                poll.status === "published"
+                                    ? "📝 پیش‌نویس"
+                                    : "✅ انتشار"
+                            }
+                        </button>
+
+
+                        <button
+                            class="admin-button admin-button-danger"
+                            data-delete-poll="${poll.id}"
+                            type="button"
+                        >
+                            🗑️ حذف
+                        </button>
+
+                    </article>
+                `;
+
+            }).join("") ||
+            "هنوز نظرسنجی‌ای ساخته نشده.";
+
+    }
+
+
+    /* =========================================================
+       USERS
+    ========================================================== */
+
+    async function loadUsers() {
+
+        const response =
+            await fetch(
+                "/api/admin/users",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        users =
+            data.users || [];
+
+
+        document.getElementById(
+            "user-list"
+        ).innerHTML =
+
+            users.map(
+                user => `
+
+                    <article class="admin-item">
+
+                        <b>
+                            👤 ${esc(user.username)}
+                        </b>
+
+                        <div
+                            style="
+                                font-size:10px;
+                                opacity:.5;
+                            "
+                        >
+                            ID:
+                            ${user.id}
+
+                            • LV
+                            ${user.level ?? 1}
+
+                            • XP
+                            ${user.xp ?? 0}
+
+                            • 🪙
+                            ${user.coins ?? 0}
+                        </div>
+
+
+                        ${
+                            Number(user.ban_active) === 1
+                                ? `
+                                    <p
+                                        style="
+                                            color:#ffc0c8;
+                                            font-size:10px;
+                                        "
+                                    >
+                                        🚫
+                                        ${esc(
+                                            user.ban_reason ||
+                                            "محدودیت فعال"
+                                        )}
+
+                                        •
+                                        ${esc(
+                                            user.ban_type ||
+                                            "full"
+                                        )}
+                                    </p>
+
+                                    <button
+                                        class="
+                                            admin-button
+                                            admin-button-secondary
+                                        "
+                                        data-unban="${user.id}"
+                                        type="button"
+                                    >
+                                        ✅ رفع محدودیت
+                                    </button>
+                                  `
+                                : `
+                                    <button
+                                        class="
+                                            admin-button
+                                            admin-button-danger
+                                        "
+                                        data-ban="${user.id}"
+                                        type="button"
+                                    >
+                                        🚫 بن ۲۴ ساعته
+                                    </button>
+                                  `
+                        }
+
+                    </article>
+                `
+            ).join("") ||
+            "کاربری وجود ندارد.";
+
+    }
+
+
+    /* =========================================================
+       SUPPORT
+    ========================================================== */
+
+    async function loadSupport() {
+
+        const response =
+            await fetch(
+                "/api/admin/support",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        supports =
+            data.messages || [];
+
+
+        document.getElementById(
+            "support-list"
+        ).innerHTML =
+
+            supports.map(
+                message => `
+
+                    <article class="admin-item">
+
+                        <b>
+                            👤 ${esc(message.username)}
+                        </b>
+
+                        <div
+                            style="
+                                font-size:10px;
+                                opacity:.5;
+                            "
+                        >
+                            ${esc(
+                                message.created_at
+                            )}
+                        </div>
+
+                        <p
+                            style="
+                                font-size:11px;
+                            "
+                        >
+                            ${esc(
+                                message.message
+                            )}
+                        </p>
+
+
+                        ${
+                            message.reply
+                                ? `
+                                    <div
+                                        style="
+                                            font-size:10px;
+                                            color:#b8ffe4;
+                                        "
+                                    >
+                                        👑
+                                        ${esc(
+                                            message.reply
+                                        )}
+                                    </div>
+                                  `
+                                : ""
+                        }
+
+
+                        <form
+                            data-reply="${message.id}"
+                            style="
+                                display:grid;
+                                gap:7px;
+                                margin-top:8px;
+                            "
+                        >
+
+                            <textarea
+                                placeholder="پاسخ"
+                                style="
+                                    width:100%;
+                                    min-height:70px;
+                                    box-sizing:border-box;
+                                "
+                            >${esc(
+                                message.reply ||
+                                ""
+                            )}</textarea>
+
+
+                            <button
+                                class="
+                                    admin-button
+                                    admin-button-primary
+                                "
+                                type="submit"
+                            >
+                                ${
+                                    message.reply
+                                        ? "✏️ بروزرسانی"
+                                        : "🚀 ارسال پاسخ"
+                                }
+                            </button>
+
+                        </form>
+
+                    </article>
+                `
+            ).join("") ||
+            "پیامی دریافت نشده.";
+
+    }
+
+
+    async function refreshCurrent() {
+
+        if (
+            currentSection ===
+            "news"
+        ) {
+
+            await loadNews();
+
+        }
+
+
+        if (
+            currentSection ===
+            "polls"
+        ) {
+
+            await loadPolls();
+
+        }
+
+
+        if (
+            currentSection ===
+            "ban"
+        ) {
+
+            await loadUsers();
+
+        }
+
+
+        if (
+            currentSection ===
+            "support"
+        ) {
+
+            await loadSupport();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       TABS
+    ========================================================== */
+
+    document
+        .querySelectorAll(".admin-tab")
+        .forEach(
+            tab => {
+
+                tab.onclick =
+                    async () => {
+
+                        document
+                            .querySelectorAll(
+                                ".admin-tab"
+                            )
+                            .forEach(
+                                item =>
+                                    item.classList.remove(
+                                        "active"
+                                    )
+                            );
+
+
+                        tab.classList.add(
+                            "active"
+                        );
+
+
+                        currentSection =
+                            tab.dataset.section;
+
+
+                        document
+                            .querySelectorAll(
+                                ".admin-section"
+                            )
+                            .forEach(
+                                section =>
+                                    section.classList.toggle(
+                                        "active",
+                                        section.id ===
+                                        `section-${currentSection}`
+                                    )
+                            );
+
+
+                        await refreshCurrent();
+
+                    };
+
+            }
+        );
+
+
+    /* =========================================================
+       NEWS FORM
+    ========================================================== */
+
+    document
+        .getElementById(
+            "news-form"
+        )
+        .addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                const id =
+                    document.getElementById(
+                        "news-id"
+                    ).value;
+
+
+                const payload = {
+
+                    title:
+                        document.getElementById(
+                            "news-title"
+                        ).value,
+
+                    content:
+                        document.getElementById(
+                            "news-content"
+                        ).value,
+
+                    image_url:
+                        document.getElementById(
+                            "news-image"
+                        ).value,
+
+                    category:
+                        document.getElementById(
+                            "news-category"
+                        ).value,
+
+                    status:
+                        document.getElementById(
+                            "news-status"
+                        ).value
+
+                };
+
+
+                const response =
+                    await fetch(
+                        id
+                            ? `/api/admin/news/${id}`
+                            : "/api/admin/news",
+                        {
+                            method:
+                                id
+                                    ? "PUT"
+                                    : "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    showError(
+                        data.message
+                    );
+
+                    return;
+
+                }
+
+
+                event.target.reset();
+
+
+                document.getElementById(
+                    "news-id"
+                ).value = "";
+
+
+                await loadNews();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "news-list"
+        )
+        .addEventListener(
+            "click",
+            async event => {
+
+                const button =
+                    event.target.closest(
+                        "button"
+                    );
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                if (
+                    button.dataset.editNews
+                ) {
+
+                    const item =
+                        news.find(
+                            value =>
+                                String(value.id) ===
+                                String(
+                                    button.dataset.editNews
+                                )
+                        );
+
+
+                    if (item) {
+
+                        document.getElementById(
+                            "news-id"
+                        ).value =
+                            item.id;
+
+                        document.getElementById(
+                            "news-title"
+                        ).value =
+                            item.title;
+
+                        document.getElementById(
+                            "news-content"
+                        ).value =
+                            item.content;
+
+                        document.getElementById(
+                            "news-image"
+                        ).value =
+                            item.image_url ||
+                            "";
+
+                        document.getElementById(
+                            "news-category"
+                        ).value =
+                            item.category ||
+                            "general";
+
+                        document.getElementById(
+                            "news-status"
+                        ).value =
+                            item.status;
+
+                    }
+
+                    return;
+
+                }
+
+
+                if (
+                    button.dataset.toggleNews
+                ) {
+
+                    const id =
+                        button.dataset.toggleNews;
+
+
+                    const item =
+                        news.find(
+                            value =>
+                                String(value.id) ===
+                                String(id)
+                        );
+
+
+                    if (!item) {
+                        return;
+                    }
+
+
+                    await fetch(
+                        `/api/admin/news/${id}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    status:
+                                        item.status ===
+                                        "published"
+                                            ? "draft"
+                                            : "published"
+                                })
+                        }
+                    );
+
+
+                    await loadNews();
+
+                    return;
+
+                }
+
+
+                if (
+                    button.dataset.deleteNews
+                ) {
+
+                    const id =
+                        button.dataset.deleteNews;
+
+
+                    if (
+                        !confirm(
+                            "این خبر حذف شود؟"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    await fetch(
+                        `/api/admin/news/${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                    await loadNews();
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       POLL FORM
+    ========================================================== */
+
+    document
+        .getElementById(
+            "add-poll-option"
+        )
+        .addEventListener(
+            "click",
+            () => addPollOption()
+        );
+
+
+    resetPollForm();
+
+
+    document
+        .getElementById(
+            "poll-form"
+        )
+        .addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                const id =
+                    document.getElementById(
+                        "poll-id"
+                    ).value;
+
+
+                const options =
+                    Array.from(
+                        document.querySelectorAll(
+                            ".poll-option-input"
+                        )
+                    )
+                    .map(
+                        input =>
+                            input.value.trim()
+                    )
+                    .filter(Boolean);
+
+
+                const question =
+                    document.getElementById(
+                        "poll-question"
+                    ).value.trim();
+
+
+                const status =
+                    document.getElementById(
+                        "poll-status"
+                    ).value;
+
+
+                if (
+                    question.length < 3
+                ) {
+
+                    showError(
+                        "سؤال نظرسنجی را کامل وارد کن."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    options.length < 2
+                ) {
+
+                    showError(
+                        "حداقل دو گزینه لازم است."
+                    );
+
+                    return;
+
+                }
+
+
+                const response =
+                    await fetch(
+                        id
+                            ? `/api/admin/polls/${id}`
+                            : "/api/admin/polls",
+                        {
+                            method:
+                                id
+                                    ? "PUT"
+                                    : "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    question,
+                                    status,
+                                    options
+                                })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    showError(
+                        data.message
+                    );
+
+                    return;
+
+                }
+
+
+                resetPollForm();
+
+
+                await loadPolls();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "poll-list"
+        )
+        .addEventListener(
+            "click",
+            async event => {
+
+                const button =
+                    event.target.closest(
+                        "button"
+                    );
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                if (
+                    button.dataset.editPoll
+                ) {
+
+                    const poll =
+                        polls.find(
+                            value =>
+                                String(value.id) ===
+                                String(
+                                    button.dataset.editPoll
+                                )
+                        );
+
+
+                    if (poll) {
+
+                        fillPollForm(
+                            poll
+                        );
+
+                    }
+
+                    return;
+
+                }
+
+
+                if (
+                    button.dataset.togglePoll
+                ) {
+
+                    const id =
+                        button.dataset.togglePoll;
+
+
+                    const poll =
+                        polls.find(
+                            value =>
+                                String(value.id) ===
+                                String(id)
+                        );
+
+
+                    if (!poll) {
+                        return;
+                    }
+
+
+                    await fetch(
+                        `/api/admin/polls/${id}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    question:
+                                        poll.question,
+
+                                    status:
+                                        poll.status ===
+                                        "published"
+                                            ? "draft"
+                                            : "published",
+
+                                    options:
+                                        (poll.options || [])
+                                            .map(
+                                                option =>
+                                                    option.option_text
+                                            )
+                                })
+                        }
+                    );
+
+
+                    await loadPolls();
+
+                    return;
+
+                }
+
+
+                if (
+                    button.dataset.deletePoll
+                ) {
+
+                    const id =
+                        button.dataset.deletePoll;
+
+
+                    if (
+                        !confirm(
+                            "این نظرسنجی حذف شود؟"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    await fetch(
+                        `/api/admin/polls/${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                    await loadPolls();
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       USERS
+    ========================================================== */
+
+    document
+        .getElementById(
+            "user-list"
+        )
+        .addEventListener(
+            "click",
+            async event => {
+
+                const button =
+                    event.target.closest(
+                        "button"
+                    );
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                if (
+                    button.dataset.unban
+                ) {
+
+                    await fetch(
+                        `/api/admin/users/${button.dataset.unban}/unban`,
+                        {
+                            method:
+                                "POST"
+                        }
+                    );
+
+
+                    await loadUsers();
+
+                    return;
+
+                }
+
+
+                if (
+                    button.dataset.ban
+                ) {
+
+                    await fetch(
+                        `/api/admin/users/${button.dataset.ban}/ban`,
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    ban_type:
+                                        "full",
+
+                                    banned_until:
+                                        new Date(
+                                            Date.now() +
+                                            86400000
+                                        ).toISOString(),
+
+                                    reason:
+                                        "نقض قوانین PGame"
+                                })
+                        }
+                    );
+
+
+                    await loadUsers();
+
+                }
+
+            }
+        );
+
+
+    /* =========================================================
+       SUPPORT
+    ========================================================== */
+
+    document
+        .getElementById(
+            "support-list"
+        )
+        .addEventListener(
+            "submit",
+            async event => {
+
+                const form =
+                    event.target.closest(
+                        "form"
+                    );
+
+
+                if (!form) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                const reply =
+                    form
+                        .querySelector(
+                            "textarea"
+                        )
+                        .value;
+
+
+                await fetch(
+                    `/api/admin/support/${form.dataset.reply}/reply`,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                reply
+                            })
+                    }
+                );
+
+
+                await loadSupport();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "refresh-current"
+        )
+        .onclick =
+            refreshCurrent;
+
+
+    document
+        .getElementById(
+            "back-home"
+        )
+        .onclick =
+            () =>
+                location.href =
+                    "index.html";
+
+
+    document
+        .getElementById(
+            "admin-logout"
+        )
+        .onclick =
+            async () => {
+
+                await fetch(
+                    "/api/logout",
+                    {
+                        method:
+                            "POST"
+                    }
+                );
+
+
+                location.href =
+                    "sections/login.html";
+
+            };
+
+
+    if (
+        await adminCheck()
+    ) {
+
+        await refreshCurrent();
+
+    }
+
+})();
+
+</script>
+
+</body>
 </html>
