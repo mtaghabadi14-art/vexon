@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html dir="rtl" lang="fa">
 
 <head>
 
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
 
     <meta
+        content="width=device-width,initial-scale=1.0"
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
     >
 
     <meta
-        name="description"
         content="تنظیمات حساب PGame."
+        name="description"
     >
 
     <meta
-        name="theme-color"
         content="#03040a"
+        name="theme-color"
     >
 
     <title>
@@ -25,90 +25,382 @@
     </title>
 
     <link
-        rel="stylesheet"
         href="../style.css"
+        rel="stylesheet"
     >
 
     <style>
 
+        /* =========================================================
+           RUBIKA
+        ========================================================= */
+
         .rubika-status {
+
             margin-top: 10px;
+
             padding: 11px 12px;
+
             border-radius: 12px;
-            background: rgba(255,255,255,.025);
-            border: 1px solid rgba(255,255,255,.07);
+
             font-size: 11px;
+
             line-height: 1.8;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
         }
+
 
         .rubika-status.connected {
-            border-color: rgba(0,255,157,.18);
-            background: rgba(0,255,157,.035);
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .20
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .035
+                );
+
         }
+
 
         .rubika-status.disconnected {
-            border-color: rgba(255,63,90,.16);
-            background: rgba(255,63,90,.025);
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .16
+                );
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .025
+                );
+
         }
+
 
         .rubika-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
+
+            display:
+                flex;
+
+            gap:
+                8px;
+
+            margin-top:
+                10px;
+
         }
+
 
         .rubika-actions button {
-            flex: 1;
+
+            flex:
+                1;
+
         }
+
 
         .rubika-unlink-button {
-            display: none;
+
+            display:
+                none;
+
         }
+
 
         .rubika-code-area {
-            display: none;
-            margin-top: 14px;
-            text-align: center;
-            padding: 14px;
-            border-radius: 14px;
-            background: rgba(0,255,157,.035);
-            border: 1px solid rgba(0,255,157,.12);
+
+            display:
+                none;
+
+            margin-top:
+                14px;
+
+            padding:
+                14px;
+
+            text-align:
+                center;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .035
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
         }
+
 
         .rubika-code {
-            font: 900 28px monospace;
-            letter-spacing: 6px;
-            color: #00ff9d;
+
+            font:
+                900 28px monospace;
+
+            letter-spacing:
+                6px;
+
+            color:
+                #00ff9d;
+
         }
+
 
         .rubika-help {
-            margin: 7px 0 0;
-            color: #8b8b9f;
-            font-size: 10px;
+
+            margin:
+                7px 0 0;
+
+            color:
+                #8b8b9f;
+
+            font-size:
+                10px;
+
         }
+
 
         .rubika-message {
-            margin-top: 9px;
-            min-height: 18px;
-            font-size: 10px;
+
+            margin-top:
+                9px;
+
+            min-height:
+                18px;
+
+            font-size:
+                10px;
+
         }
+
+
+        /* =========================================================
+           ADMIN BUTTON
+        ========================================================= */
+
+        .admin-profile-button {
+
+            display:
+                none;
+
+            width:
+                100%;
+
+            margin-top:
+                16px;
+
+            padding:
+                13px
+                16px;
+
+            border-radius:
+                14px;
+
+            box-sizing:
+                border-box;
+
+            text-align:
+                center;
+
+            text-decoration:
+                none;
+
+            font-weight:
+                800;
+
+            font-size:
+                12px;
+
+            color:
+                #ffffff;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .24
+                );
+
+            transition:
+                transform
+                .2s
+                ease,
+
+                background
+                .2s
+                ease,
+
+                border-color
+                .2s
+                ease,
+
+                box-shadow
+                .2s
+                ease;
+
+        }
+
+
+        .admin-profile-button:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .14
+                );
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .40
+                );
+
+            box-shadow:
+                0 0 20px
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .10
+                );
+
+        }
+
+
+        /* =========================================================
+           DANGER
+        ========================================================= */
 
         .danger-button {
-            background: rgba(255,63,90,.08) !important;
-            border-color: rgba(255,63,90,.24) !important;
-            color: #ff7183 !important;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                ) !important;
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .24
+                ) !important;
+
+            color:
+                #ff7183 !important;
+
         }
 
+
         .danger-button:hover {
-            background: rgba(255,63,90,.14) !important;
-            border-color: rgba(255,63,90,.40) !important;
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .14
+                ) !important;
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .40
+                ) !important;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .rubika-actions {
+
+                flex-direction:
+                    column;
+
+            }
+
         }
 
     </style>
 
 </head>
 
+
 <body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================== -->
 
     <div
         aria-hidden="true"
@@ -116,20 +408,30 @@
     >
 
         <div class="nebula nebula-purple"></div>
+
         <div class="nebula nebula-green"></div>
+
         <div class="nebula nebula-blue"></div>
 
         <div class="stars stars-one"></div>
+
         <div class="stars stars-two"></div>
+
         <div class="stars stars-three"></div>
 
         <div class="planet planet-purple"></div>
+
         <div class="planet planet-blue"></div>
 
     </div>
 
 
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
     <header class="navbar">
+
 
         <a
             class="logo"
@@ -180,14 +482,22 @@
 
         </a>
 
+
     </header>
 
 
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
     <main>
+
 
         <section class="profile-section">
 
+
             <div class="profile-page-content">
+
 
                 <span class="section-label">
                     ⚙️ PGAME ACCOUNT
@@ -206,13 +516,22 @@
 
 
                 <p>
-                    اینجا می‌توانی تنظیمات حساب و اتصال‌های PGame را مدیریت کنی.
+
+                    اینجا می‌توانی تنظیمات حساب و
+                    اتصال‌های PGame را مدیریت کنی.
+
                 </p>
+
 
             </div>
 
 
             <div class="profile-big-card">
+
+
+                <!-- =================================================
+                     AVATAR
+                ================================================== -->
 
                 <div class="profile-big-avatar">
                     ⚙️
@@ -229,9 +548,9 @@
                 </span>
 
 
-                <!-- =============================================
+                <!-- =================================================
                      ACCOUNT INFO
-                ============================================== -->
+                ================================================== -->
 
                 <div
                     style="
@@ -245,6 +564,7 @@
                     "
                 >
 
+
                     <div
                         style="
                             display:flex;
@@ -257,8 +577,9 @@
                             👤 نام کاربری
                         </span>
 
+
                         <strong id="account-username">
-                            —
+                            &mdash;
                         </strong>
 
                     </div>
@@ -277,21 +598,23 @@
                             🔐 وضعیت
                         </span>
 
+
                         <strong
-                            style="color:#00ff9d"
                             id="account-status"
+                            style="color:#00ff9d"
                         >
                             فعال
                         </strong>
 
                     </div>
 
+
                 </div>
 
 
-                <!-- =============================================
-                     RUBIKA
-                ============================================== -->
+                <!-- =================================================
+                     RUBIKA CONNECTION
+                ================================================== -->
 
                 <div
                     style="
@@ -303,6 +626,7 @@
                         text-align:right;
                     "
                 >
+
 
                     <strong>
                         🤖 اتصال روبیکا
@@ -335,7 +659,9 @@
                         id="rubika-status"
                         class="rubika-status disconnected"
                     >
+
                         🔴 حساب روبیکا متصل نیست.
+
                     </div>
 
 
@@ -343,13 +669,16 @@
 
                     <div class="rubika-actions">
 
+
                         <button
                             class="auth-button"
                             id="rubika-connect-button"
                             style="width:100%"
                             type="button"
                         >
+
                             🤖 ساخت کد اتصال
+
                         </button>
 
 
@@ -363,8 +692,11 @@
                             style="width:100%"
                             type="button"
                         >
+
                             🔌 لغو اتصال
+
                         </button>
+
 
                     </div>
 
@@ -375,6 +707,7 @@
                         id="rubika-code-area"
                         class="rubika-code-area"
                     >
+
 
                         <div
                             id="rubika-code"
@@ -393,23 +726,46 @@
                             class="rubika-help"
                             style="margin-top:4px"
                         >
-                            کد را برای @bangame56bot ارسال کن.
+
+                            کد را برای
+                            @bangame56bot
+                            ارسال کن.
+
                         </div>
+
 
                     </div>
 
+
+                    <!-- MESSAGE -->
 
                     <div
                         id="rubika-message"
                         class="rubika-message"
                     ></div>
 
+
                 </div>
 
 
-                <!-- =============================================
+                <!-- =================================================
+                     ADMIN BUTTON
+                ================================================== -->
+
+                <a
+                    href="https://s.vexongame.workers.dev/admin"
+                    id="admin-profile-button"
+                    class="admin-profile-button"
+                >
+
+                    🛠️ ورود به پنل ادمین
+
+                </a>
+
+
+                <!-- =================================================
                      LOGOUT
-                ============================================== -->
+                ================================================== -->
 
                 <button
                     class="auth-secondary-button"
@@ -420,17 +776,27 @@
                     "
                     type="button"
                 >
+
                     🚪 خروج از حساب
+
                 </button>
+
 
             </div>
 
+
         </section>
+
 
     </main>
 
 
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
     <footer>
+
 
         <div class="footer-logo">
 
@@ -477,8 +843,13 @@
 
         </span>
 
+
     </footer>
 
+
+    <!-- =========================================================
+         PROFILE SCRIPT
+    ========================================================== -->
 
     <script>
 
@@ -559,11 +930,21 @@
                 );
 
 
+            const adminButton =
+                document.getElementById(
+                    "admin-profile-button"
+                );
+
+
             const logoutButton =
                 document.getElementById(
                     "logout-button"
                 );
 
+
+            /* =====================================================
+               MESSAGE
+            ====================================================== */
 
             function setMessage(
                 text,
@@ -581,43 +962,64 @@
             }
 
 
+            /* =====================================================
+               RUBIKA STATUS
+            ====================================================== */
+
             function renderRubikaStatus(
                 rubikaUserId
             ) {
 
+
                 if (rubikaUserId) {
+
 
                     rubikaStatus.className =
                         "rubika-status connected";
 
+
                     rubikaStatus.innerHTML =
                         `
-                            🟢 <strong>حساب روبیکا متصل است.</strong>
+                            🟢
+                            <strong>
+                                حساب روبیکا متصل است.
+                            </strong>
+
                             <br>
+
                             <span style="color:#8b8b9f">
+
                                 شناسه اتصال:
                                 ${String(rubikaUserId)}
+
                             </span>
                         `;
+
 
                     connectButton.style.display =
                         "none";
 
+
                     unlinkButton.style.display =
                         "block";
 
+
                     return;
+
                 }
 
 
                 rubikaStatus.className =
                     "rubika-status disconnected";
 
+
                 rubikaStatus.innerHTML =
                     "🔴 حساب روبیکا متصل نیست.";
 
+
                 connectButton.style.display =
                     "block";
+
 
                 unlinkButton.style.display =
                     "none";
@@ -625,15 +1027,25 @@
             }
 
 
+            /* =====================================================
+               LOAD CURRENT USER
+            ====================================================== */
+
             try {
+
 
                 const response =
                     await fetch(
                         "/api/me",
                         {
-                            method: "GET",
-                            credentials: "same-origin",
-                            cache: "no-store"
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
                         }
                     );
 
@@ -664,61 +1076,131 @@
                     "کاربر";
 
 
+                /* =================================================
+                   ACCOUNT
+                ================================================== */
+
                 settingsUsername.textContent =
                     username;
+
 
                 accountUsername.textContent =
                     username;
 
+
                 headerUsername.textContent =
                     username;
+
 
                 settingsStatus.textContent =
                     "حساب PGame فعال ✅";
 
+
                 headerStatus.textContent =
                     "حساب PGame فعال";
+
 
                 accountStatus.textContent =
                     "فعال";
 
+
+                /* =================================================
+                   RUBIKA STATUS
+                ================================================== */
 
                 renderRubikaStatus(
                     user?.rubika_user_id
                 );
 
 
-                /* =========================================
+                /* =================================================
+                   ADMIN CHECK
+                ================================================== */
+
+                try {
+
+
+                    const adminResponse =
+                        await fetch(
+                            "/api/admin/me",
+                            {
+                                method:
+                                    "GET",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const adminData =
+                        await adminResponse.json();
+
+
+                    if (
+                        adminResponse.ok &&
+                        adminData.success &&
+                        adminData.isAdmin
+                    ) {
+
+                        adminButton.style.display =
+                            "block";
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "ADMIN_PROFILE_BUTTON_ERROR",
+                        error
+                    );
+
+                }
+
+
+                /* =================================================
                    CREATE RUBIKA CODE
-                ========================================== */
+                ================================================== */
 
                 connectButton.addEventListener(
                     "click",
                     async function () {
 
+
                         connectButton.disabled =
                             true;
+
 
                         connectButton.textContent =
                             "⏳ در حال ساخت...";
 
+
                         codeArea.style.display =
                             "none";
 
-                        setMessage(
-                            ""
-                        );
+
+                        setMessage("");
 
 
                         try {
+
 
                             const response =
                                 await fetch(
                                     "/api/rubika/create-code",
                                     {
-                                        method: "POST",
-                                        credentials: "same-origin",
-                                        cache: "no-store"
+                                        method:
+                                            "POST",
+
+                                        credentials:
+                                            "same-origin",
+
+                                        cache:
+                                            "no-store"
                                     }
                                 );
 
@@ -743,6 +1225,7 @@
                             codeElement.textContent =
                                 result.code;
 
+
                             codeArea.style.display =
                                 "block";
 
@@ -752,7 +1235,9 @@
                                 true
                             );
 
+
                         } catch (error) {
+
 
                             console.error(
                                 "RUBIKA_CREATE_CODE_ERROR",
@@ -768,10 +1253,13 @@
                                 )
                             );
 
+
                         } finally {
+
 
                             connectButton.disabled =
                                 false;
+
 
                             connectButton.textContent =
                                 "🤖 ساخت کد اتصال";
@@ -782,13 +1270,14 @@
                 );
 
 
-                /* =========================================
+                /* =================================================
                    UNLINK RUBIKA
-                ========================================== */
+                ================================================== */
 
                 unlinkButton.addEventListener(
                     "click",
                     async function () {
+
 
                         const confirmed =
                             confirm(
@@ -804,23 +1293,29 @@
                         unlinkButton.disabled =
                             true;
 
+
                         unlinkButton.textContent =
                             "⏳ در حال لغو اتصال...";
 
-                        setMessage(
-                            ""
-                        );
+
+                        setMessage("");
 
 
                         try {
+
 
                             const response =
                                 await fetch(
                                     "/api/rubika/unlink",
                                     {
-                                        method: "POST",
-                                        credentials: "same-origin",
-                                        cache: "no-store"
+                                        method:
+                                            "POST",
+
+                                        credentials:
+                                            "same-origin",
+
+                                        cache:
+                                            "no-store"
                                     }
                                 );
 
@@ -859,6 +1354,7 @@
 
                         } catch (error) {
 
+
                             console.error(
                                 "RUBIKA_UNLINK_ERROR",
                                 error
@@ -873,10 +1369,13 @@
                                 )
                             );
 
+
                         } finally {
+
 
                             unlinkButton.disabled =
                                 false;
+
 
                             unlinkButton.textContent =
                                 "🔌 لغو اتصال";
@@ -887,13 +1386,14 @@
                 );
 
 
-                /* =========================================
+                /* =================================================
                    LOGOUT
-                ========================================== */
+                ================================================== */
 
                 logoutButton.addEventListener(
                     "click",
                     async function () {
+
 
                         logoutButton.disabled =
                             true;
@@ -908,9 +1408,14 @@
                             await fetch(
                                 "/api/logout",
                                 {
-                                    method: "POST",
-                                    credentials: "same-origin",
-                                    cache: "no-store"
+                                    method:
+                                        "POST",
+
+                                    credentials:
+                                        "same-origin",
+
+                                    cache:
+                                        "no-store"
                                 }
                             );
 
@@ -933,6 +1438,7 @@
 
             } catch (error) {
 
+
                 console.error(
                     "PROFILE_PAGE_ERROR",
                     error
@@ -952,6 +1458,7 @@
     <script src="../script.js"></script>
 
     <script src="../vexon-nav.js"></script>
+
 
 </body>
 
