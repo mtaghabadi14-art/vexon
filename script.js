@@ -2826,24 +2826,25 @@ function initializeNotificationWidget() {
                 button.style.display =
                     "flex";
 
-
                 badge.textContent =
                     unreadCount > 99
                         ? "99+"
-                        : String(
-                            unreadCount
-                        );
+                        : String(unreadCount);
 
             } else {
 
+    /*
+     * TEST:
+     * حباب حتی بدون اعلان هم دیده می‌شود.
+     *
+     * بعد از اینکه مطمئن شدیم ظاهرش درست است،
+     * دوباره مخفی‌شدن در حالت صفر را فعال می‌کنیم.
+     */
                 button.style.display =
-                    "none";
+                    "flex";
 
-
-                panel.classList.remove(
-                    "open"
-                );
-
+                badge.textContent =
+                    "0";
             }
 
 
