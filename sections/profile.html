@@ -1,167 +1,958 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="fa">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-  <meta content="تنظیمات حساب PGame." name="description"/>
-  <meta content="#03040a" name="theme-color"/>
-  <title>
-   PGame | تنظیمات حساب
-  </title>
-  <link href="../style.css" rel="stylesheet"/>
- </head>
- <body>
-  <div aria-hidden="true" class="background-effects">
-   <div class="nebula nebula-purple">
-   </div>
-   <div class="nebula nebula-green">
-   </div>
-   <div class="nebula nebula-blue">
-   </div>
-   <div class="stars stars-one">
-   </div>
-   <div class="stars stars-two">
-   </div>
-   <div class="stars stars-three">
-   </div>
-   <div class="planet planet-purple">
-   </div>
-   <div class="planet planet-blue">
-   </div>
-  </div>
-  <header class="navbar">
-   <a class="logo" href="../index.html">
-    <span class="logo-p">
-     P
-    </span>
-    <span class="logo-rest">
-     Game
-    </span>
-   </a>
-   <nav class="nav-links">
-   </nav>
-   <a class="header-profile" href="profile.html">
-    <div class="header-profile-icon">
-     👤
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="تنظیمات حساب PGame."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        PGame | تنظیمات حساب
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+    <style>
+
+        .rubika-status {
+            margin-top: 10px;
+            padding: 11px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.025);
+            border: 1px solid rgba(255,255,255,.07);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .rubika-status.connected {
+            border-color: rgba(0,255,157,.18);
+            background: rgba(0,255,157,.035);
+        }
+
+        .rubika-status.disconnected {
+            border-color: rgba(255,63,90,.16);
+            background: rgba(255,63,90,.025);
+        }
+
+        .rubika-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .rubika-actions button {
+            flex: 1;
+        }
+
+        .rubika-unlink-button {
+            display: none;
+        }
+
+        .rubika-code-area {
+            display: none;
+            margin-top: 14px;
+            text-align: center;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(0,255,157,.035);
+            border: 1px solid rgba(0,255,157,.12);
+        }
+
+        .rubika-code {
+            font: 900 28px monospace;
+            letter-spacing: 6px;
+            color: #00ff9d;
+        }
+
+        .rubika-help {
+            margin: 7px 0 0;
+            color: #8b8b9f;
+            font-size: 10px;
+        }
+
+        .rubika-message {
+            margin-top: 9px;
+            min-height: 18px;
+            font-size: 10px;
+        }
+
+        .danger-button {
+            background: rgba(255,63,90,.08) !important;
+            border-color: rgba(255,63,90,.24) !important;
+            color: #ff7183 !important;
+        }
+
+        .danger-button:hover {
+            background: rgba(255,63,90,.14) !important;
+            border-color: rgba(255,63,90,.40) !important;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div
+        aria-hidden="true"
+        class="background-effects"
+    >
+
+        <div class="nebula nebula-purple"></div>
+        <div class="nebula nebula-green"></div>
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+        <div class="stars stars-two"></div>
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+        <div class="planet planet-blue"></div>
+
     </div>
-    <div class="header-player-info">
-     <strong>
-      ...
-     </strong>
-     <span>
-      در حال بررسی حساب...
-     </span>
-    </div>
-    <b>
-     &lsaquo;
-    </b>
-   </a>
-  </header>
-  <main>
-   <section class="profile-section">
-    <div class="profile-page-content">
-     <span class="section-label">
-      ⚙️ PGAME ACCOUNT
-     </span>
-     <h1>
-      تنظیمات حساب،
-      <span>
-       حساب PGame تو.
-      </span>
-     </h1>
-     <p>
-      اینجا می&zwnj;توانی تنظیمات حساب و اتصال&zwnj;های PGame را مدیریت کنی.
-     </p>
-    </div>
-    <div class="profile-big-card">
-     <div class="profile-big-avatar">
-      ⚙️
-     </div>
-     <strong id="settings-username">
-      در حال بارگذاری...
-     </strong>
-     <span id="settings-status">
-      حساب PGame
-     </span>
-     <div style="width:100%;margin-top:22px;padding:16px;border-radius:16px;border:1px solid rgba(0,255,157,.15);background:rgba(0,255,157,.035);text-align:right">
-      <div style="display:flex;justify-content:space-between;gap:12px">
-       <span>
-        👤 نام کاربری
-       </span>
-       <strong id="account-username">
-        &mdash;
-       </strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;gap:12px;margin-top:10px">
-       <span>
-        🔐 وضعیت
-       </span>
-       <strong style="color:#00ff9d">
-        فعال
-       </strong>
-      </div>
-     </div>
-     <div style="margin-top:16px;padding:16px;border-radius:16px;border:1px solid rgba(0,255,157,.15);background:rgba(0,255,157,.035);text-align:right">
-      <strong>
-       🤖 اتصال روبیکا
-      </strong>
-      <p style="font-size:11px;line-height:1.8;color:#8b8b9f">
-       حساب PGame خودت را به
-       <b>
-        @bangame56bot
-       </b>
-       وصل کن.
-      </p>
-      <button class="auth-button" id="rubika-connect-button" style="width:100%" type="button">
-       🤖 ساخت کد اتصال
-      </button>
-      <div id="rubika-code-area" style="display:none;margin-top:14px;text-align:center">
-       <div id="rubika-code" style="font:900 28px monospace;letter-spacing:6px;color:#00ff9d">
-        ------
-       </div>
-       <small>
-        ⏱ اعتبار کد: ۱۰ دقیقه
-       </small>
-      </div>
-      <div id="rubika-message" style="margin-top:8px;font-size:10px">
-      </div>
-     </div>
-     <button class="auth-secondary-button" id="logout-button" style="width:100%;margin-top:16px" type="button">
-      🚪 خروج از حساب
-     </button>
-    </div>
-   </section>
-  </main>
-  <script>
-   (async()=>{try{const r=await fetch('/api/me',{cache:'no-store'});const d=await r.json();if(!r.ok||!d.loggedIn) return location.href='login.html';document.getElementById('settings-username').textContent=d.user.username;document.getElementById('account-username').textContent=d.user.username;document.getElementById('settings-status').textContent='حساب PGame فعال ✅';document.getElementById('rubika-connect-button').addEventListener('click',async()=>{const b=document.getElementById('rubika-connect-button'),a=document.getElementById('rubika-code-area'),c=document.getElementById('rubika-code'),m=document.getElementById('rubika-message');b.disabled=true;b.textContent='⏳ در حال ساخت...';try{const r=await fetch('/api/rubika/create-code',{method:'POST'}),x=await r.json();if(!r.ok||!x.success)throw new Error(x.message||'خطا');c.textContent=x.code;a.style.display='block';m.textContent='✅ کد را برای @bangame56bot بفرست.'}catch(e){m.textContent='❌ '+e.message}finally{b.disabled=false;b.textContent='🤖 ساخت کد اتصال'}});document.getElementById('logout-button').onclick=async()=>{await fetch('/api/logout',{method:'POST'}).catch(()=>{});location.href='login.html'};}catch{location.href='login.html'}})()
-  </script>
-  <footer>
-   <div class="footer-logo">
-            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+
+
+    <header class="navbar">
+
+        <a
+            class="logo"
+            href="../index.html"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </a>
+
+
+        <nav class="nav-links"></nav>
+
+
+        <a
+            class="header-profile"
+            href="profile.html"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+
+            <div class="header-player-info">
+
+                <strong id="header-username">
+                    ...
+                </strong>
+
+                <span id="header-status">
+                    در حال بررسی حساب...
+                </span>
+
+            </div>
+
+
+            <b>
+                &lsaquo;
+            </b>
+
+        </a>
+
+    </header>
+
+
+    <main>
+
+        <section class="profile-section">
+
+            <div class="profile-page-content">
+
+                <span class="section-label">
+                    ⚙️ PGAME ACCOUNT
+                </span>
+
+
+                <h1>
+
+                    تنظیمات حساب،
+
+                    <span>
+                        حساب PGame تو.
+                    </span>
+
+                </h1>
+
+
+                <p>
+                    اینجا می‌توانی تنظیمات حساب و اتصال‌های PGame را مدیریت کنی.
+                </p>
+
+            </div>
+
+
+            <div class="profile-big-card">
+
+                <div class="profile-big-avatar">
+                    ⚙️
+                </div>
+
+
+                <strong id="settings-username">
+                    در حال بارگذاری...
+                </strong>
+
+
+                <span id="settings-status">
+                    حساب PGame
+                </span>
+
+
+                <!-- =============================================
+                     ACCOUNT INFO
+                ============================================== -->
+
+                <div
+                    style="
+                        width:100%;
+                        margin-top:22px;
+                        padding:16px;
+                        border-radius:16px;
+                        border:1px solid rgba(0,255,157,.15);
+                        background:rgba(0,255,157,.035);
+                        text-align:right;
+                    "
+                >
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:12px;
+                        "
+                    >
+
+                        <span>
+                            👤 نام کاربری
+                        </span>
+
+                        <strong id="account-username">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            gap:12px;
+                            margin-top:10px;
+                        "
+                    >
+
+                        <span>
+                            🔐 وضعیت
+                        </span>
+
+                        <strong
+                            style="color:#00ff9d"
+                            id="account-status"
+                        >
+                            فعال
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     RUBIKA
+                ============================================== -->
+
+                <div
+                    style="
+                        margin-top:16px;
+                        padding:16px;
+                        border-radius:16px;
+                        border:1px solid rgba(0,255,157,.15);
+                        background:rgba(0,255,157,.035);
+                        text-align:right;
+                    "
+                >
+
+                    <strong>
+                        🤖 اتصال روبیکا
+                    </strong>
+
+
+                    <p
+                        style="
+                            font-size:11px;
+                            line-height:1.8;
+                            color:#8b8b9f;
+                            margin:8px 0 0;
+                        "
+                    >
+
+                        حساب PGame خودت را به
+
+                        <b>
+                            @bangame56bot
+                        </b>
+
+                        وصل کن.
+
+                    </p>
+
+
+                    <!-- STATUS -->
+
+                    <div
+                        id="rubika-status"
+                        class="rubika-status disconnected"
+                    >
+                        🔴 حساب روبیکا متصل نیست.
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="rubika-actions">
+
+                        <button
+                            class="auth-button"
+                            id="rubika-connect-button"
+                            style="width:100%"
+                            type="button"
+                        >
+                            🤖 ساخت کد اتصال
+                        </button>
+
+
+                        <button
+                            class="
+                                auth-secondary-button
+                                danger-button
+                                rubika-unlink-button
+                            "
+                            id="rubika-unlink-button"
+                            style="width:100%"
+                            type="button"
+                        >
+                            🔌 لغو اتصال
+                        </button>
+
+                    </div>
+
+
+                    <!-- CODE -->
+
+                    <div
+                        id="rubika-code-area"
+                        class="rubika-code-area"
+                    >
+
+                        <div
+                            id="rubika-code"
+                            class="rubika-code"
+                        >
+                            ------
+                        </div>
+
+
+                        <div class="rubika-help">
+                            ⏱ اعتبار کد: ۱۰ دقیقه
+                        </div>
+
+
+                        <div
+                            class="rubika-help"
+                            style="margin-top:4px"
+                        >
+                            کد را برای @bangame56bot ارسال کن.
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="rubika-message"
+                        class="rubika-message"
+                    ></div>
+
+                </div>
+
+
+                <!-- =============================================
+                     LOGOUT
+                ============================================== -->
+
+                <button
+                    class="auth-secondary-button"
+                    id="logout-button"
+                    style="
+                        width:100%;
+                        margin-top:16px;
+                    "
+                    type="button"
+                >
+                    🚪 خروج از حساب
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
         </div>
-   <p>
-    PLAY &bull; COMPETE &bull; LEVEL UP.
-   </p>
-   <div class="footer-socials">
-    <span>
-     ✈️
-    </span>
-    <span>
-     ◎
-    </span>
-    <span>
-     ▶
-    </span>
-   </div>
-   <span>
-    ساخته شده با 💚 برای گیمرها
-    <br/>
-    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
-   </span>
-  </footer>
-  <script src="../script.js">
-  </script>
-  <script src="../vexon-nav.js">
-  </script>
- </body>
+
+
+        <p>
+            PLAY • COMPETE • LEVEL UP.
+        </p>
+
+
+        <div class="footer-socials">
+
+            <span>
+                ✈️
+            </span>
+
+            <span>
+                ◎
+            </span>
+
+            <span>
+                ▶
+            </span>
+
+        </div>
+
+
+        <span>
+
+            ساخته شده با 💚 برای گیمرها
+
+            <br>
+
+            © 2026 PGame — همه حقوق محفوظ است.
+
+        </span>
+
+    </footer>
+
+
+    <script>
+
+        (async function () {
+
+            "use strict";
+
+
+            const settingsUsername =
+                document.getElementById(
+                    "settings-username"
+                );
+
+
+            const accountUsername =
+                document.getElementById(
+                    "account-username"
+                );
+
+
+            const accountStatus =
+                document.getElementById(
+                    "account-status"
+                );
+
+
+            const settingsStatus =
+                document.getElementById(
+                    "settings-status"
+                );
+
+
+            const headerUsername =
+                document.getElementById(
+                    "header-username"
+                );
+
+
+            const headerStatus =
+                document.getElementById(
+                    "header-status"
+                );
+
+
+            const rubikaStatus =
+                document.getElementById(
+                    "rubika-status"
+                );
+
+
+            const connectButton =
+                document.getElementById(
+                    "rubika-connect-button"
+                );
+
+
+            const unlinkButton =
+                document.getElementById(
+                    "rubika-unlink-button"
+                );
+
+
+            const codeArea =
+                document.getElementById(
+                    "rubika-code-area"
+                );
+
+
+            const codeElement =
+                document.getElementById(
+                    "rubika-code"
+                );
+
+
+            const messageElement =
+                document.getElementById(
+                    "rubika-message"
+                );
+
+
+            const logoutButton =
+                document.getElementById(
+                    "logout-button"
+                );
+
+
+            function setMessage(
+                text,
+                success = false
+            ) {
+
+                messageElement.textContent =
+                    text;
+
+                messageElement.style.color =
+                    success
+                        ? "#00ff9d"
+                        : "#ff7183";
+
+            }
+
+
+            function renderRubikaStatus(
+                rubikaUserId
+            ) {
+
+                if (rubikaUserId) {
+
+                    rubikaStatus.className =
+                        "rubika-status connected";
+
+                    rubikaStatus.innerHTML =
+                        `
+                            🟢 <strong>حساب روبیکا متصل است.</strong>
+                            <br>
+                            <span style="color:#8b8b9f">
+                                شناسه اتصال:
+                                ${String(rubikaUserId)}
+                            </span>
+                        `;
+
+                    connectButton.style.display =
+                        "none";
+
+                    unlinkButton.style.display =
+                        "block";
+
+                    return;
+                }
+
+
+                rubikaStatus.className =
+                    "rubika-status disconnected";
+
+                rubikaStatus.innerHTML =
+                    "🔴 حساب روبیکا متصل نیست.";
+
+                connectButton.style.display =
+                    "block";
+
+                unlinkButton.style.display =
+                    "none";
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/me",
+                        {
+                            method: "GET",
+                            credentials: "same-origin",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.loggedIn
+                ) {
+
+                    location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                const user =
+                    data.user;
+
+
+                const username =
+                    user?.username ??
+                    "کاربر";
+
+
+                settingsUsername.textContent =
+                    username;
+
+                accountUsername.textContent =
+                    username;
+
+                headerUsername.textContent =
+                    username;
+
+                settingsStatus.textContent =
+                    "حساب PGame فعال ✅";
+
+                headerStatus.textContent =
+                    "حساب PGame فعال";
+
+                accountStatus.textContent =
+                    "فعال";
+
+
+                renderRubikaStatus(
+                    user?.rubika_user_id
+                );
+
+
+                /* =========================================
+                   CREATE RUBIKA CODE
+                ========================================== */
+
+                connectButton.addEventListener(
+                    "click",
+                    async function () {
+
+                        connectButton.disabled =
+                            true;
+
+                        connectButton.textContent =
+                            "⏳ در حال ساخت...";
+
+                        codeArea.style.display =
+                            "none";
+
+                        setMessage(
+                            ""
+                        );
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    "/api/rubika/create-code",
+                                    {
+                                        method: "POST",
+                                        credentials: "same-origin",
+                                        cache: "no-store"
+                                    }
+                                );
+
+
+                            const result =
+                                await response.json();
+
+
+                            if (
+                                !response.ok ||
+                                !result.success
+                            ) {
+
+                                throw new Error(
+                                    result.message ||
+                                    "ساخت کد اتصال انجام نشد."
+                                );
+
+                            }
+
+
+                            codeElement.textContent =
+                                result.code;
+
+                            codeArea.style.display =
+                                "block";
+
+
+                            setMessage(
+                                "✅ کد ساخته شد؛ آن را برای @bangame56bot ارسال کن.",
+                                true
+                            );
+
+                        } catch (error) {
+
+                            console.error(
+                                "RUBIKA_CREATE_CODE_ERROR",
+                                error
+                            );
+
+
+                            setMessage(
+                                "❌ " +
+                                (
+                                    error.message ||
+                                    "خطایی رخ داد."
+                                )
+                            );
+
+                        } finally {
+
+                            connectButton.disabled =
+                                false;
+
+                            connectButton.textContent =
+                                "🤖 ساخت کد اتصال";
+
+                        }
+
+                    }
+                );
+
+
+                /* =========================================
+                   UNLINK RUBIKA
+                ========================================== */
+
+                unlinkButton.addEventListener(
+                    "click",
+                    async function () {
+
+                        const confirmed =
+                            confirm(
+                                "آیا مطمئنی می‌خواهی اتصال حساب روبیکا را لغو کنی؟"
+                            );
+
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+
+                        unlinkButton.disabled =
+                            true;
+
+                        unlinkButton.textContent =
+                            "⏳ در حال لغو اتصال...";
+
+                        setMessage(
+                            ""
+                        );
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    "/api/rubika/unlink",
+                                    {
+                                        method: "POST",
+                                        credentials: "same-origin",
+                                        cache: "no-store"
+                                    }
+                                );
+
+
+                            const result =
+                                await response.json();
+
+
+                            if (
+                                !response.ok ||
+                                !result.success
+                            ) {
+
+                                throw new Error(
+                                    result.message ||
+                                    "لغو اتصال انجام نشد."
+                                );
+
+                            }
+
+
+                            renderRubikaStatus(
+                                null
+                            );
+
+
+                            codeArea.style.display =
+                                "none";
+
+
+                            setMessage(
+                                "✅ اتصال روبیکا با موفقیت لغو شد.",
+                                true
+                            );
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "RUBIKA_UNLINK_ERROR",
+                                error
+                            );
+
+
+                            setMessage(
+                                "❌ " +
+                                (
+                                    error.message ||
+                                    "خطایی رخ داد."
+                                )
+                            );
+
+                        } finally {
+
+                            unlinkButton.disabled =
+                                false;
+
+                            unlinkButton.textContent =
+                                "🔌 لغو اتصال";
+
+                        }
+
+                    }
+                );
+
+
+                /* =========================================
+                   LOGOUT
+                ========================================== */
+
+                logoutButton.addEventListener(
+                    "click",
+                    async function () {
+
+                        logoutButton.disabled =
+                            true;
+
+
+                        logoutButton.textContent =
+                            "⏳ در حال خروج...";
+
+
+                        try {
+
+                            await fetch(
+                                "/api/logout",
+                                {
+                                    method: "POST",
+                                    credentials: "same-origin",
+                                    cache: "no-store"
+                                }
+                            );
+
+                        } catch (error) {
+
+                            console.error(
+                                "LOGOUT_ERROR",
+                                error
+                            );
+
+                        }
+
+
+                        location.href =
+                            "login.html";
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "PROFILE_PAGE_ERROR",
+                    error
+                );
+
+
+                location.href =
+                    "login.html";
+
+            }
+
+        })();
+
+    </script>
+
+
+    <script src="../script.js"></script>
+
+    <script src="../vexon-nav.js"></script>
+
+</body>
+
 </html>

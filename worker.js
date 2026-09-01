@@ -119,6 +119,46 @@ export default {async fetch(request,env){
     const mr=path.match(/^\/api\/messenger\/conversations\/(\d+)\/read$/);if(mr&&method==="POST"){const a=await access(request,env);if(!a.ok)return json({success:false},a.status);await env.DB.prepare(`UPDATE conversation_members SET last_read_at=CURRENT_TIMESTAMP WHERE conversation_id=?1 AND user_id=?2`).bind(Number(mr[1]),a.user.id).run();return json({success:true});}
     const md=path.match(/^\/api\/messenger\/messages\/(\d+)$/);if(md&&method==="DELETE"){const a=await access(request,env);if(!a.ok)return json({success:false},a.status);const r=await env.DB.prepare(`UPDATE messages SET deleted_at=CURRENT_TIMESTAMP WHERE id=?1 AND sender_id=?2 AND deleted_at IS NULL`).bind(Number(md[1]),a.user.id).run();return json({success:true,changed:Number(r.meta?.changes??0)});}
 
+    if (path === "/api/rubika/unlink" && method === "POST") {
+    const user = await getCurrentUser(request, env);
+
+    if (!user) {
+        return json({
+            success: false,
+            message: "ابتدا وارد حساب PGame شو."
+        }, 401);
+    }
+
+    const linked = await env.DB
+        .prepare(`
+            SELECT id, rubika_sender_id
+            FROM rubika_links
+            WHERE user_id = ?1
+            LIMIT 1
+        `)
+        .bind(user.id)
+        .first();
+
+    if (!linked) {
+        return json({
+            success: false,
+            message: "هیچ حساب روبیکایی به این حساب متصل نیست."
+        }, 404);
+    }
+
+    await env.DB
+        .prepare(`
+            DELETE FROM rubika_links
+            WHERE user_id = ?1
+        `)
+        .bind(user.id)
+        .run();
+
+    return json({
+        success: true,
+        message: "اتصال روبیکا با موفقیت لغو شد."
+    });
+}
     return env.ASSETS.fetch(request);
   }catch(e){console.error("PGAME_WORKER_ERROR",e);return json({success:false,message:"خطای داخلی سرور رخ داد."},500);}
 }};
