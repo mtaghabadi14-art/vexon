@@ -1,157 +1,2832 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-  <meta content="پیام&zwnj;رسان رسمی PGame." name="description"/>
-  <meta content="#03040a" name="theme-color"/>
-  <title>
-   PGame | پیام&zwnj;رسان
-  </title>
-  <link href="../style.css" rel="stylesheet"/>
- </head>
- <body>
-  <div aria-hidden="true" class="background-effects">
-   <div class="nebula nebula-purple">
-   </div>
-   <div class="nebula nebula-green">
-   </div>
-   <div class="nebula nebula-blue">
-   </div>
-   <div class="stars stars-one">
-   </div>
-   <div class="stars stars-two">
-   </div>
-   <div class="stars stars-three">
-   </div>
-   <div class="planet planet-purple">
-   </div>
-   <div class="planet planet-blue">
-   </div>
-  </div>
-  <header class="navbar">
-   <a class="logo" href="../index.html">
-    <span class="logo-p">
-     P
-    </span>
-    <span class="logo-rest">
-     Game
-    </span>
-   </a>
-   <nav class="nav-links">
-   </nav>
-   <a class="header-profile" href="profile.html">
-    <div class="header-profile-icon">
-     👤
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="PGame؛ پیام‌رسان گیمرها."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        PGame | پیام‌رسان
+    </title>
+
+    <link
+        href="../style.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .messenger-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                min(
+                    1200px,
+                    94%
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                30px 0 80px;
+
+        }
+
+
+        /* =========================================================
+           TITLE
+        ========================================================= */
+
+        .messenger-title {
+
+            text-align:
+                center;
+
+            margin-bottom:
+                24px;
+
+        }
+
+
+        .messenger-title span {
+
+            display:
+                inline-block;
+
+            font-family:
+                Orbitron,
+                Vazirmatn,
+                sans-serif;
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                1.5px;
+
+            opacity:
+                .65;
+
+            margin-bottom:
+                7px;
+
+        }
+
+
+        .messenger-title h1 {
+
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    28px,
+                    5vw,
+                    42px
+                );
+
+            font-weight:
+                900;
+
+        }
+
+
+        .messenger-title p {
+
+            margin:
+                9px auto 0;
+
+            max-width:
+                650px;
+
+            color:
+                #89899d;
+
+            font-size:
+                11px;
+
+            line-height:
+                2;
+
+        }
+
+
+        /* =========================================================
+           CONVERSATIONS GRID
+        ========================================================= */
+
+        .messenger-conversations {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(
+                        240px,
+                        1fr
+                    )
+                );
+
+            gap:
+                14px;
+
+        }
+
+
+        /* =========================================================
+           CONVERSATION CARD
+        ========================================================= */
+
+        .messenger-conversation {
+
+            position:
+                relative;
+
+            width:
+                100%;
+
+            min-height:
+                145px;
+
+            padding:
+                18px;
+
+            box-sizing:
+                border-box;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            border-radius:
+                19px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(
+                        10,
+                        14,
+                        25,
+                        .92
+                    ),
+                    rgba(
+                        5,
+                        8,
+                        16,
+                        .84
+                    )
+                );
+
+            color:
+                #fff;
+
+            text-align:
+                right;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 16px 40px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .24
+                );
+
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+
+        }
+
+
+        .messenger-conversation:hover {
+
+            transform:
+                translateY(
+                    -4px
+                );
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .22
+                );
+
+            box-shadow:
+                0 20px 46px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .34
+                );
+
+        }
+
+
+        .messenger-avatar {
+
+            width:
+                46px;
+
+            height:
+                46px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            font-size:
+                22px;
+
+            margin-bottom:
+                10px;
+
+        }
+
+
+        .messenger-conversation h3 {
+
+            margin:
+                0;
+
+            font-size:
+                14px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .messenger-last-message {
+
+            margin:
+                6px 0 0;
+
+            color:
+                #85869a;
+
+            font-size:
+                9px;
+
+            line-height:
+                1.8;
+
+            display:
+                -webkit-box;
+
+            -webkit-line-clamp:
+                2;
+
+            -webkit-box-orient:
+                vertical;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .messenger-unread {
+
+            position:
+                absolute;
+
+            top:
+                13px;
+
+            left:
+                13px;
+
+            min-width:
+                22px;
+
+            height:
+                22px;
+
+            padding:
+                0 6px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            box-sizing:
+                border-box;
+
+            border-radius:
+                999px;
+
+            background:
+                var(--green);
+
+            color:
+                #03110c;
+
+            font-size:
+                9px;
+
+            font-weight:
+                900;
+
+            box-shadow:
+                0 0 16px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .22
+                );
+
+        }
+
+
+        /* =========================================================
+           EMPTY / ERROR
+        ========================================================= */
+
+        .messenger-state {
+
+            grid-column:
+                1 / -1;
+
+            padding:
+                45px 20px;
+
+            text-align:
+                center;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            border-radius:
+                18px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            color:
+                #818398;
+
+            font-size:
+                11px;
+
+        }
+
+
+        /* =========================================================
+           FLOATING NEW CHAT
+        ========================================================= */
+
+        .messenger-floating-new {
+
+            position:
+                fixed;
+
+            left:
+                22px;
+
+            bottom:
+                22px;
+
+            width:
+                62px;
+
+            height:
+                62px;
+
+            z-index:
+                85000;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border:
+                1px solid
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .42
+                );
+
+            border-radius:
+                50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .95
+                    ),
+                    rgba(
+                        0,
+                        234,
+                        255,
+                        .90
+                    )
+                );
+
+            color:
+                #fff;
+
+            font-size:
+                25px;
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 0 24px
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .22
+                ),
+
+                0 14px 38px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .35
+                );
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+        .messenger-floating-new:hover {
+
+            transform:
+                translateY(
+                    -4px
+                )
+                scale(
+                    1.04
+                );
+
+            box-shadow:
+                0 0 32px
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .34
+                ),
+
+                0 18px 44px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .42
+                );
+
+        }
+
+
+        /* =========================================================
+           OVERLAYS
+        ========================================================= */
+
+        .messenger-overlay {
+
+            display:
+                none;
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                90000;
+
+            padding:
+                18px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .72
+                );
+
+        }
+
+
+        .messenger-overlay-center {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        /* =========================================================
+           CHAT WINDOW
+        ========================================================= */
+
+        .messenger-chat-window {
+
+            width:
+                min(
+                    1050px,
+                    100%
+                );
+
+            height:
+                100%;
+
+            margin:
+                auto;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            overflow:
+                hidden;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                22px;
+
+            background:
+                #05080f;
+
+            box-shadow:
+                0 25px 80px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .50
+                );
+
+        }
+
+
+        .messenger-chat-header {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                14px;
+
+            border-bottom:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+        }
+
+
+        .messenger-close {
+
+            width:
+                40px;
+
+            height:
+                40px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                12px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .04
+                );
+
+            color:
+                #fff;
+
+            cursor:
+                pointer;
+
+            font-size:
+                21px;
+
+        }
+
+
+        .messenger-chat-title {
+
+            font-size:
+                14px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .messenger-chat-subtitle {
+
+            display:
+                block;
+
+            margin-top:
+                2px;
+
+            color:
+                #77778c;
+
+            font-size:
+                8px;
+
+        }
+
+
+        .messenger-message-list {
+
+            flex:
+                1;
+
+            overflow:
+                auto;
+
+            padding:
+                18px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                8px;
+
+        }
+
+
+        .messenger-message {
+
+            max-width:
+                min(
+                    82%,
+                    520px
+                );
+
+            padding:
+                9px 11px;
+
+            border-radius:
+                12px;
+
+            line-height:
+                1.8;
+
+            font-size:
+                10px;
+
+        }
+
+
+        .messenger-message.mine {
+
+            align-self:
+                flex-start;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .11
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .08
+                );
+
+        }
+
+
+        .messenger-message.theirs {
+
+            align-self:
+                flex-end;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .045
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+        }
+
+
+        .messenger-message-time {
+
+            display:
+                block;
+
+            margin-top:
+                3px;
+
+            opacity:
+                .42;
+
+            font-size:
+                7px;
+
+        }
+
+
+        .messenger-send-form {
+
+            display:
+                flex;
+
+            gap:
+                8px;
+
+            padding:
+                12px;
+
+            border-top:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+        }
+
+
+        .messenger-send-input {
+
+            flex:
+                1;
+
+            min-height:
+                42px;
+
+            max-height:
+                130px;
+
+            box-sizing:
+                border-box;
+
+            resize:
+                vertical;
+
+            padding:
+                10px 12px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                13px;
+
+            outline:
+                none;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+
+            font-family:
+                inherit;
+
+            font-size:
+                11px;
+
+        }
+
+
+        .messenger-send-button {
+
+            width:
+                48px;
+
+            min-width:
+                48px;
+
+            border:
+                0;
+
+            border-radius:
+                13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--green),
+                    var(--blue)
+                );
+
+            color:
+                #03110c;
+
+            cursor:
+                pointer;
+
+            font-size:
+                20px;
+
+        }
+
+
+        /* =========================================================
+           NEW CHAT WINDOW
+        ========================================================= */
+
+        .new-chat-window {
+
+            width:
+                min(
+                    520px,
+                    100%
+                );
+
+            max-height:
+                88vh;
+
+            overflow:
+                auto;
+
+            padding:
+                20px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                22px;
+
+            background:
+                #05080f;
+
+            box-shadow:
+                0 25px 80px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .50
+                );
+
+        }
+
+
+        .new-chat-header {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
+
+        }
+
+
+        .new-chat-header h2 {
+
+            margin:
+                0;
+
+            font-size:
+                18px;
+
+        }
+
+
+        .new-chat-search {
+
+            width:
+                100%;
+
+            box-sizing:
+                border-box;
+
+            margin-top:
+                14px;
+
+            padding:
+                11px 12px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            border-radius:
+                13px;
+
+            outline:
+                none;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+
+            font-family:
+                inherit;
+
+            font-size:
+                11px;
+
+        }
+
+
+        .new-chat-results {
+
+            display:
+                grid;
+
+            gap:
+                8px;
+
+            margin-top:
+                12px;
+
+        }
+
+
+        .new-chat-user {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            width:
+                100%;
+
+            padding:
+                11px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            border-radius:
+                13px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            color:
+                #fff;
+
+            text-align:
+                right;
+
+            cursor:
+                pointer;
+
+            transition:
+                background .18s ease,
+                border-color .18s ease,
+                transform .18s ease;
+
+        }
+
+
+        .new-chat-user:hover {
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .06
+                );
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
+        }
+
+
+        .new-chat-user-icon {
+
+            width:
+                40px;
+
+            height:
+                40px;
+
+            flex-shrink:
+                0;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                12px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
+        }
+
+
+        .new-chat-user-name {
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .new-chat-state {
+
+            color:
+                #77778c;
+
+            text-align:
+                center;
+
+            padding:
+                25px 10px;
+
+            font-size:
+                10px;
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 600px) {
+
+            .messenger-page {
+
+                width:
+                    94%;
+
+                padding-top:
+                    20px;
+
+            }
+
+
+            .messenger-floating-new {
+
+                left:
+                    16px;
+
+                bottom:
+                    16px;
+
+                width:
+                    58px;
+
+                height:
+                    58px;
+
+                font-size:
+                    23px;
+
+            }
+
+
+            .messenger-overlay {
+
+                padding:
+                    10px;
+
+            }
+
+
+            .messenger-chat-window {
+
+                border-radius:
+                    18px;
+
+            }
+
+
+            .messenger-message {
+
+                max-width:
+                    88%;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================== -->
+
+    <div
+        class="background-effects"
+        aria-hidden="true"
+    >
+
+        <div class="nebula nebula-purple"></div>
+
+        <div class="nebula nebula-green"></div>
+
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+
+        <div class="stars stars-two"></div>
+
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+
+        <div class="planet planet-blue"></div>
+
     </div>
-    <div class="header-player-info">
-     <strong>
-      ...
-     </strong>
-     <span>
-      در حال بررسی حساب...
-     </span>
-    </div>
-    <b>
-     &lsaquo;
-    </b>
-   </a>
-  </header>
-  <main class="messenger-page" style="position:relative;z-index:2">
-   <section style="width:min(1200px,94%);margin:20px auto">
-    <div style="display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:14px">
-     <div>
-      <span class="section-label">
-       💬 PGAME MESSENGER
-      </span>
-      <h1 style="margin:0">
-       پیام&zwnj;رسان
-      </h1>
-      <p style="color:#77778c;font-size:10px">
-       با بازیکنان PGame گفتگو کن.
-      </p>
-     </div>
-     <button class="hero-button" id="new-chat-button">
-      ✎ گفتگوی جدید
-     </button>
-    </div>
-    <div class="games-grid" id="conversation-wall">
-     <div class="game-box" style="grid-column:1/-1;text-align:center">
-      ⏳ در حال دریافت گفتگوها...
-     </div>
-    </div>
-   </section>
-  </main>
-  <div id="chat-overlay" style="display:none;position:fixed;inset:0;z-index:90000;background:rgba(0,0,0,.7);padding:18px">
-   <section style="width:min(1050px,100%);height:100%;margin:auto;display:flex;flex-direction:column;background:#05080f;border:1px solid rgba(255,255,255,.08);border-radius:22px;overflow:hidden">
-    <header style="display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)">
-     <button class="admin-button admin-button-secondary" id="close-chat">
-      &times;
-     </button>
-     <div>
-      <strong id="chat-title">
-       گفتگو
-      </strong>
-      <span style="display:block;font-size:8px;color:#77778c">
-       گفتگوی خصوصی PGame
-      </span>
-     </div>
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="navbar">
+
+
+        <button
+            type="button"
+            id="vexon-menu-trigger"
+            class="vexon-global-menu-trigger"
+            aria-label="باز کردن منوی PGame"
+            title="منوی PGame"
+        >
+            ☰
+        </button>
+
+
+        <a
+            href="../index.html"
+            class="logo"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </a>
+
+
+        <nav class="nav-links"></nav>
+
+
+        <a
+            href="profile.html"
+            class="header-profile"
+        >
+
+            <div
+                class="header-profile-icon"
+            >
+                👤
+            </div>
+
+
+            <div>
+
+                <strong
+                    id="header-username"
+                >
+                    ...
+                </strong>
+
+                <span
+                    id="header-user-status"
+                >
+                    در حال بررسی حساب...
+                </span>
+
+            </div>
+
+
+            <b>
+                &lsaquo;
+            </b>
+
+        </a>
+
+
     </header>
-    <div id="message-list" style="flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:8px">
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+    <main
+        class="messenger-page"
+    >
+
+
+        <section
+            class="messenger-title"
+        >
+
+            <span>
+                💬 PGAME MESSENGER
+            </span>
+
+
+            <h1>
+                پیام‌رسان
+            </h1>
+
+
+            <p>
+                با بازیکنان PGame گفتگو کن،
+                دوستانت را پیدا کن و پیام بفرست.
+            </p>
+
+        </section>
+
+
+        <section
+            id="conversation-wall"
+            class="messenger-conversations"
+        >
+
+            <div
+                class="messenger-state"
+            >
+                ⏳ در حال دریافت گفتگوها...
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================================================
+         FLOATING NEW CHAT
+    ========================================================== -->
+
+    <button
+        id="new-chat-button"
+        class="messenger-floating-new"
+        type="button"
+        title="گفتگوی جدید"
+        aria-label="گفتگوی جدید"
+    >
+
+        ✎
+
+    </button>
+
+
+    <!-- =========================================================
+         CHAT OVERLAY
+    ========================================================== -->
+
+    <div
+        id="chat-overlay"
+        class="messenger-overlay"
+    >
+
+
+        <section
+            class="messenger-chat-window"
+        >
+
+
+            <header
+                class="messenger-chat-header"
+            >
+
+                <button
+                    id="close-chat"
+                    class="messenger-close"
+                    type="button"
+                    aria-label="بستن گفتگو"
+                >
+                    &times;
+                </button>
+
+
+                <div>
+
+                    <strong
+                        id="chat-title"
+                        class="messenger-chat-title"
+                    >
+                        گفتگو
+                    </strong>
+
+
+                    <span
+                        class="messenger-chat-subtitle"
+                    >
+                        گفتگوی خصوصی PGame
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <div
+                id="message-list"
+                class="messenger-message-list"
+            ></div>
+
+
+            <form
+                id="message-form"
+                class="messenger-send-form"
+            >
+
+                <textarea
+                    id="message-input"
+                    class="messenger-send-input"
+                    maxlength="4000"
+                    placeholder="پیامت را بنویس..."
+                    rows="1"
+                ></textarea>
+
+
+                <button
+                    class="messenger-send-button"
+                    type="submit"
+                    aria-label="ارسال پیام"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+
+        </section>
+
+
     </div>
-    <form id="message-form" style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,.06)">
-     <textarea id="message-input" maxlength="4000" placeholder="پیامت را بنویس..." rows="1" style="flex:1;resize:none;border-radius:13px;padding:10px;background:rgba(255,255,255,.04);color:#fff;border:1px solid rgba(255,255,255,.08)"></textarea>
-     <button class="auth-button" type="submit">
-      ➤
-     </button>
-    </form>
-   </section>
-  </div>
-  <div id="new-chat-overlay" style="display:none;position:fixed;inset:0;z-index:91000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:18px">
-   <section class="admin-panel" style="width:min(520px,100%)">
-    <div style="display:flex;justify-content:space-between">
-     <h2 style="margin:0">
-      ✎ شروع گفتگوی جدید
-     </h2>
-     <button class="admin-button admin-button-secondary" id="close-new-chat">
-      &times;
-     </button>
+
+
+    <!-- =========================================================
+         NEW CHAT OVERLAY
+    ========================================================== -->
+
+    <div
+        id="new-chat-overlay"
+        class="
+            messenger-overlay
+            messenger-overlay-center
+        "
+    >
+
+
+        <section
+            class="new-chat-window"
+        >
+
+
+            <div
+                class="new-chat-header"
+            >
+
+                <h2>
+                    ✎ گفتگوی جدید
+                </h2>
+
+
+                <button
+                    id="close-new-chat"
+                    class="messenger-close"
+                    type="button"
+                    aria-label="بستن"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <input
+                id="user-search"
+                class="new-chat-search"
+                type="text"
+                maxlength="40"
+                autocomplete="off"
+                placeholder="نام کاربری را جستجو کن..."
+            >
+
+
+            <div
+                id="user-results"
+                class="new-chat-results"
+            >
+
+                <div class="new-chat-state">
+                    حداقل ۲ کاراکتر وارد کن.
+                </div>
+
+            </div>
+
+
+        </section>
+
+
     </div>
-    <input class="admin-form" id="user-search" placeholder="نام کاربری را جستجو کن..." style="margin-top:12px;width:100%;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff"/>
-    <div class="admin-list" id="user-results" style="margin-top:12px">
-    </div>
-   </section>
-  </div>
-  <script>
-   (function(){let me=null,currentId=null,currentName='';const wall=document.getElementById('conversation-wall'),overlay=document.getElementById('chat-overlay'),newOverlay=document.getElementById('new-chat-overlay'),messages=document.getElementById('message-list');const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));async function auth(){const r=await fetch('/api/me');const d=await r.json();if(!r.ok||!d.loggedIn){location.href='login.html';return false}me=d.user;return true}async function loadConvs(){const r=await fetch('/api/messenger/conversations');const d=await r.json();if(!r.ok){wall.innerHTML='<div class="game-box" style="grid-column:1/-1;text-align:center">❌ '+esc(d.message||'دریافت گفتگوها ناموفق بود.')+'</div>';return}const c=d.conversations||[];wall.innerHTML=c.length?c.map(x=>`<button class="game-box" style="text-align:right;cursor:pointer" data-open="${x.id}" data-name="${esc(x.other_username)}"><div style="font-size:25px">👤</div><h3>${esc(x.other_username)}</h3><p>${esc(x.last_message||'هنوز پیامی ارسال نشده')}</p>${Number(x.unread_count||0)?`<span style="color:#00ff9d">${x.unread_count} پیام خوانده‌نشده</span>`:''}</button>`).join(''):'<div class="game-box" style="grid-column:1/-1;text-align:center">💬 هنوز گفتگویی نداری.</div>'}async function openChat(id,name){currentId=id;currentName=name;document.getElementById('chat-title').textContent=name;overlay.style.display='block';await loadMessages();await fetch('/api/messenger/conversations/'+id+'/read',{method:'POST'}); }async function loadMessages(){const r=await fetch('/api/messenger/conversations/'+currentId+'/messages');const d=await r.json();messages.innerHTML=(d.messages||[]).map(m=>`<div style="align-self:${m.sender_id===me.id?'flex-start':'flex-end'};max-width:82%;padding:8px 10px;border-radius:11px;background:${m.sender_id===me.id?'rgba(0,255,157,.12)':'rgba(255,255,255,.05)'}"><div>${esc(m.content)}</div><small style="opacity:.4;font-size:7px">${esc(new Date(m.created_at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}))}</small></div>`).join('')||'<div style="text-align:center;opacity:.4">هنوز پیامی نیست.</div>';messages.scrollTop=messages.scrollHeight}wall.onclick=e=>{const b=e.target.closest('[data-open]');if(b)openChat(b.dataset.open,b.dataset.name)};document.getElementById('close-chat').onclick=()=>overlay.style.display='none';document.getElementById('message-form').onsubmit=async e=>{e.preventDefault();const i=document.getElementById('message-input'),content=i.value.trim();if(!content)return;await fetch('/api/messenger/conversations/'+currentId+'/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content})});i.value='';await loadMessages();await loadConvs()};document.getElementById('new-chat-button').onclick=()=>{newOverlay.style.display='flex';document.getElementById('user-search').focus()};document.getElementById('close-new-chat').onclick=()=>newOverlay.style.display='none';let timer;document.getElementById('user-search').oninput=e=>{clearTimeout(timer);const q=e.target.value.trim();if(q.length<2){document.getElementById('user-results').innerHTML='';return}timer=setTimeout(async()=>{const r=await fetch('/api/messenger/users/search?q='+encodeURIComponent(q)),d=await r.json();document.getElementById('user-results').innerHTML=(d.users||[]).map(u=>`<button class="game-box" style="text-align:right" data-user="${u.id}" data-name="${esc(u.username)}">👤 ${esc(u.username)}</button>`).join('')||'کاربری پیدا نشد.'},250)};document.getElementById('user-results').onclick=async e=>{const b=e.target.closest('[data-user]');if(!b)return;const r=await fetch('/api/messenger/conversations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:Number(b.dataset.user)})});const d=await r.json();if(r.ok&&d.success){newOverlay.style.display='none';await loadConvs();openChat(d.conversation.id,d.conversation.other_username)}};(async()=>{if(await auth())await loadConvs();})();setInterval(()=>{if(currentId&&overlay.style.display!=='none')loadMessages();loadConvs()},15000)})();
-  </script>
-  <footer>
-   <div class="footer-logo">
-            <span class="logo-p">P</span><span class="logo-rest">Game</span>
+
+
+    <!-- =========================================================
+         SCRIPT
+    ========================================================== -->
+
+    <script>
+
+        (function () {
+
+            "use strict";
+
+
+            let me =
+                null;
+
+
+            let currentConversationId =
+                null;
+
+
+            const wall =
+                document.getElementById(
+                    "conversation-wall"
+                );
+
+
+            const chatOverlay =
+                document.getElementById(
+                    "chat-overlay"
+                );
+
+
+            const newChatOverlay =
+                document.getElementById(
+                    "new-chat-overlay"
+                );
+
+
+            const messageList =
+                document.getElementById(
+                    "message-list"
+                );
+
+
+            const messageInput =
+                document.getElementById(
+                    "message-input"
+                );
+
+
+            const userSearch =
+                document.getElementById(
+                    "user-search"
+                );
+
+
+            const userResults =
+                document.getElementById(
+                    "user-results"
+                );
+
+
+            function escapeHtml(
+                value
+            ) {
+
+                return String(
+                    value ?? ""
+                ).replace(
+                    /[&<>"']/g,
+                    char => ({
+                        "&":
+                            "&amp;",
+                        "<":
+                            "&lt;",
+                        ">":
+                            "&gt;",
+                        "\"":
+                            "&quot;",
+                        "'":
+                            "&#039;"
+                    })[char]
+                );
+
+            }
+
+
+            /* =====================================================
+               AUTH
+            ====================================================== */
+
+            async function loadCurrentUser() {
+
+                const response =
+                    await fetch(
+                        "/api/me",
+                        {
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response
+                        .json();
+
+
+                if (
+                    !response.ok ||
+                    !data.loggedIn
+                ) {
+
+                    location.href =
+                        "login.html";
+
+                    return false;
+
+                }
+
+
+                me =
+                    data.user;
+
+
+                const username =
+                    document.getElementById(
+                        "header-username"
+                    );
+
+
+                const status =
+                    document.getElementById(
+                        "header-user-status"
+                    );
+
+
+                if (username) {
+
+                    username.textContent =
+                        me.username;
+
+                }
+
+
+                if (status) {
+
+                    status.textContent =
+                        `LV ${me.level ?? 1} • XP ${me.xp ?? 0}`;
+
+                }
+
+
+                return true;
+
+            }
+
+
+            /* =====================================================
+               LOAD CONVERSATIONS
+            ====================================================== */
+
+            async function loadConversations() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/messenger/conversations",
+                            {
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const data =
+                        await response
+                            .json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "دریافت گفتگوها ناموفق بود."
+                        );
+
+                    }
+
+
+                    const conversations =
+                        data.conversations ||
+                        [];
+
+
+                    if (
+                        !conversations.length
+                    ) {
+
+                        wall.innerHTML =
+                            `
+                                <div
+                                    class="messenger-state"
+                                >
+                                    💬 هنوز گفتگویی نداری.
+                                    <br>
+                                    از دکمه ✎ برای شروع یک گفتگوی جدید استفاده کن.
+                                </div>
+                            `;
+
+                        return;
+
+                    }
+
+
+                    wall.innerHTML =
+                        conversations
+                            .map(
+                                conversation => {
+
+                                    const unread =
+                                        Number(
+                                            conversation.unread_count ||
+                                            0
+                                        );
+
+
+                                    return `
+                                        <button
+                                            type="button"
+                                            class="messenger-conversation"
+                                            data-conversation-id="${conversation.id}"
+                                            data-conversation-name="${escapeHtml(
+                                                conversation.other_username
+                                            )}"
+                                        >
+
+                                            ${
+                                                unread > 0
+                                                    ? `
+                                                        <span
+                                                            class="messenger-unread"
+                                                        >
+                                                            ${unread}
+                                                        </span>
+                                                      `
+                                                    : ""
+                                            }
+
+
+                                            <div
+                                                class="messenger-avatar"
+                                            >
+                                                👤
+                                            </div>
+
+
+                                            <h3>
+                                                ${escapeHtml(
+                                                    conversation.other_username
+                                                )}
+                                            </h3>
+
+
+                                            <p
+                                                class="messenger-last-message"
+                                            >
+                                                ${escapeHtml(
+                                                    conversation.last_message ||
+                                                    "هنوز پیامی ارسال نشده است."
+                                                )}
+                                            </p>
+
+                                        </button>
+                                    `;
+
+                                }
+                            )
+                            .join("");
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LOAD_CONVERSATIONS_ERROR",
+                        error
+                    );
+
+
+                    wall.innerHTML =
+                        `
+                            <div
+                                class="messenger-state"
+                            >
+                                ❌
+                                ${escapeHtml(
+                                    error.message ||
+                                    "دریافت گفتگوها ناموفق بود."
+                                )}
+                            </div>
+                        `;
+
+                }
+
+            }
+
+
+            /* =====================================================
+               OPEN CHAT
+            ====================================================== */
+
+            async function openChat(
+                conversationId,
+                username
+            ) {
+
+                currentConversationId =
+                    Number(
+                        conversationId
+                    );
+
+
+                document.getElementById(
+                    "chat-title"
+                ).textContent =
+                    username;
+
+
+                chatOverlay.style.display =
+                    "block";
+
+
+                await loadMessages();
+
+
+                await markConversationRead();
+
+            }
+
+
+            /* =====================================================
+               CLOSE CHAT
+            ====================================================== */
+
+            document.getElementById(
+                "close-chat"
+            ).onclick =
+                () => {
+
+                    chatOverlay.style.display =
+                        "none";
+
+                    currentConversationId =
+                        null;
+
+                };
+
+
+            /* =====================================================
+               LOAD MESSAGES
+            ====================================================== */
+
+            async function loadMessages() {
+
+                if (
+                    !currentConversationId
+                ) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/messenger/conversations/${currentConversationId}/messages`,
+                            {
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const data =
+                        await response
+                            .json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "دریافت پیام‌ها ناموفق بود."
+                        );
+
+                    }
+
+
+                    const messages =
+                        data.messages ||
+                        [];
+
+
+                    messageList.innerHTML =
+                        messages.length
+
+                            ? messages
+                                .map(
+                                    message => {
+
+                                        const mine =
+                                            Number(
+                                                message.sender_id
+                                            ) ===
+                                            Number(
+                                                me.id
+                                            );
+
+
+                                        return `
+                                            <div
+                                                class="
+                                                    messenger-message
+                                                    ${mine
+                                                        ? "mine"
+                                                        : "theirs"}
+                                                "
+                                            >
+
+                                                <div>
+                                                    ${escapeHtml(
+                                                        message.content
+                                                    )}
+                                                </div>
+
+
+                                                <span
+                                                    class="
+                                                        messenger-message-time
+                                                    "
+                                                >
+                                                    ${escapeHtml(
+                                                        new Date(
+                                                            message.created_at
+                                                        )
+                                                        .toLocaleTimeString(
+                                                            "fa-IR",
+                                                            {
+                                                                hour:
+                                                                    "2-digit",
+                                                                minute:
+                                                                    "2-digit"
+                                                            }
+                                                        )
+                                                    )}
+                                                </span>
+
+                                            </div>
+                                        `;
+
+                                    }
+                                )
+                                .join("")
+
+                            : `
+                                <div
+                                    style="
+                                        margin:auto;
+                                        opacity:.4;
+                                        font-size:10px;
+                                    "
+                                >
+                                    هنوز پیامی ارسال نشده است.
+                                </div>
+                              `;
+
+
+                    messageList.scrollTop =
+                        messageList.scrollHeight;
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LOAD_MESSAGES_ERROR",
+                        error
+                    );
+
+
+                    messageList.innerHTML =
+                        `
+                            <div
+                                style="
+                                    margin:auto;
+                                    color:#ff7183;
+                                    font-size:10px;
+                                "
+                            >
+                                ❌
+                                ${escapeHtml(
+                                    error.message
+                                )}
+                            </div>
+                        `;
+
+                }
+
+            }
+
+
+            /* =====================================================
+               MARK READ
+            ====================================================== */
+
+            async function markConversationRead() {
+
+                if (
+                    !currentConversationId
+                ) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    await fetch(
+                        `/api/messenger/conversations/${currentConversationId}/read`,
+                        {
+                            method:
+                                "POST",
+
+                            credentials:
+                                "same-origin"
+                        }
+                    );
+
+                } catch {
+
+                    // Ignore.
+
+                }
+
+            }
+
+
+            /* =====================================================
+               CONVERSATION CLICK
+            ====================================================== */
+
+            wall.addEventListener(
+                "click",
+                event => {
+
+                    const button =
+                        event.target.closest(
+                            "[data-conversation-id]"
+                        );
+
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    openChat(
+                        button.dataset.conversationId,
+                        button.dataset.conversationName
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               SEND MESSAGE
+            ====================================================== */
+
+            document.getElementById(
+                "message-form"
+            ).addEventListener(
+                "submit",
+                async event => {
+
+                    event.preventDefault();
+
+
+                    if (
+                        !currentConversationId
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const content =
+                        messageInput.value.trim();
+
+
+                    if (!content) {
+
+                        return;
+
+                    }
+
+
+                    const submitButton =
+                        event.target.querySelector(
+                            "button[type='submit']"
+                        );
+
+
+                    submitButton.disabled =
+                        true;
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                `/api/messenger/conversations/${currentConversationId}/messages`,
+                                {
+                                    method:
+                                        "POST",
+
+                                    credentials:
+                                        "same-origin",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            content
+                                        })
+                                }
+                            );
+
+
+                        const data =
+                            await response
+                                .json();
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.message ||
+                                "ارسال پیام ناموفق بود."
+                            );
+
+                        }
+
+
+                        messageInput.value =
+                            "";
+
+
+                        await loadMessages();
+
+                        await loadConversations();
+
+
+                    } catch (error) {
+
+                        alert(
+                            error.message ||
+                            "ارسال پیام ناموفق بود."
+                        );
+
+                    } finally {
+
+                        submitButton.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               NEW CHAT OPEN
+            ====================================================== */
+
+            document.getElementById(
+                "new-chat-button"
+            ).onclick =
+                () => {
+
+                    newChatOverlay.style.display =
+                        "flex";
+
+                    userSearch.focus();
+
+                };
+
+
+            /* =====================================================
+               NEW CHAT CLOSE
+            ====================================================== */
+
+            document.getElementById(
+                "close-new-chat"
+            ).onclick =
+                () => {
+
+                    newChatOverlay.style.display =
+                        "none";
+
+                };
+
+
+            /* =====================================================
+               SEARCH USERS
+            ====================================================== */
+
+            let searchTimer =
+                null;
+
+
+            userSearch.addEventListener(
+                "input",
+                () => {
+
+                    clearTimeout(
+                        searchTimer
+                    );
+
+
+                    const query =
+                        userSearch.value.trim();
+
+
+                    if (
+                        query.length < 2
+                    ) {
+
+                        userResults.innerHTML =
+                            `
+                                <div
+                                    class="new-chat-state"
+                                >
+                                    حداقل ۲ کاراکتر وارد کن.
+                                </div>
+                            `;
+
+                        return;
+
+                    }
+
+
+                    searchTimer =
+                        setTimeout(
+                            async () => {
+
+                                try {
+
+                                    const response =
+                                        await fetch(
+                                            `/api/messenger/users/search?q=${encodeURIComponent(
+                                                query
+                                            )}`,
+                                            {
+                                                credentials:
+                                                    "same-origin",
+
+                                                cache:
+                                                    "no-store"
+                                            }
+                                        );
+
+
+                                    const data =
+                                        await response
+                                            .json();
+
+
+                                    if (
+                                        !response.ok ||
+                                        !data.success
+                                    ) {
+
+                                        throw new Error(
+                                            data.message ||
+                                            "جستجو ناموفق بود."
+                                        );
+
+                                    }
+
+
+                                    const users =
+                                        data.users ||
+                                        [];
+
+
+                                    userResults.innerHTML =
+                                        users.length
+
+                                            ? users
+                                                .map(
+                                                    user =>
+                                                        `
+                                                            <button
+                                                                type="button"
+                                                                class="new-chat-user"
+                                                                data-user-id="${user.id}"
+                                                                data-user-name="${escapeHtml(
+                                                                    user.username
+                                                                )}"
+                                                            >
+
+                                                                <span
+                                                                    class="new-chat-user-icon"
+                                                                >
+                                                                    👤
+                                                                </span>
+
+
+                                                                <span
+                                                                    class="new-chat-user-name"
+                                                                >
+                                                                    ${escapeHtml(
+                                                                        user.username
+                                                                    )}
+                                                                </span>
+
+                                                            </button>
+                                                        `
+                                                )
+                                                .join("")
+
+                                            : `
+                                                <div
+                                                    class="new-chat-state"
+                                                >
+                                                    کاربری پیدا نشد.
+                                                </div>
+                                              `;
+
+
+                                } catch (error) {
+
+                                    userResults.innerHTML =
+                                        `
+                                            <div
+                                                class="new-chat-state"
+                                            >
+                                                ❌
+                                                ${escapeHtml(
+                                                    error.message
+                                                )}
+                                            </div>
+                                        `;
+
+                                }
+
+                            },
+                            250
+                        );
+
+                }
+            );
+
+
+            /* =====================================================
+               CREATE CHAT
+            ====================================================== */
+
+            userResults.addEventListener(
+                "click",
+                async event => {
+
+                    const button =
+                        event.target.closest(
+                            "[data-user-id]"
+                        );
+
+
+                    if (!button) {
+
+                        return;
+
+                    }
+
+
+                    button.disabled =
+                        true;
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/messenger/conversations",
+                                {
+                                    method:
+                                        "POST",
+
+                                    credentials:
+                                        "same-origin",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            user_id:
+                                                Number(
+                                                    button.dataset.userId
+                                                )
+                                        })
+                                }
+                            );
+
+
+                        const data =
+                            await response
+                                .json();
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.message ||
+                                "ساخت گفتگو ناموفق بود."
+                            );
+
+                        }
+
+
+                        newChatOverlay.style.display =
+                            "none";
+
+
+                        userSearch.value =
+                            "";
+
+
+                        userResults.innerHTML =
+                            `
+                                <div
+                                    class="new-chat-state"
+                                >
+                                    حداقل ۲ کاراکتر وارد کن.
+                                </div>
+                            `;
+
+
+                        await loadConversations();
+
+
+                        await openChat(
+                            data.conversation.id,
+                            data.conversation.other_username
+                        );
+
+
+                    } catch (error) {
+
+                        alert(
+                            error.message ||
+                            "ساخت گفتگو ناموفق بود."
+                        );
+
+
+                    } finally {
+
+                        button.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               OVERLAY CLICK TO CLOSE
+            ====================================================== */
+
+            chatOverlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        chatOverlay
+                    ) {
+
+                        chatOverlay.style.display =
+                            "none";
+
+                        currentConversationId =
+                            null;
+
+                    }
+
+                }
+            );
+
+
+            newChatOverlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        newChatOverlay
+                    ) {
+
+                        newChatOverlay.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               INIT
+            ====================================================== */
+
+            (async () => {
+
+                const authenticated =
+                    await loadCurrentUser();
+
+
+                if (
+                    authenticated
+                ) {
+
+                    await loadConversations();
+
+                }
+
+            })();
+
+
+            /* =====================================================
+               REFRESH
+            ====================================================== */
+
+            setInterval(
+                async () => {
+
+                    await loadConversations();
+
+
+                    if (
+                        currentConversationId &&
+                        chatOverlay.style.display !==
+                            "none"
+                    ) {
+
+                        await loadMessages();
+
+                        await markConversationRead();
+
+                    }
+
+                },
+                10000
+            );
+
+
+        })();
+
+    </script>
+
+
+    <script src="../script.js"></script>
+
+    <script src="../vexon-nav.js"></script>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
         </div>
-   <p>
-    PLAY &bull; COMPETE &bull; LEVEL UP.
-   </p>
-   <div class="footer-socials">
-    <span>
-     ✈️
-    </span>
-    <span>
-     ◎
-    </span>
-    <span>
-     ▶
-    </span>
-   </div>
-   <span>
-    ساخته شده با 💚 برای گیمرها
-    <br/>
-    &copy; 2026 PGame &mdash; همه حقوق محفوظ است.
-   </span>
-  </footer>
-  <script src="../script.js">
-  </script>
-  <script src="../vexon-nav.js">
-  </script>
- </body>
+
+
+        <p>
+            PLAY • COMPETE • LEVEL UP.
+        </p>
+
+
+        <div class="footer-socials">
+
+            <span>✈️</span>
+
+            <span>◎</span>
+
+            <span>▶</span>
+
+        </div>
+
+
+        <span>
+
+            ساخته شده با 💚 برای گیمرها
+
+            <br>
+
+            © 2026 PGame — همه حقوق محفوظ است.
+
+        </span>
+
+    </footer>
+
+</body>
+
 </html>
