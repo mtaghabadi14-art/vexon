@@ -9,7 +9,8 @@
         ["sections/news.html", "📢", "اخبار"],
         ["sections/guide.html", "❓", "راهنما"],
         ["sections/creators.html", "👨‍💻", "سازندگان"],
-        ["sections/messenger.html", "💬", "پیام‌رسان"]
+        ["sections/messenger.html", "💬", "پیام‌رسان"],
+        ["sections/friends.html", "👥", "دوستان"]
     ];
 
     function insideSections() {

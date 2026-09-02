@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="دوستان PGame"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>PGame | دوستان</title>
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+    <style>
+
+        .friends-page {
+
+            position: relative;
+            z-index: 2;
+
+            width: min(1050px, 92%);
+
+            margin: 0 auto;
+
+            padding: 45px 0 90px;
+
+        }
+
+        .friends-hero {
+
+            text-align: center;
+
+            margin-bottom: 28px;
+
+        }
+
+        .friends-hero .section-label {
+
+            color: #00ff9d;
+
+        }
+
+        .friends-hero h1 {
+
+            margin: 7px 0;
+
+            font-size:
+                clamp(
+                    28px,
+                    5vw,
+                    46px
+                );
+
+        }
+
+        .friends-hero h1 span {
+
+            color: #00ff9d;
+
+            text-shadow:
+                0 0 15px
+                rgba(0,255,157,.25);
+
+        }
+
+        .friends-hero p {
+
+            margin: 0 auto;
+
+            max-width: 650px;
+
+            color: #8f90a5;
+
+            font-size: 12px;
+
+            line-height: 2;
+
+        }
+
+        .friends-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 14px;
+
+        }
+
+        .friends-panel {
+
+            padding: 20px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(7,10,18,.74);
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+
+            backdrop-filter: blur(14px);
+
+        }
+
+        .friends-panel-wide {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+        .friends-panel-head {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            gap: 12px;
+
+            margin-bottom: 15px;
+
+        }
+
+        .friends-panel-head h2 {
+
+            margin: 0;
+
+            font-size: 16px;
+
+        }
+
+        .friends-panel-head span {
+
+            color: #75768a;
+
+            font-size: 10px;
+
+        }
+
+        .friends-search {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+        .friends-search input {
+
+            flex: 1;
+
+            min-width: 0;
+
+            padding: 12px 13px;
+
+            border-radius: 13px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            background:
+                rgba(255,255,255,.035);
+
+            color: #fff;
+
+            outline: none;
+
+        }
+
+        .friends-search input:focus {
+
+            border-color:
+                rgba(0,255,157,.35);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(0,255,157,.05);
+
+        }
+
+        .friends-search button {
+
+            border: 0;
+
+            border-radius: 13px;
+
+            padding: 0 18px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #00ff9d,
+                    #00eaff
+                );
+
+            color: #03110c;
+
+            font-weight: 900;
+
+            cursor: pointer;
+
+        }
+
+        .friend-list {
+
+            display: grid;
+
+            gap: 9px;
+
+        }
+
+        .friend-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 11px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            border:
+                1px solid
+                rgba(255,255,255,.05);
+
+        }
+
+        .friend-avatar {
+
+            width: 42px;
+
+            height: 42px;
+
+            flex:
+                0 0 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,255,157,.10),
+                    rgba(116,77,255,.13)
+                );
+
+            font-size: 18px;
+
+        }
+
+        .friend-info {
+
+            min-width: 0;
+
+            flex: 1;
+
+        }
+
+        .friend-info strong {
+
+            display: block;
+
+            font-size: 12px;
+
+        }
+
+        .friend-info span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: #7f8093;
+
+            font-size: 9px;
+
+        }
+
+        .friend-online {
+
+            color: #00ff9d !important;
+
+        }
+
+        .friend-offline {
+
+            color: #77788c !important;
+
+        }
+
+        .friend-actions {
+
+            display: flex;
+
+            gap: 6px;
+
+        }
+
+        .friend-action {
+
+            width: 32px;
+
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+
+            background:
+                rgba(255,255,255,.035);
+
+            color: #fff;
+
+            cursor: pointer;
+
+        }
+
+        .friend-action:hover {
+
+            border-color:
+                rgba(0,255,157,.25);
+
+            background:
+                rgba(0,255,157,.06);
+
+        }
+
+        .request-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 11px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            border:
+                1px solid
+                rgba(255,255,255,.05);
+
+        }
+
+        .request-buttons {
+
+            display: flex;
+
+            gap: 6px;
+
+        }
+
+        .request-button {
+
+            border: 0;
+
+            border-radius: 10px;
+
+            padding: 8px 10px;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+        }
+
+        .request-accept {
+
+            background:
+                rgba(0,255,157,.10);
+
+            color: #00ff9d;
+
+        }
+
+        .request-reject {
+
+            background:
+                rgba(255,63,90,.08);
+
+            color: #ff7183;
+
+        }
+
+        .friends-empty {
+
+            padding: 25px 10px;
+
+            text-align: center;
+
+            color: #77788b;
+
+            font-size: 11px;
+
+        }
+
+        .friends-note {
+
+            margin-top: 12px;
+
+            color: #6f7084;
+
+            font-size: 9px;
+
+            line-height: 1.8;
+
+        }
+
+        @media (max-width: 800px) {
+
+            .friends-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+            .friends-panel-wide {
+
+                grid-column: auto;
+
+            }
+
+        }
+
+        @media (max-width: 520px) {
+
+            .friends-search {
+
+                flex-direction:
+                    column;
+
+            }
+
+            .friends-search button {
+
+                min-height: 42px;
+
+            }
+
+            .friend-actions {
+
+                flex-direction:
+                    column;
+
+            }
+
+            .request-item {
+
+                align-items:
+                    flex-start;
+
+                flex-wrap:
+                    wrap;
+
+            }
+
+            .request-buttons {
+
+                width: 100%;
+
+            }
+
+            .request-buttons button {
+
+                flex: 1;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div
+        aria-hidden="true"
+        class="background-effects"
+    >
+
+        <div class="nebula nebula-purple"></div>
+
+        <div class="nebula nebula-green"></div>
+
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+
+        <div class="stars stars-two"></div>
+
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+
+        <div class="planet planet-blue"></div>
+
+    </div>
+
+
+    <header class="navbar">
+
+        <a
+            class="logo"
+            href="../index.html"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">P</span>
+            <span class="logo-rest">Game</span>
+
+        </a>
+
+
+        <nav class="nav-links"></nav>
+
+
+        <a
+            class="header-profile"
+            href="profile.html"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+            <div class="header-player-info">
+
+                <strong>
+                    ...
+                </strong>
+
+                <span>
+                    حساب PGame
+                </span>
+
+            </div>
+
+            <b>&lsaquo;</b>
+
+        </a>
+
+    </header>
+
+
+    <main class="friends-page">
+
+        <section class="friends-hero">
+
+            <span class="section-label">
+                👥 PGAME FRIENDS
+            </span>
+
+            <h1>
+                دوستان
+                <span>PGame</span>
+            </h1>
+
+            <p>
+                دوستانت را پیدا کن، درخواست دوستی بفرست
+                و ارتباطت را با گیمرهای PGame مدیریت کن.
+            </p>
+
+        </section>
+
+
+        <section class="friends-grid">
+
+
+            <!-- SEARCH -->
+
+            <div class="friends-panel friends-panel-wide">
+
+                <div class="friends-panel-head">
+
+                    <h2>
+                        🔎 پیدا کردن دوست
+                    </h2>
+
+                    <span>
+                        Username / PGame ID
+                    </span>
+
+                </div>
+
+
+                <div class="friends-search">
+
+                    <input
+                        id="friend-search-input"
+                        type="text"
+                        placeholder="نام کاربری یا PGame ID..."
+                    >
+
+                    <button
+                        id="friend-search-button"
+                        type="button"
+                    >
+                        جستجو
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="friend-search-results"
+                    class="friend-list"
+                    style="margin-top:12px"
+                >
+
+                    <div class="friends-empty">
+                        برای پیدا کردن کاربر، جستجو کن.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MY FRIENDS -->
+
+            <div class="friends-panel">
+
+                <div class="friends-panel-head">
+
+                    <h2>
+                        🧑‍🤝‍🧑 دوستان من
+                    </h2>
+
+                    <span id="friends-count">
+                        0 نفر
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="friends-list"
+                    class="friend-list"
+                >
+
+                    <div class="friends-empty">
+                        هنوز دوستی اضافه نکردی.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INCOMING -->
+
+            <div class="friends-panel">
+
+                <div class="friends-panel-head">
+
+                    <h2>
+                        📨 درخواست‌های دریافتی
+                    </h2>
+
+                    <span id="incoming-count">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="incoming-list"
+                    class="friend-list"
+                >
+
+                    <div class="friends-empty">
+                        درخواست جدیدی نداری.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OUTGOING -->
+
+            <div class="friends-panel">
+
+                <div class="friends-panel-head">
+
+                    <h2>
+                        📤 درخواست‌های ارسالی
+                    </h2>
+
+                    <span id="outgoing-count">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="outgoing-list"
+                    class="friend-list"
+                >
+
+                    <div class="friends-empty">
+                        درخواست ارسالی نداری.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <p class="friends-note">
+            سیستم دوستان فعلاً در حال آماده‌سازی است.
+            در مرحله بعدی درخواست دوستی و ارتباط واقعی با حساب‌های PGame فعال می‌شود.
+        </p>
+
+    </main>
+
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <span class="logo-p">P</span>
+            <span class="logo-rest">Game</span>
+
+        </div>
+
+        <p>
+            PLAY • COMPETE • LEVEL UP.
+        </p>
+
+        <span>
+            ساخته شده با 💚 برای گیمرها
+            <br>
+            © 2026 PGame — همه حقوق محفوظ است.
+        </span>
+
+    </footer>
+
+
+    <script src="../script.js"></script>
+    <script src="../vexon-nav.js"></script>
+
+</body>
+
+</html>
