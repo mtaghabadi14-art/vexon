@@ -224,6 +224,14 @@
 
         }
 
+        .friends-search button:disabled {
+
+            opacity: .55;
+
+            cursor: wait;
+
+        }
+
         .friend-list {
 
             display: grid;
@@ -309,18 +317,6 @@
 
         }
 
-        .friend-online {
-
-            color: #00ff9d !important;
-
-        }
-
-        .friend-offline {
-
-            color: #77788c !important;
-
-        }
-
         .friend-actions {
 
             display: flex;
@@ -354,6 +350,9 @@
 
             cursor: pointer;
 
+            transition:
+                .2s ease;
+
         }
 
         .friend-action:hover {
@@ -363,6 +362,20 @@
 
             background:
                 rgba(0,255,157,.06);
+
+        }
+
+        .friend-action.sent {
+
+            color: #00ff9d;
+
+            border-color:
+                rgba(0,255,157,.30);
+
+            background:
+                rgba(0,255,157,.08);
+
+            cursor: default;
 
         }
 
@@ -436,6 +449,30 @@
             color: #77788b;
 
             font-size: 11px;
+
+        }
+
+        .friends-status {
+
+            min-height: 18px;
+
+            margin-top: 10px;
+
+            color: #8a8ba0;
+
+            font-size: 10px;
+
+        }
+
+        .friends-status.success {
+
+            color: #00ff9d;
+
+        }
+
+        .friends-status.error {
+
+            color: #ff7183;
 
         }
 
@@ -636,7 +673,8 @@
                     <input
                         id="friend-search-input"
                         type="text"
-                        placeholder="نام کاربری یا PGame ID..."
+                        autocomplete="off"
+                        placeholder="نام کاربری را جستجو کن..."
                     >
 
                     <button
@@ -647,6 +685,12 @@
                     </button>
 
                 </div>
+
+
+                <div
+                    id="friend-search-status"
+                    class="friends-status"
+                ></div>
 
 
                 <div
@@ -761,8 +805,8 @@
 
 
         <p class="friends-note">
-            سیستم دوستان فعلاً در حال آماده‌سازی است.
-            در مرحله بعدی درخواست دوستی و ارتباط واقعی با حساب‌های PGame فعال می‌شود.
+            فعلاً جستجوی کاربران و ارسال درخواست دوستی فعال است.
+            مدیریت درخواست‌های دریافتی و لیست دوستان در مرحله بعدی وصل می‌شود.
         </p>
 
     </main>
@@ -788,6 +832,484 @@
         </span>
 
     </footer>
+
+
+    <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const input =
+                document.getElementById(
+                    "friend-search-input"
+                );
+
+            const button =
+                document.getElementById(
+                    "friend-search-button"
+                );
+
+            const results =
+                document.getElementById(
+                    "friend-search-results"
+                );
+
+            const status =
+                document.getElementById(
+                    "friend-search-status"
+                );
+
+            if (
+                !input ||
+                !button ||
+                !results
+            ) {
+                return;
+            }
+
+
+            function escapeHtml(
+                value
+            ) {
+
+                return String(
+                    value ?? ""
+                )
+                    .replaceAll(
+                        "&",
+                        "&amp;"
+                    )
+                    .replaceAll(
+                        "<",
+                        "&lt;"
+                    )
+                    .replaceAll(
+                        ">",
+                        "&gt;"
+                    )
+                    .replaceAll(
+                        '"',
+                        "&quot;"
+                    )
+                    .replaceAll(
+                        "'",
+                        "&#039;"
+                    );
+
+            }
+
+
+            function showStatus(
+                message,
+                type = ""
+            ) {
+
+                if (!status) {
+                    return;
+                }
+
+                status.textContent =
+                    message;
+
+                status.className =
+                    "friends-status " +
+                    type;
+
+            }
+
+
+            async function sendFriendRequest(
+                userId,
+                actionButton
+            ) {
+
+                if (
+                    !Number.isInteger(
+                        Number(userId)
+                    )
+                ) {
+                    return;
+                }
+
+                actionButton.disabled =
+                    true;
+
+                actionButton.textContent =
+                    "⏳";
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/friends/request",
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        user_id:
+                                            Number(
+                                                userId
+                                            )
+                                    })
+                            }
+                        );
+
+                    let data =
+                        {};
+
+                    try {
+
+                        data =
+                            await response.json();
+
+                    } catch {
+
+                        data =
+                            {};
+
+                    }
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "ارسال درخواست دوستی انجام نشد."
+                        );
+
+                    }
+
+
+                    actionButton.textContent =
+                        "✓";
+
+                    actionButton.classList.add(
+                        "sent"
+                    );
+
+                    actionButton.title =
+                        "درخواست ارسال شد";
+
+                    showStatus(
+                        data.message ||
+                        "✅ درخواست دوستی ارسال شد.",
+                        "success"
+                    );
+
+                } catch (
+                    error
+                ) {
+
+                    console.error(
+                        "FRIEND_REQUEST_ERROR:",
+                        error
+                    );
+
+                    actionButton.disabled =
+                        false;
+
+                    actionButton.textContent =
+                        "➕";
+
+                    showStatus(
+                        "❌ " +
+                        (
+                            error.message ||
+                            "ارسال درخواست انجام نشد."
+                        ),
+                        "error"
+                    );
+
+                }
+
+            }
+
+
+            async function searchUsers() {
+
+                const query =
+                    input.value.trim();
+
+                showStatus(
+                    ""
+                );
+
+
+                if (!query) {
+
+                    results.innerHTML = `
+                        <div class="friends-empty">
+                            نام کاربری را وارد کن.
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                if (
+                    query.length < 2
+                ) {
+
+                    results.innerHTML = `
+                        <div class="friends-empty">
+                            حداقل ۲ کاراکتر وارد کن.
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "در حال جستجو...";
+
+
+                results.innerHTML = `
+                    <div class="friends-empty">
+                        🔎 در حال پیدا کردن کاربران...
+                    </div>
+                `;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/friends/search?q=${encodeURIComponent(
+                                query
+                            )}`,
+                            {
+                                method:
+                                    "GET",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    let data =
+                        {};
+
+                    try {
+
+                        data =
+                            await response.json();
+
+                    } catch {
+
+                        data =
+                            {};
+
+                    }
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "جستجو انجام نشد."
+                        );
+
+                    }
+
+
+                    const users =
+                        Array.isArray(
+                            data.users
+                        )
+                            ? data.users
+                            : [];
+
+
+                    if (
+                        !users.length
+                    ) {
+
+                        results.innerHTML = `
+                            <div class="friends-empty">
+                                😕 کاربری با این نام پیدا نشد.
+                            </div>
+                        `;
+
+                        return;
+                    }
+
+
+                    results.innerHTML =
+                        users
+                            .map(
+                                user => {
+
+                                    const username =
+                                        escapeHtml(
+                                            user.username ||
+                                            ""
+                                        );
+
+                                    const userId =
+                                        Number(
+                                            user.id
+                                        );
+
+                                    return `
+                                        <div
+                                            class="friend-item"
+                                        >
+
+                                            <div
+                                                class="friend-avatar"
+                                            >
+                                                👤
+                                            </div>
+
+                                            <div
+                                                class="friend-info"
+                                            >
+
+                                                <strong>
+                                                    ${username}
+                                                </strong>
+
+                                                <span>
+                                                    کاربر PGame
+                                                </span>
+
+                                            </div>
+
+                                            <div
+                                                class="friend-actions"
+                                            >
+
+                                                <button
+                                                    class="friend-action"
+                                                    type="button"
+                                                    title="افزودن دوست"
+                                                    data-user-id="${userId}"
+                                                >
+                                                    ➕
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+                                    `;
+
+                                }
+                            )
+                            .join("");
+
+
+                    results
+                        .querySelectorAll(
+                            ".friend-action"
+                        )
+                        .forEach(
+                            actionButton => {
+
+                                actionButton.addEventListener(
+                                    "click",
+                                    function () {
+
+                                        sendFriendRequest(
+                                            this.dataset.userId,
+                                            this
+                                        );
+
+                                    }
+                                );
+
+                            }
+                        );
+
+                } catch (
+                    error
+                ) {
+
+                    console.error(
+                        "FRIEND_SEARCH_ERROR:",
+                        error
+                    );
+
+                    results.innerHTML = `
+                        <div class="friends-empty">
+                            ❌ ${
+                                escapeHtml(
+                                    error.message ||
+                                    "خطا در جستجو."
+                                )
+                            }
+                        </div>
+                    `;
+
+                } finally {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "جستجو";
+
+                }
+
+            }
+
+
+            button.addEventListener(
+                "click",
+                searchUsers
+            );
+
+
+            input.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key ===
+                        "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        searchUsers();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+    </script>
 
 
     <script src="../script.js"></script>

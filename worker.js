@@ -1226,6 +1226,87 @@ async function ensureNotifications(
 }
 
 
+
+/* =========================================================
+   FRIEND REQUESTS TABLE
+========================================================= */
+
+async function ensureFriendRequests(
+    env
+) {
+
+    await env.DB
+        .prepare(`
+            CREATE TABLE IF NOT EXISTS friend_requests (
+
+                id INTEGER PRIMARY KEY
+                    AUTOINCREMENT,
+
+                requester_id INTEGER NOT NULL,
+
+                receiver_id INTEGER NOT NULL,
+
+                status TEXT NOT NULL
+                    DEFAULT 'pending',
+
+                created_at TEXT NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP,
+
+                updated_at TEXT NOT NULL
+                    DEFAULT CURRENT_TIMESTAMP,
+
+                CHECK (
+                    requester_id != receiver_id
+                ),
+
+                UNIQUE(
+                    requester_id,
+                    receiver_id
+                ),
+
+                FOREIGN KEY(
+                    requester_id
+                )
+                REFERENCES users(id)
+                ON DELETE CASCADE,
+
+                FOREIGN KEY(
+                    receiver_id
+                )
+                REFERENCES users(id)
+                ON DELETE CASCADE
+
+            )
+        `)
+        .run();
+
+    await env.DB
+        .prepare(`
+            CREATE INDEX IF NOT EXISTS
+                idx_friend_requests_receiver
+
+            ON friend_requests(
+                receiver_id,
+                status
+            )
+        `)
+        .run();
+
+    await env.DB
+        .prepare(`
+            CREATE INDEX IF NOT EXISTS
+                idx_friend_requests_requester
+
+            ON friend_requests(
+                requester_id,
+                status
+            )
+        `)
+        .run();
+
+}
+
+
 /* =========================================================
    NOTIFICATION HELPERS
 ========================================================= */
@@ -2426,6 +2507,354 @@ export default {
                 });
 
             }
+
+            /* =========================================================
+   FRIENDS — SEARCH USERS
+========================================================= */
+
+if (
+    url.pathname ===
+        "/api/friends/search" &&
+    request.method === "GET"
+) {
+
+    const accessResult =
+        await access(
+            request,
+            env
+        );
+
+    if (!accessResult.ok) {
+
+        return json(
+            {
+                success: false,
+                message: "ابتدا وارد حساب شوید."
+            },
+            accessResult.status
+        );
+
+    }
+
+    const query =
+        (url.searchParams.get("q") || "")
+            .trim()
+            .toLowerCase();
+
+    if (!query) {
+
+        return json({
+            success: true,
+            users: []
+        });
+
+    }
+
+    const users =
+        await env.DB
+            .prepare(`
+                SELECT
+                    id,
+                    username
+                FROM users
+                WHERE
+                    id != ?1
+                    AND LOWER(username)
+                        LIKE ?2
+                ORDER BY
+                    username ASC
+                LIMIT 20
+            `)
+            .bind(
+                accessResult.user.id,
+                `%${query}%`
+            )
+            .all();
+
+    return json({
+        success: true,
+        users:
+            users.results || []
+    });
+
+}
+
+/* =========================================================
+   FRIENDS — SEND REQUEST
+========================================================= */
+
+if (
+    path ===
+        "/api/friends/request" &&
+    method ===
+        "POST"
+) {
+
+    const accessResult =
+        await access(
+            request,
+            env
+        );
+
+    if (!accessResult.ok) {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "ابتدا وارد حساب شوید."
+            },
+            accessResult.status
+        );
+
+    }
+
+    await ensureFriendRequests(
+        env
+    );
+
+    let body =
+        {};
+
+    try {
+
+        body =
+            await request.json();
+
+    } catch {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "داده درخواست نامعتبر است."
+            },
+            400
+        );
+
+    }
+
+    const targetUserId =
+        Number(
+            body.user_id
+        );
+
+    if (
+        !Number.isInteger(
+            targetUserId
+        ) ||
+        targetUserId <= 0
+    ) {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "کاربر نامعتبر است."
+            },
+            400
+        );
+
+    }
+
+    if (
+        targetUserId ===
+        accessResult.user.id
+    ) {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "نمی‌توانی خودت را به دوستانت اضافه کنی."
+            },
+            400
+        );
+
+    }
+
+    const targetUser =
+        await env.DB
+            .prepare(`
+                SELECT
+                    id,
+                    username
+                FROM users
+                WHERE id = ?1
+                LIMIT 1
+            `)
+            .bind(
+                targetUserId
+            )
+            .first();
+
+    if (!targetUser) {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "این کاربر پیدا نشد."
+            },
+            404
+        );
+
+    }
+
+    const existing =
+        await env.DB
+            .prepare(`
+                SELECT
+                    id,
+                    requester_id,
+                    receiver_id,
+                    status
+                FROM friend_requests
+                WHERE
+                    (
+                        requester_id = ?1
+                        AND receiver_id = ?2
+                    )
+                    OR
+                    (
+                        requester_id = ?2
+                        AND receiver_id = ?1
+                    )
+                ORDER BY
+                    id DESC
+                LIMIT 1
+            `)
+            .bind(
+                accessResult.user.id,
+                targetUserId
+            )
+            .first();
+
+    if (
+        existing?.status ===
+        "accepted"
+    ) {
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "این کاربر از قبل دوستت است."
+            },
+            409
+        );
+
+    }
+
+    if (
+        existing?.status ===
+        "pending"
+    ) {
+
+        if (
+            Number(
+                existing.requester_id
+            ) ===
+            Number(
+                accessResult.user.id
+            )
+        ) {
+
+            return json(
+                {
+                    success:
+                        false,
+
+                    message:
+                        "درخواست دوستی قبلاً ارسال شده."
+                },
+                409
+            );
+
+        }
+
+        return json(
+            {
+                success:
+                    false,
+
+                message:
+                    "این کاربر قبلاً برای تو درخواست فرستاده است."
+            },
+            409
+        );
+
+    }
+
+    const inserted =
+        await env.DB
+            .prepare(`
+                INSERT INTO friend_requests(
+                    requester_id,
+                    receiver_id,
+                    status,
+                    created_at,
+                    updated_at
+                )
+                VALUES(
+                    ?1,
+                    ?2,
+                    'pending',
+                    CURRENT_TIMESTAMP,
+                    CURRENT_TIMESTAMP
+                )
+            `)
+            .bind(
+                accessResult.user.id,
+                targetUserId
+            )
+            .run();
+
+    const requestId =
+        inserted.meta?.last_row_id ??
+        null;
+
+    await notifyUser(
+        env,
+        targetUserId,
+        "friend_request",
+        "👥 درخواست دوستی جدید",
+        `${accessResult.user.username} برایت درخواست دوستی فرستاد.`,
+        requestId
+    );
+
+    return json({
+        success:
+            true,
+
+        message:
+            "✅ درخواست دوستی ارسال شد.",
+
+        request_id:
+            requestId,
+
+        user: {
+            id:
+                targetUser.id,
+
+            username:
+                targetUser.username
+        }
+    });
+
+}
 
 
             /* =================================================
