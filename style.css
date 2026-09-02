@@ -2171,7 +2171,7 @@ footer {
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 900px) {}
+@media (max-width: 900px) {
 
     .nav-links {
         display: none;
@@ -2300,6 +2300,7 @@ footer {
                 44px
             );
     }
+}
 
 
 @media (max-width: 600px) {
