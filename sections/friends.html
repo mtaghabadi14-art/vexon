@@ -29,36 +29,58 @@
 
     <style>
 
+        /* =========================================================
+           FRIENDS PAGE
+        ========================================================= */
+
         .friends-page {
 
             position: relative;
+
             z-index: 2;
 
-            width: min(1050px, 92%);
+            width:
+                min(
+                    1100px,
+                    92%
+                );
 
-            margin: 0 auto;
+            margin:
+                0 auto;
 
-            padding: 45px 0 90px;
+            padding:
+                45px 0 100px;
 
         }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
 
         .friends-hero {
 
-            text-align: center;
+            text-align:
+                center;
 
-            margin-bottom: 28px;
+            margin-bottom:
+                28px;
 
         }
+
 
         .friends-hero .section-label {
 
-            color: #00ff9d;
+            color:
+                #00ff9d;
 
         }
 
+
         .friends-hero h1 {
 
-            margin: 7px 0;
+            margin:
+                7px 0;
 
             font-size:
                 clamp(
@@ -69,9 +91,11 @@
 
         }
 
+
         .friends-hero h1 span {
 
-            color: #00ff9d;
+            color:
+                #00ff9d;
 
             text-shadow:
                 0 0 15px
@@ -84,39 +108,62 @@
 
         }
 
+
         .friends-hero p {
 
-            margin: 0 auto;
+            margin:
+                0 auto;
 
-            max-width: 650px;
+            max-width:
+                680px;
 
-            color: #8f90a5;
+            color:
+                #8f90a5;
 
-            font-size: 12px;
+            font-size:
+                12px;
 
-            line-height: 2;
+            line-height:
+                2;
 
         }
 
+
+        /* =========================================================
+           GRID
+        ========================================================= */
+
         .friends-grid {
 
-            display: grid;
+            display:
+                grid;
 
             grid-template-columns:
                 repeat(
                     3,
-                    1fr
+                    minmax(
+                        0,
+                        1fr
+                    )
                 );
 
-            gap: 14px;
+            gap:
+                14px;
 
         }
 
+
+        /* =========================================================
+           PANELS
+        ========================================================= */
+
         .friends-panel {
 
-            padding: 20px;
+            padding:
+                20px;
 
-            border-radius: 20px;
+            border-radius:
+                20px;
 
             background:
                 rgba(
@@ -138,7 +185,17 @@
             backdrop-filter:
                 blur(14px);
 
+            box-shadow:
+                0 12px 40px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .14
+                );
+
         }
+
 
         .friends-panel-wide {
 
@@ -147,50 +204,71 @@
 
         }
 
+
         .friends-panel-head {
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
             justify-content:
                 space-between;
 
-            gap: 12px;
+            gap:
+                12px;
 
-            margin-bottom: 15px;
+            margin-bottom:
+                15px;
 
         }
+
 
         .friends-panel-head h2 {
 
-            margin: 0;
+            margin:
+                0;
 
-            font-size: 16px;
+            font-size:
+                16px;
 
         }
+
 
         .friends-panel-head span {
 
-            color: #75768a;
+            color:
+                #75768a;
 
-            font-size: 10px;
+            font-size:
+                10px;
 
         }
+
+
+        /* =========================================================
+           SEARCH
+        ========================================================= */
 
         .friends-search {
 
-            display: flex;
+            display:
+                flex;
 
-            gap: 8px;
+            gap:
+                8px;
 
         }
 
+
         .friends-search input {
 
-            flex: 1;
+            flex:
+                1;
 
-            min-width: 0;
+            min-width:
+                0;
 
             padding:
                 12px 13px;
@@ -215,11 +293,25 @@
                     .035
                 );
 
-            color: #fff;
+            color:
+                #fff;
 
-            outline: none;
+            outline:
+                none;
+
+            font-family:
+                inherit;
 
         }
+
+
+        .friends-search input::placeholder {
+
+            color:
+                #6f7084;
+
+        }
+
 
         .friends-search input:focus {
 
@@ -242,9 +334,11 @@
 
         }
 
+
         .friends-search button {
 
-            border: 0;
+            border:
+                0;
 
             border-radius:
                 13px;
@@ -262,40 +356,81 @@
             color:
                 #03110c;
 
-            font-weight: 900;
+            font-family:
+                inherit;
+
+            font-weight:
+                900;
 
             cursor:
                 pointer;
 
+            transition:
+                .2s ease;
+
         }
+
+
+        .friends-search button:hover {
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+            filter:
+                brightness(
+                    1.05
+                );
+
+        }
+
 
         .friends-search button:disabled {
 
-            opacity: .55;
+            opacity:
+                .55;
 
-            cursor: wait;
+            cursor:
+                wait;
+
+            transform:
+                none;
 
         }
+
+
+        /* =========================================================
+           LIST
+        ========================================================= */
 
         .friend-list {
 
-            display: grid;
+            display:
+                grid;
 
-            gap: 9px;
+            gap:
+                9px;
 
         }
 
+
         .friend-item {
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            gap: 10px;
+            gap:
+                10px;
 
-            padding: 11px;
+            padding:
+                11px;
 
-            border-radius: 14px;
+            border-radius:
+                14px;
 
             background:
                 rgba(
@@ -314,22 +449,52 @@
                     .05
                 );
 
+            transition:
+                .2s ease;
+
         }
+
+
+        .friend-item:hover {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+        }
+
 
         .friend-avatar {
 
-            width: 42px;
+            width:
+                42px;
 
-            height: 42px;
+            height:
+                42px;
 
             flex:
                 0 0 42px;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            justify-content: center;
+            justify-content:
+                center;
 
             border-radius:
                 13px;
@@ -351,58 +516,103 @@
                     )
                 );
 
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
             font-size:
                 18px;
 
+            font-weight:
+                900;
+
         }
+
 
         .friend-info {
 
-            min-width: 0;
+            min-width:
+                0;
 
-            flex: 1;
+            flex:
+                1;
 
         }
+
 
         .friend-info strong {
 
-            display: block;
+            display:
+                block;
 
-            font-size: 12px;
+            font-size:
+                12px;
+
+            white-space:
+                nowrap;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
 
         }
+
 
         .friend-info span {
 
-            display: block;
+            display:
+                block;
 
-            margin-top: 3px;
+            margin-top:
+                4px;
 
-            color: #7f8093;
+            color:
+                #7f8093;
 
-            font-size: 9px;
+            font-size:
+                9px;
 
         }
+
 
         .friend-actions {
 
-            display: flex;
+            display:
+                flex;
 
-            gap: 6px;
+            gap:
+                6px;
 
         }
 
+
+        /* =========================================================
+           ACTION BUTTON
+        ========================================================= */
+
         .friend-action {
 
-            width: 32px;
+            width:
+                34px;
 
-            height: 32px;
+            height:
+                34px;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            justify-content: center;
+            justify-content:
+                center;
 
             border-radius:
                 10px;
@@ -430,10 +640,14 @@
             cursor:
                 pointer;
 
+            font-family:
+                inherit;
+
             transition:
                 .2s ease;
 
         }
+
 
         .friend-action:hover {
 
@@ -453,7 +667,13 @@
                     .06
                 );
 
+            transform:
+                translateY(
+                    -1px
+                );
+
         }
+
 
         .friend-action.sent {
 
@@ -481,15 +701,56 @@
 
         }
 
+
+        .friend-action.sent:hover {
+
+            transform:
+                none;
+
+        }
+
+
+        .friend-action.danger:hover {
+
+            color:
+                #ff7183;
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .25
+                );
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .06
+                );
+
+        }
+
+
+        /* =========================================================
+           REQUEST ITEM
+        ========================================================= */
+
         .request-item {
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            gap: 10px;
+            gap:
+                10px;
 
-            padding: 11px;
+            padding:
+                11px;
 
             border-radius:
                 14px;
@@ -513,17 +774,22 @@
 
         }
 
+
         .request-buttons {
 
-            display: flex;
+            display:
+                flex;
 
-            gap: 6px;
+            gap:
+                6px;
 
         }
 
+
         .request-button {
 
-            border: 0;
+            border:
+                0;
 
             border-radius:
                 10px;
@@ -531,21 +797,44 @@
             padding:
                 8px 10px;
 
+            font-family:
+                inherit;
+
             font-size:
                 10px;
 
             cursor:
                 pointer;
 
+            transition:
+                .2s ease;
+
         }
+
+
+        .request-button:hover {
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+        }
+
 
         .request-button:disabled {
 
-            opacity: .55;
+            opacity:
+                .55;
 
-            cursor: wait;
+            cursor:
+                wait;
+
+            transform:
+                none;
 
         }
+
 
         .request-accept {
 
@@ -562,6 +851,7 @@
 
         }
 
+
         .request-reject {
 
             background:
@@ -577,6 +867,11 @@
 
         }
 
+
+        /* =========================================================
+           EMPTY
+        ========================================================= */
+
         .friends-empty {
 
             padding:
@@ -591,7 +886,15 @@
             font-size:
                 11px;
 
+            line-height:
+                1.8;
+
         }
+
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
 
         .friends-status {
 
@@ -609,12 +912,14 @@
 
         }
 
+
         .friends-status.success {
 
             color:
                 #00ff9d;
 
         }
+
 
         .friends-status.error {
 
@@ -623,24 +928,35 @@
 
         }
 
-        .friends-note {
 
-            margin-top:
-                12px;
+        /* =========================================================
+           MOBILE
+        ========================================================= */
 
-            color:
-                #6f7084;
+        @media (
+            max-width: 900px
+        ) {
 
-            font-size:
-                9px;
+            .friends-grid {
 
-            line-height:
-                1.8;
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+
+            .friends-panel-wide {
+
+                grid-column:
+                    1 / -1;
+
+            }
 
         }
 
+
         @media (
-            max-width: 800px
+            max-width: 650px
         ) {
 
             .friends-grid {
@@ -649,6 +965,7 @@
                     1fr;
 
             }
+
 
             .friends-panel-wide {
 
@@ -659,9 +976,21 @@
 
         }
 
+
         @media (
             max-width: 520px
         ) {
+
+            .friends-page {
+
+                width:
+                    94%;
+
+                padding-top:
+                    30px;
+
+            }
+
 
             .friends-search {
 
@@ -670,6 +999,7 @@
 
             }
 
+
             .friends-search button {
 
                 min-height:
@@ -677,12 +1007,22 @@
 
             }
 
+
+            .friend-item {
+
+                align-items:
+                    flex-start;
+
+            }
+
+
             .friend-actions {
 
                 flex-direction:
                     column;
 
             }
+
 
             .request-item {
 
@@ -694,12 +1034,14 @@
 
             }
 
+
             .request-buttons {
 
                 width:
                     100%;
 
             }
+
 
             .request-buttons button {
 
@@ -716,6 +1058,11 @@
 
 
 <body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================= -->
 
     <div
         aria-hidden="true"
@@ -740,6 +1087,10 @@
 
     </div>
 
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
 
     <header class="navbar">
 
@@ -797,7 +1148,15 @@
     </header>
 
 
+
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
     <main class="friends-page">
+
+
+        <!-- HERO -->
 
         <section class="friends-hero">
 
@@ -818,17 +1177,25 @@
             </h1>
 
             <p>
-                دوستانت را پیدا کن، درخواست دوستی بفرست
-                و ارتباطت را با گیمرهای PGame مدیریت کن.
+                دوستانت را پیدا کن، درخواست دوستی بفرست،
+                درخواست‌هایت را مدیریت کن و با گیمرهای PGame
+                در ارتباط باش.
             </p>
 
         </section>
 
 
+
+        <!-- =====================================================
+             GRID
+        ===================================================== -->
+
         <section class="friends-grid">
 
 
-            <!-- SEARCH -->
+            <!-- =================================================
+                 SEARCH
+            ================================================= -->
 
             <div
                 class="
@@ -860,8 +1227,10 @@
                         id="friend-search-input"
                         type="text"
                         autocomplete="off"
+                        maxlength="30"
                         placeholder="نام کاربری را جستجو کن..."
                     >
+
 
                     <button
                         id="friend-search-button"
@@ -883,7 +1252,7 @@
                     id="friend-search-results"
                     class="friend-list"
                     style="
-                        margin-top:12px
+                        margin-top:12px;
                     "
                 >
 
@@ -898,7 +1267,10 @@
             </div>
 
 
-            <!-- FRIENDS -->
+
+            <!-- =================================================
+                 MY FRIENDS
+            ================================================= -->
 
             <div
                 class="friends-panel"
@@ -937,7 +1309,10 @@
             </div>
 
 
-            <!-- INCOMING -->
+
+            <!-- =================================================
+                 INCOMING
+            ================================================= -->
 
             <div
                 class="friends-panel"
@@ -976,10 +1351,13 @@
             </div>
 
 
-            <!-- OUTGOING -->
+
+            <!-- =================================================
+                 OUTGOING
+            ================================================= -->
 
             <div
-                class="friends-panel"
+                class="friends-panel friends-panel-wide"
             >
 
                 <div
@@ -1017,666 +1395,751 @@
 
         </section>
 
-
-        <p
-            class="friends-note"
-        >
-            سیستم دوستان PGame فعال است.
-            درخواست‌های دوستی، قبول و رد درخواست‌ها
-            و لیست دوستان از حساب شما مدیریت می‌شوند.
-        </p>
-
     </main>
 
 
-    <footer>
 
-        <div
-            class="footer-logo"
-        >
+    <!-- =========================================================
+         PGAME GLOBAL SCRIPT
+    ========================================================= -->
 
-            <span
-                class="logo-p"
-            >
-                P
-            </span>
+    <script src="../script.js"></script>
 
-            <span
-                class="logo-rest"
-            >
-                Game
-            </span>
+    <script src="../vexon-nav.js"></script>
 
-        </div>
 
-        <p>
-            PLAY • COMPETE • LEVEL UP.
-        </p>
 
-        <span>
-            ساخته شده با 💚 برای گیمرها
-            <br>
-            © 2026 PGame — همه حقوق محفوظ است.
-        </span>
-
-    </footer>
-
+    <!-- =========================================================
+         FRIENDS SCRIPT
+    ========================================================= -->
 
     <script>
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+        /* =====================================================
+           HELPERS
+        ===================================================== */
 
-            const searchInput =
-                document.getElementById(
-                    "friend-search-input"
-                );
-
-            const searchButton =
-                document.getElementById(
-                    "friend-search-button"
-                );
-
-            const searchResults =
-                document.getElementById(
-                    "friend-search-results"
-                );
-
-            const searchStatus =
-                document.getElementById(
-                    "friend-search-status"
-                );
-
-            const friendsList =
-                document.getElementById(
-                    "friends-list"
-                );
-
-            const incomingList =
-                document.getElementById(
-                    "incoming-list"
-                );
-
-            const outgoingList =
-                document.getElementById(
-                    "outgoing-list"
-                );
-
-            const friendsCount =
-                document.getElementById(
-                    "friends-count"
-                );
-
-            const incomingCount =
-                document.getElementById(
-                    "incoming-count"
-                );
-
-            const outgoingCount =
-                document.getElementById(
-                    "outgoing-count"
-                );
+        const $ = (
+            id
+        ) => document.getElementById(id);
 
 
-            function escapeHtml(
-                value
-            ) {
+        function escapeHtml(
+            value
+        ) {
 
-                return String(
-                    value ?? ""
+            return String(
+                value ?? ""
+            )
+                .replaceAll(
+                    "&",
+                    "&amp;"
                 )
-                    .replaceAll(
-                        "&",
-                        "&amp;"
-                    )
-                    .replaceAll(
-                        "<",
-                        "&lt;"
-                    )
-                    .replaceAll(
-                        ">",
-                        "&gt;"
-                    )
-                    .replaceAll(
-                        '"',
-                        "&quot;"
-                    )
-                    .replaceAll(
-                        "'",
-                        "&#039;"
-                    );
-
-            }
-
-
-            function showSearchStatus(
-                message,
-                type = ""
-            ) {
-
-                if (
-                    !searchStatus
-                ) {
-                    return;
-                }
-
-                searchStatus.textContent =
-                    message;
-
-                searchStatus.className =
-                    "friends-status " +
-                    type;
-
-            }
-
-
-            async function respondToRequest(
-                requestId,
-                action,
-                button
-            ) {
-
-                button.disabled =
-                    true;
-
-                button.textContent =
-                    action ===
-                        "accept"
-
-                        ? "⏳"
-
-                        : "⏳";
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/api/friends/respond",
-                            {
-                                method:
-                                    "POST",
-
-                                credentials:
-                                    "same-origin",
-
-                                cache:
-                                    "no-store",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify({
-                                        request_id:
-                                            Number(
-                                                requestId
-                                            ),
-
-                                        action
-                                    })
-                            }
-                        );
-
-
-                    let data =
-                        {};
-
-                    try {
-
-                        data =
-                            await response.json();
-
-                    } catch {
-
-                        data =
-                            {};
-
-                    }
-
-
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
-
-                        throw new Error(
-                            data.message ||
-                            "عملیات انجام نشد."
-                        );
-
-                    }
-
-
-                    await loadFriendStatus();
-
-                } catch (
-                    error
-                ) {
-
-                    console.error(
-                        "FRIEND_RESPOND_ERROR:",
-                        error
-                    );
-
-                    alert(
-                        error.message ||
-                        "عملیات انجام نشد."
-                    );
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        action ===
-                            "accept"
-                            ? "قبول"
-                            : "رد";
-
-                }
-
-            }
-
-
-            async function sendFriendRequest(
-                userId,
-                button
-            ) {
-
-                button.disabled =
-                    true;
-
-                button.textContent =
-                    "⏳";
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/api/friends/request",
-                            {
-                                method:
-                                    "POST",
-
-                                credentials:
-                                    "same-origin",
-
-                                cache:
-                                    "no-store",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify({
-                                        user_id:
-                                            Number(
-                                                userId
-                                            )
-                                    })
-                            }
-                        );
-
-
-                    let data =
-                        {};
-
-                    try {
-
-                        data =
-                            await response.json();
-
-                    } catch {
-
-                        data =
-                            {};
-
-                    }
-
-
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
-
-                        throw new Error(
-                            data.message ||
-                            "ارسال درخواست انجام نشد."
-                        );
-
-                    }
-
-
-                    button.textContent =
-                        "✓";
-
-                    button.classList.add(
-                        "sent"
-                    );
-
-                    button.title =
-                        "درخواست ارسال شد";
-
-                    showSearchStatus(
-                        data.message ||
-                        "✅ درخواست دوستی ارسال شد.",
-                        "success"
-                    );
-
-
-                    await loadFriendStatus();
-
-                } catch (
-                    error
-                ) {
-
-                    console.error(
-                        "FRIEND_REQUEST_ERROR:",
-                        error
-                    );
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "➕";
-
-                    showSearchStatus(
-                        "❌ " +
-                        (
-                            error.message ||
-                            "ارسال درخواست انجام نشد."
-                        ),
-                        "error"
-                    );
-
-                }
-
-            }
-
-
-            async function searchUsers() {
-
-                const query =
-                    searchInput.value.trim();
-
-
-                showSearchStatus(
-                    ""
+                .replaceAll(
+                    "<",
+                    "&lt;"
+                )
+                .replaceAll(
+                    ">",
+                    "&gt;"
+                )
+                .replaceAll(
+                    '"',
+                    "&quot;"
+                )
+                .replaceAll(
+                    "'",
+                    "&#039;"
                 );
 
-
-                if (!query) {
-
-                    searchResults.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            نام کاربری را وارد کن.
-                        </div>
-                    `;
-
-                    return;
-
-                }
+        }
 
 
-                if (
-                    query.length < 2
-                ) {
+        function userAvatar(
+            username
+        ) {
 
-                    searchResults.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            حداقل ۲ کاراکتر وارد کن.
-                        </div>
-                    `;
+            const value =
+                String(
+                    username || "P"
+                )
+                    .trim();
 
-                    return;
+            return (
+                value.charAt(0)
+                .toUpperCase()
+            ) || "P";
 
-                }
-
-
-                searchButton.disabled =
-                    true;
-
-                searchButton.textContent =
-                    "در حال جستجو...";
+        }
 
 
-                searchResults.innerHTML = `
-                    <div
-                        class="friends-empty"
+        function onlineLabel(
+            online
+        ) {
+
+            return Number(
+                online
+            ) === 1
+
+                ? `
+                    <span
+                        style="
+                            color:#00ff9d;
+                        "
                     >
-                        🔎 در حال پیدا کردن کاربران...
-                    </div>
+                        ● آنلاین
+                    </span>
+                `
+
+                : `
+                    <span>
+                        ● آفلاین
+                    </span>
                 `;
 
-
-                try {
-
-                    const response =
-                        await fetch(
-                            `/api/friends/search?q=${encodeURIComponent(
-                                query
-                            )}`,
-                            {
-                                method:
-                                    "GET",
-
-                                credentials:
-                                    "same-origin",
-
-                                cache:
-                                    "no-store"
-                            }
-                        );
+        }
 
 
-                    const data =
-                        await response.json();
+        function empty(
+            text
+        ) {
+
+            return `
+                <div class="friends-empty">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+
+        }
 
 
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
+        async function api(
+            url,
+            options = {}
+        ) {
 
-                        throw new Error(
-                            data.message ||
-                            "جستجو انجام نشد."
-                        );
+            const response =
+                await fetch(
+                    url,
+                    {
+                        ...options,
 
-                    }
-
-
-                    const users =
-                        Array.isArray(
-                            data.users
-                        )
-                            ? data.users
-                            : [];
-
-
-                    if (
-                        !users.length
-                    ) {
-
-                        searchResults.innerHTML = `
-                            <div
-                                class="friends-empty"
-                            >
-                                😕 کاربری با این نام پیدا نشد.
-                            </div>
-                        `;
-
-                        return;
-
-                    }
-
-
-                    searchResults.innerHTML =
-                        users
-                            .map(
-                                user => {
-
-                                    return `
-                                        <div
-                                            class="friend-item"
-                                        >
-
-                                            <div
-                                                class="friend-avatar"
-                                            >
-                                                👤
-                                            </div>
-
-                                            <div
-                                                class="friend-info"
-                                            >
-
-                                                <strong>
-                                                    ${escapeHtml(
-                                                        user.username
-                                                    )}
-                                                </strong>
-
-                                                <span>
-                                                    کاربر PGame
-                                                </span>
-
-                                            </div>
-
-                                            <div
-                                                class="friend-actions"
-                                            >
-
-                                                <button
-                                                    class="friend-action"
-                                                    type="button"
-                                                    data-user-id="${
-                                                        Number(
-                                                            user.id
-                                                        )
-                                                    }"
-                                                    title="افزودن دوست"
-                                                >
-                                                    ➕
-                                                </button>
-
-                                            </div>
-
-                                        </div>
-                                    `;
-
+                        headers: {
+                            ...(options.body
+                                ? {
+                                    "Content-Type":
+                                        "application/json"
                                 }
-                            )
-                            .join("");
+                                : {}),
+
+                            ...(options.headers || {})
+                        }
+                    }
+                );
 
 
-                    searchResults
-                        .querySelectorAll(
-                            ".friend-action"
-                        )
-                        .forEach(
-                            button => {
-
-                                button.addEventListener(
-                                    "click",
-                                    function () {
-
-                                        sendFriendRequest(
-                                            this.dataset.userId,
-                                            this
-                                        );
-
-                                    }
-                                );
-
-                            }
-                        );
-
-                } catch (
-                    error
-                ) {
-
-                    console.error(
-                        "FRIEND_SEARCH_ERROR:",
-                        error
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
                     );
 
-                    searchResults.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            ❌ ${
-                                escapeHtml(
-                                    error.message ||
-                                    "خطا در جستجو."
-                                )
-                            }
-                        </div>
-                    `;
 
-                } finally {
+            if (
+                !response.ok
+            ) {
 
-                    searchButton.disabled =
-                        false;
-
-                    searchButton.textContent =
-                        "جستجو";
-
-                }
+                throw new Error(
+                    data.error ||
+                    "REQUEST_FAILED"
+                );
 
             }
 
 
-            function renderFriends(
-                friends
+            return data;
+
+        }
+
+
+
+        /* =====================================================
+           ELEMENTS
+        ===================================================== */
+
+        const searchInput =
+            $("friend-search-input");
+
+        const searchButton =
+            $("friend-search-button");
+
+        const searchResults =
+            $("friend-search-results");
+
+        const searchStatus =
+            $("friend-search-status");
+
+        const friendsList =
+            $("friends-list");
+
+        const incomingList =
+            $("incoming-list");
+
+        const outgoingList =
+            $("outgoing-list");
+
+        const friendsCount =
+            $("friends-count");
+
+        const incomingCount =
+            $("incoming-count");
+
+        const outgoingCount =
+            $("outgoing-count");
+
+
+
+        /* =====================================================
+           RENDER FRIENDS
+        ===================================================== */
+
+        function renderFriends(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
+
+
+            friendsCount.textContent =
+                `${users.length} نفر`;
+
+
+            if (
+                !users.length
             ) {
 
-                friends =
-                    Array.isArray(
-                        friends
+                friendsList.innerHTML =
+                    empty(
+                        "هنوز دوستی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            friendsList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="friend-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="friend-actions"
+                                >
+
+                                    <button
+                                        class="friend-action"
+                                        title="پروفایل"
+                                        data-profile-friend="${user.id}"
+                                    >
+                                        👤
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            friend-action
+                                            danger
+                                        "
+                                        title="حذف دوست"
+                                        data-remove-friend="${user.id}"
+                                    >
+                                        🗑️
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
                     )
-                        ? friends
-                        : [];
+                    .join("");
+
+        }
 
 
-                friendsCount.textContent =
-                    `${friends.length} نفر`;
+
+        /* =====================================================
+           RENDER INCOMING
+        ===================================================== */
+
+        function renderIncoming(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
 
 
-                if (
-                    !friends.length
-                ) {
+            incomingCount.textContent =
+                users.length;
 
-                    friendsList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            هنوز دوستی اضافه نکردی.
-                        </div>
-                    `;
 
-                    return;
+            if (
+                !users.length
+            ) {
 
-                }
+                incomingList.innerHTML =
+                    empty(
+                        "درخواست دریافتی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            incomingList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="request-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="request-buttons"
+                                >
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-accept
+                                        "
+                                        data-accept="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        قبول
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-reject
+                                        "
+                                        data-reject="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        رد
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           RENDER OUTGOING
+        ===================================================== */
+
+        function renderOutgoing(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
+
+
+            outgoingCount.textContent =
+                users.length;
+
+
+            if (
+                !users.length
+            ) {
+
+                outgoingList.innerHTML =
+                    empty(
+                        "درخواست ارسالی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            outgoingList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="request-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="request-buttons"
+                                >
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-reject
+                                        "
+                                        data-cancel="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        لغو درخواست
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           LOAD FRIEND STATUS
+        ===================================================== */
+
+        async function loadFriends() {
+
+            try {
+
+                const data =
+                    await api(
+                        "/api/friends/status"
+                    );
+
+
+                renderFriends(
+                    data.friends || []
+                );
+
+
+                renderIncoming(
+                    data.incoming || []
+                );
+
+
+                renderOutgoing(
+                    data.outgoing || []
+                );
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Friends load error:",
+                    error
+                );
 
 
                 friendsList.innerHTML =
-                    friends
+                    empty(
+                        "خطا در دریافت لیست دوستان."
+                    );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        async function searchFriends() {
+
+            const q =
+                searchInput.value
+                    .trim();
+
+
+            if (!q) {
+
+                searchResults.innerHTML =
+                    empty(
+                        "نام کاربری را وارد کن."
+                    );
+
+                searchStatus.textContent =
+                    "";
+
+                return;
+
+            }
+
+
+            searchButton.disabled =
+                true;
+
+
+            searchStatus.textContent =
+                "در حال جستجو...";
+
+
+            searchStatus.className =
+                "friends-status";
+
+
+            try {
+
+                const data =
+                    await api(
+                        `/api/friends/search?q=${encodeURIComponent(q)}`
+                    );
+
+
+                const users =
+                    Array.isArray(
+                        data.users
+                    )
+                        ? data.users
+                        : [];
+
+
+                if (
+                    !users.length
+                ) {
+
+                    searchResults.innerHTML =
+                        empty(
+                            "کاربری پیدا نشد."
+                        );
+
+                    searchStatus.textContent =
+                        "";
+
+                    return;
+
+                }
+
+
+                searchResults.innerHTML =
+                    users
                         .map(
-                            friend => {
+                            user => {
+
+                                let action =
+                                    "";
+
+
+                                if (
+                                    user.relation ===
+                                    "friend"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="
+                                                friend-action
+                                                sent
+                                            "
+                                            disabled
+                                            title="دوست شما"
+                                        >
+                                            ✓
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else if (
+                                    user.relation ===
+                                    "outgoing"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="
+                                                friend-action
+                                                sent
+                                            "
+                                            disabled
+                                            title="درخواست ارسال شده"
+                                        >
+                                            ⏳
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else if (
+                                    user.relation ===
+                                    "incoming"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="friend-action"
+                                            title="درخواست دریافتی"
+                                            data-refresh-friends="1"
+                                        >
+                                            👥
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else {
+
+                                    action = `
+                                        <button
+                                            class="friend-action"
+                                            title="ارسال درخواست دوستی"
+                                            data-send-friend="${user.id}"
+                                        >
+                                            ➕
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                const relationText =
+
+                                    user.relation === "friend"
+
+                                        ? "دوست شما"
+
+                                        : user.relation === "outgoing"
+
+                                            ? "درخواست ارسال شده"
+
+                                            : user.relation === "incoming"
+
+                                                ? "برای شما درخواست فرستاده"
+
+                                                : "کاربر PGame";
+
 
                                 return `
+
                                     <div
                                         class="friend-item"
                                     >
@@ -1684,8 +2147,13 @@
                                         <div
                                             class="friend-avatar"
                                         >
-                                            👤
+                                            ${escapeHtml(
+                                                userAvatar(
+                                                    user.username
+                                                )
+                                            )}
                                         </div>
+
 
                                         <div
                                             class="friend-info"
@@ -1693,134 +2161,29 @@
 
                                             <strong>
                                                 ${escapeHtml(
-                                                    friend.username
-                                                )}
-                                            </strong>
-
-                                            <span
-                                                class="friend-online"
-                                            >
-                                                ● دوست PGame
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-                                `;
-
-                            }
-                        )
-                        .join("");
-
-            }
-
-
-            function renderIncoming(
-                requests
-            ) {
-
-                requests =
-                    Array.isArray(
-                        requests
-                    )
-                        ? requests
-                        : [];
-
-
-                incomingCount.textContent =
-                    String(
-                        requests.length
-                    );
-
-
-                if (
-                    !requests.length
-                ) {
-
-                    incomingList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            درخواست جدیدی نداری.
-                        </div>
-                    `;
-
-                    return;
-
-                }
-
-
-                incomingList.innerHTML =
-                    requests
-                        .map(
-                            request => {
-
-                                return `
-                                    <div
-                                        class="request-item"
-                                    >
-
-                                        <div
-                                            class="friend-avatar"
-                                        >
-                                            👤
-                                        </div>
-
-                                        <div
-                                            class="friend-info"
-                                        >
-
-                                            <strong>
-                                                ${escapeHtml(
-                                                    request.username
+                                                    user.username
                                                 )}
                                             </strong>
 
                                             <span>
-                                                درخواست دوستی برای شما ارسال کرده
+                                                ${escapeHtml(
+                                                    relationText
+                                                )}
                                             </span>
 
                                         </div>
 
+
                                         <div
-                                            class="request-buttons"
+                                            class="friend-actions"
                                         >
 
-                                            <button
-                                                class="
-                                                    request-button
-                                                    request-accept
-                                                "
-                                                type="button"
-                                                data-request-id="${
-                                                    Number(
-                                                        request.id
-                                                    )
-                                                }"
-                                                data-action="accept"
-                                            >
-                                                قبول
-                                            </button>
-
-                                            <button
-                                                class="
-                                                    request-button
-                                                    request-reject
-                                                "
-                                                type="button"
-                                                data-request-id="${
-                                                    Number(
-                                                        request.id
-                                                    )
-                                                }"
-                                                data-action="reject"
-                                            >
-                                                رد
-                                            </button>
+                                            ${action}
 
                                         </div>
 
                                     </div>
+
                                 `;
 
                             }
@@ -1828,255 +2191,661 @@
                         .join("");
 
 
-                incomingList
-                    .querySelectorAll(
-                        ".request-button"
-                    )
-                    .forEach(
-                        button => {
-
-                            button.addEventListener(
-                                "click",
-                                function () {
-
-                                    respondToRequest(
-                                        this.dataset.requestId,
-                                        this.dataset.action,
-                                        this
-                                    );
-
-                                }
-                            );
-
-                        }
-                    );
+                searchStatus.textContent =
+                    `${users.length} نتیجه پیدا شد.`;
 
             }
 
-
-            function renderOutgoing(
-                requests
+            catch (
+                error
             ) {
 
-                requests =
-                    Array.isArray(
-                        requests
-                    )
-                        ? requests
-                        : [];
-
-
-                outgoingCount.textContent =
-                    String(
-                        requests.length
-                    );
-
-
-                if (
-                    !requests.length
-                ) {
-
-                    outgoingList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            درخواست ارسالی نداری.
-                        </div>
-                    `;
-
-                    return;
-
-                }
-
-
-                outgoingList.innerHTML =
-                    requests
-                        .map(
-                            request => {
-
-                                return `
-                                    <div
-                                        class="request-item"
-                                    >
-
-                                        <div
-                                            class="friend-avatar"
-                                        >
-                                            👤
-                                        </div>
-
-                                        <div
-                                            class="friend-info"
-                                        >
-
-                                            <strong>
-                                                ${escapeHtml(
-                                                    request.username
-                                                )}
-                                            </strong>
-
-                                            <span>
-                                                در انتظار پاسخ...
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-                                `;
-
-                            }
-                        )
-                        .join("");
-
-            }
-
-
-            async function loadFriendStatus() {
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/api/friends/status",
-                            {
-                                method:
-                                    "GET",
-
-                                credentials:
-                                    "same-origin",
-
-                                cache:
-                                    "no-store"
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
-
-                        throw new Error(
-                            data.message ||
-                            "دریافت اطلاعات دوستان انجام نشد."
-                        );
-
-                    }
-
-
-                    renderFriends(
-                        data.friends
-                    );
-
-                    renderIncoming(
-                        data.incoming
-                    );
-
-                    renderOutgoing(
-                        data.outgoing
-                    );
-
-                } catch (
+                console.error(
+                    "Friend search error:",
                     error
-                ) {
-
-                    console.error(
-                        "FRIEND_STATUS_ERROR:",
-                        error
-                    );
+                );
 
 
-                    friendsList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            ❌ ${escapeHtml(
-                                error.message ||
-                                "خطا در دریافت دوستان."
-                            )}
-                        </div>
-                    `;
+                searchStatus.textContent =
+                    "خطا در جستجو.";
 
 
-                    incomingList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            ❌ خطا در دریافت درخواست‌ها.
-                        </div>
-                    `;
-
-
-                    outgoingList.innerHTML = `
-                        <div
-                            class="friends-empty"
-                        >
-                            ❌ خطا در دریافت درخواست‌ها.
-                        </div>
-                    `;
-
-                }
+                searchStatus.className =
+                    "friends-status error";
 
             }
 
+            finally {
 
-            searchButton.addEventListener(
-                "click",
-                searchUsers
-            );
+                searchButton.disabled =
+                    false;
 
-
-            searchInput.addEventListener(
-                "keydown",
-                function (
-                    event
-                ) {
-
-                    if (
-                        event.key ===
-                        "Enter"
-                    ) {
-
-                        event.preventDefault();
-
-                        searchUsers();
-
-                    }
-
-                }
-            );
-
-
-            loadFriendStatus();
-
-
-            setInterval(
-                function () {
-
-                    if (
-                        !document.hidden
-                    ) {
-
-                        loadFriendStatus();
-
-                    }
-
-                },
-                10000
-            );
+            }
 
         }
-    );
+
+
+
+        /* =====================================================
+           SEND FRIEND REQUEST
+        ===================================================== */
+
+        async function sendFriend(
+            userId,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/request",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                user_id:
+                                    Number(
+                                        userId
+                                    )
+                            })
+                    }
+                );
+
+
+                searchStatus.textContent =
+                    "درخواست دوستی ارسال شد ✅";
+
+
+                searchStatus.className =
+                    "friends-status success";
+
+
+                await loadFriends();
+
+                await searchFriends();
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Send friend error:",
+                    error
+                );
+
+
+                const messages = {
+
+                    ALREADY_SENT:
+                        "درخواست قبلاً ارسال شده.",
+
+                    ALREADY_FRIENDS:
+                        "این کاربر دوست شماست.",
+
+                    INCOMING_PENDING:
+                        "این کاربر قبلاً برای شما درخواست فرستاده.",
+
+                    USER_NOT_FOUND:
+                        "کاربر پیدا نشد.",
+
+                    CANNOT_ADD_SELF:
+                        "نمی‌توانی خودت را اضافه کنی."
+
+                };
+
+
+                searchStatus.textContent =
+                    messages[
+                        error.message
+                    ] ||
+                    "ارسال درخواست ناموفق بود.";
+
+
+                searchStatus.className =
+                    "friends-status error";
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           ACCEPT / REJECT
+        ===================================================== */
+
+        async function respondFriend(
+            requestId,
+            action,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/respond",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+
+                                request_id:
+                                    Number(
+                                        requestId
+                                    ),
+
+                                action
+
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+
+                    action === "accept"
+
+                        ? "دوستی با موفقیت اضافه شد 🎉"
+
+                        : "درخواست رد شد.";
+
+
+                searchStatus.className =
+
+                    action === "accept"
+
+                        ? "friends-status success"
+
+                        : "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Friend response error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           CANCEL OUTGOING REQUEST
+        ===================================================== */
+
+        async function cancelFriendRequest(
+            requestId,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/cancel",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                request_id:
+                                    Number(
+                                        requestId
+                                    )
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+                    "درخواست لغو شد.";
+
+                searchStatus.className =
+                    "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Cancel friend request error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           REMOVE FRIEND
+        ===================================================== */
+
+        async function removeFriend(
+            userId,
+            button = null
+        ) {
+
+            const confirmed =
+                confirm(
+                    "این کاربر از لیست دوستانت حذف شود؟"
+                );
+
+
+            if (
+                !confirmed
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/remove",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                user_id:
+                                    Number(
+                                        userId
+                                    )
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+                    "دوست با موفقیت حذف شد.";
+
+                searchStatus.className =
+                    "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Remove friend error:",
+                    error
+                );
+
+
+                searchStatus.textContent =
+                    "حذف دوست ناموفق بود.";
+
+                searchStatus.className =
+                    "friends-status error";
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           EVENTS - SEARCH
+        ===================================================== */
+
+        searchButton.addEventListener(
+            "click",
+            searchFriends
+        );
+
+
+        searchInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    searchFriends();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - SEARCH RESULTS
+        ===================================================== */
+
+        searchResults.addEventListener(
+            "click",
+            event => {
+
+                const sendButton =
+                    event.target.closest(
+                        "[data-send-friend]"
+                    );
+
+
+                if (
+                    sendButton
+                ) {
+
+                    sendFriend(
+                        sendButton.dataset.sendFriend,
+                        sendButton
+                    );
+
+                    return;
+
+                }
+
+
+                const refresh =
+                    event.target.closest(
+                        "[data-refresh-friends]"
+                    );
+
+
+                if (
+                    refresh
+                ) {
+
+                    loadFriends();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - INCOMING
+        ===================================================== */
+
+        incomingList.addEventListener(
+            "click",
+            event => {
+
+                const accept =
+                    event.target.closest(
+                        "[data-accept]"
+                    );
+
+
+                if (
+                    accept
+                ) {
+
+                    respondFriend(
+                        accept.dataset.requestId,
+                        "accept",
+                        accept
+                    );
+
+                    return;
+
+                }
+
+
+                const reject =
+                    event.target.closest(
+                        "[data-reject]"
+                    );
+
+
+                if (
+                    reject
+                ) {
+
+                    respondFriend(
+                        reject.dataset.requestId,
+                        "reject",
+                        reject
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - OUTGOING
+        ===================================================== */
+
+        outgoingList.addEventListener(
+            "click",
+            event => {
+
+                const cancel =
+                    event.target.closest(
+                        "[data-cancel]"
+                    );
+
+
+                if (
+                    cancel
+                ) {
+
+                    cancelFriendRequest(
+                        cancel.dataset.requestId ||
+                        cancel.dataset.cancel,
+                        cancel
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - FRIENDS
+        ===================================================== */
+
+        friendsList.addEventListener(
+            "click",
+            event => {
+
+                const profile =
+                    event.target.closest(
+                        "[data-profile-friend]"
+                    );
+
+
+                if (
+                    profile
+                ) {
+
+                    const id =
+                        Number(
+                            profile.dataset.profileFriend
+                        );
+
+
+                    if (
+                        id > 0
+                    ) {
+
+                        location.href =
+                            `profile.html?id=${encodeURIComponent(id)}`;
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                const remove =
+                    event.target.closest(
+                        "[data-remove-friend]"
+                    );
+
+
+                if (
+                    remove
+                ) {
+
+                    removeFriend(
+                        remove.dataset.removeFriend,
+                        remove
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           INITIAL LOAD
+        ===================================================== */
+
+        loadFriends();
+
+
+        /* =====================================================
+           AUTO REFRESH
+        ===================================================== */
+
+        setInterval(
+            () => {
+
+                loadFriends();
+
+            },
+            10000
+        );
 
     </script>
-
-
-    <script src="../script.js"></script>
-    <script src="../vexon-nav.js"></script>
 
 </body>
 

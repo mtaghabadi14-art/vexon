@@ -1,16 +1,12 @@
 const PASSWORD_ITERATIONS = 100000;
-
 const SESSION_DAYS = 7;
-
 const RUBIKA_CODE_MINUTES = 10;
-
 
 const ALLOWED_BAN_TYPES = new Set([
     "full",
     "messages",
     "reactions"
 ]);
-
 
 const ALLOWED_REACTIONS = new Set([
     "like",
@@ -21,310 +17,184 @@ const ALLOWED_REACTIONS = new Set([
     "dislike"
 ]);
 
-
 /* =========================================================
    RESPONSE
 ========================================================= */
 
-function json(
-    data,
-    status = 200
-) {
-
+function json(data, status = 200) {
     return new Response(
         JSON.stringify(data),
         {
             status,
-
             headers: {
                 "Content-Type":
                     "application/json; charset=UTF-8",
-
                 "Cache-Control":
                     "no-store"
             }
         }
     );
-
 }
-
 
 /* =========================================================
    BASE64
 ========================================================= */
 
-function b64(
-    bytes
-) {
-
+function b64(bytes) {
     let s = "";
 
-    for (
-        const b
-        of bytes
-    ) {
-
-        s +=
-            String.fromCharCode(
-                b
-            );
-
+    for (const b of bytes) {
+        s += String.fromCharCode(b);
     }
 
-
     return btoa(s);
-
 }
 
-
-function unb64(
-    value
-) {
-
-    const s =
-        atob(value);
-
+function unb64(value) {
+    const s = atob(value);
 
     return Uint8Array.from(
         s,
-        char =>
-            char.charCodeAt(0)
+        char => char.charCodeAt(0)
     );
-
 }
-
 
 /* =========================================================
    PASSWORD HASH
 ========================================================= */
 
-async function hashPassword(
-    password
-) {
-
+async function hashPassword(password) {
     const salt =
         crypto.getRandomValues(
             new Uint8Array(16)
         );
 
-
     const key =
         await crypto.subtle.importKey(
             "raw",
-            new TextEncoder()
-                .encode(password),
+            new TextEncoder().encode(password),
             "PBKDF2",
             false,
-            [
-                "deriveBits"
-            ]
+            ["deriveBits"]
         );
-
 
     const bits =
         await crypto.subtle.deriveBits(
             {
-                name:
-                    "PBKDF2",
-
+                name: "PBKDF2",
                 salt,
-
-                iterations:
-                    PASSWORD_ITERATIONS,
-
-                hash:
-                    "SHA-256"
+                iterations: PASSWORD_ITERATIONS,
+                hash: "SHA-256"
             },
-
             key,
-
             256
         );
-
 
     return [
         "pbkdf2",
         PASSWORD_ITERATIONS,
         b64(salt),
-        b64(
-            new Uint8Array(bits)
-        )
+        b64(new Uint8Array(bits))
     ].join("$");
-
 }
 
-
-async function verifyPassword(
-    password,
-    stored
-) {
-
+async function verifyPassword(password, stored) {
     try {
-
-        const parts =
-            stored.split("$");
-
+        const parts = stored.split("$");
 
         if (
             parts.length !== 4 ||
-            parts[0] !==
-                "pbkdf2"
+            parts[0] !== "pbkdf2"
         ) {
-
             return false;
-
         }
-
 
         const key =
             await crypto.subtle.importKey(
                 "raw",
-                new TextEncoder()
-                    .encode(password),
+                new TextEncoder().encode(password),
                 "PBKDF2",
                 false,
-                [
-                    "deriveBits"
-                ]
+                ["deriveBits"]
             );
-
 
         const expected =
-            unb64(
-                parts[3]
-            );
-
+            unb64(parts[3]);
 
         const bits =
             await crypto.subtle.deriveBits(
                 {
-                    name:
-                        "PBKDF2",
-
-                    salt:
-                        unb64(
-                            parts[2]
-                        ),
-
-                    iterations:
-                        Number(
-                            parts[1]
-                        ),
-
-                    hash:
-                        "SHA-256"
+                    name: "PBKDF2",
+                    salt: unb64(parts[2]),
+                    iterations: Number(parts[1]),
+                    hash: "SHA-256"
                 },
-
                 key,
-
                 expected.length * 8
             );
 
-
         const actual =
-            new Uint8Array(
-                bits
-            );
-
+            new Uint8Array(bits);
 
         let diff = 0;
-
 
         for (
             let i = 0;
             i < actual.length;
             i++
         ) {
-
             diff |=
                 actual[i] ^
                 expected[i];
-
         }
-
 
         return diff === 0;
 
     } catch {
-
         return false;
-
     }
-
 }
-
 
 /* =========================================================
    SESSION
 ========================================================= */
 
 function createSessionToken() {
-
     const bytes =
         crypto.getRandomValues(
             new Uint8Array(32)
         );
-
 
     return Array.from(
         bytes,
         byte =>
             byte
                 .toString(16)
-                .padStart(
-                    2,
-                    "0"
-                )
+                .padStart(2, "0")
     ).join("");
-
 }
 
-
-async function hashToken(
-    token
-) {
-
+async function hashToken(token) {
     const digest =
         await crypto.subtle.digest(
             "SHA-256",
-            new TextEncoder()
-                .encode(token)
+            new TextEncoder().encode(token)
         );
 
-
     return Array.from(
-        new Uint8Array(
-            digest
-        ),
+        new Uint8Array(digest),
         byte =>
             byte
                 .toString(16)
-                .padStart(
-                    2,
-                    "0"
-                )
+                .padStart(2, "0")
     ).join("");
-
 }
 
-
-function getCookie(
-    request,
-    name
-) {
-
+function getCookie(request, name) {
     const header =
-        request.headers.get(
-            "Cookie"
-        ) ||
-        "";
+        request.headers.get("Cookie") || "";
 
-
-    for (
-        const item
-        of header.split(";")
-    ) {
-
+    for (const item of header.split(";")) {
         const [
             key,
             ...value
@@ -333,34 +203,22 @@ function getCookie(
                 .trim()
                 .split("=");
 
-
-        if (
-            key === name
-        ) {
-
+        if (key === name) {
             return (
                 value.join("=") ||
                 null
             );
-
         }
-
     }
 
-
     return null;
-
 }
-
 
 /* =========================================================
    XP
 ========================================================= */
 
-function nextXp(
-    level
-) {
-
+function nextXp(level) {
     return (
         {
             1: 100,
@@ -372,77 +230,44 @@ function nextXp(
             7: 2500,
             8: 3500,
             9: 5000
-        }[
-            level
-        ]
-        ??
+        }[level] ??
         level * 700
     );
-
 }
-
 
 /* =========================================================
    ADMIN
 ========================================================= */
 
-function adminName(
-    env
-) {
-
-    return typeof env.ADMIN_USERNAME ===
-        "string"
-
+function adminName(env) {
+    return typeof env.ADMIN_USERNAME === "string"
         ? env.ADMIN_USERNAME.trim()
-
         : "";
-
 }
 
-
-function isAdmin(
-    user,
-    env
-) {
-
+function isAdmin(user, env) {
     return Boolean(
         user &&
         adminName(env) &&
-        user.username ===
-            adminName(env)
+        user.username === adminName(env)
     );
-
 }
-
 
 /* =========================================================
    RUBIKA PLAYER
 ========================================================= */
 
-async function renderPlayer(
-    env,
-    rubikaId
-) {
-
-    if (
-        !env.VEXON_RUBIKA_API_KEY
-    ) {
-
+async function renderPlayer(env, rubikaId) {
+    if (!env.VEXON_RUBIKA_API_KEY) {
         return null;
-
     }
 
-
     try {
-
         const response =
             await fetch(
                 `https://bangame.onrender.com/vexon/player?rubika_user_id=${encodeURIComponent(
-                    String(
-                        rubikaId
-                    )
+                    String(rubikaId)
                 )}`,
-
                 {
                     headers: {
                         "X-VEXON-API-KEY":
@@ -451,61 +276,39 @@ async function renderPlayer(
                 }
             );
 
-
-        if (
-            !response.ok
-        ) {
-
+        if (!response.ok) {
             return null;
-
         }
-
 
         const data =
             await response.json();
-
 
         return data?.success
             ? data.player
             : null;
 
     } catch {
-
         return null;
-
     }
-
 }
-
 
 /* =========================================================
    CURRENT USER
 ========================================================= */
 
-async function getCurrentUser(
-    request,
-    env
-) {
-
+async function getCurrentUser(request, env) {
     const token =
         getCookie(
             request,
             "vexon_session"
         );
 
-
     if (!token) {
-
         return null;
-
     }
 
-
     const tokenHash =
-        await hashToken(
-            token
-        );
-
+        await hashToken(token);
 
     const session =
         await env.DB
@@ -523,18 +326,12 @@ async function getCurrentUser(
                         datetime('now')
                 LIMIT 1
             `)
-            .bind(
-                tokenHash
-            )
+            .bind(tokenHash)
             .first();
 
-
     if (!session) {
-
         return null;
-
     }
-
 
     const rubikaLink =
         await env.DB
@@ -546,104 +343,72 @@ async function getCurrentUser(
                 WHERE user_id = ?1
                 LIMIT 1
             `)
-            .bind(
-                session.user_id
-            )
+            .bind(session.user_id)
             .first();
 
-
     let xp = 0;
-
     let level = 1;
-
     let coins = 0;
-
     let nickname = null;
-
-    let title =
-        "🥉 تازه‌کار";
-
+    let title = "🥉 تازه‌کار";
     let typingGames = 0;
-
     let typingBestTime = 0;
-
     let typingBestWpm = 0;
-
     let rubikaUserId = null;
 
-
-    if (
-        rubikaLink?.rubika_sender_id
-    ) {
-
+    if (rubikaLink?.rubika_sender_id) {
         const player =
             await renderPlayer(
                 env,
                 rubikaLink.rubika_sender_id
             );
 
-
         if (player) {
-
             level =
                 Number(
                     player.level ?? 1
                 );
-
 
             xp =
                 Number(
                     player.xp ?? 0
                 );
 
-
             coins =
                 Number(
                     player.coins ?? 0
                 );
 
-
             nickname =
-                player.nickname ??
-                null;
-
+                player.nickname ?? null;
 
             title =
-                player.title ??
-                title;
-
+                player.title ?? title;
 
             typingGames =
                 Number(
                     player.typing_games ?? 0
                 );
 
-
             typingBestTime =
                 Number(
                     player.typing_best_time ?? 0
                 );
-
 
             typingBestWpm =
                 Number(
                     player.typing_best_wpm ?? 0
                 );
 
-
             rubikaUserId =
                 String(
                     player.user_id ??
                     rubikaLink.rubika_sender_id
                 );
-
         }
-
     }
 
-
     if (!rubikaUserId) {
-
         const stats =
             await env.DB
                 .prepare(`
@@ -655,57 +420,41 @@ async function getCurrentUser(
                     WHERE user_id = ?1
                     LIMIT 1
                 `)
-                .bind(
-                    session.user_id
-                )
+                .bind(session.user_id)
                 .first();
-
 
         xp =
             Number(
                 stats?.xp ?? 0
             );
 
-
         level =
             Number(
                 stats?.level ?? 1
             );
 
-
         coins =
             Number(
                 stats?.coins ?? 0
             );
-
     }
-
 
     const requiredXp =
         Number(
-            nextXp(
-                level
-            )
+            nextXp(level)
         );
 
-
     return {
-
-        id:
-            session.user_id,
-
-        username:
-            session.username,
+        id: session.user_id,
+        username: session.username,
 
         rubika_user_id:
             rubikaUserId,
 
         nickname,
-
         title,
 
         xp,
-
         level,
 
         next_xp:
@@ -734,21 +483,14 @@ async function getCurrentUser(
 
         typing_best_wpm:
             typingBestWpm
-
     };
-
 }
-
 
 /* =========================================================
    BAN
 ========================================================= */
 
-async function activeBan(
-    userId,
-    env
-) {
-
+async function activeBan(userId, env) {
     return await env.DB
         .prepare(`
             SELECT
@@ -771,44 +513,25 @@ async function activeBan(
                 id DESC
             LIMIT 1
         `)
-        .bind(
-            userId
-        )
+        .bind(userId)
         .first();
-
 }
 
-
-async function access(
-    request,
-    env
-) {
-
+async function access(request, env) {
     const user =
         await getCurrentUser(
             request,
             env
         );
 
-
     if (!user) {
-
         return {
-            ok:
-                false,
-
-            status:
-                401,
-
-            user:
-                null,
-
-            ban:
-                null
+            ok: false,
+            status: 401,
+            user: null,
+            ban: null
         };
-
     }
-
 
     const ban =
         await activeBan(
@@ -816,443 +539,244 @@ async function access(
             env
         );
 
-
     return {
-
         ok:
             !(
                 ban &&
-                ban.ban_type ===
-                    "full"
+                ban.ban_type === "full"
             ),
 
         status:
             ban &&
-            ban.ban_type ===
-                "full"
-
+            ban.ban_type === "full"
                 ? 403
-
                 : 200,
 
         user,
-
         ban
-
     };
-
 }
 
-
-/* =========================================================
-   ADMIN AUTH
-========================================================= */
-
-async function requireAdmin(
-    request,
-    env
-) {
-
+async function requireAdmin(request, env) {
     const user =
         await getCurrentUser(
             request,
             env
         );
 
-
     if (!user) {
-
         return {
-            ok:
-                false,
-
-            status:
-                401,
-
-            user:
-                null
+            ok: false,
+            status: 401,
+            user: null
         };
-
     }
 
-
-    if (
-        !isAdmin(
-            user,
-            env
-        )
-    ) {
-
+    if (!isAdmin(user, env)) {
         return {
-            ok:
-                false,
-
-            status:
-                403,
-
+            ok: false,
+            status: 403,
             user
         };
-
     }
 
-
     return {
-
-        ok:
-            true,
-
-        status:
-            200,
-
+        ok: true,
+        status: 200,
         user
-
     };
-
 }
-
 
 /* =========================================================
    NEWS TABLE
 ========================================================= */
 
-async function ensureNews(
-    env
-) {
-
+async function ensureNews(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS news (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
-
                 content TEXT NOT NULL,
-
                 image_url TEXT,
-
-                category TEXT
-                    DEFAULT 'general',
-
-                status TEXT NOT NULL
-                    DEFAULT 'draft',
-
+                category TEXT DEFAULT 'general',
+                status TEXT NOT NULL DEFAULT 'draft',
                 author_username TEXT NOT NULL,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                updated_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 published_at TEXT
-
             )
         `)
         .run();
-
 }
 
-
 /* =========================================================
-   NEWS REACTIONS TABLE
+   NEWS REACTIONS
 ========================================================= */
 
-async function ensureNewsReactions(
-    env
-) {
-
+async function ensureNewsReactions(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS news_reactions (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 news_id INTEGER NOT NULL,
-
                 user_id INTEGER NOT NULL,
-
                 reaction TEXT NOT NULL,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                UNIQUE(
-                    news_id,
-                    user_id
-                ),
-
-                FOREIGN KEY(
-                    news_id
-                )
-                REFERENCES news(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY(
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(news_id, user_id),
+                FOREIGN KEY(news_id)
+                    REFERENCES news(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_news_reactions_news
-
-            ON news_reactions(
-                news_id
-            )
+            idx_news_reactions_news
+            ON news_reactions(news_id)
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_news_reactions_user
-
-            ON news_reactions(
-                user_id
-            )
+            idx_news_reactions_user
+            ON news_reactions(user_id)
         `)
         .run();
-
 }
 
-
 /* =========================================================
-   POLL TABLES
+   POLLS
 ========================================================= */
 
-async function ensurePolls(
-    env
-) {
-
+async function ensurePolls(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS polls (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 question TEXT NOT NULL,
-
-                status TEXT NOT NULL
-                    DEFAULT 'draft',
-
+                status TEXT NOT NULL DEFAULT 'draft',
                 author_username TEXT NOT NULL,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                updated_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 published_at TEXT
-
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS poll_options (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 poll_id INTEGER NOT NULL,
-
                 option_text TEXT NOT NULL,
-
-                sort_order INTEGER NOT NULL
-                    DEFAULT 0,
-
-                FOREIGN KEY(
-                    poll_id
-                )
-                REFERENCES polls(id)
-                ON DELETE CASCADE
-
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY(poll_id)
+                    REFERENCES polls(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS poll_votes (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 poll_id INTEGER NOT NULL,
-
                 option_id INTEGER NOT NULL,
-
                 user_id INTEGER NOT NULL,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                UNIQUE(
-                    poll_id,
-                    user_id
-                ),
-
-                FOREIGN KEY(
-                    poll_id
-                )
-                REFERENCES polls(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY(
-                    option_id
-                )
-                REFERENCES poll_options(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY(
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(poll_id, user_id),
+                FOREIGN KEY(poll_id)
+                    REFERENCES polls(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY(option_id)
+                    REFERENCES poll_options(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_poll_options_poll
-
-            ON poll_options(
-                poll_id
-            )
+            idx_poll_options_poll
+            ON poll_options(poll_id)
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_poll_votes_poll
-
-            ON poll_votes(
-                poll_id
-            )
+            idx_poll_votes_poll
+            ON poll_votes(poll_id)
         `)
         .run();
-
 }
 
-
 /* =========================================================
-   NOTIFICATIONS TABLE
+   NOTIFICATIONS
 ========================================================= */
 
-async function ensureNotifications(
-    env
-) {
-
+async function ensureNotifications(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS notifications (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
-
                 type TEXT NOT NULL,
-
                 title TEXT NOT NULL,
-
                 message TEXT NOT NULL,
-
                 reference_id INTEGER,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 read_at TEXT,
-
-                FOREIGN KEY(
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_notifications_user
-
-            ON notifications(
-                user_id,
-                id
-            )
+            idx_notifications_user
+            ON notifications(user_id, id)
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_notifications_unread
-
-            ON notifications(
-                user_id,
-                read_at
-            )
+            idx_notifications_unread
+            ON notifications(user_id, read_at)
         `)
         .run();
-
 }
 
-
 /* =========================================================
-   FRIEND REQUESTS TABLE
+   FRIEND REQUESTS
 ========================================================= */
 
-async function ensureFriendRequests(
-    env
-) {
-
+async function ensureFriendRequests(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS friend_requests (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 requester_id INTEGER NOT NULL,
-
                 receiver_id INTEGER NOT NULL,
-
-                status TEXT NOT NULL
-                    DEFAULT 'pending',
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                updated_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
+                status TEXT NOT NULL DEFAULT 'pending',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                 CHECK (
                     requester_id != receiver_id
@@ -1263,28 +787,21 @@ async function ensureFriendRequests(
                     receiver_id
                 ),
 
-                FOREIGN KEY(
-                    requester_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(requester_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY(
-                    receiver_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                FOREIGN KEY(receiver_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
 
-
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_friend_requests_receiver
-
+            idx_friend_requests_receiver
             ON friend_requests(
                 receiver_id,
                 status
@@ -1292,21 +809,17 @@ async function ensureFriendRequests(
         `)
         .run();
 
-
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_friend_requests_requester
-
+            idx_friend_requests_requester
             ON friend_requests(
                 requester_id,
                 status
             )
         `)
         .run();
-
 }
-
 
 /* =========================================================
    NOTIFICATION HELPERS
@@ -1319,11 +832,7 @@ async function notifyAllUsers(
     message,
     referenceId = null
 ) {
-
-    await ensureNotifications(
-        env
-    );
-
+    await ensureNotifications(env);
 
     await env.DB
         .prepare(`
@@ -1334,14 +843,12 @@ async function notifyAllUsers(
                 message,
                 reference_id
             )
-
             SELECT
                 id,
                 ?1,
                 ?2,
                 ?3,
                 ?4
-
             FROM users
         `)
         .bind(
@@ -1351,9 +858,7 @@ async function notifyAllUsers(
             referenceId
         )
         .run();
-
 }
-
 
 async function notifyUser(
     env,
@@ -1363,11 +868,7 @@ async function notifyUser(
     message,
     referenceId = null
 ) {
-
-    await ensureNotifications(
-        env
-    );
-
+    await ensureNotifications(env);
 
     await env.DB
         .prepare(`
@@ -1394,255 +895,150 @@ async function notifyUser(
             referenceId
         )
         .run();
-
 }
-
 
 /* =========================================================
    MESSENGER TABLES
 ========================================================= */
 
-async function ensureMessenger(
-    env
-) {
-
+async function ensureMessenger(env) {
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS conversations (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
-                updated_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS conversation_members (
-
                 conversation_id INTEGER NOT NULL,
-
                 user_id INTEGER NOT NULL,
-
                 last_read_at TEXT,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY(
                     conversation_id,
                     user_id
                 ),
-
-                FOREIGN KEY(
-                    conversation_id
-                )
-                REFERENCES conversations(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY(
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                FOREIGN KEY(conversation_id)
+                    REFERENCES conversations(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
-
 
     await env.DB
         .prepare(`
             CREATE TABLE IF NOT EXISTS messages (
-
-                id INTEGER PRIMARY KEY
-                    AUTOINCREMENT,
-
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 conversation_id INTEGER NOT NULL,
-
                 sender_id INTEGER NOT NULL,
-
                 content TEXT NOT NULL,
-
-                created_at TEXT NOT NULL
-                    DEFAULT CURRENT_TIMESTAMP,
-
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 deleted_at TEXT,
-
-                FOREIGN KEY(
-                    conversation_id
-                )
-                REFERENCES conversations(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY(
-                    sender_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
-
+                FOREIGN KEY(conversation_id)
+                    REFERENCES conversations(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY(sender_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
         `)
         .run();
 
-
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_conversation_members_user
-
-            ON conversation_members(
-                user_id
-            )
+            idx_conversation_members_user
+            ON conversation_members(user_id)
         `)
         .run();
 
-
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
-                idx_messages_conversation
-
+            idx_messages_conversation
             ON messages(
                 conversation_id,
                 id
             )
         `)
         .run();
-
 }
-
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-function clean(
-    value,
-    maxLength
-) {
-
-    return typeof value ===
-        "string"
-
+function clean(value, maxLength) {
+    return typeof value === "string"
         ? value
             .trim()
-            .slice(
-                0,
-                maxLength
-            )
-
+            .slice(0, maxLength)
         : "";
-
 }
 
-
-function banType(
-    value
-) {
-
+function banType(value) {
     return (
-        typeof value ===
-            "string" &&
+        typeof value === "string" &&
         ALLOWED_BAN_TYPES.has(
             value.trim()
         )
     )
         ? value.trim()
         : "full";
-
 }
 
-
-function banLabel(
-    value
-) {
-
-    if (
-        value ===
-        "messages"
-    ) {
-
+function banLabel(value) {
+    if (value === "messages") {
         return "💬 محرومیت از پیام";
-
     }
 
-
-    if (
-        value ===
-        "reactions"
-    ) {
-
+    if (value === "reactions") {
         return "❤️ محرومیت از واکنش";
-
     }
-
 
     return "🚫 بن کامل سایت";
-
 }
 
-
-function leaderboardType(
-    value
-) {
-
-    return value ===
-        "coins"
-
+function leaderboardType(value) {
+    return value === "coins"
         ? "coins"
-
         : "level";
-
 }
-
 
 function limitParam(
     value,
     max,
     defaultValue
 ) {
-
     const number =
         Number(
-            value ??
-            defaultValue
+            value ?? defaultValue
         );
-
 
     return Math.min(
         max,
         Math.max(
             1,
-            Number.isFinite(
-                number
-            )
-                ? Math.floor(
-                    number
-                )
+            Number.isFinite(number)
+                ? Math.floor(number)
                 : defaultValue
         )
     );
-
 }
-
 
 /* =========================================================
    LEADERBOARD
 ========================================================= */
 
-async function leaderboard(
-    env
-) {
-
+async function leaderboard(env) {
     const result =
         await env.DB
             .prepare(`
@@ -1675,64 +1071,46 @@ async function leaderboard(
             `)
             .all();
 
-
     return Promise.all(
         (
-            result.results ??
-            []
-        )
-        .map(
+            result.results ?? []
+        ).map(
             async player => {
-
                 let level =
                     Number(
-                        player.level ??
-                        1
+                        player.level ?? 1
                     );
-
 
                 let coins =
                     Number(
-                        player.coins ??
-                        0
+                        player.coins ?? 0
                     );
-
 
                 if (
                     player.rubika_sender_id
                 ) {
-
                     const rubikaPlayer =
                         await renderPlayer(
                             env,
                             player.rubika_sender_id
                         );
 
-
-                    if (
-                        rubikaPlayer
-                    ) {
-
+                    if (rubikaPlayer) {
                         level =
                             Number(
                                 rubikaPlayer.level ??
                                 level
                             );
 
-
                         coins =
                             Number(
                                 rubikaPlayer.coins ??
                                 coins
                             );
-
                     }
-
                 }
 
-
                 return {
-
                     id:
                         player.id,
 
@@ -1740,17 +1118,12 @@ async function leaderboard(
                         player.username,
 
                     level,
-
                     coins
-
                 };
-
             }
         )
     );
-
 }
-
 
 /* =========================================================
    MAIN WORKER
@@ -1758,42 +1131,31 @@ async function leaderboard(
 
 export default {
 
-    async fetch(
-        request,
-        env
-    ) {
+    async fetch(request, env) {
 
         const url =
             new URL(
                 request.url
             );
 
-
         const path =
             url.pathname;
-
 
         const method =
             request.method;
 
-
         try {
-
 
             /* =================================================
                REGISTER
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/register" &&
-                method ===
-                    "POST"
+                path === "/api/register" &&
+                method === "POST"
             ) {
-
                 const body =
                     await request.json();
-
 
                 const username =
                     clean(
@@ -1801,55 +1163,38 @@ export default {
                         20
                     );
 
-
                 const password =
-                    typeof body.password ===
-                        "string"
-
+                    typeof body.password === "string"
                         ? body.password
-
                         : "";
 
-
                 if (
-                    !/^[A-Za-z0-9_]{3,20}$/
-                        .test(
-                            username
-                        )
+                    !/^[A-Za-z0-9_]{3,20}$/.test(
+                        username
+                    )
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "نام کاربری باید ۳ تا ۲۰ کاراکتر و فقط شامل حروف انگلیسی، عدد یا _ باشد."
                         },
                         400
                     );
-
                 }
 
-
                 if (
-                    password.length <
-                    8
+                    password.length < 8
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "رمز عبور باید حداقل ۸ کاراکتر باشد."
                         },
                         400
                     );
-
                 }
-
 
                 const existing =
                     await env.DB
@@ -1859,29 +1204,19 @@ export default {
                             WHERE username = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            username
-                        )
+                        .bind(username)
                         .first();
 
-
-                if (
-                    existing
-                ) {
-
+                if (existing) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این نام کاربری قبلاً ثبت شده است."
                         },
                         409
                     );
-
                 }
-
 
                 const inserted =
                     await env.DB
@@ -1899,28 +1234,18 @@ export default {
                         `)
                         .bind(
                             username,
-                            await hashPassword(
-                                password
-                            )
+                            await hashPassword(password)
                         )
                         .run();
 
-
                 const userId =
-                    inserted.meta
-                        ?.last_row_id;
+                    inserted.meta?.last_row_id;
 
-
-                if (
-                    !userId
-                ) {
-
+                if (!userId) {
                     throw new Error(
                         "no user id"
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -1937,40 +1262,29 @@ export default {
                             0
                         )
                     `)
-                    .bind(
-                        userId
-                    )
+                    .bind(userId)
                     .run();
-
 
                 return json(
                     {
-                        success:
-                            true,
-
+                        success: true,
                         message:
                             "حساب PGame با موفقیت ساخته شد."
                     },
                     201
                 );
-
             }
-
 
             /* =================================================
                LOGIN
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/login" &&
-                method ===
-                    "POST"
+                path === "/api/login" &&
+                method === "POST"
             ) {
-
                 const body =
                     await request.json();
-
 
                 const username =
                     clean(
@@ -1978,15 +1292,10 @@ export default {
                         20
                     );
 
-
                 const password =
-                    typeof body.password ===
-                        "string"
-
+                    typeof body.password === "string"
                         ? body.password
-
                         : "";
-
 
                 const user =
                     await env.DB
@@ -1995,18 +1304,12 @@ export default {
                                 id,
                                 username,
                                 password_hash
-
                             FROM users
-
                             WHERE username = ?1
-
                             LIMIT 1
                         `)
-                        .bind(
-                            username
-                        )
+                        .bind(username)
                         .first();
-
 
                 if (
                     !user ||
@@ -2017,20 +1320,15 @@ export default {
                         )
                     )
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "نام کاربری یا رمز عبور اشتباه است."
                         },
                         401
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -2047,30 +1345,23 @@ export default {
                             0
                         )
                     `)
-                    .bind(
-                        user.id
-                    )
+                    .bind(user.id)
                     .run();
-
 
                 const token =
                     createSessionToken();
-
 
                 const tokenHash =
                     await hashToken(
                         token
                     );
 
-
                 const expires =
                     new Date(
                         Date.now() +
                         SESSION_DAYS *
                         86400000
-                    )
-                    .toISOString();
-
+                    ).toISOString();
 
                 await env.DB
                     .prepare(`
@@ -2092,23 +1383,18 @@ export default {
                     )
                     .run();
 
-
                 return new Response(
                     JSON.stringify(
                         {
-                            success:
-                                true,
-
+                            success: true,
                             message:
                                 "ورود موفق بود.",
-
                             username:
                                 user.username
                         }
                     ),
                     {
-                        status:
-                            200,
+                        status: 200,
 
                         headers: {
                             "Content-Type":
@@ -2122,42 +1408,30 @@ export default {
                         }
                     }
                 );
-
             }
-
 
             /* =================================================
                CURRENT USER
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/me" &&
-                method ===
-                    "GET"
+                path === "/api/me" &&
+                method === "GET"
             ) {
-
                 const user =
                     await getCurrentUser(
                         request,
                         env
                     );
 
-
-                if (
-                    !user
-                ) {
-
+                if (!user) {
                     return json(
                         {
-                            loggedIn:
-                                false
+                            loggedIn: false
                         },
                         401
                     );
-
                 }
-
 
                 const ban =
                     await activeBan(
@@ -2165,82 +1439,59 @@ export default {
                         env
                     );
 
-
                 return json({
-                    loggedIn:
-                        true,
+                    loggedIn: true,
 
                     user: {
                         ...user,
 
                         banned:
-                            Boolean(
-                                ban
-                            ),
+                            Boolean(ban),
 
                         ban_type:
-                            ban?.ban_type ??
-                            null,
+                            ban?.ban_type ?? null,
 
                         ban_reason:
-                            ban?.reason ??
-                            null,
+                            ban?.reason ?? null,
 
                         banned_until:
-                            ban?.banned_until ??
-                            null
-
+                            ban?.banned_until ?? null
                     }
                 });
-
             }
-
 
             /* =================================================
                LOGOUT
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/logout" &&
-                method ===
-                    "POST"
+                path === "/api/logout" &&
+                method === "POST"
             ) {
-
                 const token =
                     getCookie(
                         request,
                         "vexon_session"
                     );
 
-
-                if (
-                    token
-                ) {
-
+                if (token) {
                     await env.DB
                         .prepare(`
                             DELETE FROM sessions
                             WHERE token_hash = ?1
                         `)
                         .bind(
-                            await hashToken(
-                                token
-                            )
+                            await hashToken(token)
                         )
                         .run();
-
                 }
-
 
                 return new Response(
                     JSON.stringify({
-                        success:
-                            true
+                        success: true
                     }),
                     {
                         headers: {
-
                             "Content-Type":
                                 "application/json; charset=UTF-8",
 
@@ -2249,25 +1500,19 @@ export default {
 
                             "Set-Cookie":
                                 "vexon_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
-
                         }
                     }
                 );
-
             }
-
 
             /* =================================================
                COMMUNITY STATS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/community/stats" &&
-                method ===
-                    "GET"
+                path === "/api/community/stats" &&
+                method === "GET"
             ) {
-
                 const total =
                     await env.DB
                         .prepare(`
@@ -2276,7 +1521,6 @@ export default {
                             FROM users
                         `)
                         .first();
-
 
                 const today =
                     await env.DB
@@ -2289,47 +1533,35 @@ export default {
                         `)
                         .first();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     total_users:
                         Number(
-                            total?.total_users ??
-                            0
+                            total?.total_users ?? 0
                         ),
 
                     today_users:
                         Number(
-                            today?.today_users ??
-                            0
+                            today?.today_users ?? 0
                         )
-
                 });
-
             }
-
 
             /* =================================================
                LEADERBOARD
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/leaderboard" &&
-                method ===
-                    "GET"
+                path === "/api/leaderboard" &&
+                method === "GET"
             ) {
-
                 const type =
                     leaderboardType(
                         url.searchParams.get(
                             "type"
                         )
                     );
-
 
                 const limit =
                     limitParam(
@@ -2340,24 +1572,14 @@ export default {
                         50
                     );
 
-
                 const players =
-                    await leaderboard(
-                        env
-                    );
-
+                    await leaderboard(env);
 
                 players.sort(
-                    (
-                        a,
-                        b
-                    ) => {
-
+                    (a, b) => {
                         if (
-                            type ===
-                                "coins"
+                            type === "coins"
                         ) {
-
                             return (
                                 b.coins -
                                 a.coins
@@ -2372,9 +1594,7 @@ export default {
                                 a.id -
                                 b.id
                             );
-
                         }
-
 
                         return (
                             b.level -
@@ -2390,15 +1610,11 @@ export default {
                             a.id -
                             b.id
                         );
-
                     }
                 );
 
-
                 return json({
-                    success:
-                        true,
-
+                    success: true,
                     type,
 
                     leaderboard:
@@ -2421,147 +1637,93 @@ export default {
                                     username:
                                         player.username,
 
-                                    ...(
-                                        type ===
-                                            "coins"
-
-                                            ? {
-                                                coins:
-                                                    player.coins
-                                            }
-
-                                            : {
-                                                level:
-                                                    player.level
-                                            }
-                                    )
-
+                                    ...(type === "coins"
+                                        ? {
+                                            coins:
+                                                player.coins
+                                        }
+                                        : {
+                                            level:
+                                                player.level
+                                        })
                                 })
                             )
-
                 });
-
             }
 
-
             /* =================================================
-               ADMIN CHECK
-            ================================================== */
+               ADMIN ME
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/me" &&
-                method ===
-                    "GET"
+                path === "/api/admin/me" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
-                            isAdmin:
-                                false
+                            success: false,
+                            isAdmin: false
                         },
                         admin.status
                     );
-
                 }
 
-
                 return json({
-
-                    success:
-                        true,
-
-                    isAdmin:
-                        true,
-
+                    success: true,
+                    isAdmin: true,
                     username:
                         admin.user.username
-
                 });
-
             }
-                        /* =========================================================
-               FRIENDS — SEARCH USERS
-            ========================================================= */
+
+            /* =================================================
+               FRIENDS — SEARCH
+            ================================================= */
 
             if (
-                path ===
-                    "/api/friends/search" &&
-                method ===
-                    "GET"
+                path === "/api/friends/search" &&
+                method === "GET"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب شوید."
                         },
                         accessResult.status
                     );
-
                 }
 
-
-                await ensureFriendRequests(
-                    env
-                );
-
+                await ensureFriendRequests(env);
 
                 const query =
                     clean(
-                        url.searchParams.get(
-                            "q"
-                        ) ||
-                        "",
+                        url.searchParams.get("q") || "",
                         40
-                    )
-                    .toLowerCase();
-
+                    ).toLowerCase();
 
                 if (
                     query.length < 2
                 ) {
-
                     return json({
-
-                        success:
-                            true,
-
-                        users:
-                            []
-
+                        success: true,
+                        users: []
                     });
-
                 }
-
 
                 const users =
                     await env.DB
@@ -2571,20 +1733,26 @@ export default {
                                 u.username,
 
                                 CASE
+
                                     WHEN EXISTS (
                                         SELECT 1
                                         FROM friend_requests fr
                                         WHERE
                                             (
-                                                fr.requester_id = ?1
-                                                AND fr.receiver_id = u.id
+                                                (
+                                                    fr.requester_id = ?1
+                                                    AND
+                                                    fr.receiver_id = u.id
+                                                )
+                                                OR
+                                                (
+                                                    fr.requester_id = u.id
+                                                    AND
+                                                    fr.receiver_id = ?1
+                                                )
                                             )
-                                            OR
-                                            (
-                                                fr.requester_id = u.id
-                                                AND fr.receiver_id = ?1
-                                            )
-                                            AND fr.status = 'accepted'
+                                            AND
+                                            fr.status = 'accepted'
                                     )
                                     THEN 'friend'
 
@@ -2593,8 +1761,10 @@ export default {
                                         FROM friend_requests fr
                                         WHERE
                                             fr.requester_id = ?1
-                                            AND fr.receiver_id = u.id
-                                            AND fr.status = 'pending'
+                                            AND
+                                            fr.receiver_id = u.id
+                                            AND
+                                            fr.status = 'pending'
                                     )
                                     THEN 'outgoing'
 
@@ -2603,12 +1773,15 @@ export default {
                                         FROM friend_requests fr
                                         WHERE
                                             fr.requester_id = u.id
-                                            AND fr.receiver_id = ?1
-                                            AND fr.status = 'pending'
+                                            AND
+                                            fr.receiver_id = ?1
+                                            AND
+                                            fr.status = 'pending'
                                     )
                                     THEN 'incoming'
 
                                     ELSE 'none'
+
                                 END AS relation
 
                             FROM users u
@@ -2621,7 +1794,9 @@ export default {
                                 ) LIKE ?2
 
                             ORDER BY
-                                u.username ASC
+                                LOWER(
+                                    u.username
+                                ) ASC
 
                             LIMIT 30
                         `)
@@ -2631,91 +1806,60 @@ export default {
                         )
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     users:
-                        users.results ??
-                        []
-
+                        users.results ?? []
                 });
-
             }
 
-
-            /* =========================================================
+            /* =================================================
                FRIENDS — SEND REQUEST
-            ========================================================= */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/friends/request" &&
-                method ===
-                    "POST"
+                path === "/api/friends/request" &&
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب شوید."
                         },
                         accessResult.status
                     );
-
                 }
 
+                await ensureFriendRequests(env);
 
-                await ensureFriendRequests(
-                    env
-                );
-
-
-                let body =
-                    {};
+                let body = {};
 
                 try {
-
                     body =
                         await request.json();
 
                 } catch {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "داده درخواست نامعتبر است."
                         },
                         400
                     );
-
                 }
 
-
                 const targetUserId =
-                    Number(
-                        body.user_id
-                    );
-
+                    Number(body.user_id);
 
                 if (
                     !Number.isInteger(
@@ -2723,39 +1867,29 @@ export default {
                     ) ||
                     targetUserId <= 0
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کاربر نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 if (
                     targetUserId ===
                     accessResult.user.id
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "نمی‌توانی خودت را به دوستانت اضافه کنی."
                         },
                         400
                     );
-
                 }
-
 
                 const targetUser =
                     await env.DB
@@ -2764,33 +1898,22 @@ export default {
                                 id,
                                 username
                             FROM users
-                            WHERE
-                                id = ?1
+                            WHERE id = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            targetUserId
-                        )
+                        .bind(targetUserId)
                         .first();
 
-
-                if (
-                    !targetUser
-                ) {
-
+                if (!targetUser) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این کاربر پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 const existing =
                     await env.DB
@@ -2800,25 +1923,21 @@ export default {
                                 requester_id,
                                 receiver_id,
                                 status
-
                             FROM friend_requests
-
                             WHERE
                                 (
                                     requester_id = ?1
-                                    AND receiver_id = ?2
+                                    AND
+                                    receiver_id = ?2
                                 )
-
                                 OR
-
                                 (
                                     requester_id = ?2
-                                    AND receiver_id = ?1
+                                    AND
+                                    receiver_id = ?1
                                 )
-
                             ORDER BY
                                 id DESC
-
                             LIMIT 1
                         `)
                         .bind(
@@ -2827,31 +1946,24 @@ export default {
                         )
                         .first();
 
-
                 if (
                     existing?.status ===
                     "accepted"
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این کاربر از قبل دوستت است."
                         },
                         409
                     );
-
                 }
-
 
                 if (
                     existing?.status ===
                     "pending"
                 ) {
-
                     if (
                         Number(
                             existing.requester_id
@@ -2860,84 +1972,88 @@ export default {
                             accessResult.user.id
                         )
                     ) {
-
                         return json(
                             {
-                                success:
-                                    false,
-
+                                success: false,
                                 message:
                                     "درخواست دوستی قبلاً ارسال شده."
                             },
                             409
                         );
-
                     }
-
 
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این کاربر قبلاً برای تو درخواست فرستاده است."
                         },
                         409
                     );
-
                 }
 
+                let requestId = null;
 
-                const inserted =
+                if (existing) {
                     await env.DB
                         .prepare(`
-                            INSERT INTO friend_requests(
-                                requester_id,
-                                receiver_id,
-                                status,
-                                created_at,
-                                updated_at
-                            )
-                            VALUES(
-                                ?1,
-                                ?2,
-                                'pending',
-                                CURRENT_TIMESTAMP,
-                                CURRENT_TIMESTAMP
-                            )
+                            UPDATE friend_requests
+
+                            SET
+                                requester_id = ?1,
+                                receiver_id = ?2,
+                                status = 'pending',
+                                updated_at =
+                                    CURRENT_TIMESTAMP
+                            WHERE id = ?3
                         `)
                         .bind(
                             accessResult.user.id,
-                            targetUserId
+                            targetUserId,
+                            existing.id
                         )
                         .run();
 
+                    requestId =
+                        existing.id;
 
-                const requestId =
-                    inserted.meta?.last_row_id ??
-                    null;
+                } else {
+                    const inserted =
+                        await env.DB
+                            .prepare(`
+                                INSERT INTO friend_requests(
+                                    requester_id,
+                                    receiver_id,
+                                    status
+                                )
+                                VALUES(
+                                    ?1,
+                                    ?2,
+                                    'pending'
+                                )
+                            `)
+                            .bind(
+                                accessResult.user.id,
+                                targetUserId
+                            )
+                            .run();
 
+                    requestId =
+                        inserted.meta?.last_row_id ??
+                        null;
+                }
 
                 await notifyUser(
                     env,
-
                     targetUserId,
-
                     "friend_request",
-
                     "👥 درخواست دوستی جدید",
-
                     `${accessResult.user.username} برایت درخواست دوستی فرستاد.`,
-
                     requestId
                 );
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "✅ درخواست دوستی ارسال شد.",
@@ -2946,68 +2062,44 @@ export default {
                         requestId,
 
                     user: {
-
                         id:
                             targetUser.id,
 
                         username:
                             targetUser.username
-
                     }
-
                 });
-
             }
 
-
-            /* =========================================================
-               FRIENDS — GET STATUS
-            ========================================================= */
+            /* =================================================
+               FRIENDS — STATUS
+            ================================================= */
 
             if (
-                path ===
-                    "/api/friends/status" &&
-                method ===
-                    "GET"
+                path === "/api/friends/status" &&
+                method === "GET"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب شوید."
                         },
                         accessResult.status
                     );
-
                 }
 
-
-                await ensureFriendRequests(
-                    env
-                );
-
+                await ensureFriendRequests(env);
 
                 const userId =
                     accessResult.user.id;
-
-
-                /* =====================================================
-                   FRIENDS
-                ===================================================== */
 
                 const friendsResult =
                     await env.DB
@@ -3015,39 +2107,53 @@ export default {
                             SELECT
                                 u.id,
                                 u.username,
-                                fr.updated_at
+                                fr.updated_at,
+
+                                CASE
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM sessions s
+                                        WHERE
+                                            s.user_id = u.id
+                                            AND
+                                            s.expires_at >
+                                                CURRENT_TIMESTAMP
+                                    )
+                                    THEN 1
+                                    ELSE 0
+                                END AS online
 
                             FROM friend_requests fr
 
                             INNER JOIN users u
                                 ON u.id =
                                     CASE
-                                        WHEN fr.requester_id = ?1
-                                            THEN fr.receiver_id
-                                        ELSE fr.requester_id
+                                        WHEN
+                                            fr.requester_id = ?1
+                                        THEN
+                                            fr.receiver_id
+                                        ELSE
+                                            fr.requester_id
                                     END
 
                             WHERE
                                 (
                                     fr.requester_id = ?1
-                                    OR fr.receiver_id = ?1
+                                    OR
+                                    fr.receiver_id = ?1
                                 )
 
-                                AND fr.status =
-                                    'accepted'
+                                AND
+                                fr.status = 'accepted'
 
                             ORDER BY
-                                u.username COLLATE NOCASE ASC
+                                online DESC,
+                                LOWER(
+                                    u.username
+                                ) ASC
                         `)
-                        .bind(
-                            userId
-                        )
+                        .bind(userId)
                         .all();
-
-
-                /* =====================================================
-                   INCOMING
-                ===================================================== */
 
                 const incomingResult =
                     await env.DB
@@ -3057,7 +2163,21 @@ export default {
                                 fr.created_at,
 
                                 u.id AS user_id,
-                                u.username
+                                u.username,
+
+                                CASE
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM sessions s
+                                        WHERE
+                                            s.user_id = u.id
+                                            AND
+                                            s.expires_at >
+                                                CURRENT_TIMESTAMP
+                                    )
+                                    THEN 1
+                                    ELSE 0
+                                END AS online
 
                             FROM friend_requests fr
 
@@ -3067,22 +2187,14 @@ export default {
 
                             WHERE
                                 fr.receiver_id = ?1
-
-                                AND fr.status =
-                                    'pending'
+                                AND
+                                fr.status = 'pending'
 
                             ORDER BY
                                 fr.id DESC
                         `)
-                        .bind(
-                            userId
-                        )
+                        .bind(userId)
                         .all();
-
-
-                /* =====================================================
-                   OUTGOING
-                ===================================================== */
 
                 const outgoingResult =
                     await env.DB
@@ -3092,7 +2204,21 @@ export default {
                                 fr.created_at,
 
                                 u.id AS user_id,
-                                u.username
+                                u.username,
+
+                                CASE
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM sessions s
+                                        WHERE
+                                            s.user_id = u.id
+                                            AND
+                                            s.expires_at >
+                                                CURRENT_TIMESTAMP
+                                    )
+                                    THEN 1
+                                    ELSE 0
+                                END AS online
 
                             FROM friend_requests fr
 
@@ -3102,122 +2228,84 @@ export default {
 
                             WHERE
                                 fr.requester_id = ?1
-
-                                AND fr.status =
-                                    'pending'
+                                AND
+                                fr.status = 'pending'
 
                             ORDER BY
                                 fr.id DESC
                         `)
-                        .bind(
-                            userId
-                        )
+                        .bind(userId)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     friends:
-                        friendsResult.results ??
-                        [],
+                        friendsResult.results ?? [],
 
                     incoming:
-                        incomingResult.results ??
-                        [],
+                        incomingResult.results ?? [],
 
                     outgoing:
-                        outgoingResult.results ??
-                        []
-
+                        outgoingResult.results ?? []
                 });
-
             }
 
-
-            /* =========================================================
+            /* =================================================
                FRIENDS — ACCEPT / REJECT
-            ========================================================= */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/friends/respond" &&
-                method ===
-                    "POST"
+                path === "/api/friends/respond" &&
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب شوید."
                         },
                         accessResult.status
                     );
-
                 }
 
+                await ensureFriendRequests(env);
 
-                await ensureFriendRequests(
-                    env
-                );
-
-
-                let body =
-                    {};
+                let body = {};
 
                 try {
-
                     body =
                         await request.json();
 
                 } catch {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "داده درخواست نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 const requestId =
                     Number(
                         body.request_id
                     );
 
-
                 const action =
-                    typeof body.action ===
-                        "string"
-
+                    typeof body.action === "string"
                         ? body.action
                             .trim()
                             .toLowerCase()
-
                         : "";
-
 
                 if (
                     !Number.isInteger(
@@ -3225,41 +2313,29 @@ export default {
                     ) ||
                     requestId <= 0
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "شناسه درخواست نامعتبر است."
                         },
                         400
                     );
-
                 }
 
-
                 if (
-                    action !==
-                        "accept" &&
-                    action !==
-                        "reject"
+                    action !== "accept" &&
+                    action !== "reject"
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "عملیات نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 const friendRequest =
                     await env.DB
@@ -3281,9 +2357,8 @@ export default {
 
                             WHERE
                                 fr.id = ?1
-
-                                AND fr.receiver_id =
-                                    ?2
+                                AND
+                                fr.receiver_id = ?2
 
                             LIMIT 1
                         `)
@@ -3293,52 +2368,35 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    !friendRequest
-                ) {
-
+                if (!friendRequest) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "درخواست دوستی پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 if (
                     friendRequest.status !==
                     "pending"
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این درخواست قبلاً تعیین تکلیف شده است."
                         },
                         409
                     );
-
                 }
 
-
                 const newStatus =
-                    action ===
-                        "accept"
-
+                    action === "accept"
                         ? "accepted"
-
                         : "rejected";
-
 
                 await env.DB
                     .prepare(`
@@ -3359,93 +2417,302 @@ export default {
                     )
                     .run();
 
-
                 if (
-                    action ===
-                    "accept"
+                    action === "accept"
                 ) {
-
                     await notifyUser(
                         env,
-
                         friendRequest.requester_id,
-
                         "friend_accepted",
-
                         "✅ درخواست دوستی پذیرفته شد",
-
                         `${accessResult.user.username} درخواست دوستی‌ات را پذیرفت.`,
-
                         requestId
                     );
 
-
                     return json({
-
-                        success:
-                            true,
+                        success: true,
 
                         message:
                             "✅ درخواست دوستی پذیرفته شد."
-
                     });
-
                 }
-
 
                 await notifyUser(
                     env,
-
                     friendRequest.requester_id,
-
                     "friend_rejected",
-
                     "👥 درخواست دوستی رد شد",
-
                     `${accessResult.user.username} درخواست دوستی‌ات را رد کرد.`,
-
                     requestId
                 );
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "درخواست دوستی رد شد."
-
                 });
-
             }
 
-
             /* =================================================
-               NEWS
-            ================================================== */
+               FRIENDS — CANCEL
+            ================================================= */
 
             if (
-                path ===
-                    "/api/news" &&
-                method ===
-                    "GET"
+                path === "/api/friends/cancel" &&
+                method === "POST"
             ) {
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
 
-                await ensureNews(
-                    env
-                );
+                if (!accessResult.ok) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
+                }
 
+                await ensureFriendRequests(env);
+
+                let body = {};
+
+                try {
+                    body =
+                        await request.json();
+
+                } catch {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "داده درخواست نامعتبر است."
+                        },
+                        400
+                    );
+                }
+
+                const requestId =
+                    Number(
+                        body.request_id
+                    );
+
+                if (
+                    !Number.isInteger(
+                        requestId
+                    ) ||
+                    requestId <= 0
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "شناسه درخواست نامعتبر است."
+                        },
+                        400
+                    );
+                }
+
+                const row =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                status
+                            FROM friend_requests
+                            WHERE
+                                id = ?1
+                                AND
+                                requester_id = ?2
+                            LIMIT 1
+                        `)
+                        .bind(
+                            requestId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+                if (!row) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "درخواست دوستی پیدا نشد."
+                        },
+                        404
+                    );
+                }
+
+                if (
+                    row.status !== "pending"
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "این درخواست دیگر قابل لغو نیست."
+                        },
+                        409
+                    );
+                }
+
+                await env.DB
+                    .prepare(`
+                        DELETE FROM friend_requests
+                        WHERE id = ?1
+                    `)
+                    .bind(requestId)
+                    .run();
+
+                return json({
+                    success: true,
+                    message:
+                        "درخواست دوستی لغو شد."
+                });
+            }
+
+            /* =================================================
+               FRIENDS — REMOVE
+            ================================================= */
+
+            if (
+                path === "/api/friends/remove" &&
+                method === "POST"
+            ) {
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+                if (!accessResult.ok) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
+                }
+
+                await ensureFriendRequests(env);
+
+                let body = {};
+
+                try {
+                    body =
+                        await request.json();
+
+                } catch {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "داده درخواست نامعتبر است."
+                        },
+                        400
+                    );
+                }
+
+                const friendId =
+                    Number(
+                        body.user_id
+                    );
+
+                if (
+                    !Number.isInteger(
+                        friendId
+                    ) ||
+                    friendId <= 0
+                ) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "کاربر نامعتبر است."
+                        },
+                        400
+                    );
+                }
+
+                const row =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id
+                            FROM friend_requests
+                            WHERE
+                                status = 'accepted'
+                                AND
+                                (
+                                    (
+                                        requester_id = ?1
+                                        AND
+                                        receiver_id = ?2
+                                    )
+                                    OR
+                                    (
+                                        requester_id = ?2
+                                        AND
+                                        receiver_id = ?1
+                                    )
+                                )
+                            LIMIT 1
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            friendId
+                        )
+                        .first();
+
+                if (!row) {
+                    return json(
+                        {
+                            success: false,
+                            message:
+                                "این کاربر دوست شما نیست."
+                        },
+                        404
+                    );
+                }
+
+                await env.DB
+                    .prepare(`
+                        DELETE FROM friend_requests
+                        WHERE id = ?1
+                    `)
+                    .bind(row.id)
+                    .run();
+
+                return json({
+                    success: true,
+                    message:
+                        "دوست با موفقیت حذف شد."
+                });
+            }
+                        /* =================================================
+               NEWS
+            ================================================= */
+
+            if (
+                path === "/api/news" &&
+                method === "GET"
+            ) {
+                await ensureNews(env);
 
                 const limit =
                     limitParam(
-                        url.searchParams.get(
-                            "limit"
-                        ),
+                        url.searchParams.get("limit"),
                         50,
                         20
                     );
-
 
                 const result =
                     await env.DB
@@ -3460,57 +2727,37 @@ export default {
                                 created_at,
                                 updated_at,
                                 published_at
-
                             FROM news
-
                             WHERE status = 'published'
-
                             ORDER BY
                                 published_at DESC,
                                 id DESC
-
                             LIMIT ?1
                         `)
-                        .bind(
-                            limit
-                        )
+                        .bind(limit)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     news:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                SINGLE NEWS
-            ================================================== */
+            ================================================= */
 
             const singleNews =
                 path.match(
                     /^\/api\/news\/(\d+)$/
                 );
 
-
             if (
                 singleNews &&
-                method ===
-                    "GET"
+                method === "GET"
             ) {
-
-                await ensureNews(
-                    env
-                );
-
+                await ensureNews(env);
 
                 const news =
                     await env.DB
@@ -3525,13 +2772,10 @@ export default {
                                 created_at,
                                 updated_at,
                                 published_at
-
                             FROM news
-
                             WHERE
                                 id = ?1
                                 AND status = 'published'
-
                             LIMIT 1
                         `)
                         .bind(
@@ -3541,200 +2785,133 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    !news
-                ) {
-
+                if (!news) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این خبر پیدا نشد."
                         },
                         404
                     );
-
                 }
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     news
-
                 });
-
             }
-
 
             /* =================================================
                NEWS REACTIONS
-            ================================================== */
+            ================================================= */
 
             const reactionMatch =
                 path.match(
                     /^\/api\/news\/(\d+)\/reaction$/
                 );
 
-
             if (
                 reactionMatch &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب PGame شو."
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 if (
                     accessResult.ban &&
                     (
-                        accessResult.ban.ban_type ===
-                            "full" ||
-
-                        accessResult.ban.ban_type ===
-                            "reactions"
+                        accessResult.ban.ban_type === "full" ||
+                        accessResult.ban.ban_type === "reactions"
                     )
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
+                            success: false,
 
                             message:
-                                accessResult.ban.ban_type ===
-                                    "full"
-
+                                accessResult.ban.ban_type === "full"
                                     ? "🚫 دسترسی این حساب به PGame محدود شده است."
-
                                     : "❤️ این حساب از واکنش به اخبار محروم شده است.",
 
-                            banned:
-                                true,
+                            banned: true,
 
                             ban_type:
                                 accessResult.ban.ban_type
-
                         },
                         403
                     );
-
                 }
 
-
-                await ensureNewsReactions(
-                    env
-                );
-
+                await ensureNewsReactions(env);
 
                 const body =
                     await request.json();
-
 
                 const newsId =
                     Number(
                         reactionMatch[1]
                     );
 
-
                 const reaction =
-                    typeof body.reaction ===
-                        "string"
-
+                    typeof body.reaction === "string"
                         ? body.reaction.trim()
-
                         : "";
 
-
                 if (
-                    !Number.isInteger(
-                        newsId
-                    ) ||
+                    !Number.isInteger(newsId) ||
                     newsId < 1 ||
                     !ALLOWED_REACTIONS.has(
                         reaction
                     )
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "نوع واکنش یا شناسه خبر نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 const news =
                     await env.DB
                         .prepare(`
-                            SELECT
-                                id
-
+                            SELECT id
                             FROM news
-
                             WHERE
                                 id = ?1
                                 AND status = 'published'
-
                             LIMIT 1
                         `)
-                        .bind(
-                            newsId
-                        )
+                        .bind(newsId)
                         .first();
 
-
-                if (
-                    !news
-                ) {
-
+                if (!news) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این خبر پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 const existing =
                     await env.DB
@@ -3742,13 +2919,10 @@ export default {
                             SELECT
                                 id,
                                 reaction
-
                             FROM news_reactions
-
                             WHERE
                                 news_id = ?1
                                 AND user_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -3757,40 +2931,27 @@ export default {
                         )
                         .first();
 
-
                 if (
                     existing &&
-                    existing.reaction ===
-                        reaction
+                    existing.reaction === reaction
                 ) {
-
                     await env.DB
                         .prepare(`
                             DELETE FROM news_reactions
-
                             WHERE id = ?1
                         `)
-                        .bind(
-                            existing.id
-                        )
+                        .bind(existing.id)
                         .run();
 
-                } else if (
-                    existing
-                ) {
-
+                } else if (existing) {
                     await env.DB
                         .prepare(`
                             UPDATE news_reactions
-
                             SET
                                 reaction = ?1,
-
                                 created_at =
                                     CURRENT_TIMESTAMP
-
-                            WHERE
-                                id = ?2
+                            WHERE id = ?2
                         `)
                         .bind(
                             reaction,
@@ -3799,7 +2960,6 @@ export default {
                         .run();
 
                 } else {
-
                     await env.DB
                         .prepare(`
                             INSERT INTO news_reactions(
@@ -3821,9 +2981,7 @@ export default {
                             reaction
                         )
                         .run();
-
                 }
-
 
                 const countsResult =
                     await env.DB
@@ -3831,53 +2989,31 @@ export default {
                             SELECT
                                 reaction,
                                 COUNT(*) AS count
-
                             FROM news_reactions
-
-                            WHERE
-                                news_id = ?1
-
-                            GROUP BY
-                                reaction
+                            WHERE news_id = ?1
+                            GROUP BY reaction
                         `)
-                        .bind(
-                            newsId
-                        )
+                        .bind(newsId)
                         .all();
 
-
-                const counts =
-                    {};
-
+                const counts = {};
 
                 for (
                     const item
-                    of countsResult.results ??
-                    []
+                    of countsResult.results ?? []
                 ) {
-
-                    counts[
-                        item.reaction
-                    ] =
-                        Number(
-                            item.count
-                        );
-
+                    counts[item.reaction] =
+                        Number(item.count);
                 }
-
 
                 const current =
                     await env.DB
                         .prepare(`
-                            SELECT
-                                reaction
-
+                            SELECT reaction
                             FROM news_reactions
-
                             WHERE
                                 news_id = ?1
                                 AND user_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -3886,67 +3022,45 @@ export default {
                         )
                         .first();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     reactions:
                         counts,
 
                     my_reaction:
-                        current?.reaction ??
-                        null
-
+                        current?.reaction ?? null
                 });
-
             }
-                        /* =================================================
+
+            /* =================================================
                ADMIN NEWS LIST
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/news" &&
-                method ===
-                    "GET"
+                path === "/api/admin/news" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
-                                admin.status ===
-                                    401
-
+                                admin.status === 401
                                     ? "ابتدا وارد حساب شو."
-
                                     : "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
 
-
-                await ensureNews(
-                    env
-                );
-
+                await ensureNews(env);
 
                 const result =
                     await env.DB
@@ -3959,70 +3073,44 @@ export default {
                         `)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     news:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                ADMIN CREATE NEWS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/news" &&
-                method ===
-                    "POST"
+                path === "/api/admin/news" &&
+                method === "POST"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
-                                admin.status ===
-                                    401
-
+                                admin.status === 401
                                     ? "ابتدا وارد حساب شو."
-
                                     : "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
 
-
-                await ensureNews(
-                    env
-                );
-
+                await ensureNews(env);
 
                 const body =
                     await request.json();
-
 
                 const title =
                     clean(
@@ -4030,13 +3118,11 @@ export default {
                         200
                     );
 
-
                 const content =
                     clean(
                         body.content,
                         20000
                     );
-
 
                 const imageUrl =
                     clean(
@@ -4044,53 +3130,35 @@ export default {
                         1000
                     );
 
-
                 const category =
                     clean(
-                        body.category ||
-                            "general",
+                        body.category || "general",
                         50
-                    ) ||
-                    "general";
-
+                    ) || "general";
 
                 const status =
-                    body.status ===
-                        "published"
-
+                    body.status === "published"
                         ? "published"
-
                         : "draft";
-
 
                 if (
                     title.length < 3 ||
                     content.length < 3
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "عنوان و متن خبر را کامل وارد کن."
                         },
                         400
                     );
-
                 }
 
-
                 const publishedAt =
-                    status ===
-                        "published"
-
-                        ? new Date()
-                            .toISOString()
-
+                    status === "published"
+                        ? new Date().toISOString()
                         : null;
-
 
                 const inserted =
                     await env.DB
@@ -4121,8 +3189,7 @@ export default {
                         .bind(
                             title,
                             content,
-                            imageUrl ||
-                                null,
+                            imageUrl || null,
                             category,
                             status,
                             admin.user.username,
@@ -4130,183 +3197,119 @@ export default {
                         )
                         .run();
 
-
                 const newsId =
-                    inserted.meta
-                        ?.last_row_id;
-
+                    inserted.meta?.last_row_id;
 
                 if (
-                    status ===
-                    "published"
+                    status === "published"
                 ) {
-
                     await notifyAllUsers(
                         env,
-
                         "news",
-
                         "📰 خبر جدید PGame",
-
                         title,
-
-                        newsId ??
-                            null
+                        newsId ?? null
                     );
-
                 }
-
 
                 return json(
                     {
-                        success:
-                            true,
+                        success: true,
 
                         message:
-                            status ===
-                                "published"
-
+                            status === "published"
                                 ? "خبر منتشر شد."
-
                                 : "خبر به‌عنوان پیش‌نویس ذخیره شد.",
 
                         id:
-                            newsId ??
-                            null
+                            newsId ?? null
                     },
                     201
                 );
-
             }
-
 
             /* =================================================
                ADMIN UPDATE / DELETE NEWS
-            ================================================== */
+            ================================================= */
 
             const adminNewsMatch =
                 path.match(
                     /^\/api\/admin\/news\/(\d+)$/
                 );
 
-
             if (
                 adminNewsMatch &&
                 (
-                    method ===
-                        "PUT" ||
-
-                    method ===
-                        "DELETE"
+                    method === "PUT" ||
+                    method === "DELETE"
                 )
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
 
-
-                await ensureNews(
-                    env
-                );
-
+                await ensureNews(env);
 
                 const id =
                     Number(
                         adminNewsMatch[1]
                     );
 
-
                 const existing =
                     await env.DB
                         .prepare(`
                             SELECT *
-
                             FROM news
-
-                            WHERE
-                                id = ?1
-
+                            WHERE id = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            id
-                        )
+                        .bind(id)
                         .first();
 
-
-                if (
-                    !existing
-                ) {
-
+                if (!existing) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "خبر پیدا نشد."
                         },
                         404
                     );
-
                 }
 
-
                 if (
-                    method ===
-                    "DELETE"
+                    method === "DELETE"
                 ) {
-
                     await env.DB
                         .prepare(`
                             DELETE FROM news
-
-                            WHERE
-                                id = ?1
+                            WHERE id = ?1
                         `)
-                        .bind(
-                            id
-                        )
+                        .bind(id)
                         .run();
 
-
                     return json({
-
-                        success:
-                            true,
-
+                        success: true,
                         message:
                             "خبر حذف شد."
-
                     });
-
                 }
-
 
                 const body =
                     await request.json();
-
 
                 const title =
                     clean(
@@ -4315,14 +3318,12 @@ export default {
                         200
                     );
 
-
                 const content =
                     clean(
                         body.content ??
                             existing.content,
                         20000
                     );
-
 
                 const imageUrl =
                     clean(
@@ -4332,87 +3333,58 @@ export default {
                         1000
                     );
 
-
                 const category =
                     clean(
                         body.category ??
                             existing.category ??
                             "general",
                         50
-                    ) ||
-                    "general";
-
+                    ) || "general";
 
                 const status =
-                    body.status ===
-                        "published"
-
+                    body.status === "published"
                         ? "published"
-
                         : "draft";
-
 
                 let publishedAt =
                     existing.published_at;
-
 
                 const wasPublished =
                     existing.status ===
                     "published";
 
-
                 if (
-                    status ===
-                        "published" &&
+                    status === "published" &&
                     !publishedAt
                 ) {
-
                     publishedAt =
-                        new Date()
-                            .toISOString();
-
+                        new Date().toISOString();
                 }
-
 
                 if (
-                    status ===
-                        "draft"
+                    status === "draft"
                 ) {
-
-                    publishedAt =
-                        null;
-
+                    publishedAt = null;
                 }
-
 
                 await env.DB
                     .prepare(`
                         UPDATE news
-
                         SET
                             title = ?1,
-
                             content = ?2,
-
                             image_url = ?3,
-
                             category = ?4,
-
                             status = ?5,
-
                             updated_at =
                                 CURRENT_TIMESTAMP,
-
                             published_at = ?6
-
-                        WHERE
-                            id = ?7
+                        WHERE id = ?7
                     `)
                     .bind(
                         title,
                         content,
-                        imageUrl ||
-                            null,
+                        imageUrl || null,
                         category,
                         status,
                         publishedAt,
@@ -4420,56 +3392,35 @@ export default {
                     )
                     .run();
 
-
                 if (
-                    status ===
-                        "published" &&
+                    status === "published" &&
                     !wasPublished
                 ) {
-
                     await notifyAllUsers(
                         env,
-
                         "news",
-
                         "📰 خبر جدید PGame",
-
                         title,
-
                         id
                     );
-
                 }
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     message:
                         "خبر با موفقیت ویرایش شد."
-
                 });
-
             }
-
 
             /* =================================================
                PUBLIC POLLS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/polls" &&
-                method ===
-                    "GET"
+                path === "/api/polls" &&
+                method === "GET"
             ) {
-
-                await ensurePolls(
-                    env
-                );
-
+                await ensurePolls(env);
 
                 const result =
                     await env.DB
@@ -4482,31 +3433,21 @@ export default {
                                 created_at,
                                 updated_at,
                                 published_at
-
                             FROM polls
-
-                            WHERE status =
-                                'published'
-
+                            WHERE status = 'published'
                             ORDER BY
                                 published_at DESC,
                                 id DESC
-
                             LIMIT 50
                         `)
                         .all();
 
-
-                const polls =
-                    [];
-
+                const polls = [];
 
                 for (
                     const poll
-                    of result.results ??
-                    []
+                    of result.results ?? []
                 ) {
-
                     const options =
                         await env.DB
                             .prepare(`
@@ -4521,26 +3462,17 @@ export default {
                                             poll_votes.option_id =
                                                 poll_options.id
                                     ) AS votes
-
                                 FROM poll_options
-
-                                WHERE
-                                    poll_id = ?1
-
+                                WHERE poll_id = ?1
                                 ORDER BY
                                     sort_order ASC,
                                     id ASC
                             `)
-                            .bind(
-                                poll.id
-                            )
+                            .bind(poll.id)
                             .all();
 
-
                     const optionList =
-                        options.results ??
-                        [];
-
+                        options.results ?? [];
 
                     const totalVotes =
                         optionList.reduce(
@@ -4550,80 +3482,52 @@ export default {
                             ) =>
                                 total +
                                 Number(
-                                    option.votes ??
-                                    0
+                                    option.votes ?? 0
                                 ),
                             0
                         );
 
-
                     polls.push({
-
                         ...poll,
-
                         options:
                             optionList,
-
                         total_votes:
                             totalVotes
-
                     });
-
                 }
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     polls
-
                 });
-
             }
-
 
             /* =================================================
                ADMIN POLLS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/polls" &&
-                method ===
-                    "GET"
+                path === "/api/admin/polls" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
 
-
-                await ensurePolls(
-                    env
-                );
-
+                await ensurePolls(env);
 
                 const result =
                     await env.DB
@@ -4636,26 +3540,19 @@ export default {
                                 created_at,
                                 updated_at,
                                 published_at
-
                             FROM polls
-
                             ORDER BY
                                 created_at DESC,
                                 id DESC
                         `)
                         .all();
 
-
-                const polls =
-                    [];
-
+                const polls = [];
 
                 for (
                     const poll
-                    of result.results ??
-                    []
+                    of result.results ?? []
                 ) {
-
                     const options =
                         await env.DB
                             .prepare(`
@@ -4663,96 +3560,59 @@ export default {
                                     id,
                                     option_text,
                                     sort_order
-
                                 FROM poll_options
-
-                                WHERE
-                                    poll_id = ?1
-
+                                WHERE poll_id = ?1
                                 ORDER BY
                                     sort_order ASC,
                                     id ASC
                             `)
-                            .bind(
-                                poll.id
-                            )
+                            .bind(poll.id)
                             .all();
 
-
                     polls.push({
-
                         ...poll,
-
                         options:
-                            options.results ??
-                            []
-
+                            options.results ?? []
                     });
-
                 }
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     polls
-
                 });
-
             }
-
 
             /* =================================================
                ADMIN CREATE POLL
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/polls" &&
-                method ===
-                    "POST"
+                path === "/api/admin/polls" &&
+                method === "POST"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
-                                admin.status ===
-                                    401
-
+                                admin.status === 401
                                     ? "ابتدا وارد حساب شو."
-
                                     : "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
 
-
-                await ensurePolls(
-                    env
-                );
-
+                await ensurePolls(env);
 
                 const body =
                     await request.json();
-
 
                 const question =
                     clean(
@@ -4760,93 +3620,60 @@ export default {
                         500
                     );
 
-
                 const status =
-                    body.status ===
-                        "published"
-
+                    body.status === "published"
                         ? "published"
-
                         : "draft";
 
-
                 let options =
-                    Array.isArray(
-                        body.options
-                    )
+                    Array.isArray(body.options)
                         ? body.options
                         : [];
-
 
                 options =
                     options
                         .map(
                             option =>
                                 clean(
-                                    typeof option ===
-                                        "string"
-
+                                    typeof option === "string"
                                         ? option
-
                                         : option?.option_text,
-
                                     250
                                 )
                         )
                         .filter(Boolean)
-                        .slice(
-                            0,
-                            10
-                        );
-
+                        .slice(0, 10);
 
                 if (
-                    question.length <
-                    3
+                    question.length < 3
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "سؤال نظرسنجی را کامل وارد کن."
                         },
                         400
                     );
-
                 }
 
-
                 if (
-                    options.length <
-                    2
+                    options.length < 2
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "حداقل دو گزینه برای نظرسنجی لازم است."
                         },
                         400
                     );
-
                 }
 
-
                 const publishedAt =
-                    status ===
-                        "published"
-
-                        ? new Date()
-                            .toISOString()
-
+                    status === "published"
+                        ? new Date().toISOString()
                         : null;
-
 
                 const inserted =
                     await env.DB
@@ -4876,29 +3703,20 @@ export default {
                         )
                         .run();
 
-
                 const pollId =
-                    inserted.meta
-                        ?.last_row_id;
+                    inserted.meta?.last_row_id;
 
-
-                if (
-                    !pollId
-                ) {
-
+                if (!pollId) {
                     throw new Error(
                         "poll id was not created"
                     );
-
                 }
-
 
                 for (
                     let i = 0;
                     i < options.length;
                     i++
                 ) {
-
                     await env.DB
                         .prepare(`
                             INSERT INTO poll_options(
@@ -4918,137 +3736,94 @@ export default {
                             i
                         )
                         .run();
-
                 }
-
 
                 if (
-                    status ===
-                        "published"
+                    status === "published"
                 ) {
-
                     await notifyAllUsers(
                         env,
-
                         "poll",
-
                         "📊 نظرسنجی جدید PGame",
-
                         question,
-
                         pollId
                     );
-
                 }
-
 
                 return json(
                     {
-                        success:
-                            true,
+                        success: true,
 
                         message:
-                            status ===
-                                "published"
-
+                            status === "published"
                                 ? "نظرسنجی منتشر شد."
-
                                 : "نظرسنجی به‌عنوان پیش‌نویس ذخیره شد.",
 
                         id:
                             pollId
-
                     },
                     201
                 );
-
             }
-
 
             /* =================================================
                VOTE POLL
-            ================================================== */
+            ================================================= */
 
             const votePollMatch =
                 path.match(
                     /^\/api\/polls\/(\d+)\/vote$/
                 );
 
-
             if (
                 votePollMatch &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب PGame شو."
                         },
                         accessResult.status
                     );
-
                 }
 
-
-                await ensurePolls(
-                    env
-                );
-
+                await ensurePolls(env);
 
                 const pollId =
                     Number(
                         votePollMatch[1]
                     );
 
-
                 const body =
                     await request.json();
-
 
                 const optionId =
                     Number(
                         body.option_id
                     );
 
-
                 if (
-                    !Number.isInteger(
-                        pollId
-                    ) ||
-                    !Number.isInteger(
-                        optionId
-                    )
+                    !Number.isInteger(pollId) ||
+                    !Number.isInteger(optionId)
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "شناسه نظرسنجی یا گزینه نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 const poll =
                     await env.DB
@@ -5056,38 +3831,25 @@ export default {
                             SELECT
                                 id,
                                 question
-
                             FROM polls
-
                             WHERE
                                 id = ?1
                                 AND status = 'published'
-
                             LIMIT 1
                         `)
-                        .bind(
-                            pollId
-                        )
+                        .bind(pollId)
                         .first();
 
-
-                if (
-                    !poll
-                ) {
-
+                if (!poll) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "نظرسنجی پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 const option =
                     await env.DB
@@ -5095,13 +3857,10 @@ export default {
                             SELECT
                                 id,
                                 option_text
-
                             FROM poll_options
-
                             WHERE
                                 id = ?1
                                 AND poll_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -5110,24 +3869,16 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    !option
-                ) {
-
+                if (!option) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "گزینه انتخاب‌شده معتبر نیست."
                         },
                         400
                     );
-
                 }
-
 
                 const existingVote =
                     await env.DB
@@ -5135,13 +3886,10 @@ export default {
                             SELECT
                                 id,
                                 option_id
-
                             FROM poll_votes
-
                             WHERE
                                 poll_id = ?1
                                 AND user_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -5150,23 +3898,15 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    existingVote
-                ) {
-
+                if (existingVote) {
                     await env.DB
                         .prepare(`
                             UPDATE poll_votes
-
                             SET
                                 option_id = ?1,
-
                                 created_at =
                                     CURRENT_TIMESTAMP
-
-                            WHERE
-                                id = ?2
+                            WHERE id = ?2
                         `)
                         .bind(
                             optionId,
@@ -5175,7 +3915,6 @@ export default {
                         .run();
 
                 } else {
-
                     await env.DB
                         .prepare(`
                             INSERT INTO poll_votes(
@@ -5197,9 +3936,7 @@ export default {
                             accessResult.user.id
                         )
                         .run();
-
                 }
-
 
                 const options =
                     await env.DB
@@ -5214,26 +3951,18 @@ export default {
                                         poll_votes.option_id =
                                             poll_options.id
                                 ) AS votes
-
                             FROM poll_options
-
                             WHERE
                                 poll_id = ?1
-
                             ORDER BY
                                 sort_order ASC,
                                 id ASC
                         `)
-                        .bind(
-                            pollId
-                        )
+                        .bind(pollId)
                         .all();
 
-
                 const optionList =
-                    options.results ??
-                    [];
-
+                    options.results ?? [];
 
                 const totalVotes =
                     optionList.reduce(
@@ -5243,20 +3972,15 @@ export default {
                         ) =>
                             total +
                             Number(
-                                item.votes ??
-                                0
+                                item.votes ?? 0
                             ),
                         0
                     );
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     poll: {
-
                         id:
                             poll.id,
 
@@ -5271,55 +3995,35 @@ export default {
 
                         my_option_id:
                             optionId
-
                     }
-
                 });
-
             }
                         /* =================================================
                GET NOTIFICATIONS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/notifications" &&
-                method ===
-                    "GET"
+                path === "/api/notifications" &&
+                method === "GET"
             ) {
-
                 const user =
                     await getCurrentUser(
                         request,
                         env
                     );
 
-
-                if (
-                    !user
-                ) {
-
+                if (!user) {
                     return json(
                         {
-                            success:
-                                false,
-
-                            notifications:
-                                [],
-
-                            unread_count:
-                                0
+                            success: false,
+                            notifications: [],
+                            unread_count: 0
                         },
                         401
                     );
-
                 }
 
-
-                await ensureNotifications(
-                    env
-                );
-
+                await ensureNotifications(env);
 
                 const result =
                     await env.DB
@@ -5332,106 +4036,71 @@ export default {
                                 reference_id,
                                 created_at,
                                 read_at
-
                             FROM notifications
-
-                            WHERE
-                                user_id = ?1
-
-                            ORDER BY
-                                id DESC
-
+                            WHERE user_id = ?1
+                            ORDER BY id DESC
                             LIMIT 50
                         `)
-                        .bind(
-                            user.id
-                        )
+                        .bind(user.id)
                         .all();
-
 
                 const unread =
                     await env.DB
                         .prepare(`
                             SELECT
                                 COUNT(*) AS count
-
                             FROM notifications
-
                             WHERE
                                 user_id = ?1
                                 AND read_at IS NULL
                         `)
-                        .bind(
-                            user.id
-                        )
+                        .bind(user.id)
                         .first();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     notifications:
-                        result.results ??
-                        [],
+                        result.results ?? [],
 
                     unread_count:
                         Number(
-                            unread?.count ??
-                            0
+                            unread?.count ?? 0
                         )
-
                 });
-
             }
-
 
             /* =================================================
                READ NOTIFICATION
-            ================================================== */
+            ================================================= */
 
             const notificationRead =
                 path.match(
                     /^\/api\/notifications\/(\d+)\/read$/
                 );
 
-
             if (
                 notificationRead &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const user =
                     await getCurrentUser(
                         request,
                         env
                     );
 
-
-                if (
-                    !user
-                ) {
-
+                if (!user) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب شو."
                         },
                         401
                     );
-
                 }
 
-
-                await ensureNotifications(
-                    env
-                );
-
+                await ensureNotifications(env);
 
                 await env.DB
                     .prepare(`
@@ -5453,87 +4122,61 @@ export default {
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true
-
+                    success: true
                 });
-
             }
 
-
             /* =================================================
-               SUPPORT
-            ================================================== */
+               SUPPORT SEND
+            ================================================= */
 
             if (
-                path ===
-                    "/api/support/send" &&
-                method ===
-                    "POST"
+                path === "/api/support/send" &&
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی این حساب به PGame محدود شده است."
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 if (
                     accessResult.ban &&
                     (
-                        accessResult.ban.ban_type ===
-                            "full" ||
-
-                        accessResult.ban.ban_type ===
-                            "messages"
+                        accessResult.ban.ban_type === "full" ||
+                        accessResult.ban.ban_type === "messages"
                     )
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
+                            success: false,
 
                             message:
                                 "💬 این حساب از ارسال پیام محروم شده است.",
 
-                            banned:
-                                true,
+                            banned: true,
 
                             ban_type:
                                 accessResult.ban.ban_type
                         },
                         403
                     );
-
                 }
-
 
                 const body =
                     await request.json();
-
 
                 const message =
                     clean(
@@ -5541,25 +4184,18 @@ export default {
                         5000
                     );
 
-
                 if (
-                    message.length <
-                    2
+                    message.length < 2
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "پیام خیلی کوتاه است."
                         },
                         400
                     );
-
                 }
-
 
                 const inserted =
                     await env.DB
@@ -5590,61 +4226,44 @@ export default {
                         )
                         .run();
 
-
                 return json(
                     {
-                        success:
-                            true,
+                        success: true,
 
                         message:
                             "پیامت با موفقیت برای مدیریت ارسال شد. 💚",
 
                         id:
-                            inserted.meta
-                                ?.last_row_id ??
+                            inserted.meta?.last_row_id ??
                             null
                     },
                     201
                 );
-
             }
 
-
             /* =================================================
-               MY SUPPORT MESSAGES
-            ================================================== */
+               MY SUPPORT
+            ================================================= */
 
             if (
-                path ===
-                    "/api/support/my" &&
-                method ===
-                    "GET"
+                path === "/api/support/my" &&
+                method === "GET"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
-                            messages:
-                                []
+                            success: false,
+                            messages: []
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 const result =
                     await env.DB
@@ -5656,16 +4275,11 @@ export default {
                                 status,
                                 created_at,
                                 replied_at
-
                             FROM support_messages
-
-                            WHERE
-                                user_id = ?1
-
+                            WHERE user_id = ?1
                             ORDER BY
                                 created_at DESC,
                                 id DESC
-
                             LIMIT 50
                         `)
                         .bind(
@@ -5673,56 +4287,38 @@ export default {
                         )
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     messages:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
 
-
             /* =================================================
-               ADMIN SUPPORT LIST
-            ================================================== */
+               ADMIN SUPPORT
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/support" &&
-                method ===
-                    "GET"
+                path === "/api/admin/support" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
-
 
                 const result =
                     await env.DB
@@ -5736,88 +4332,64 @@ export default {
                                 status,
                                 created_at,
                                 replied_at
-
                             FROM support_messages
-
                             ORDER BY
                                 CASE
                                     WHEN status = 'new'
                                     THEN 0
                                     ELSE 1
                                 END,
-
                                 created_at DESC,
                                 id DESC
-
                             LIMIT 200
                         `)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     messages:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
 
-
             /* =================================================
-               ADMIN REPLY
-            ================================================== */
+               ADMIN SUPPORT REPLY
+            ================================================= */
 
             const supportReply =
                 path.match(
                     /^\/api\/admin\/support\/(\d+)\/reply$/
                 );
 
-
             if (
                 supportReply &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
-
 
                 const supportId =
                     Number(
                         supportReply[1]
                     );
 
-
                 const body =
                     await request.json();
-
 
                 const reply =
                     clean(
@@ -5825,24 +4397,16 @@ export default {
                         5000
                     );
 
-
-                if (
-                    !reply
-                ) {
-
+                if (!reply) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "متن پاسخ خالی است."
                         },
                         400
                     );
-
                 }
-
 
                 const supportMessage =
                     await env.DB
@@ -5850,37 +4414,23 @@ export default {
                             SELECT
                                 id,
                                 user_id
-
                             FROM support_messages
-
-                            WHERE
-                                id = ?1
-
+                            WHERE id = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            supportId
-                        )
+                        .bind(supportId)
                         .first();
 
-
-                if (
-                    !supportMessage
-                ) {
-
+                if (!supportMessage) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "پیام پشتیبانی پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -5888,15 +4438,11 @@ export default {
 
                         SET
                             reply = ?1,
-
-                            status =
-                                'replied',
-
+                            status = 'replied',
                             replied_at =
                                 CURRENT_TIMESTAMP
 
-                        WHERE
-                            id = ?2
+                        WHERE id = ?2
                     `)
                     .bind(
                         reply,
@@ -5904,67 +4450,45 @@ export default {
                     )
                     .run();
 
-
                 await notifyUser(
                     env,
-
                     supportMessage.user_id,
-
                     "support",
-
                     "💬 پاسخ مدیریت",
-
                     "مدیریت به پیام شما پاسخ داده است.",
-
                     supportId
                 );
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "پاسخ با موفقیت ارسال شد."
-
                 });
-
             }
-
 
             /* =================================================
                ADMIN USERS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/users" &&
-                method ===
-                    "GET"
+                path === "/api/admin/users" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false
+                            success: false
                         },
                         admin.status
                     );
-
                 }
-
 
                 const result =
                     await env.DB
@@ -6005,53 +4529,36 @@ export default {
                         `)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     users:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                ADMIN BANS
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/admin/bans" &&
-                method ===
-                    "GET"
+                path === "/api/admin/bans" &&
+                method === "GET"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false
+                            success: false
                         },
                         admin.status
                     );
-
                 }
-
 
                 const result =
                     await env.DB
@@ -6087,121 +4594,89 @@ export default {
                         `)
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     bans:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                BAN USER
-            ================================================== */
+            ================================================= */
 
             const banMatch =
                 path.match(
                     /^\/api\/admin\/users\/(\d+)\/ban$/
                 );
 
-
             if (
                 banMatch &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
-
 
                 const userId =
                     Number(
                         banMatch[1]
                     );
 
-
                 if (
                     userId ===
                     admin.user.id
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ادمین نمی‌تواند خودش را بن کند."
                         },
                         400
                     );
-
                 }
-
 
                 const body =
                     await request.json();
-
 
                 const reason =
                     clean(
                         body.reason,
                         500
-                    )
-                    ||
+                    ) ||
                     "نقض قوانین PGame";
-
 
                 const ban_type =
                     banType(
                         body.ban_type
                     );
 
-
-                let bannedUntil =
-                    null;
-
+                let bannedUntil = null;
 
                 if (
                     typeof body.banned_until ===
                         "string" &&
                     body.banned_until
                 ) {
-
                     const date =
                         new Date(
                             body.banned_until
                         );
-
 
                     if (
                         Number.isNaN(
@@ -6210,26 +4685,19 @@ export default {
                         date.getTime() <=
                             Date.now()
                     ) {
-
                         return json(
                             {
-                                success:
-                                    false,
-
+                                success: false,
                                 message:
                                     "زمان پایان بن نامعتبر است."
                             },
                             400
                         );
-
                     }
-
 
                     bannedUntil =
                         date.toISOString();
-
                 }
-
 
                 const target =
                     await env.DB
@@ -6237,54 +4705,34 @@ export default {
                             SELECT
                                 id,
                                 username
-
                             FROM users
-
-                            WHERE
-                                id = ?1
-
+                            WHERE id = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            userId
-                        )
+                        .bind(userId)
                         .first();
 
-
-                if (
-                    !target
-                ) {
-
+                if (!target) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کاربر پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
                         UPDATE user_bans
-
-                        SET
-                            active = 0
-
+                        SET active = 0
                         WHERE
                             user_id = ?1
                             AND active = 1
                     `)
-                    .bind(
-                        userId
-                    )
+                    .bind(userId)
                     .run();
-
 
                 await env.DB
                     .prepare(`
@@ -6313,11 +4761,8 @@ export default {
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "محدودیت کاربر اعمال شد.",
@@ -6334,52 +4779,38 @@ export default {
 
                     banned_until:
                         bannedUntil
-
                 });
-
             }
 
-
             /* =================================================
-               UNBAN USER
-            ================================================== */
+               UNBAN
+            ================================================= */
 
             const unbanMatch =
                 path.match(
                     /^\/api\/admin\/users\/(\d+)\/unban$/
                 );
 
-
             if (
                 unbanMatch &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const admin =
                     await requireAdmin(
                         request,
                         env
                     );
 
-
-                if (
-                    !admin.ok
-                ) {
-
+                if (!admin.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی ادمین ندارید."
                         },
                         admin.status
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -6399,55 +4830,38 @@ export default {
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "محدودیت کاربر برداشته شد."
-
                 });
-
             }
-
 
             /* =================================================
                RUBIKA CREATE CODE
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/rubika/create-code" &&
-                method ===
-                    "POST"
+                path === "/api/rubika/create-code" &&
+                method === "POST"
             ) {
-
                 const user =
                     await getCurrentUser(
                         request,
                         env
                     );
 
-
-                if (
-                    !user
-                ) {
-
+                if (!user) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب PGame شو."
                         },
                         401
                     );
-
                 }
-
 
                 const code =
                     String(
@@ -6455,21 +4869,17 @@ export default {
                         (
                             crypto.getRandomValues(
                                 new Uint32Array(1)
-                            )[0]
-                            %
+                            )[0] %
                             900000
                         )
                     );
-
 
                 const expires =
                     new Date(
                         Date.now() +
                         RUBIKA_CODE_MINUTES *
                         60000
-                    )
-                    .toISOString();
-
+                    ).toISOString();
 
                 await env.DB
                     .prepare(`
@@ -6500,42 +4910,26 @@ export default {
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     code,
-
-                    expires_at:
-                        expires
-
+                    expires_at: expires
                 });
-
             }
-
-
-            /* =================================================
+                        /* =================================================
                RUBIKA LINK
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/rubika/link" &&
-                method ===
-                    "POST"
+                path === "/api/rubika/link" &&
+                method === "POST"
             ) {
-
                 const key =
                     (
                         request.headers.get(
                             "X-VEXON-API-KEY"
-                        ) ||
-                        ""
-                    )
-                    .trim();
-
+                        ) || ""
+                    ).trim();
 
                 if (
                     !env.VEXON_RUBIKA_API_KEY ||
@@ -6544,24 +4938,18 @@ export default {
                             env.VEXON_RUBIKA_API_KEY
                         ).trim()
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "Unauthorized"
                         },
                         401
                     );
-
                 }
-
 
                 const body =
                     await request.json();
-
 
                 const code =
                     clean(
@@ -6569,38 +4957,27 @@ export default {
                         6
                     );
 
-
                 const rubikaId =
                     body.rubika_user_id !==
                         undefined
-
                         ? String(
                             body.rubika_user_id
                         ).trim()
-
                         : "";
 
-
                 if (
-                    !/^\d{6}$/.test(
-                        code
-                    ) ||
+                    !/^\d{6}$/.test(code) ||
                     !rubikaId
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "Invalid data"
                         },
                         400
                     );
-
                 }
-
 
                 const linkCode =
                     await env.DB
@@ -6609,37 +4986,23 @@ export default {
                                 user_id,
                                 code,
                                 expires_at
-
                             FROM rubika_link_codes
-
-                            WHERE
-                                code = ?1
-
+                            WHERE code = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            code
-                        )
+                        .bind(code)
                         .first();
 
-
-                if (
-                    !linkCode
-                ) {
-
+                if (!linkCode) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کد اتصال معتبر نیست."
                         },
                         404
                     );
-
                 }
-
 
                 if (
                     new Date(
@@ -6647,33 +5010,24 @@ export default {
                     ).getTime() <=
                     Date.now()
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کد اتصال منقضی شده است."
                         },
                         410
                     );
-
                 }
-
 
                 const existing =
                     await env.DB
                         .prepare(`
-                            SELECT
-                                id
-
+                            SELECT id
                             FROM rubika_links
-
                             WHERE
                                 user_id = ?1
                                 OR rubika_sender_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -6682,24 +5036,16 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    existing
-                ) {
-
+                if (existing) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "این حساب PGame یا حساب روبیکا قبلاً متصل شده است."
                         },
                         409
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -6721,68 +5067,48 @@ export default {
                     )
                     .run();
 
-
                 await env.DB
                     .prepare(`
                         DELETE FROM rubika_link_codes
-
-                        WHERE
-                            user_id = ?1
+                        WHERE user_id = ?1
                     `)
                     .bind(
                         linkCode.user_id
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "حساب روبیکا با موفقیت متصل شد."
-
                 });
-
             }
-
 
             /* =================================================
                RUBIKA UNLINK
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/rubika/unlink" &&
-                method ===
-                    "POST"
+                path === "/api/rubika/unlink" &&
+                method === "POST"
             ) {
-
                 const user =
                     await getCurrentUser(
                         request,
                         env
                     );
 
-
-                if (
-                    !user
-                ) {
-
+                if (!user) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "ابتدا وارد حساب PGame شو."
                         },
                         401
                     );
-
                 }
-
 
                 const linked =
                     await env.DB
@@ -6790,128 +5116,82 @@ export default {
                             SELECT
                                 id,
                                 rubika_sender_id
-
                             FROM rubika_links
-
-                            WHERE
-                                user_id = ?1
-
+                            WHERE user_id = ?1
                             LIMIT 1
                         `)
-                        .bind(
-                            user.id
-                        )
+                        .bind(user.id)
                         .first();
 
-
-                if (
-                    !linked
-                ) {
-
+                if (!linked) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "هیچ حساب روبیکایی به این حساب متصل نیست."
                         },
                         404
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
                         DELETE FROM rubika_links
-
-                        WHERE
-                            user_id = ?1
+                        WHERE user_id = ?1
                     `)
-                    .bind(
-                        user.id
-                    )
+                    .bind(user.id)
                     .run();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     message:
                         "اتصال روبیکا با موفقیت لغو شد."
-
                 });
-
             }
-
 
             /* =================================================
                API TEST
-            ================================================== */
+            ================================================= */
 
             if (
-                path ===
-                    "/api/test" &&
-                method ===
-                    "GET"
+                path === "/api/test" &&
+                method === "GET"
             ) {
-
                 return json({
-
-                    success:
-                        true,
-
+                    success: true,
                     message:
                         "PGame API is online!"
-
                 });
-
             }
-
 
             /* =================================================
                MESSENGER - CONVERSATIONS GET
-            ================================================== */
+            ================================================= */
 
             if (
                 path ===
                     "/api/messenger/conversations" &&
-                method ===
-                    "GET"
+                method === "GET"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی به پیام‌رسان محدود شده است."
                         },
                         accessResult.status
                     );
-
                 }
 
-
-                await ensureMessenger(
-                    env
-                );
-
+                await ensureMessenger(env);
 
                 const result =
                     await env.DB
@@ -6934,9 +5214,7 @@ export default {
 
                                 (
                                     SELECT COUNT(*)
-
                                     FROM messages um
-
                                     WHERE
                                         um.conversation_id =
                                             c.id
@@ -6951,7 +5229,6 @@ export default {
                                             OR um.created_at >
                                                cm.last_read_at
                                         )
-
                                 ) AS unread_count
 
                             FROM conversations c
@@ -6978,9 +5255,7 @@ export default {
                                 ON lm.id = (
                                     SELECT
                                         MAX(m2.id)
-
                                     FROM messages m2
-
                                     WHERE
                                         m2.conversation_id =
                                             c.id
@@ -7001,81 +5276,52 @@ export default {
                         )
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     conversations:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                MESSENGER - SEARCH USERS
-            ================================================== */
+            ================================================= */
 
             if (
                 path ===
                     "/api/messenger/users/search" &&
-                method ===
-                    "GET"
+                method === "GET"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false
+                            success: false
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 const query =
                     clean(
-                        url.searchParams.get(
-                            "q"
-                        ) ||
-                        "",
+                        url.searchParams.get("q") || "",
                         40
                     );
 
-
                 if (
-                    query.length <
-                    2
+                    query.length < 2
                 ) {
-
                     return json({
-
-                        success:
-                            true,
-
-                        users:
-                            []
-
+                        success: true,
+                        users: []
                     });
-
                 }
-
 
                 const result =
                     await env.DB
@@ -7083,110 +5329,77 @@ export default {
                             SELECT
                                 id,
                                 username
-
                             FROM users
-
                             WHERE
                                 id != ?1
-
                                 AND username LIKE ?2
-
                             ORDER BY
                                 username ASC
-
                             LIMIT 30
                         `)
                         .bind(
                             accessResult.user.id,
-
                             `%${query}%`
                         )
                         .all();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     users:
-                        result.results ??
-                        []
-
+                        result.results ?? []
                 });
-
             }
-
 
             /* =================================================
                MESSENGER - CREATE CONVERSATION
-            ================================================== */
+            ================================================= */
 
             if (
                 path ===
                     "/api/messenger/conversations" &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی به پیام‌رسان محدود شده است."
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 if (
                     accessResult.ban?.ban_type ===
-                        "messages"
+                    "messages"
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "💬 این حساب از ارسال پیام محروم شده است."
                         },
                         403
                     );
-
                 }
 
-
-                await ensureMessenger(
-                    env
-                );
-
+                await ensureMessenger(env);
 
                 const body =
                     await request.json();
-
 
                 const targetUserId =
                     Number(
                         body.user_id
                     );
-
 
                 if (
                     !Number.isInteger(
@@ -7196,20 +5409,15 @@ export default {
                     targetUserId ===
                         accessResult.user.id
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کاربر مقصد نامعتبر است."
                         },
                         400
                     );
-
                 }
-
 
                 const target =
                     await env.DB
@@ -7217,12 +5425,8 @@ export default {
                             SELECT
                                 id,
                                 username
-
                             FROM users
-
-                            WHERE
-                                id = ?1
-
+                            WHERE id = ?1
                             LIMIT 1
                         `)
                         .bind(
@@ -7230,30 +5434,21 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    !target
-                ) {
-
+                if (!target) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "کاربر پیدا نشد."
                         },
                         404
                     );
-
                 }
-
 
                 const existing =
                     await env.DB
                         .prepare(`
-                            SELECT
-                                c.id
+                            SELECT c.id
 
                             FROM conversations c
 
@@ -7273,9 +5468,7 @@ export default {
 
                             WHERE NOT EXISTS (
                                 SELECT 1
-
                                 FROM conversation_members z
-
                                 WHERE
                                     z.conversation_id =
                                         c.id
@@ -7294,15 +5487,10 @@ export default {
                         )
                         .first();
 
-
                 let conversationId =
                     existing?.id;
 
-
-                if (
-                    !conversationId
-                ) {
-
+                if (!conversationId) {
                     const inserted =
                         await env.DB
                             .prepare(`
@@ -7311,11 +5499,9 @@ export default {
                             `)
                             .run();
 
-
                     conversationId =
                         inserted.meta
                             ?.last_row_id;
-
 
                     await env.DB
                         .prepare(`
@@ -7338,17 +5524,13 @@ export default {
                             targetUserId
                         )
                         .run();
-
                 }
-
 
                 return json(
                     {
-                        success:
-                            true,
+                        success: true,
 
                         conversation: {
-
                             id:
                                 conversationId,
 
@@ -7357,105 +5539,75 @@ export default {
 
                             other_username:
                                 target.username
-
                         }
-
                     },
                     201
                 );
-
             }
-
 
             /* =================================================
                MESSENGER - MESSAGES
-            ================================================== */
+            ================================================= */
 
             const messagesMatch =
                 path.match(
                     /^\/api\/messenger\/conversations\/(\d+)\/messages$/
                 );
 
-
             if (
                 messagesMatch &&
                 (
-                    method ===
-                        "GET" ||
-                    method ===
-                        "POST"
+                    method === "GET" ||
+                    method === "POST"
                 )
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی به پیام‌رسان محدود شده است."
                         },
                         accessResult.status
                     );
-
                 }
 
-
                 if (
-                    method ===
-                        "POST" &&
+                    method === "POST" &&
                     accessResult.ban?.ban_type ===
                         "messages"
                 ) {
-
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "💬 این حساب از ارسال پیام محروم شده است."
                         },
                         403
                     );
-
                 }
 
-
-                await ensureMessenger(
-                    env
-                );
-
+                await ensureMessenger(env);
 
                 const conversationId =
                     Number(
                         messagesMatch[1]
                     );
 
-
                 const member =
                     await env.DB
                         .prepare(`
                             SELECT 1
-
                             FROM conversation_members
-
                             WHERE
                                 conversation_id = ?1
-
                                 AND user_id = ?2
-
                             LIMIT 1
                         `)
                         .bind(
@@ -7464,30 +5616,20 @@ export default {
                         )
                         .first();
 
-
-                if (
-                    !member
-                ) {
-
+                if (!member) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "دسترسی به این گفتگو ندارید."
                         },
                         403
                     );
-
                 }
 
-
                 if (
-                    method ===
-                        "GET"
+                    method === "GET"
                 ) {
-
                     const result =
                         await env.DB
                             .prepare(`
@@ -7498,22 +5640,16 @@ export default {
                                         AS sender_username,
                                     m.content,
                                     m.created_at
-
                                 FROM messages m
-
                                 INNER JOIN users u
                                     ON u.id =
                                        m.sender_id
-
                                 WHERE
                                     m.conversation_id =
                                         ?1
-
                                     AND m.deleted_at IS NULL
-
                                 ORDER BY
                                     m.id ASC
-
                                 LIMIT 500
                             `)
                             .bind(
@@ -7521,24 +5657,16 @@ export default {
                             )
                             .all();
 
-
                     return json({
-
-                        success:
-                            true,
+                        success: true,
 
                         messages:
-                            result.results ??
-                            []
-
+                            result.results ?? []
                     });
-
                 }
-
 
                 const body =
                     await request.json();
-
 
                 const content =
                     clean(
@@ -7546,24 +5674,16 @@ export default {
                         4000
                     );
 
-
-                if (
-                    !content
-                ) {
-
+                if (!content) {
                     return json(
                         {
-                            success:
-                                false,
-
+                            success: false,
                             message:
                                 "پیام خالی است."
                         },
                         400
                     );
-
                 }
-
 
                 const inserted =
                     await env.DB
@@ -7586,7 +5706,6 @@ export default {
                         )
                         .run();
 
-
                 await env.DB
                     .prepare(`
                         UPDATE conversations
@@ -7595,68 +5714,50 @@ export default {
                             updated_at =
                                 CURRENT_TIMESTAMP
 
-                        WHERE
-                            id = ?1
+                        WHERE id = ?1
                     `)
-                    .bind(
-                        conversationId
-                    )
+                    .bind(conversationId)
                     .run();
-
 
                 return json(
                     {
-                        success:
-                            true,
+                        success: true,
 
                         id:
-                            inserted.meta
-                                ?.last_row_id ??
+                            inserted.meta?.last_row_id ??
                             null
                     },
                     201
                 );
-
             }
-
 
             /* =================================================
                MESSENGER - MARK READ
-            ================================================== */
+            ================================================= */
 
             const readConversation =
                 path.match(
                     /^\/api\/messenger\/conversations\/(\d+)\/read$/
                 );
 
-
             if (
                 readConversation &&
-                method ===
-                    "POST"
+                method === "POST"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false
+                            success: false
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 await env.DB
                     .prepare(`
@@ -7678,54 +5779,38 @@ export default {
                     )
                     .run();
 
-
                 return json({
-
-                    success:
-                        true
-
+                    success: true
                 });
-
             }
-
 
             /* =================================================
                MESSENGER - DELETE MESSAGE
-            ================================================== */
+            ================================================= */
 
             const deleteMessage =
                 path.match(
                     /^\/api\/messenger\/messages\/(\d+)$/
                 );
 
-
             if (
                 deleteMessage &&
-                method ===
-                    "DELETE"
+                method === "DELETE"
             ) {
-
                 const accessResult =
                     await access(
                         request,
                         env
                     );
 
-
-                if (
-                    !accessResult.ok
-                ) {
-
+                if (!accessResult.ok) {
                     return json(
                         {
-                            success:
-                                false
+                            success: false
                         },
                         accessResult.status
                     );
-
                 }
-
 
                 const result =
                     await env.DB
@@ -7738,9 +5823,7 @@ export default {
 
                             WHERE
                                 id = ?1
-
                                 AND sender_id = ?2
-
                                 AND deleted_at IS NULL
                         `)
                         .bind(
@@ -7751,31 +5834,23 @@ export default {
                         )
                         .run();
 
-
                 return json({
-
-                    success:
-                        true,
+                    success: true,
 
                     changed:
                         Number(
-                            result.meta?.changes ??
-                            0
+                            result.meta?.changes ?? 0
                         )
-
                 });
-
             }
-
 
             /* =================================================
                STATIC ASSETS
-            ================================================== */
+            ================================================= */
 
             return env.ASSETS.fetch(
                 request
             );
-
 
         } catch (e) {
 
@@ -7784,20 +5859,14 @@ export default {
                 e
             );
 
-
             return json(
                 {
-                    success:
-                        false,
-
+                    success: false,
                     message:
                         "خطای داخلی سرور رخ داد."
                 },
                 500
             );
-
         }
-
     }
-
 };
