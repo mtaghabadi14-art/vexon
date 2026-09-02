@@ -21,6 +21,44 @@ function isMessengerPage() {
         window.location.pathname
     );
 }
+function isMessengerPage() {
+
+    return /(^|\/)messenger\.html$/i.test(
+        window.location.pathname
+    );
+
+}
+
+
+function removeSupportWidgetOnMessenger() {
+
+    if (
+        !isMessengerPage()
+    ) {
+
+        return;
+
+    }
+
+    const widget =
+        document.getElementById(
+            "vexon-support-widget"
+        );
+
+    if (widget) {
+        widget.remove();
+    }
+
+    const style =
+        document.getElementById(
+            "vexon-support-style"
+        );
+
+    if (style) {
+        style.remove();
+    }
+
+}
 
 
 function inSections() {
@@ -3274,10 +3312,12 @@ function initializePGame() {
 
     initializeAuthHeader();
 
+    removeSupportWidgetOnMessenger();
+
     if (
         !isMessengerPage()
     ) {
-       initializeSupportWidget();
+        initializeSupportWidget();
     }
 
     initializeNotificationWidget();
