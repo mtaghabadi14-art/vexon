@@ -1,30 +1,24 @@
 /* =========================================================
-   PGAME SCRIPT
+   PGame — Main Script
+   Play • Compete • Level Up.
 ========================================================= */
-
-"use strict";
-
-
-/* =========================================================
-   APP ELEMENT
-========================================================= */
-
-const app = document.querySelector("#app");
-
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
 function isMessengerPage() {
-    return /(^|\/)messenger\.html$/i.test(
-        window.location.pathname
-    );
-}
-function isMessengerPage() {
 
-    return /(^|\/)messenger\.html$/i.test(
+    const path =
         window.location.pathname
+            .replace(/\/+$/, "")
+            .toLowerCase();
+
+    return (
+        path.endsWith("/messenger") ||
+        path.endsWith("/messenger.html") ||
+        path.endsWith("/sections/messenger") ||
+        path.endsWith("/sections/messenger.html")
     );
 
 }
@@ -32,12 +26,8 @@ function isMessengerPage() {
 
 function removeSupportWidgetOnMessenger() {
 
-    if (
-        !isMessengerPage()
-    ) {
-
+    if (!isMessengerPage()) {
         return;
-
     }
 
     const widget =
@@ -61,29 +51,117 @@ function removeSupportWidgetOnMessenger() {
 }
 
 
-function inSections() {
-    return location.pathname.includes("/sections/");
+function protectMessengerFromSupport() {
+
+    if (!isMessengerPage()) {
+        return;
+    }
+
+    function removeSupport() {
+
+        const widget =
+            document.getElementById(
+                "vexon-support-widget"
+            );
+
+        if (widget) {
+            widget.remove();
+        }
+
+        const style =
+            document.getElementById(
+                "vexon-support-style"
+            );
+
+        if (style) {
+            style.remove();
+        }
+
+    }
+
+    removeSupport();
+
+    const observer =
+        new MutationObserver(() => {
+
+            removeSupport();
+
+        });
+
+    function startObserver() {
+
+        if (!document.body) {
+            return;
+        }
+
+        observer.observe(
+            document.body,
+            {
+                childList: true,
+                subtree: true
+            }
+        );
+
+        removeSupport();
+
+    }
+
+    if (document.body) {
+
+        startObserver();
+
+    } else {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            startObserver,
+            { once: true }
+        );
+
+    }
+
+}
+
+
+function inSections(file) {
+
+    return (
+        window.location.pathname.includes(
+            "/sections/"
+        )
+    )
+        ? `./${file}`
+        : `./sections/${file}`;
+
 }
 
 
 function escapeHtml(value) {
+
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
 }
 
 
-function formatNotificationDate(value) {
-    if (!value) {
+function formatNotificationDate(dateValue) {
+
+    if (!dateValue) {
         return "";
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(dateValue);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return "";
     }
 
@@ -97,71 +175,54 @@ function formatNotificationDate(value) {
             minute: "2-digit"
         }
     );
+
 }
 
 
 /* =========================================================
-   FULL BAN CHECK
+   BAN CHECK
 ========================================================= */
 
 async function checkFullBan() {
 
     try {
 
-        if (
-            location.pathname.endsWith(
-                "/banned.html"
-            )
-        ) {
-
-            return;
-
-        }
-
-
         const response =
             await fetch(
                 "/api/me",
                 {
-                    method: "GET",
-                    credentials: "same-origin",
                     cache: "no-store"
                 }
             );
 
-
-        if (
-            !response.ok
-        ) {
-
+        if (!response.ok) {
             return;
-
         }
-
 
         const data =
             await response.json();
 
-
         if (
-            data?.loggedIn &&
-            data.user?.banned &&
-            data.user?.ban_type === "full"
+            data?.success &&
+            data?.user?.ban_type === "full"
         ) {
 
-            location.href =
-                inSections()
-                    ? "../banned.html"
-                    : "banned.html";
+            if (
+                !location.pathname.endsWith(
+                    "/banned.html"
+                )
+            ) {
+
+                location.href = "/banned.html";
+
+            }
 
         }
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
-            "FULL_BAN_CHECK_ERROR",
+            "BAN CHECK ERROR:",
             error
         );
 
@@ -176,20 +237,14 @@ async function checkFullBan() {
 
 async function initializeAuthHeader() {
 
-    const headers =
-        document.querySelectorAll(
+    const profileBox =
+        document.querySelector(
             ".header-profile"
         );
 
-
-    if (
-        !headers.length
-    ) {
-
+    if (!profileBox) {
         return;
-
     }
-
 
     try {
 
@@ -197,92 +252,161 @@ async function initializeAuthHeader() {
             await fetch(
                 "/api/me",
                 {
-                    method: "GET",
-                    credentials: "same-origin",
                     cache: "no-store"
                 }
             );
 
-
         const data =
             await response.json();
 
+        if (
+            !data?.success ||
+            !data?.user
+        ) {
 
-        headers.forEach(
-            header => {
+            return;
 
-                const strong =
-                    header.querySelector(
-                        "strong"
-                    );
+        }
 
+        const user =
+            data.user;
 
-                const span =
-                    header.querySelector(
-                        "span"
-                    );
+        const username =
+            user.username ||
+            user.name ||
+            "Player";
 
+        const level =
+            Number(
+                user.level || 1
+            );
 
-                if (
-                    data?.loggedIn &&
-                    data.user
-                ) {
+        const xp =
+            Number(
+                user.xp || 0
+            );
 
-                    if (strong) {
+        const coins =
+            Number(
+                user.coins || 0
+            );
 
-                        strong.textContent =
-                            data.user.username;
-
-                    }
-
-
-                    if (span) {
-
-                        span.textContent =
-                            `LV ${data.user.level ?? 1} • XP ${data.user.xp ?? 0}/${data.user.next_xp ?? 0} • 🪙 ${data.user.coins ?? 0}`;
-
-                    }
-
-
-                    header.href =
-                        inSections()
-                            ? "profile.html"
-                            : "sections/profile.html";
-
-                } else {
-
-                    if (strong) {
-
-                        strong.textContent =
-                            "ورود / ثبت‌نام";
-
-                    }
-
-
-                    if (span) {
-
-                        span.textContent =
-                            "ورود به حساب";
-
-                    }
-
-
-                    header.href =
-                        inSections()
-                            ? "login.html"
-                            : "sections/login.html";
-
-                }
-
-            }
+        profileBox.classList.add(
+            "is-logged-in"
         );
 
-    } catch (
-        error
-    ) {
+        const nameElement =
+            profileBox.querySelector(
+                "[data-user-name]"
+            );
+
+        if (nameElement) {
+
+            nameElement.textContent =
+                username;
+
+        }
+
+        const levelElement =
+            profileBox.querySelector(
+                "[data-user-level]"
+            );
+
+        if (levelElement) {
+
+            levelElement.textContent =
+                `LV ${level}`;
+
+        }
+
+        const xpElement =
+            profileBox.querySelector(
+                "[data-user-xp]"
+            );
+
+        if (xpElement) {
+
+            xpElement.textContent =
+                `${xp} XP`;
+
+        }
+
+        const coinElement =
+            profileBox.querySelector(
+                "[data-user-coins]"
+            );
+
+        if (coinElement) {
+
+            coinElement.textContent =
+                `${coins}`;
+
+        }
+
+        const progressElement =
+            profileBox.querySelector(
+                "[data-xp-progress]"
+            );
+
+        if (progressElement) {
+
+            const thresholds = {
+
+                1: 100,
+                2: 250,
+                3: 500,
+                4: 800,
+                5: 1200,
+                6: 1700,
+                7: 2500,
+                8: 3500,
+                9: 5000
+
+            };
+
+            const currentThreshold =
+                thresholds[level] ||
+                (level * 700);
+
+            const previousThreshold =
+                level <= 1
+                    ? 0
+                    : (
+                        thresholds[level - 1] ||
+                        ((level - 1) * 700)
+                    );
+
+            const needed =
+                Math.max(
+                    1,
+                    currentThreshold -
+                    previousThreshold
+                );
+
+            const current =
+                Math.max(
+                    0,
+                    xp - previousThreshold
+                );
+
+            const percent =
+                Math.min(
+                    100,
+                    Math.max(
+                        0,
+                        (current / needed) * 100
+                    )
+                );
+
+            progressElement.style.width =
+                `${percent}%`;
+
+        }
+
+    } catch (error) {
 
         console.error(
-            "AUTH_HEADER_ERROR",
+            "AUTH HEADER ERROR:",
             error
         );
 
@@ -297,97 +421,107 @@ async function initializeAuthHeader() {
 
 function initializeNavigation() {
 
-    const nav =
-        document.querySelector(
-            ".nav-links"
+    const links =
+        document.querySelectorAll(
+            ".nav-links a[href^='#']"
         );
 
-
-    if (
-        !nav
-    ) {
-
+    if (!links.length) {
         return;
-
     }
 
+    const sections = [];
 
-    const links = [
+    links.forEach(
+        (link) => {
 
-        {
-            href:
-                inSections()
-                    ? "../index.html"
-                    : "index.html",
+            const href =
+                link.getAttribute(
+                    "href"
+                );
 
-            label:
-                "خانه"
-        },
+            if (
+                !href ||
+                href === "#"
+            ) {
+                return;
+            }
 
-        {
-            href:
-                inSections()
-                    ? "games.html"
-                    : "sections/games.html",
+            const target =
+                document.querySelector(
+                    href
+                );
 
-            label:
-                "بازی‌ها"
-        },
+            if (target) {
+                sections.push({
+                    link,
+                    target
+                });
+            }
 
-        {
-            href:
-                inSections()
-                    ? "news.html"
-                    : "sections/news.html",
-
-            label:
-                "اخبار"
-        },
-
-        {
-            href:
-                inSections()
-                    ? "cafe.html"
-                    : "sections/cafe.html",
-
-            label:
-                "کافه"
-        },
-
-        {
-            href:
-                inSections()
-                    ? "leaderboard.html"
-                    : "sections/leaderboard.html",
-
-            label:
-                "لیدربورد"
-        },
-
-        {
-            href:
-                inSections()
-                    ? "messenger.html"
-                    : "sections/messenger.html",
-
-            label:
-                "پیام‌رسان"
         }
+    );
 
-    ];
+    if (!sections.length) {
+        return;
+    }
 
+    const observer =
+        new IntersectionObserver(
+            (entries) => {
 
-    nav.innerHTML =
-        links
-            .map(
-                link =>
-                    `
-                        <a href="${link.href}">
-                            ${link.label}
-                        </a>
-                    `
-            )
-            .join("");
+                entries.forEach(
+                    (entry) => {
+
+                        if (
+                            !entry.isIntersecting
+                        ) {
+                            return;
+                        }
+
+                        sections.forEach(
+                            ({ link }) => {
+
+                                link.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+                        const current =
+                            sections.find(
+                                ({ target }) =>
+                                    target ===
+                                    entry.target
+                            );
+
+                        if (current) {
+
+                            current.link.classList.add(
+                                "active"
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.35
+            }
+        );
+
+    sections.forEach(
+        ({ target }) => {
+
+            observer.observe(
+                target
+            );
+
+        }
+    );
 
 }
 
@@ -400,37 +534,30 @@ function initializeButtonPress() {
 
     document.addEventListener(
         "click",
-        event => {
+        (event) => {
 
-            const target =
+            const button =
                 event.target.closest(
-                    "button, .hero-button, a"
+                    "button, .btn, a.button"
                 );
 
-
-            if (
-                !target
-            ) {
-
+            if (!button) {
                 return;
-
             }
 
-
-            target.classList.add(
-                "button-pressed"
+            button.classList.add(
+                "pressing"
             );
-
 
             setTimeout(
                 () => {
 
-                    target.classList.remove(
-                        "button-pressed"
+                    button.classList.remove(
+                        "pressing"
                     );
 
                 },
-                160
+                150
             );
 
         }
@@ -445,49 +572,47 @@ function initializeButtonPress() {
 
 function initializeParallax() {
 
-    const visual =
-        document.querySelector(
-            ".hero-visual"
+    const elements =
+        document.querySelectorAll(
+            "[data-parallax]"
         );
 
-
-    if (
-        !visual
-    ) {
-
+    if (!elements.length) {
         return;
-
     }
-
 
     window.addEventListener(
         "mousemove",
-        event => {
+        (event) => {
 
             const x =
-                (
-                    event.clientX /
+                (event.clientX /
                     window.innerWidth -
-                    0.5
-                ) * 10;
-
+                    0.5);
 
             const y =
-                (
-                    event.clientY /
+                (event.clientY /
                     window.innerHeight -
-                    0.5
-                ) * 10;
+                    0.5);
 
+            elements.forEach(
+                (element) => {
 
-            visual.style.transform =
-                `
-                    translate(
-                        ${x}px,
-                        ${y}px
-                    )
-                `;
+                    const amount =
+                        Number(
+                            element.dataset.parallax ||
+                            10
+                        );
 
+                    element.style.transform =
+                        `translate(${x * amount}px, ${y * amount}px)`;
+
+                }
+            );
+
+        },
+        {
+            passive: true
         }
     );
 
@@ -500,55 +625,29 @@ function initializeParallax() {
 
 function initializeScrollReveal() {
 
-    const elements =
+    const items =
         document.querySelectorAll(
-            ".section, .game-box, .hero-button"
+            ".reveal, [data-reveal]"
         );
 
-
-    if (
-        !elements.length
-    ) {
-
+    if (!items.length) {
         return;
-
     }
-
-
-    if (
-        !("IntersectionObserver" in window)
-    ) {
-
-        elements.forEach(
-            element => {
-
-                element.classList.add(
-                    "revealed"
-                );
-
-            }
-        );
-
-        return;
-
-    }
-
 
     const observer =
         new IntersectionObserver(
-            entries => {
+            (entries) => {
 
                 entries.forEach(
-                    entry => {
+                    (entry) => {
 
                         if (
                             entry.isIntersecting
                         ) {
 
                             entry.target.classList.add(
-                                "revealed"
+                                "visible"
                             );
-
 
                             observer.unobserve(
                                 entry.target
@@ -561,16 +660,15 @@ function initializeScrollReveal() {
 
             },
             {
-                threshold: 0.12
+                threshold: 0.15
             }
         );
 
-
-    elements.forEach(
-        element => {
+    items.forEach(
+        (item) => {
 
             observer.observe(
-                element
+                item
             );
 
         }
@@ -587,61 +685,44 @@ function initializeSmoothNavigation() {
 
     document.addEventListener(
         "click",
-        event => {
+        (event) => {
 
             const link =
                 event.target.closest(
                     "a[href^='#']"
                 );
 
-
-            if (
-                !link
-            ) {
-
+            if (!link) {
                 return;
-
             }
 
-
-            const id =
+            const href =
                 link.getAttribute(
                     "href"
                 );
 
-
             if (
-                !id ||
-                id === "#"
+                !href ||
+                href === "#"
             ) {
-
                 return;
-
             }
-
 
             const target =
                 document.querySelector(
-                    id
+                    href
                 );
 
-
-            if (
-                !target
-            ) {
-
+            if (!target) {
                 return;
-
             }
-
 
             event.preventDefault();
 
-
             target.scrollIntoView(
                 {
-                    behavior:
-                        "smooth"
+                    behavior: "smooth",
+                    block: "start"
                 }
             );
 
@@ -653,19 +734,17 @@ function initializeSmoothNavigation() {
 
 /* =========================================================
    SUPPORT WIDGET
-   همه صفحات به جز Messenger
 ========================================================= */
 
 function initializeSupportWidget() {
 
-    if (
-        isMessengerPage()
-    ) {
+    if (isMessengerPage()) {
+
+        removeSupportWidgetOnMessenger();
 
         return;
 
     }
-
 
     if (
         location.pathname.includes(
@@ -677,7 +756,6 @@ function initializeSupportWidget() {
 
     }
 
-
     if (
         location.pathname.endsWith(
             "/banned.html"
@@ -687,7 +765,6 @@ function initializeSupportWidget() {
         return;
 
     }
-
 
     if (
         document.getElementById(
@@ -699,397 +776,275 @@ function initializeSupportWidget() {
 
     }
 
-
     const style =
         document.createElement(
             "style"
         );
 
-
     style.id =
         "vexon-support-style";
-
 
     style.textContent = `
 
         #vexon-support-widget {
 
             position: fixed;
-            left: 22px;
-            right: auto;
+            right: 22px;
             bottom: 22px;
-            z-index: 99997;
+
+            z-index: 999999;
+
+            font-family:
+                Vazirmatn,
+                Arial,
+                sans-serif;
 
         }
 
-
         #vexon-support-button {
 
-            width: 60px;
-            height: 60px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 58px;
+            height: 58px;
 
             border-radius: 50%;
 
             border:
                 1px solid
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .36
-                );
+                rgba(0,255,157,.55);
 
             background:
-                linear-gradient(
-                    135deg,
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        .94
-                    ),
-                    rgba(
-                        0,
-                        234,
-                        255,
-                        .90
-                    )
-                );
+                rgba(3,4,10,.88);
 
             color:
-                #03110c;
-
-            font-size:
-                23px;
-
-            cursor:
-                pointer;
+                #00ff9d;
 
             box-shadow:
-                0 0 25px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .20
-                ),
-                0 14px 38px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    .34
-                );
+                0 0 18px
+                rgba(0,255,157,.28);
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
 
             transition:
-                transform .2s ease,
-                box-shadow .2s ease;
+                .25s ease;
 
         }
-
 
         #vexon-support-button:hover {
 
             transform:
                 translateY(-4px)
-                scale(1.05);
+                scale(1.04);
 
             box-shadow:
-                0 0 35px
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .32
-                );
+                0 0 28px
+                rgba(0,255,157,.5);
 
         }
 
+        #vexon-support-panel {
 
-        #vexon-support-overlay {
+            position: absolute;
 
-            display:
-                none;
-
-            position:
-                fixed;
-
-            inset:
-                0;
-
-            z-index:
-                99999;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            padding:
-                18px;
-
-            background:
-                rgba(
-                    0,
-                    0,
-                    0,
-                    .74
-                );
-
-        }
-
-
-        .vexon-support-box {
+            right: 0;
+            bottom: 72px;
 
             width:
-                min(
-                    520px,
-                    100%
-                );
+                min(340px, calc(100vw - 30px));
 
-            box-sizing:
-                border-box;
+            padding: 18px;
 
-            padding:
-                20px;
+            border-radius: 20px;
+
+            background:
+                rgba(7,10,18,.97);
 
             border:
                 1px solid
-                rgba(
-                    0,
-                    255,
-                    157,
-                    .16
-                );
-
-            border-radius:
-                22px;
-
-            background:
-                #05080f;
+                rgba(0,255,157,.25);
 
             box-shadow:
-                0 25px 80px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    .55
-                );
+                0 20px 60px
+                rgba(0,0,0,.45);
+
+            display: none;
+
+            direction: rtl;
 
         }
 
+        #vexon-support-panel.open {
 
-        .vexon-support-header {
+            display: block;
 
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                space-between;
+            animation:
+                vexonSupportIn
+                .22s ease;
 
         }
 
+        @keyframes vexonSupportIn {
 
-        .vexon-support-header h2 {
+            from {
+
+                opacity: 0;
+                transform:
+                    translateY(10px)
+                    scale(.97);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+        #vexon-support-panel h3 {
 
             margin:
-                0;
+                0 0 12px;
+
+            color:
+                #ffffff;
 
             font-size:
-                18px;
+                17px;
 
         }
 
+        #vexon-support-panel textarea {
 
-        .vexon-support-close {
+            width: 100%;
+            min-height: 110px;
 
-            width:
-                38px;
+            resize: vertical;
 
-            height:
-                38px;
+            box-sizing: border-box;
 
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .08
-                );
-
-            border-radius:
-                12px;
-
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .04
-                );
-
-            color:
-                #fff;
-
-            cursor:
-                pointer;
-
-            font-size:
-                20px;
-
-        }
-
-
-        .vexon-support-input {
-
-            width:
-                100%;
-
-            min-height:
-                150px;
-
-            box-sizing:
-                border-box;
-
-            margin-top:
-                15px;
-
-            padding:
-                13px;
-
-            resize:
-                vertical;
+            border-radius: 14px;
 
             border:
                 1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .08
-                );
-
-            border-radius:
-                14px;
-
-            outline:
-                none;
+                rgba(255,255,255,.1);
 
             background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    .035
-                );
+                rgba(255,255,255,.03);
 
             color:
-                #fff;
+                white;
 
-            font-family:
+            padding: 12px;
+
+            outline: none;
+
+            font:
                 inherit;
 
-            font-size:
-                12px;
+        }
+
+        #vexon-support-panel textarea:focus {
+
+            border-color:
+                rgba(0,255,157,.5);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(0,255,157,.06);
 
         }
 
+        #vexon-support-send {
 
-        .vexon-support-actions {
+            width: 100%;
 
-            display:
-                flex;
+            margin-top: 10px;
 
-            gap:
-                8px;
+            border: none;
 
-            margin-top:
-                10px;
+            border-radius: 12px;
 
-        }
+            padding: 11px;
 
+            background:
+                linear-gradient(
+                    90deg,
+                    #00ff9d,
+                    #00eaff
+                );
 
-        .vexon-support-actions button {
+            color:
+                #03110d;
 
-            flex:
-                1;
+            font-weight: 800;
 
-        }
-
-
-        .vexon-support-status {
-
-            min-height:
-                18px;
-
-            margin-top:
-                9px;
-
-            font-size:
-                10px;
+            cursor: pointer;
 
         }
 
+        #vexon-support-status {
 
-        @media (
-            max-width: 600px
-        ) {
+            margin-top: 10px;
 
-            #vexon-support-widget {
+            font-size: 13px;
 
-                left:
-                    14px;
-
-                right:
-                    auto;
-
-                bottom:
-                    16px;
-
-            }
-
-
-            #vexon-support-button {
-
-                width:
-                    56px;
-
-                height:
-                    56px;
-
-            }
+            color:
+                #8a8aa0;
 
         }
 
     `;
-
 
     document.head.appendChild(
         style
     );
 
 
-    const widget =
+    const wrapper =
         document.createElement(
             "div"
         );
 
-
-    widget.id =
+    wrapper.id =
         "vexon-support-widget";
 
+    wrapper.innerHTML = `
 
-    widget.innerHTML = `
+        <div
+            id="vexon-support-panel"
+        >
+
+            <h3>
+                پیام به مدیریت
+            </h3>
+
+            <textarea
+                id="vexon-support-text"
+                placeholder="پیامت رو برای مدیریت بنویس..."
+            ></textarea>
+
+            <button
+                id="vexon-support-send"
+                type="button"
+            >
+                ارسال پیام
+            </button>
+
+            <div
+                id="vexon-support-status"
+            ></div>
+
+        </div>
 
         <button
             id="vexon-support-button"
@@ -1100,95 +1055,10 @@ function initializeSupportWidget() {
             💬
         </button>
 
-
-        <div
-            id="vexon-support-overlay"
-        >
-
-            <section
-                class="vexon-support-box"
-            >
-
-                <div
-                    class="vexon-support-header"
-                >
-
-                    <div>
-
-                        <h2>
-                            💬 پیام به مدیریت
-                        </h2>
-
-                        <p
-                            style="
-                                margin:5px 0 0;
-                                color:#85869a;
-                                font-size:10px;
-                            "
-                        >
-                            پیامت رو برای مدیریت PGame ارسال کن.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        class="vexon-support-close"
-                        id="vexon-support-close"
-                        type="button"
-                    >
-                        &times;
-                    </button>
-
-                </div>
-
-
-                <textarea
-                    id="vexon-support-input"
-                    class="vexon-support-input"
-                    maxlength="5000"
-                    placeholder="پیامت رو برای مدیریت بنویس..."
-                ></textarea>
-
-
-                <div
-                    class="vexon-support-actions"
-                >
-
-                    <button
-                        class="auth-button"
-                        id="vexon-support-send"
-                        type="button"
-                    >
-                        🚀 ارسال پیام
-                    </button>
-
-
-                    <button
-                        class="auth-secondary-button"
-                        id="vexon-support-cancel"
-                        type="button"
-                    >
-                        بستن
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="vexon-support-status"
-                    class="vexon-support-status"
-                ></div>
-
-            </section>
-
-        </div>
-
     `;
 
-
     document.body.appendChild(
-        widget
+        wrapper
     );
 
 
@@ -1197,36 +1067,20 @@ function initializeSupportWidget() {
             "vexon-support-button"
         );
 
-
-    const overlay =
+    const panel =
         document.getElementById(
-            "vexon-support-overlay"
+            "vexon-support-panel"
         );
 
-
-    const close =
+    const textarea =
         document.getElementById(
-            "vexon-support-close"
+            "vexon-support-text"
         );
 
-
-    const cancel =
-        document.getElementById(
-            "vexon-support-cancel"
-        );
-
-
-    const send =
+    const sendButton =
         document.getElementById(
             "vexon-support-send"
         );
-
-
-    const input =
-        document.getElementById(
-            "vexon-support-input"
-        );
-
 
     const status =
         document.getElementById(
@@ -1234,92 +1088,30 @@ function initializeSupportWidget() {
         );
 
 
-    function closeSupport() {
-
-        overlay.style.display =
-            "none";
-
-    }
-
-
-    function setSupportStatus(
-        message,
-        success = false
-    ) {
-
-        status.textContent =
-            message;
-
-        status.style.color =
-            success
-                ? "#00ff9d"
-                : "#ff7183";
-
-    }
-
-
     button.addEventListener(
         "click",
-        async () => {
+        () => {
 
-            try {
+            panel.classList.toggle(
+                "open"
+            );
 
-                const response =
-                    await fetch(
-                        "/api/me",
-                        {
-                            method:
-                                "GET",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
+        }
+    );
 
 
-                if (
-                    response.status ===
-                    401
-                ) {
+    document.addEventListener(
+        "click",
+        (event) => {
 
-                    location.href =
-                        inSections()
-                            ? "login.html"
-                            : "sections/login.html";
-
-                    return;
-
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !data.loggedIn
-                ) {
-
-                    return;
-
-                }
-
-
-                overlay.style.display =
-                    "flex";
-
-                input.focus();
-
-            } catch (
-                error
+            if (
+                !wrapper.contains(
+                    event.target
+                )
             ) {
 
-                console.error(
-                    "SUPPORT_OPEN_ERROR",
-                    error
+                panel.classList.remove(
+                    "open"
                 );
 
             }
@@ -1328,63 +1120,27 @@ function initializeSupportWidget() {
     );
 
 
-    close.addEventListener(
-        "click",
-        closeSupport
-    );
-
-
-    cancel.addEventListener(
-        "click",
-        closeSupport
-    );
-
-
-    overlay.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                overlay
-            ) {
-
-                closeSupport();
-
-            }
-
-        }
-    );
-
-
-    send.addEventListener(
+    sendButton.addEventListener(
         "click",
         async () => {
 
             const message =
-                input.value.trim();
+                textarea.value.trim();
 
+            if (!message) {
 
-            if (
-                message.length < 2
-            ) {
-
-                setSupportStatus(
-                    "پیام خیلی کوتاه است."
-                );
+                status.textContent =
+                    "پیام خالی است.";
 
                 return;
 
             }
 
-
-            send.disabled =
+            sendButton.disabled =
                 true;
 
-
-            send.textContent =
-                "⏳ در حال ارسال...";
-
+            status.textContent =
+                "در حال ارسال...";
 
             try {
 
@@ -1392,11 +1148,7 @@ function initializeSupportWidget() {
                     await fetch(
                         "/api/support/send",
                         {
-                            method:
-                                "POST",
-
-                            credentials:
-                                "same-origin",
+                            method: "POST",
 
                             headers: {
                                 "Content-Type":
@@ -1404,31 +1156,16 @@ function initializeSupportWidget() {
                             },
 
                             body:
-                                JSON.stringify({
-                                    message
-                                })
+                                JSON.stringify(
+                                    {
+                                        message
+                                    }
+                                )
                         }
                     );
 
-
                 const data =
                     await response.json();
-
-
-                if (
-                    response.status ===
-                    401
-                ) {
-
-                    location.href =
-                        inSections()
-                            ? "login.html"
-                            : "sections/login.html";
-
-                    return;
-
-                }
-
 
                 if (
                     !response.ok ||
@@ -1442,35 +1179,37 @@ function initializeSupportWidget() {
 
                 }
 
+                textarea.value = "";
 
-                input.value =
-                    "";
+                status.textContent =
+                    "پیام با موفقیت ارسال شد ✅";
 
+                setTimeout(
+                    () => {
 
-                setSupportStatus(
-                    "✅ پیامت برای مدیریت ارسال شد.",
-                    true
+                        panel.classList.remove(
+                            "open"
+                        );
+
+                    },
+                    1200
                 );
 
-            } catch (
-                error
-            ) {
+            } catch (error) {
 
-                setSupportStatus(
-                    "❌ " +
-                    (
-                        error.message ||
-                        "ارسال پیام ناموفق بود."
-                    )
+                console.error(
+                    "SUPPORT SEND ERROR:",
+                    error
                 );
+
+                status.textContent =
+                    error.message ||
+                    "خطا در ارسال پیام.";
 
             } finally {
 
-                send.disabled =
+                sendButton.disabled =
                     false;
-
-                send.textContent =
-                    "🚀 ارسال پیام";
 
             }
 
@@ -1487,8 +1226,28 @@ function initializeSupportWidget() {
 function initializeNotificationWidget() {
 
     if (
+        location.pathname.includes(
+            "admin.html"
+        )
+    ) {
+
+        return;
+
+    }
+
+    if (
+        location.pathname.endsWith(
+            "/banned.html"
+        )
+    ) {
+
+        return;
+
+    }
+
+    if (
         document.getElementById(
-            "vexon-notification-widget"
+            "pgame-notification-widget"
         )
     ) {
 
@@ -1497,779 +1256,526 @@ function initializeNotificationWidget() {
     }
 
 
-    const widget =
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "pgame-notification-style";
+
+    style.textContent = `
+
+        #pgame-notification-widget {
+
+            position: fixed;
+
+            right: 22px;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            z-index: 999998;
+
+            font-family:
+                Vazirmatn,
+                Arial,
+                sans-serif;
+
+            direction: rtl;
+
+        }
+
+        #pgame-notification-button {
+
+            width: 54px;
+            height: 54px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid
+                rgba(116,77,255,.65);
+
+            background:
+                rgba(7,10,18,.95);
+
+            color:
+                #ffffff;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+
+            cursor: pointer;
+
+            font-size: 22px;
+
+            box-shadow:
+                0 0 20px
+                rgba(116,77,255,.3);
+
+            transition:
+                .25s ease;
+
+        }
+
+        #pgame-notification-button.visible {
+
+            display: flex;
+
+        }
+
+        #pgame-notification-button:hover {
+
+            transform:
+                scale(1.06);
+
+            box-shadow:
+                0 0 28px
+                rgba(116,77,255,.55);
+
+        }
+
+        #pgame-notification-badge {
+
+            position: absolute;
+
+            top: -4px;
+            right: -4px;
+
+            min-width: 20px;
+            height: 20px;
+
+            padding:
+                0 5px;
+
+            border-radius: 999px;
+
+            background:
+                #ff3f5a;
+
+            color:
+                white;
+
+            font-size: 11px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 800;
+
+            box-sizing: border-box;
+
+        }
+
+
+        #pgame-notification-panel {
+
+            position: absolute;
+
+            right: 68px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            width:
+                min(360px, calc(100vw - 110px));
+
+            max-height:
+                520px;
+
+            overflow-y: auto;
+
+            padding: 14px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(7,10,18,.98);
+
+            border:
+                1px solid
+                rgba(116,77,255,.25);
+
+            box-shadow:
+                0 20px 60px
+                rgba(0,0,0,.5);
+
+            display: none;
+
+        }
+
+        #pgame-notification-panel.open {
+
+            display: block;
+
+            animation:
+                pgameNotifIn
+                .2s ease;
+
+        }
+
+        @keyframes pgameNotifIn {
+
+            from {
+
+                opacity: 0;
+                transform:
+                    translateY(-50%)
+                    translateX(8px)
+                    scale(.98);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform:
+                    translateY(-50%)
+                    translateX(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        .pgame-notification-head {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .pgame-notification-head h3 {
+
+            margin: 0;
+
+            font-size: 16px;
+
+            color: white;
+
+        }
+
+        .pgame-notification-close {
+
+            width: 30px;
+            height: 30px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,.06);
+
+            color:
+                white;
+
+            cursor: pointer;
+
+        }
+
+
+        .pgame-notification-item {
+
+            padding: 12px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.035);
+
+            border:
+                1px solid
+                rgba(255,255,255,.06);
+
+            margin-bottom: 8px;
+
+            cursor: pointer;
+
+            transition:
+                .2s ease;
+
+        }
+
+        .pgame-notification-item:hover {
+
+            border-color:
+                rgba(116,77,255,.35);
+
+            transform:
+                translateY(-1px);
+
+        }
+
+        .pgame-notification-item.unread {
+
+            border-color:
+                rgba(116,77,255,.28);
+
+        }
+
+        .pgame-notification-title {
+
+            color:
+                white;
+
+            font-weight:
+                700;
+
+            font-size:
+                14px;
+
+        }
+
+        .pgame-notification-message {
+
+            margin-top: 5px;
+
+            color:
+                #a8a8bb;
+
+            font-size:
+                12px;
+
+            line-height:
+                1.7;
+
+        }
+
+        .pgame-notification-date {
+
+            margin-top: 8px;
+
+            color:
+                #66667a;
+
+            font-size:
+                10px;
+
+        }
+
+        .pgame-notification-empty {
+
+            text-align:
+                center;
+
+            padding:
+                26px 12px;
+
+            color:
+                #77778c;
+
+            font-size:
+                13px;
+
+        }
+
+
+        #pgame-notification-modal {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 999999;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.68);
+
+            backdrop-filter:
+                blur(8px);
+
+        }
+
+        #pgame-notification-modal.open {
+
+            display: flex;
+
+        }
+
+        .pgame-notification-modal-box {
+
+            width:
+                min(520px, 100%);
+
+            max-height:
+                80vh;
+
+            overflow-y: auto;
+
+            background:
+                #070a12;
+
+            border-radius: 22px;
+
+            border:
+                1px solid
+                rgba(116,77,255,.3);
+
+            padding: 20px;
+
+            box-shadow:
+                0 30px 100px
+                rgba(0,0,0,.6);
+
+        }
+
+        .pgame-notification-modal-head {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            margin-bottom: 15px;
+
+        }
+
+        .pgame-notification-modal-head h3 {
+
+            margin: 0;
+
+            color:
+                white;
+
+            font-size:
+                18px;
+
+        }
+
+        .pgame-notification-modal-close {
+
+            border: none;
+
+            width: 34px;
+            height: 34px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,.06);
+
+            color:
+                white;
+
+            cursor: pointer;
+
+        }
+
+        .pgame-notification-modal-content {
+
+            color:
+                #dddded;
+
+            line-height:
+                1.9;
+
+            font-size:
+                14px;
+
+        }
+
+        @media (max-width: 700px) {
+
+            #pgame-notification-widget {
+
+                right: 12px;
+
+            }
+
+            #pgame-notification-panel {
+
+                right: 64px;
+
+                width:
+                    min(320px, calc(100vw - 86px));
+
+            }
+
+            #vexon-support-widget {
+
+                right: 12px;
+                bottom: 12px;
+
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+
+    const wrapper =
         document.createElement(
             "div"
         );
 
+    wrapper.id =
+        "pgame-notification-widget";
 
-    widget.id =
-        "vexon-notification-widget";
+    wrapper.innerHTML = `
 
+        <div
+            id="pgame-notification-panel"
+        >
 
-    widget.innerHTML = `
+            <div
+                class="pgame-notification-head"
+            >
 
-        <style>
+                <h3>
+                    اعلان‌ها
+                </h3>
 
-            #vexon-notification-widget {
+                <button
+                    type="button"
+                    class="pgame-notification-close"
+                    aria-label="بستن"
+                >
+                    ×
+                </button>
 
-                position:
-                    fixed;
+            </div>
 
-                right:
-                    22px;
+            <div
+                id="pgame-notification-list"
+            ></div>
 
-                bottom:
-                    22px;
-
-                z-index:
-                    99998;
-
-                font-family:
-                    "Vazirmatn",
-                    sans-serif;
-
-            }
-
-
-            #vexon-notification-button {
-
-                position:
-                    relative;
-
-                width:
-                    60px;
-
-                height:
-                    60px;
-
-                display:
-                    none;
-
-                align-items:
-                    center;
-
-                justify-content:
-                    center;
-
-                border:
-                    1px solid
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .38
-                    );
-
-                border-radius:
-                    50%;
-
-                background:
-                    linear-gradient(
-                        135deg,
-                        rgba(
-                            116,
-                            77,
-                            255,
-                            .95
-                        ),
-                        rgba(
-                            0,
-                            234,
-                            255,
-                            .90
-                        )
-                    );
-
-                color:
-                    #fff;
-
-                font-size:
-                    23px;
-
-                cursor:
-                    pointer;
-
-                box-shadow:
-                    0 0 26px
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .20
-                    ),
-
-                    0 14px 38px
-                    rgba(
-                        0,
-                        0,
-                        0,
-                        .35
-                    );
-
-                transition:
-                    transform .2s ease,
-                    box-shadow .2s ease;
-
-            }
-
-
-            #vexon-notification-button:hover {
-
-                transform:
-                    translateY(-4px)
-                    scale(1.05);
-
-                box-shadow:
-                    0 0 38px
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .34
-                    ),
-
-                    0 18px 44px
-                    rgba(
-                        0,
-                        0,
-                        0,
-                        .42
-                    );
-
-            }
-
-
-            #vexon-notification-badge {
-
-                position:
-                    absolute;
-
-                top:
-                    -3px;
-
-                right:
-                    -3px;
-
-                min-width:
-                    20px;
-
-                height:
-                    20px;
-
-                padding:
-                    0 5px;
-
-                box-sizing:
-                    border-box;
-
-                display:
-                    flex;
-
-                align-items:
-                    center;
-
-                justify-content:
-                    center;
-
-                border-radius:
-                    999px;
-
-                background:
-                    #ff3f5a;
-
-                color:
-                    #fff;
-
-                font-size:
-                    8px;
-
-                font-weight:
-                    900;
-
-                box-shadow:
-                    0 0 15px
-                    rgba(
-                        255,
-                        63,
-                        90,
-                        .35
-                    );
-
-            }
-
-
-            #vexon-notification-panel {
-
-                position:
-                    absolute;
-
-                right:
-                    0;
-
-                bottom:
-                    72px;
-
-                width:
-                    min(
-                        390px,
-                        calc(100vw - 28px)
-                    );
-
-                max-height:
-                    min(
-                        580px,
-                        calc(100vh - 110px)
-                    );
-
-                display:
-                    none;
-
-                flex-direction:
-                    column;
-
-                overflow:
-                    hidden;
-
-                border:
-                    1px solid
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .18
-                    );
-
-                border-radius:
-                    22px;
-
-                background:
-                    rgba(
-                        4,
-                        8,
-                        15,
-                        .97
-                    );
-
-                box-shadow:
-                    0 20px 75px
-                    rgba(
-                        0,
-                        0,
-                        0,
-                        .54
-                    );
-
-                backdrop-filter:
-                    blur(20px);
-
-            }
-
-
-            #vexon-notification-panel.open {
-
-                display:
-                    flex;
-
-            }
-
-
-            .pgame-notification-head {
-
-                display:
-                    flex;
-
-                align-items:
-                    center;
-
-                justify-content:
-                    space-between;
-
-                gap:
-                    10px;
-
-                padding:
-                    15px;
-
-                border-bottom:
-                    1px solid
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .06
-                    );
-
-            }
-
-
-            .pgame-notification-head strong {
-
-                font-size:
-                    14px;
-
-                font-weight:
-                    900;
-
-            }
-
-
-            #pgame-notification-close {
-
-                width:
-                    34px;
-
-                height:
-                    34px;
-
-                border:
-                    1px solid
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .07
-                    );
-
-                border-radius:
-                    10px;
-
-                background:
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .045
-                    );
-
-                color:
-                    #fff;
-
-                cursor:
-                    pointer;
-
-                font-size:
-                    16px;
-
-            }
-
-
-            #pgame-notification-list {
-
-                overflow-y:
-                    auto;
-
-                padding:
-                    12px;
-
-            }
-
-
-            .pgame-notification-item {
-
-                position:
-                    relative;
-
-                margin-bottom:
-                    9px;
-
-                padding:
-                    13px;
-
-                border:
-                    1px solid
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .06
-                    );
-
-                border-radius:
-                    15px;
-
-                background:
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .035
-                    );
-
-            }
-
-
-            .pgame-notification-item:last-child {
-
-                margin-bottom:
-                    0;
-
-            }
-
-
-            .pgame-notification-item.unread {
-
-                border-color:
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .28
-                    );
-
-                background:
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .055
-                    );
-
-            }
-
-
-            .pgame-notification-title {
-
-                font-size:
-                    11px;
-
-                font-weight:
-                    900;
-
-                line-height:
-                    1.7;
-
-            }
-
-
-            .pgame-notification-text {
-
-                margin-top:
-                    5px;
-
-                color:
-                    #8b8ca0;
-
-                font-size:
-                    9px;
-
-                line-height:
-                    1.9;
-
-            }
-
-
-            .pgame-notification-date {
-
-                margin-top:
-                    5px;
-
-                color:
-                    #656678;
-
-                font-size:
-                    7px;
-
-            }
-
-
-            .pgame-notification-action {
-
-                width:
-                    100%;
-
-                margin-top:
-                    10px;
-
-                padding:
-                    8px 10px;
-
-                border:
-                    1px solid
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        .15
-                    );
-
-                border-radius:
-                    10px;
-
-                background:
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        .06
-                    );
-
-                color:
-                    #dfffee;
-
-                cursor:
-                    pointer;
-
-                font-family:
-                    inherit;
-
-                font-size:
-                    9px;
-
-            }
-
-
-            .pgame-notification-empty {
-
-                padding:
-                    35px 10px;
-
-                text-align:
-                    center;
-
-                color:
-                    #77788b;
-
-                font-size:
-                    10px;
-
-            }
-
-
-            #pgame-notification-details {
-
-                position:
-                    fixed;
-
-                inset:
-                    0;
-
-                z-index:
-                    99999;
-
-                display:
-                    none;
-
-                align-items:
-                    center;
-
-                justify-content:
-                    center;
-
-                padding:
-                    18px;
-
-                background:
-                    rgba(
-                        0,
-                        0,
-                        0,
-                        .74
-                    );
-
-            }
-
-
-            #pgame-notification-details.open {
-
-                display:
-                    flex;
-
-            }
-
-
-            .pgame-notification-details-box {
-
-                width:
-                    min(
-                        620px,
-                        100%
-                    );
-
-                max-height:
-                    min(
-                        700px,
-                        calc(100vh - 36px)
-                    );
-
-                overflow:
-                    auto;
-
-                box-sizing:
-                    border-box;
-
-                padding:
-                    20px;
-
-                border:
-                    1px solid
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .19
-                    );
-
-                border-radius:
-                    22px;
-
-                background:
-                    #05080f;
-
-                box-shadow:
-                    0 25px 90px
-                    rgba(
-                        0,
-                        0,
-                        0,
-                        .58
-                    );
-
-            }
-
-
-            .pgame-notification-details-header {
-
-                display:
-                    flex;
-
-                align-items:
-                    center;
-
-                justify-content:
-                    space-between;
-
-                gap:
-                    10px;
-
-            }
-
-
-            .pgame-notification-details-header h3 {
-
-                margin:
-                    0;
-
-                font-size:
-                    16px;
-
-            }
-
-
-            #pgame-notification-details-close {
-
-                width:
-                    36px;
-
-                height:
-                    36px;
-
-                border:
-                    1px solid
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .07
-                    );
-
-                border-radius:
-                    10px;
-
-                background:
-                    rgba(
-                        255,
-                        255,
-                        255,
-                        .04
-                    );
-
-                color:
-                    #fff;
-
-                cursor:
-                    pointer;
-
-            }
-
-
-            .pgame-notification-details-body {
-
-                margin-top:
-                    16px;
-
-                color:
-                    #d7d8e4;
-
-                font-size:
-                    11px;
-
-                line-height:
-                    2;
-
-                white-space:
-                    pre-wrap;
-
-                overflow-wrap:
-                    anywhere;
-
-            }
-
-
-            .pgame-notification-details-meta {
-
-                margin-top:
-                    14px;
-
-                color:
-                    #717286;
-
-                font-size:
-                    8px;
-
-            }
-
-
-            @media (
-                max-width: 600px
-            ) {
-
-                #vexon-notification-widget {
-
-                    right:
-                        14px;
-
-                    bottom:
-                        16px;
-
-                }
-
-
-                #vexon-notification-button {
-
-                    width:
-                        56px;
-
-                    height:
-                        56px;
-
-                }
-
-
-                #vexon-notification-panel {
-
-                    bottom:
-                        66px;
-
-                }
-
-            }
-
-        </style>
-
+        </div>
 
         <button
-            id="vexon-notification-button"
+            id="pgame-notification-button"
             type="button"
             aria-label="اعلان‌ها"
             title="اعلان‌ها"
@@ -2278,159 +1784,48 @@ function initializeNotificationWidget() {
             🔔
 
             <span
-                id="vexon-notification-badge"
+                id="pgame-notification-badge"
             >
                 0
             </span>
 
         </button>
 
-
-        <div
-            id="vexon-notification-panel"
-        >
-
-            <div
-                class="pgame-notification-head"
-            >
-
-                <strong>
-                    🔔 اعلان‌ها
-                </strong>
-
-
-                <button
-                    id="pgame-notification-close"
-                    type="button"
-                >
-                    ✕
-                </button>
-
-            </div>
-
-
-            <div
-                id="pgame-notification-list"
-            ></div>
-
-        </div>
-
-
-        <div
-            id="pgame-notification-details"
-        >
-
-            <section
-                class="pgame-notification-details-box"
-            >
-
-                <div
-                    class="pgame-notification-details-header"
-                >
-
-                    <h3
-                        id="pgame-notification-details-title"
-                    >
-                        اعلان
-                    </h3>
-
-
-                    <button
-                        id="pgame-notification-details-close"
-                        type="button"
-                    >
-                        ✕
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="pgame-notification-details-body"
-                    class="pgame-notification-details-body"
-                ></div>
-
-
-                <div
-                    id="pgame-notification-details-meta"
-                    class="pgame-notification-details-meta"
-                ></div>
-
-            </section>
-
-        </div>
-
     `;
 
-
     document.body.appendChild(
-        widget
+        wrapper
     );
 
 
     const button =
         document.getElementById(
-            "vexon-notification-button"
+            "pgame-notification-button"
         );
-
 
     const badge =
         document.getElementById(
-            "vexon-notification-badge"
+            "pgame-notification-badge"
         );
-
 
     const panel =
         document.getElementById(
-            "vexon-notification-panel"
+            "pgame-notification-panel"
         );
-
 
     const list =
         document.getElementById(
             "pgame-notification-list"
         );
 
-
     const closeButton =
-        document.getElementById(
-            "pgame-notification-close"
+        wrapper.querySelector(
+            ".pgame-notification-close"
         );
 
 
-    const details =
-        document.getElementById(
-            "pgame-notification-details"
-        );
+    let notifications = [];
 
-
-    const detailsTitle =
-        document.getElementById(
-            "pgame-notification-details-title"
-        );
-
-
-    const detailsBody =
-        document.getElementById(
-            "pgame-notification-details-body"
-        );
-
-
-    const detailsMeta =
-        document.getElementById(
-            "pgame-notification-details-meta"
-        );
-
-
-    const detailsClose =
-        document.getElementById(
-            "pgame-notification-details-close"
-        );
-
-
-    /* =====================================================
-       UPDATE BUTTON
-    ====================================================== */
 
     function updateNotificationButton(
         unreadCount
@@ -2441,23 +1836,11 @@ function initializeNotificationWidget() {
                 unreadCount || 0
             );
 
+        if (count <= 0) {
 
-        if (
-            count > 0
-        ) {
-
-            button.style.display =
-                "flex";
-
-            badge.textContent =
-                count > 99
-                    ? "99+"
-                    : String(count);
-
-        } else {
-
-            button.style.display =
-                "none";
+            button.classList.remove(
+                "visible"
+            );
 
             badge.textContent =
                 "0";
@@ -2466,14 +1849,107 @@ function initializeNotificationWidget() {
                 "open"
             );
 
+            return;
+
         }
+
+        button.classList.add(
+            "visible"
+        );
+
+        badge.textContent =
+            count > 99
+                ? "99+"
+                : String(count);
 
     }
 
 
-    /* =====================================================
-       LOAD NOTIFICATIONS
-    ====================================================== */
+    function renderNotifications() {
+
+        if (!notifications.length) {
+
+            list.innerHTML = `
+                <div
+                    class="pgame-notification-empty"
+                >
+                    اعلان جدیدی وجود ندارد.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            notifications
+                .map(
+                    (notification) => {
+
+                        const title =
+                            escapeHtml(
+                                notification.title ||
+                                notification.type ||
+                                "اعلان"
+                            );
+
+                        const message =
+                            escapeHtml(
+                                notification.message ||
+                                ""
+                            );
+
+                        const date =
+                            formatNotificationDate(
+                                notification.created_at ||
+                                notification.createdAt
+                            );
+
+                        const unread =
+                            !notification.read;
+
+                        return `
+
+                            <div
+                                class="pgame-notification-item ${unread ? "unread" : ""}"
+                                data-notification-id="${notification.id}"
+                            >
+
+                                <div
+                                    class="pgame-notification-title"
+                                >
+                                    ${title}
+                                </div>
+
+                                <div
+                                    class="pgame-notification-message"
+                                >
+                                    ${message}
+                                </div>
+
+                                ${
+                                    date
+                                        ? `
+                                            <div
+                                                class="pgame-notification-date"
+                                            >
+                                                ${escapeHtml(date)}
+                                            </div>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+    }
+
 
     async function loadNotifications() {
 
@@ -2483,22 +1959,11 @@ function initializeNotificationWidget() {
                 await fetch(
                     "/api/notifications",
                     {
-                        method:
-                            "GET",
-
-                        credentials:
-                            "same-origin",
-
-                        cache:
-                            "no-store"
+                        cache: "no-store"
                     }
                 );
 
-
-            if (
-                response.status ===
-                401
-            ) {
+            if (!response.ok) {
 
                 updateNotificationButton(
                     0
@@ -2507,15 +1972,12 @@ function initializeNotificationWidget() {
                 return;
 
             }
-
 
             const data =
                 await response.json();
 
-
             if (
-                !response.ok ||
-                !data.success
+                !data?.success
             ) {
 
                 updateNotificationButton(
@@ -2526,153 +1988,32 @@ function initializeNotificationWidget() {
 
             }
 
-
-            const notifications =
+            notifications =
                 Array.isArray(
                     data.notifications
                 )
                     ? data.notifications
                     : [];
 
-
             const unreadCount =
                 Number(
                     data.unread_count ??
-                    0
+                    notifications.filter(
+                        (item) =>
+                            !item.read
+                    ).length
                 );
-
 
             updateNotificationButton(
                 unreadCount
             );
 
+            renderNotifications();
 
-            if (
-                !notifications.length
-            ) {
-
-                list.innerHTML = `
-
-                    <div
-                        class="pgame-notification-empty"
-                    >
-
-                        🔔
-                        اعلان جدیدی وجود ندارد.
-
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-
-            list.innerHTML =
-                notifications
-                    .map(
-                        notification => {
-
-                            const unread =
-                                !notification.read_at;
-
-
-                            const date =
-                                formatNotificationDate(
-                                    notification.created_at
-                                );
-
-
-                            return `
-
-                                <article
-                                    class="
-                                        pgame-notification-item
-                                        ${unread ? "unread" : ""}
-                                    "
-                                    data-type="${escapeHtml(
-                                        notification.type || "general"
-                                    )}"
-                                    data-reference-id="${Number(
-                                        notification.reference_id ?? 0
-                                    )}"
-                                    data-notification-title="${escapeHtml(
-                                        notification.title || "اعلان"
-                                    )}"
-                                    data-notification-message="${escapeHtml(
-                                        notification.message || ""
-                                    )}"
-                                    data-notification-date="${escapeHtml(
-                                        notification.created_at || ""
-                                    )}"
-                                >
-
-                                    <div
-                                        class="
-                                            pgame-notification-title
-                                        "
-                                    >
-                                        ${escapeHtml(
-                                            notification.title || "اعلان"
-                                        )}
-                                    </div>
-
-
-                                    <div
-                                        class="
-                                            pgame-notification-text
-                                        "
-                                    >
-                                        ${escapeHtml(
-                                            notification.message || ""
-                                        )}
-                                    </div>
-
-
-                                    ${
-                                        date
-                                            ? `
-                                                <div
-                                                    class="
-                                                        pgame-notification-date
-                                                    "
-                                                >
-                                                    ${escapeHtml(
-                                                        date
-                                                    )}
-                                                </div>
-                                              `
-                                            : ""
-                                    }
-
-
-                                    <button
-                                        type="button"
-                                        class="
-                                            pgame-notification-action
-                                        "
-                                        data-notification-id="${Number(
-                                            notification.id
-                                        )}"
-                                    >
-                                        نمایش پیام
-                                    </button>
-
-                                </article>
-
-                            `;
-
-                        }
-                    )
-                    .join("");
-
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
-                "PGAME_NOTIFICATIONS_ERROR",
+                "NOTIFICATION LOAD ERROR:",
                 error
             );
 
@@ -2685,361 +2026,28 @@ function initializeNotificationWidget() {
     }
 
 
-    /* =====================================================
-       LOAD DETAILS
-    ====================================================== */
-
-    async function loadNotificationDetails(
-        type,
-        referenceId,
-        fallbackTitle,
-        fallbackMessage
+    async function markAsRead(
+        notificationId
     ) {
 
-        detailsTitle.textContent =
-            fallbackTitle ||
-            "اعلان";
-
-
-        detailsBody.textContent =
-            fallbackMessage ||
-            "";
-
-
-        detailsMeta.textContent =
-            type === "news"
-                ? "📰 خبر PGame"
-                : type === "poll"
-                    ? "📊 نظرسنجی PGame"
-                    : type === "support"
-                        ? "💬 پاسخ مدیریت"
-                        : "🔔 اعلان PGame";
-
-
-        details.classList.add(
-            "open"
-        );
-
-
-        if (
-            !referenceId
-        ) {
-
+        if (!notificationId) {
             return;
-
         }
-
 
         try {
 
-            /* =================================================
-               NEWS
-            ================================================== */
-
-            if (
-                type === "news"
-            ) {
-
-                const response =
-                    await fetch(
-                        `/api/news/${referenceId}`,
-                        {
-                            method:
-                                "GET",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    response.ok &&
-                    data.success &&
-                    data.news
-                ) {
-
-                    const news =
-                        data.news;
-
-
-                    detailsTitle.textContent =
-                        "📰 " +
-                        (
-                            news.title ||
-                            fallbackTitle ||
-                            "خبر جدید"
-                        );
-
-
-                    detailsBody.textContent =
-                        news.content ||
-                        fallbackMessage ||
-                        "";
-
-
-                    detailsMeta.textContent =
-                        [
-                            "📰 خبر PGame",
-
-                            news.category
-                                ? `دسته‌بندی: ${news.category}`
-                                : "",
-
-                            news.author_username
-                                ? `نویسنده: ${news.author_username}`
-                                : "",
-
-                            news.published_at
-                                ? formatNotificationDate(
-                                    news.published_at
-                                )
-                                : ""
-                        ]
-                            .filter(Boolean)
-                            .join(" • ");
-
-
-                    return;
-
+            await fetch(
+                `/api/notifications/${notificationId}/read`,
+                {
+                    method:
+                        "POST"
                 }
+            );
 
-            }
-
-
-            /* =================================================
-               POLL
-            ================================================== */
-
-            if (
-                type === "poll"
-            ) {
-
-                const response =
-                    await fetch(
-                        "/api/polls",
-                        {
-                            method:
-                                "GET",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    response.ok &&
-                    data.success &&
-                    Array.isArray(
-                        data.polls
-                    )
-                ) {
-
-                    const poll =
-                        data.polls.find(
-                            item =>
-                                Number(
-                                    item.id
-                                ) ===
-                                Number(
-                                    referenceId
-                                )
-                        );
-
-
-                    if (
-                        poll
-                    ) {
-
-                        detailsTitle.textContent =
-                            "📊 " +
-                            (
-                                poll.question ||
-                                fallbackTitle ||
-                                "نظرسنجی جدید"
-                            );
-
-
-                        let optionsText =
-                            "";
-
-
-                        if (
-                            Array.isArray(
-                                poll.options
-                            )
-                        ) {
-
-                            optionsText =
-                                poll.options
-                                    .map(
-                                        option => {
-
-                                            const votes =
-                                                Number(
-                                                    option.votes ||
-                                                    0
-                                                );
-
-
-                                            return (
-                                                `• ${option.option_text}` +
-                                                ` — ${votes} رأی`
-                                            );
-
-                                        }
-                                    )
-                                    .join("\n");
-
-                        }
-
-
-                        detailsBody.textContent =
-                            [
-                                poll.question,
-
-                                "",
-
-                                optionsText
-                            ]
-                                .filter(
-                                    part =>
-                                        part !== ""
-                                )
-                                .join("\n");
-
-
-                        detailsMeta.textContent =
-                            [
-                                "📊 نظرسنجی PGame",
-
-                                `مجموع رأی‌ها: ${
-                                    Number(
-                                        poll.total_votes ||
-                                        0
-                                    )
-                                }`,
-
-                                poll.published_at
-                                    ? formatNotificationDate(
-                                        poll.published_at
-                                    )
-                                    : ""
-                            ]
-                                .filter(Boolean)
-                                .join(" • ");
-
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
-
-            /* =================================================
-               SUPPORT
-            ================================================== */
-
-            if (
-                type === "support"
-            ) {
-
-                const response =
-                    await fetch(
-                        "/api/support/my",
-                        {
-                            method:
-                                "GET",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    response.ok &&
-                    data.success &&
-                    Array.isArray(
-                        data.messages
-                    )
-                ) {
-
-                    const supportMessage =
-                        data.messages.find(
-                            item =>
-                                Number(
-                                    item.id
-                                ) ===
-                                Number(
-                                    referenceId
-                                )
-                        );
-
-
-                    if (
-                        supportMessage
-                    ) {
-
-                        detailsTitle.textContent =
-                            "💬 پاسخ مدیریت";
-
-
-                        detailsBody.textContent =
-                            supportMessage.reply ||
-                            "پاسخی ثبت نشده است.";
-
-
-                        detailsMeta.textContent =
-                            supportMessage.replied_at
-                                ? (
-                                    "پاسخ داده شده در " +
-                                    formatNotificationDate(
-                                        supportMessage.replied_at
-                                    )
-                                )
-                                : "پاسخ مدیریت";
-
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
-                "PGAME_NOTIFICATION_DETAILS_ERROR",
+                "NOTIFICATION READ ERROR:",
                 error
             );
 
@@ -3048,9 +2056,414 @@ function initializeNotificationWidget() {
     }
 
 
-    /* =====================================================
-       OPEN / CLOSE
-    ====================================================== */
+    async function openNotificationDetails(
+        notification
+    ) {
+
+        if (!notification) {
+            return;
+        }
+
+
+        await markAsRead(
+            notification.id
+        );
+
+
+        const modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.id =
+            "pgame-notification-modal";
+
+        modal.innerHTML = `
+
+            <div
+                class="pgame-notification-modal-box"
+            >
+
+                <div
+                    class="pgame-notification-modal-head"
+                >
+
+                    <h3>
+                        ${escapeHtml(
+                            notification.title ||
+                            "جزئیات اعلان"
+                        )}
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="pgame-notification-modal-close"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <div
+                    class="pgame-notification-modal-content"
+                    id="pgame-notification-modal-content"
+                >
+
+                    در حال دریافت اطلاعات...
+
+                </div>
+
+            </div>
+
+        `;
+
+        document.body.appendChild(
+            modal
+        );
+
+        requestAnimationFrame(
+            () => {
+
+                modal.classList.add(
+                    "open"
+                );
+
+            }
+        );
+
+
+        const content =
+            modal.querySelector(
+                "#pgame-notification-modal-content"
+            );
+
+
+        try {
+
+            let result = null;
+
+
+            if (
+                notification.type === "news"
+            ) {
+
+                const referenceId =
+                    notification.reference_id;
+
+                if (referenceId) {
+
+                    const response =
+                        await fetch(
+                            `/api/news/${referenceId}`,
+                            {
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+                    if (response.ok) {
+                        result =
+                            await response.json();
+                    }
+
+                }
+
+            }
+
+
+            if (
+                notification.type === "poll"
+            ) {
+
+                const response =
+                    await fetch(
+                        "/api/polls",
+                        {
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+                if (response.ok) {
+
+                    const data =
+                        await response.json();
+
+                    const polls =
+                        Array.isArray(
+                            data.polls
+                        )
+                            ? data.polls
+                            : [];
+
+                    const poll =
+                        polls.find(
+                            (item) =>
+                                String(item.id) ===
+                                String(
+                                    notification.reference_id
+                                )
+                        );
+
+                    if (poll) {
+
+                        result = {
+                            success: true,
+                            poll
+                        };
+
+                    }
+
+                }
+
+            }
+
+
+            if (
+                notification.type === "support"
+            ) {
+
+                const response =
+                    await fetch(
+                        "/api/support/my",
+                        {
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+                if (response.ok) {
+
+                    const data =
+                        await response.json();
+
+                    const messages =
+                        Array.isArray(
+                            data.messages
+                        )
+                            ? data.messages
+                            : [];
+
+                    const message =
+                        messages.find(
+                            (item) =>
+                                String(item.id) ===
+                                String(
+                                    notification.reference_id
+                                )
+                        );
+
+                    if (message) {
+
+                        result = {
+                            success: true,
+                            message
+                        };
+
+                    }
+
+                }
+
+            }
+
+
+            if (
+                result?.news
+            ) {
+
+                const news =
+                    result.news;
+
+                content.innerHTML = `
+
+                    <h4>
+                        ${escapeHtml(
+                            news.title ||
+                            ""
+                        )}
+                    </h4>
+
+                    <div>
+                        ${escapeHtml(
+                            news.body ||
+                            news.content ||
+                            ""
+                        )}
+                    </div>
+
+                `;
+
+            } else if (
+                result?.poll
+            ) {
+
+                const poll =
+                    result.poll;
+
+                content.innerHTML = `
+
+                    <h4>
+                        ${escapeHtml(
+                            poll.question ||
+                            poll.title ||
+                            ""
+                        )}
+                    </h4>
+
+                    ${
+                        Array.isArray(
+                            poll.options
+                        )
+                            ? `
+                                <div>
+                                    ${poll.options
+                                        .map(
+                                            (option) =>
+                                                `<div style="margin:7px 0">
+                                                    ${escapeHtml(
+                                                        option.text ||
+                                                        option.title ||
+                                                        String(option)
+                                                    )}
+                                                </div>`
+                                        )
+                                        .join("")
+                                    }
+                                </div>
+                            `
+                            : ""
+                    }
+
+                `;
+
+            } else if (
+                result?.message
+            ) {
+
+                const support =
+                    result.message;
+
+                content.innerHTML = `
+
+                    <div>
+                        ${escapeHtml(
+                            support.message ||
+                            ""
+                        )}
+                    </div>
+
+                    ${
+                        support.reply
+                            ? `
+                                <hr
+                                    style="
+                                        opacity:.12;
+                                        margin:15px 0;
+                                    "
+                                >
+
+                                <strong>
+                                    پاسخ مدیریت:
+                                </strong>
+
+                                <div
+                                    style="margin-top:8px"
+                                >
+                                    ${escapeHtml(
+                                        support.reply
+                                    )}
+                                </div>
+                            `
+                            : ""
+                    }
+
+                `;
+
+            } else {
+
+                content.innerHTML = `
+
+                    ${escapeHtml(
+                        notification.message ||
+                        "اطلاعات این اعلان پیدا نشد."
+                    )}
+
+                `;
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "NOTIFICATION DETAILS ERROR:",
+                error
+            );
+
+            content.textContent =
+                "نمایش جزئیات اعلان با خطا مواجه شد.";
+
+        }
+
+
+        const close =
+            modal.querySelector(
+                ".pgame-notification-modal-close"
+            );
+
+        close.addEventListener(
+            "click",
+            () => {
+
+                modal.remove();
+
+            }
+        );
+
+
+        modal.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target ===
+                    modal
+                ) {
+
+                    modal.remove();
+
+                }
+
+            }
+        );
+
+
+        const item =
+            notifications.find(
+                (item) =>
+                    String(item.id) ===
+                    String(
+                        notification.id
+                    )
+            );
+
+        if (item) {
+            item.read = 1;
+        }
+
+        const unread =
+            notifications.filter(
+                (item) =>
+                    !item.read
+            ).length;
+
+        updateNotificationButton(
+            unread
+        );
+
+        renderNotifications();
+
+    }
+
 
     button.addEventListener(
         "click",
@@ -3059,6 +2472,16 @@ function initializeNotificationWidget() {
             panel.classList.toggle(
                 "open"
             );
+
+            if (
+                panel.classList.contains(
+                    "open"
+                )
+            ) {
+
+                renderNotifications();
+
+            }
 
         }
     );
@@ -3076,28 +2499,17 @@ function initializeNotificationWidget() {
     );
 
 
-    detailsClose.addEventListener(
+    document.addEventListener(
         "click",
-        () => {
-
-            details.classList.remove(
-                "open"
-            );
-
-        }
-    );
-
-
-    details.addEventListener(
-        "click",
-        event => {
+        (event) => {
 
             if (
-                event.target ===
-                details
+                !wrapper.contains(
+                    event.target
+                )
             ) {
 
-                details.classList.remove(
+                panel.classList.remove(
                     "open"
                 );
 
@@ -3107,189 +2519,50 @@ function initializeNotificationWidget() {
     );
 
 
-    /* =====================================================
-       NOTIFICATION CLICK
-    ====================================================== */
-
     list.addEventListener(
         "click",
-        async event => {
-
-            const action =
-                event.target.closest(
-                    "[data-notification-id]"
-                );
-
-
-            if (
-                !action
-            ) {
-
-                return;
-
-            }
-
-
-            const notificationId =
-                Number(
-                    action.dataset.notificationId
-                );
-
+        async (event) => {
 
             const item =
-                action.closest(
+                event.target.closest(
                     ".pgame-notification-item"
                 );
 
-
-            if (
-                !item
-            ) {
-
+            if (!item) {
                 return;
-
             }
 
+            const id =
+                item.dataset.notificationId;
 
-            const type =
-                item.dataset.type ||
-                "general";
-
-
-            const referenceId =
-                Number(
-                    item.dataset.referenceId ||
-                    0
+            const notification =
+                notifications.find(
+                    (item) =>
+                        String(item.id) ===
+                        String(id)
                 );
 
-
-            const title =
-                item
-                    .querySelector(
-                        ".pgame-notification-title"
-                    )
-                    ?.textContent
-                    ?.trim()
-                    ||
-                    "اعلان";
-
-
-            const message =
-                item
-                    .querySelector(
-                        ".pgame-notification-text"
-                    )
-                    ?.textContent
-                    ?.trim()
-                    ||
-                    "";
-
-
-            if (
-                Number.isInteger(
-                    notificationId
-                ) &&
-                notificationId > 0
-            ) {
-
-                try {
-
-                    await fetch(
-                        `/api/notifications/${notificationId}/read`,
-                        {
-                            method:
-                                "POST",
-
-                            credentials:
-                                "same-origin",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-                } catch (
-                    error
-                ) {
-
-                    console.error(
-                        "PGAME_NOTIFICATION_READ_ERROR",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            item.classList.remove(
-                "unread"
-            );
-
-
-            panel.classList.remove(
-                "open"
-            );
-
-
-            await loadNotificationDetails(
-                type,
-                referenceId,
-                title,
-                message
-            );
-
-
-            await loadNotifications();
-
-        }
-    );
-
-
-    /* =====================================================
-       ESC CLOSE
-    ====================================================== */
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key !==
-                "Escape"
-            ) {
-
+            if (!notification) {
                 return;
-
             }
 
-
-            panel.classList.remove(
-                "open"
-            );
-
-
-            details.classList.remove(
-                "open"
+            await openNotificationDetails(
+                notification
             );
 
         }
     );
 
-
-    /* =====================================================
-       INITIAL LOAD
-    ====================================================== */
 
     loadNotifications();
 
 
-    /* =====================================================
-       AUTO REFRESH
-    ====================================================== */
-
     setInterval(
-        loadNotifications,
+        () => {
+
+            loadNotifications();
+
+        },
         10000
     );
 
@@ -3312,18 +2585,28 @@ function initializePGame() {
 
     initializeAuthHeader();
 
-    removeSupportWidgetOnMessenger();
 
-    if (
-        !isMessengerPage()
-    ) {
+    /*
+       Messenger:
+       هیچ‌وقت اجازه ایجاد
+       Support Widget را نده.
+    */
+
+    protectMessengerFromSupport();
+
+
+    if (!isMessengerPage()) {
+
         initializeSupportWidget();
+
     }
+
 
     initializeNotificationWidget();
 
 
     if (
+        typeof app !== "undefined" &&
         app
     ) {
 
@@ -3340,24 +2623,21 @@ function initializePGame() {
    DOM READY
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+if (
+    document.readyState ===
+    "loading"
+) {
 
-        try {
-
-            initializePGame();
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "PGAME_INITIALIZATION_ERROR",
-                error
-            );
-
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializePGame,
+        {
+            once: true
         }
+    );
 
-    }
-);
+} else {
+
+    initializePGame();
+
+}
