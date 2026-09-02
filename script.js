@@ -1493,14 +1493,20 @@ function initializeStandaloneVexon() {
 
     initializeAuthHeader();
 
-    initializeSupportWidget();
+    if (
+        !location.pathname.includes("/messenger") &&
+        !location.pathname.includes("messenger.html")
+    ) {
+        initializeSupportWidget();
+    }
+
+}
 
     /*
      * در بخش بعدی:
      * initializeNotificationWidget();
      */
 
-}
 
 
 function initializeVexon() {
@@ -1517,7 +1523,13 @@ function initializeVexon() {
 
     initializeAuthHeader();
 
-    initializeSupportWidget();
+    if (
+        !location.pathname.includes("/messenger") &&
+        !location.pathname.includes("messenger.html")
+    ) {
+        initializeSupportWidget();
+    }
+
 
     /*
      * در بخش بعدی:
