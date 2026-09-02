@@ -225,7 +225,7 @@
         .admin-profile-button {
 
             display:
-                none;
+                block;
 
             width:
                 100%;
@@ -1138,19 +1138,6 @@
 
                     const adminData =
                         await adminResponse.json();
-
-
-                    if (
-                        adminResponse.ok &&
-                        adminData.success &&
-                        adminData.isAdmin
-                    ) {
-
-                        adminButton.style.display =
-                            "block";
-
-                    }
-
 
                 } catch (error) {
 
