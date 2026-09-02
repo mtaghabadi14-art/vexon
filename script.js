@@ -9,10 +9,57 @@
    APP ELEMENT
 ========================================================= */
 
-const app =
-    document.querySelector(
-        "#app"
+const app = document.querySelector("#app");
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function isMessengerPage() {
+    return /(^|\/)messenger\.html$/i.test(
+        window.location.pathname
     );
+}
+
+
+function inSections() {
+    return location.pathname.includes("/sections/");
+}
+
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function formatNotificationDate(value) {
+    if (!value) {
+        return "";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleString(
+        "fa-IR",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
 
 
 /* =========================================================
@@ -38,14 +85,9 @@ async function checkFullBan() {
             await fetch(
                 "/api/me",
                 {
-                    method:
-                        "GET",
-
-                    credentials:
-                        "same-origin",
-
-                    cache:
-                        "no-store"
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
                 }
             );
 
@@ -66,18 +108,11 @@ async function checkFullBan() {
         if (
             data?.loggedIn &&
             data.user?.banned &&
-            data.user?.ban_type ===
-                "full"
+            data.user?.ban_type === "full"
         ) {
 
-            const inSections =
-                location.pathname.includes(
-                    "/sections/"
-                );
-
-
             location.href =
-                inSections
+                inSections()
                     ? "../banned.html"
                     : "banned.html";
 
@@ -124,14 +159,9 @@ async function initializeAuthHeader() {
             await fetch(
                 "/api/me",
                 {
-                    method:
-                        "GET",
-
-                    credentials:
-                        "same-origin",
-
-                    cache:
-                        "no-store"
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store"
                 }
             );
 
@@ -160,9 +190,7 @@ async function initializeAuthHeader() {
                     data.user
                 ) {
 
-                    if (
-                        strong
-                    ) {
+                    if (strong) {
 
                         strong.textContent =
                             data.user.username;
@@ -170,9 +198,7 @@ async function initializeAuthHeader() {
                     }
 
 
-                    if (
-                        span
-                    ) {
+                    if (span) {
 
                         span.textContent =
                             `LV ${data.user.level ?? 1} • XP ${data.user.xp ?? 0}/${data.user.next_xp ?? 0} • 🪙 ${data.user.coins ?? 0}`;
@@ -180,22 +206,14 @@ async function initializeAuthHeader() {
                     }
 
 
-                    const inSections =
-                        location.pathname.includes(
-                            "/sections/"
-                        );
-
-
                     header.href =
-                        inSections
+                        inSections()
                             ? "profile.html"
                             : "sections/profile.html";
 
                 } else {
 
-                    if (
-                        strong
-                    ) {
+                    if (strong) {
 
                         strong.textContent =
                             "ورود / ثبت‌نام";
@@ -203,9 +221,7 @@ async function initializeAuthHeader() {
                     }
 
 
-                    if (
-                        span
-                    ) {
+                    if (span) {
 
                         span.textContent =
                             "ورود به حساب";
@@ -213,14 +229,8 @@ async function initializeAuthHeader() {
                     }
 
 
-                    const inSections =
-                        location.pathname.includes(
-                            "/sections/"
-                        );
-
-
                     header.href =
-                        inSections
+                        inSections()
                             ? "login.html"
                             : "sections/login.html";
 
@@ -265,11 +275,10 @@ function initializeNavigation() {
 
 
     const links = [
+
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "../index.html"
                     : "index.html",
 
@@ -279,9 +288,7 @@ function initializeNavigation() {
 
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "games.html"
                     : "sections/games.html",
 
@@ -291,9 +298,7 @@ function initializeNavigation() {
 
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "news.html"
                     : "sections/news.html",
 
@@ -303,9 +308,7 @@ function initializeNavigation() {
 
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "cafe.html"
                     : "sections/cafe.html",
 
@@ -315,9 +318,7 @@ function initializeNavigation() {
 
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "leaderboard.html"
                     : "sections/leaderboard.html",
 
@@ -327,9 +328,7 @@ function initializeNavigation() {
 
         {
             href:
-                location.pathname.includes(
-                    "/sections/"
-                )
+                inSections()
                     ? "messenger.html"
                     : "sections/messenger.html",
 
@@ -345,9 +344,7 @@ function initializeNavigation() {
             .map(
                 link =>
                     `
-                        <a
-                            href="${link.href}"
-                        >
+                        <a href="${link.href}">
                             ${link.label}
                         </a>
                     `
@@ -514,6 +511,7 @@ function initializeScrollReveal() {
                                 "revealed"
                             );
 
+
                             observer.unobserve(
                                 entry.target
                             );
@@ -525,8 +523,7 @@ function initializeScrollReveal() {
 
             },
             {
-                threshold:
-                    0.12
+                threshold: 0.12
             }
         );
 
@@ -623,14 +620,8 @@ function initializeSmoothNavigation() {
 
 function initializeSupportWidget() {
 
-    const isMessengerPage =
-        /(^|\/)messenger\.html$/i.test(
-            window.location.pathname
-        );
-
-
     if (
-        isMessengerPage
+        isMessengerPage()
     ) {
 
         return;
@@ -686,13 +677,9 @@ function initializeSupportWidget() {
         #vexon-support-widget {
 
             position: fixed;
-
             left: 22px;
-
             right: auto;
-
             bottom: 22px;
-
             z-index: 99997;
 
         }
@@ -701,13 +688,10 @@ function initializeSupportWidget() {
         #vexon-support-button {
 
             width: 60px;
-
             height: 60px;
 
             display: flex;
-
             align-items: center;
-
             justify-content: center;
 
             border-radius: 50%;
@@ -755,7 +739,6 @@ function initializeSupportWidget() {
                     157,
                     .20
                 ),
-
                 0 14px 38px
                 rgba(
                     0,
@@ -774,12 +757,8 @@ function initializeSupportWidget() {
         #vexon-support-button:hover {
 
             transform:
-                translateY(
-                    -4px
-                )
-                scale(
-                    1.05
-                );
+                translateY(-4px)
+                scale(1.05);
 
             box-shadow:
                 0 0 35px
@@ -1025,8 +1004,7 @@ function initializeSupportWidget() {
 
 
         @media (
-            max-width:
-            600px
+            max-width: 600px
         ) {
 
             #vexon-support-widget {
@@ -1110,7 +1088,7 @@ function initializeSupportWidget() {
                                 font-size:10px;
                             "
                         >
-                            پیام خودت را برای مدیریت PGame ارسال کن.
+                            پیامت رو برای مدیریت PGame ارسال کن.
                         </p>
 
                     </div>
@@ -1131,7 +1109,7 @@ function initializeSupportWidget() {
                     id="vexon-support-input"
                     class="vexon-support-input"
                     maxlength="5000"
-                    placeholder="پیامت را برای مدیریت بنویس..."
+                    placeholder="پیامت رو برای مدیریت بنویس..."
                 ></textarea>
 
 
@@ -1269,17 +1247,10 @@ function initializeSupportWidget() {
                     401
                 ) {
 
-                    const inSections =
-                        location.pathname.includes(
-                            "/sections/"
-                        );
-
-
                     location.href =
-                        inSections
+                        inSections()
                             ? "login.html"
                             : "sections/login.html";
-
 
                     return;
 
@@ -1357,8 +1328,7 @@ function initializeSupportWidget() {
 
 
             if (
-                message.length <
-                2
+                message.length < 2
             ) {
 
                 setSupportStatus(
@@ -1412,17 +1382,10 @@ function initializeSupportWidget() {
                     401
                 ) {
 
-                    const inSections =
-                        location.pathname.includes(
-                            "/sections/"
-                        );
-
-
                     location.href =
-                        inSections
+                        inSections()
                             ? "login.html"
                             : "sections/login.html";
-
 
                     return;
 
@@ -1480,101 +1443,11 @@ function initializeSupportWidget() {
 
 
 /* =========================================================
-   INITIALIZATION
-========================================================= */
-
-function initializeStandaloneVexon() {
-
-    initializeNavigation();
-
-    initializeButtonPress();
-
-    initializeParallax();
-
-    initializeAuthHeader();
-
-    if (
-        !location.pathname.includes("/messenger") &&
-        !location.pathname.includes("messenger.html")
-    ) {
-        initializeSupportWidget();
-    }
-
-}
-
-    /*
-     * در بخش بعدی:
-     * initializeNotificationWidget();
-     */
-
-
-
-function initializeVexon() {
-
-    initializeNavigation();
-
-    initializeScrollReveal();
-
-    initializeSmoothNavigation();
-
-    initializeButtonPress();
-
-    initializeParallax();
-
-    initializeAuthHeader();
-
-    if (
-        !location.pathname.includes("/messenger") &&
-        !location.pathname.includes("messenger.html")
-    ) {
-        initializeSupportWidget();
-    }
-
-
-    /*
-     * در بخش بعدی:
-     * initializeNotificationWidget();
-     */
-
-}
-
-
-/* =========================================================
-   DOM READY
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        checkFullBan();
-
-        if (
-            app
-        ) {
-
-            initializeVexon();
-
-        } else {
-
-            initializeStandaloneVexon();
-
-        }
-
-    }
-);
-/* =========================================================
    NOTIFICATION WIDGET
-   ---------------------------------------------------------
-   🔔 اعلان‌ها در سمت راست
-   فقط وقتی اعلان خوانده‌نشده وجود داشته باشد دیده می‌شود.
 ========================================================= */
 
 function initializeNotificationWidget() {
 
-    /*
-     * جلوگیری از ساخته شدن دوباره Widget
-     */
     if (
         document.getElementById(
             "vexon-notification-widget"
@@ -1586,9 +1459,6 @@ function initializeNotificationWidget() {
     }
 
 
-    /*
-     * ساخت Widget
-     */
     const widget =
         document.createElement(
             "div"
@@ -1599,16 +1469,9 @@ function initializeNotificationWidget() {
         "vexon-notification-widget";
 
 
-    /*
-     * HTML + CSS
-     */
     widget.innerHTML = `
 
         <style>
-
-            /* =====================================================
-               NOTIFICATION CONTAINER
-            ====================================================== */
 
             #vexon-notification-widget {
 
@@ -1630,10 +1493,6 @@ function initializeNotificationWidget() {
 
             }
 
-
-            /* =====================================================
-               FLOATING BUTTON
-            ====================================================== */
 
             #vexon-notification-button {
 
@@ -1694,7 +1553,6 @@ function initializeNotificationWidget() {
                     pointer;
 
                 box-shadow:
-
                     0 0 26px
                     rgba(
                         116,
@@ -1721,15 +1579,10 @@ function initializeNotificationWidget() {
             #vexon-notification-button:hover {
 
                 transform:
-                    translateY(
-                        -4px
-                    )
-                    scale(
-                        1.05
-                    );
+                    translateY(-4px)
+                    scale(1.05);
 
                 box-shadow:
-
                     0 0 38px
                     rgba(
                         116,
@@ -1748,10 +1601,6 @@ function initializeNotificationWidget() {
 
             }
 
-
-            /* =====================================================
-               BADGE
-            ====================================================== */
 
             #vexon-notification-badge {
 
@@ -1812,10 +1661,6 @@ function initializeNotificationWidget() {
             }
 
 
-            /* =====================================================
-               NOTIFICATION PANEL
-            ====================================================== */
-
             #vexon-notification-panel {
 
                 position:
@@ -1830,19 +1675,13 @@ function initializeNotificationWidget() {
                 width:
                     min(
                         390px,
-                        calc(
-                            100vw -
-                            28px
-                        )
+                        calc(100vw - 28px)
                     );
 
                 max-height:
                     min(
                         580px,
-                        calc(
-                            100vh -
-                            110px
-                        )
+                        calc(100vh - 110px)
                     );
 
                 display:
@@ -1875,27 +1714,16 @@ function initializeNotificationWidget() {
                     );
 
                 box-shadow:
-
                     0 20px 75px
                     rgba(
                         0,
                         0,
                         0,
                         .54
-                    ),
-
-                    0 0 30px
-                    rgba(
-                        116,
-                        77,
-                        255,
-                        .06
                     );
 
                 backdrop-filter:
-                    blur(
-                        20px
-                    );
+                    blur(20px);
 
             }
 
@@ -1907,10 +1735,6 @@ function initializeNotificationWidget() {
 
             }
 
-
-            /* =====================================================
-               HEADER
-            ====================================================== */
 
             .pgame-notification-head {
 
@@ -1992,10 +1816,6 @@ function initializeNotificationWidget() {
             }
 
 
-            /* =====================================================
-               LIST
-            ====================================================== */
-
             #pgame-notification-list {
 
                 overflow-y:
@@ -2006,10 +1826,6 @@ function initializeNotificationWidget() {
 
             }
 
-
-            /* =====================================================
-               ITEM
-            ====================================================== */
 
             .pgame-notification-item {
 
@@ -2041,10 +1857,6 @@ function initializeNotificationWidget() {
                         255,
                         .035
                     );
-
-                transition:
-                    border-color .2s ease,
-                    background .2s ease;
 
             }
 
@@ -2123,10 +1935,6 @@ function initializeNotificationWidget() {
             }
 
 
-            /* =====================================================
-               SHOW MESSAGE BUTTON
-            ====================================================== */
-
             .pgame-notification-action {
 
                 width:
@@ -2170,37 +1978,8 @@ function initializeNotificationWidget() {
                 font-size:
                     9px;
 
-                transition:
-                    background .2s ease,
-                    border-color .2s ease;
-
             }
 
-
-            .pgame-notification-action:hover {
-
-                background:
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        .10
-                    );
-
-                border-color:
-                    rgba(
-                        0,
-                        255,
-                        157,
-                        .27
-                    );
-
-            }
-
-
-            /* =====================================================
-               EMPTY
-            ====================================================== */
 
             .pgame-notification-empty {
 
@@ -2218,10 +1997,6 @@ function initializeNotificationWidget() {
 
             }
 
-
-            /* =====================================================
-               DETAILS MODAL
-            ====================================================== */
 
             #pgame-notification-details {
 
@@ -2276,10 +2051,7 @@ function initializeNotificationWidget() {
                 max-height:
                     min(
                         700px,
-                        calc(
-                            100vh -
-                            36px
-                        )
+                        calc(100vh - 36px)
                     );
 
                 overflow:
@@ -2421,8 +2193,7 @@ function initializeNotificationWidget() {
 
 
             @media (
-                max-width:
-                600px
+                max-width: 600px
             ) {
 
                 #vexon-notification-widget {
@@ -2459,10 +2230,6 @@ function initializeNotificationWidget() {
         </style>
 
 
-        <!-- =====================================================
-             FLOATING BUTTON
-        ====================================================== -->
-
         <button
             id="vexon-notification-button"
             type="button"
@@ -2472,7 +2239,6 @@ function initializeNotificationWidget() {
 
             🔔
 
-
             <span
                 id="vexon-notification-badge"
             >
@@ -2481,10 +2247,6 @@ function initializeNotificationWidget() {
 
         </button>
 
-
-        <!-- =====================================================
-             NOTIFICATION PANEL
-        ====================================================== -->
 
         <div
             id="vexon-notification-panel"
@@ -2502,7 +2264,6 @@ function initializeNotificationWidget() {
                 <button
                     id="pgame-notification-close"
                     type="button"
-                    aria-label="بستن"
                 >
                     ✕
                 </button>
@@ -2517,10 +2278,6 @@ function initializeNotificationWidget() {
         </div>
 
 
-        <!-- =====================================================
-             DETAILS MODAL
-        ====================================================== -->
-
         <div
             id="pgame-notification-details"
         >
@@ -2530,9 +2287,7 @@ function initializeNotificationWidget() {
             >
 
                 <div
-                    class="
-                        pgame-notification-details-header
-                    "
+                    class="pgame-notification-details-header"
                 >
 
                     <h3
@@ -2554,17 +2309,13 @@ function initializeNotificationWidget() {
 
                 <div
                     id="pgame-notification-details-body"
-                    class="
-                        pgame-notification-details-body
-                    "
+                    class="pgame-notification-details-body"
                 ></div>
 
 
                 <div
                     id="pgame-notification-details-meta"
-                    class="
-                        pgame-notification-details-meta
-                    "
+                    class="pgame-notification-details-meta"
                 ></div>
 
             </section>
@@ -2574,17 +2325,10 @@ function initializeNotificationWidget() {
     `;
 
 
-    /*
-     * اضافه کردن به body
-     */
     document.body.appendChild(
         widget
     );
 
-
-    /* =========================================================
-       ELEMENT REFERENCES
-    ========================================================= */
 
     const button =
         document.getElementById(
@@ -2646,114 +2390,52 @@ function initializeNotificationWidget() {
         );
 
 
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================= */
+    /* =====================================================
+       UPDATE BUTTON
+    ====================================================== */
 
-    function escapeHtml(
-        value
+    function updateNotificationButton(
+        unreadCount
     ) {
 
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    /* =========================================================
-       FORMAT DATE
-    ========================================================= */
-
-    function formatNotificationDate(
-        value
-    ) {
-
-        if (
-            !value
-        ) {
-
-            return "";
-
-        }
-
-
-        const date =
-            new Date(
-                value
+        const count =
+            Number(
+                unreadCount || 0
             );
 
 
         if (
-            Number.isNaN(
-                date.getTime()
-            )
+            count > 0
         ) {
 
-            return "";
+            button.style.display =
+                "flex";
+
+            badge.textContent =
+                count > 99
+                    ? "99+"
+                    : String(count);
+
+        } else {
+
+            button.style.display =
+                "none";
+
+            badge.textContent =
+                "0";
+
+            panel.classList.remove(
+                "open"
+            );
 
         }
 
-
-        return date.toLocaleString(
-            "fa-IR",
-            {
-                year:
-                    "numeric",
-
-                month:
-                    "short",
-
-                day:
-                    "numeric",
-
-                hour:
-                    "2-digit",
-
-                minute:
-                    "2-digit"
-            }
-        );
-
     }
 
 
-    /* =========================================================
-       CLOSE DETAILS
-    ========================================================= */
-
-    function closeDetails() {
-
-        details.classList.remove(
-            "open"
-        );
-
-    }
-
-
-    /* =========================================================
+    /* =====================================================
        LOAD NOTIFICATIONS
-    ========================================================= */
+    ====================================================== */
 
     async function loadNotifications() {
 
@@ -2775,19 +2457,13 @@ function initializeNotificationWidget() {
                 );
 
 
-            /*
-             * کاربر وارد نشده
-             */
             if (
                 response.status ===
                 401
             ) {
 
-                button.style.display =
-                    "none";
-
-                panel.classList.remove(
-                    "open"
+                updateNotificationButton(
+                    0
                 );
 
                 return;
@@ -2804,8 +2480,9 @@ function initializeNotificationWidget() {
                 !data.success
             ) {
 
-                button.style.display =
-                    "none";
+                updateNotificationButton(
+                    0
+                );
 
                 return;
 
@@ -2827,42 +2504,11 @@ function initializeNotificationWidget() {
                 );
 
 
-            /*
-             * فقط وقتی اعلان خوانده‌نشده
-             * داریم دکمه را نشان بده.
-             */
-            if (
-                unreadCount > 0
-            ) {
-
-                button.style.display =
-                    "flex";
-
-                badge.textContent =
-                    unreadCount > 99
-                        ? "99+"
-                        : String(unreadCount);
-
-            } else {
-
-    /*
-     * TEST:
-     * حباب حتی بدون اعلان هم دیده می‌شود.
-     *
-     * بعد از اینکه مطمئن شدیم ظاهرش درست است،
-     * دوباره مخفی‌شدن در حالت صفر را فعال می‌کنیم.
-     */
-                button.style.display =
-                    "flex";
-
-                badge.textContent =
-                    "0";
-            }
+            updateNotificationButton(
+                unreadCount
+            );
 
 
-            /*
-             * ساخت لیست اعلان‌ها
-             */
             if (
                 !notifications.length
             ) {
@@ -2870,9 +2516,7 @@ function initializeNotificationWidget() {
                 list.innerHTML = `
 
                     <div
-                        class="
-                            pgame-notification-empty
-                        "
+                        class="pgame-notification-empty"
                     >
 
                         🔔
@@ -2907,23 +2551,23 @@ function initializeNotificationWidget() {
                                 <article
                                     class="
                                         pgame-notification-item
-                                        ${
-                                            unread
-                                                ? "unread"
-                                                : ""
-                                        }
+                                        ${unread ? "unread" : ""}
                                     "
-                                    data-type="
-                                        ${escapeHtml(
-                                            notification.type
-                                        )}
-                                    "
-                                    data-reference-id="
-                                        ${Number(
-                                            notification.reference_id ??
-                                            0
-                                        )}
-                                    "
+                                    data-type="${escapeHtml(
+                                        notification.type || "general"
+                                    )}"
+                                    data-reference-id="${Number(
+                                        notification.reference_id ?? 0
+                                    )}"
+                                    data-notification-title="${escapeHtml(
+                                        notification.title || "اعلان"
+                                    )}"
+                                    data-notification-message="${escapeHtml(
+                                        notification.message || ""
+                                    )}"
+                                    data-notification-date="${escapeHtml(
+                                        notification.created_at || ""
+                                    )}"
                                 >
 
                                     <div
@@ -2931,11 +2575,9 @@ function initializeNotificationWidget() {
                                             pgame-notification-title
                                         "
                                     >
-
                                         ${escapeHtml(
-                                            notification.title
+                                            notification.title || "اعلان"
                                         )}
-
                                     </div>
 
 
@@ -2944,11 +2586,9 @@ function initializeNotificationWidget() {
                                             pgame-notification-text
                                         "
                                     >
-
                                         ${escapeHtml(
-                                            notification.message
+                                            notification.message || ""
                                         )}
-
                                     </div>
 
 
@@ -2974,10 +2614,9 @@ function initializeNotificationWidget() {
                                         class="
                                             pgame-notification-action
                                         "
-                                        data-notification-id="
-                                            ${Number(
-                                                notification.id
-                                            )}
+                                        data-notification-id="${Number(
+                                            notification.id
+                                        )}"
                                     >
                                         نمایش پیام
                                     </button>
@@ -2990,7 +2629,6 @@ function initializeNotificationWidget() {
                     )
                     .join("");
 
-
         } catch (
             error
         ) {
@@ -3000,14 +2638,381 @@ function initializeNotificationWidget() {
                 error
             );
 
+            updateNotificationButton(
+                0
+            );
+
         }
 
     }
 
 
-    /* =========================================================
-       OPEN / CLOSE PANEL
-    ========================================================= */
+    /* =====================================================
+       LOAD DETAILS
+    ====================================================== */
+
+    async function loadNotificationDetails(
+        type,
+        referenceId,
+        fallbackTitle,
+        fallbackMessage
+    ) {
+
+        detailsTitle.textContent =
+            fallbackTitle ||
+            "اعلان";
+
+
+        detailsBody.textContent =
+            fallbackMessage ||
+            "";
+
+
+        detailsMeta.textContent =
+            type === "news"
+                ? "📰 خبر PGame"
+                : type === "poll"
+                    ? "📊 نظرسنجی PGame"
+                    : type === "support"
+                        ? "💬 پاسخ مدیریت"
+                        : "🔔 اعلان PGame";
+
+
+        details.classList.add(
+            "open"
+        );
+
+
+        if (
+            !referenceId
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            /* =================================================
+               NEWS
+            ================================================== */
+
+            if (
+                type === "news"
+            ) {
+
+                const response =
+                    await fetch(
+                        `/api/news/${referenceId}`,
+                        {
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data.success &&
+                    data.news
+                ) {
+
+                    const news =
+                        data.news;
+
+
+                    detailsTitle.textContent =
+                        "📰 " +
+                        (
+                            news.title ||
+                            fallbackTitle ||
+                            "خبر جدید"
+                        );
+
+
+                    detailsBody.textContent =
+                        news.content ||
+                        fallbackMessage ||
+                        "";
+
+
+                    detailsMeta.textContent =
+                        [
+                            "📰 خبر PGame",
+
+                            news.category
+                                ? `دسته‌بندی: ${news.category}`
+                                : "",
+
+                            news.author_username
+                                ? `نویسنده: ${news.author_username}`
+                                : "",
+
+                            news.published_at
+                                ? formatNotificationDate(
+                                    news.published_at
+                                )
+                                : ""
+                        ]
+                            .filter(Boolean)
+                            .join(" • ");
+
+
+                    return;
+
+                }
+
+            }
+
+
+            /* =================================================
+               POLL
+            ================================================== */
+
+            if (
+                type === "poll"
+            ) {
+
+                const response =
+                    await fetch(
+                        "/api/polls",
+                        {
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data.success &&
+                    Array.isArray(
+                        data.polls
+                    )
+                ) {
+
+                    const poll =
+                        data.polls.find(
+                            item =>
+                                Number(
+                                    item.id
+                                ) ===
+                                Number(
+                                    referenceId
+                                )
+                        );
+
+
+                    if (
+                        poll
+                    ) {
+
+                        detailsTitle.textContent =
+                            "📊 " +
+                            (
+                                poll.question ||
+                                fallbackTitle ||
+                                "نظرسنجی جدید"
+                            );
+
+
+                        let optionsText =
+                            "";
+
+
+                        if (
+                            Array.isArray(
+                                poll.options
+                            )
+                        ) {
+
+                            optionsText =
+                                poll.options
+                                    .map(
+                                        option => {
+
+                                            const votes =
+                                                Number(
+                                                    option.votes ||
+                                                    0
+                                                );
+
+
+                                            return (
+                                                `• ${option.option_text}` +
+                                                ` — ${votes} رأی`
+                                            );
+
+                                        }
+                                    )
+                                    .join("\n");
+
+                        }
+
+
+                        detailsBody.textContent =
+                            [
+                                poll.question,
+
+                                "",
+
+                                optionsText
+                            ]
+                                .filter(
+                                    part =>
+                                        part !== ""
+                                )
+                                .join("\n");
+
+
+                        detailsMeta.textContent =
+                            [
+                                "📊 نظرسنجی PGame",
+
+                                `مجموع رأی‌ها: ${
+                                    Number(
+                                        poll.total_votes ||
+                                        0
+                                    )
+                                }`,
+
+                                poll.published_at
+                                    ? formatNotificationDate(
+                                        poll.published_at
+                                    )
+                                    : ""
+                            ]
+                                .filter(Boolean)
+                                .join(" • ");
+
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+
+            /* =================================================
+               SUPPORT
+            ================================================== */
+
+            if (
+                type === "support"
+            ) {
+
+                const response =
+                    await fetch(
+                        "/api/support/my",
+                        {
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data.success &&
+                    Array.isArray(
+                        data.messages
+                    )
+                ) {
+
+                    const supportMessage =
+                        data.messages.find(
+                            item =>
+                                Number(
+                                    item.id
+                                ) ===
+                                Number(
+                                    referenceId
+                                )
+                        );
+
+
+                    if (
+                        supportMessage
+                    ) {
+
+                        detailsTitle.textContent =
+                            "💬 پاسخ مدیریت";
+
+
+                        detailsBody.textContent =
+                            supportMessage.reply ||
+                            "پاسخی ثبت نشده است.";
+
+
+                        detailsMeta.textContent =
+                            supportMessage.replied_at
+                                ? (
+                                    "پاسخ داده شده در " +
+                                    formatNotificationDate(
+                                        supportMessage.replied_at
+                                    )
+                                )
+                                : "پاسخ مدیریت";
+
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "PGAME_NOTIFICATION_DETAILS_ERROR",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OPEN / CLOSE
+    ====================================================== */
 
     button.addEventListener(
         "click",
@@ -3033,13 +3038,15 @@ function initializeNotificationWidget() {
     );
 
 
-    /* =========================================================
-       DETAILS CLOSE
-    ========================================================= */
-
     detailsClose.addEventListener(
         "click",
-        closeDetails
+        () => {
+
+            details.classList.remove(
+                "open"
+            );
+
+        }
     );
 
 
@@ -3052,7 +3059,9 @@ function initializeNotificationWidget() {
                 details
             ) {
 
-                closeDetails();
+                details.classList.remove(
+                    "open"
+                );
 
             }
 
@@ -3060,9 +3069,9 @@ function initializeNotificationWidget() {
     );
 
 
-    /* =========================================================
+    /* =====================================================
        NOTIFICATION CLICK
-    ========================================================= */
+    ====================================================== */
 
     list.addEventListener(
         "click",
@@ -3085,23 +3094,40 @@ function initializeNotificationWidget() {
 
             const notificationId =
                 Number(
-                    action.dataset
-                        .notificationId
+                    action.dataset.notificationId
                 );
 
 
-            /*
-             * خود اعلان را از لیست پیدا می‌کنیم.
-             */
-            const notificationItem =
+            const item =
                 action.closest(
                     ".pgame-notification-item"
                 );
 
 
+            if (
+                !item
+            ) {
+
+                return;
+
+            }
+
+
+            const type =
+                item.dataset.type ||
+                "general";
+
+
+            const referenceId =
+                Number(
+                    item.dataset.referenceId ||
+                    0
+                );
+
+
             const title =
-                notificationItem
-                    ?.querySelector(
+                item
+                    .querySelector(
                         ".pgame-notification-title"
                     )
                     ?.textContent
@@ -3111,8 +3137,8 @@ function initializeNotificationWidget() {
 
 
             const message =
-                notificationItem
-                    ?.querySelector(
+                item
+                    .querySelector(
                         ".pgame-notification-text"
                     )
                     ?.textContent
@@ -3121,82 +3147,46 @@ function initializeNotificationWidget() {
                     "";
 
 
-            const notificationType =
-                notificationItem
-                    ?.dataset
-                    ?.type
-                    ||
-                    "general";
-
-
-            const referenceId =
-                Number(
-                    notificationItem
-                        ?.dataset
-                        ?.referenceId
-                    ||
-                    0
-                );
-
-
-            /*
-             * خوانده‌شده کردن اعلان
-             */
-            try {
-
-                await fetch(
-                    `/api/notifications/${notificationId}/read`,
-                    {
-                        method:
-                            "POST",
-
-                        credentials:
-                            "same-origin"
-                    }
-                );
-
-            } catch (
-                error
+            if (
+                Number.isInteger(
+                    notificationId
+                ) &&
+                notificationId > 0
             ) {
 
-                console.error(
-                    "PGAME_NOTIFICATION_READ_ERROR",
+                try {
+
+                    await fetch(
+                        `/api/notifications/${notificationId}/read`,
+                        {
+                            method:
+                                "POST",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+                } catch (
                     error
-                );
+                ) {
+
+                    console.error(
+                        "PGAME_NOTIFICATION_READ_ERROR",
+                        error
+                    );
+
+                }
 
             }
 
 
-            /*
-             * نمایش جزئیات فعلاً با
-             * اطلاعات خود اعلان.
-             *
-             * در بخش Worker، برای news/poll/support
-             * اطلاعات مرجع کامل را هم اضافه می‌کنیم.
-             */
-            detailsTitle.textContent =
-                title;
-
-
-            detailsBody.textContent =
-                message;
-
-
-            detailsMeta.textContent =
-                notificationType === "news"
-                    ? "📰 خبر PGame"
-                    : notificationType === "poll"
-                        ? "📊 نظرسنجی PGame"
-                        : notificationType === "support"
-                            ? "💬 پاسخ مدیریت"
-                            : "🔔 اعلان PGame";
-
-
-            /*
-             * فعلاً برای جلوگیری از هشدار
-             * unused variable
-             */
-            void referenceId;
+            item.classList.remove(
+                "unread"
+            );
 
 
             panel.classList.remove(
@@ -3204,30 +3194,61 @@ function initializeNotificationWidget() {
             );
 
 
-            details.classList.add(
-                "open"
+            await loadNotificationDetails(
+                type,
+                referenceId,
+                title,
+                message
             );
 
 
-            /*
-             * بروزرسانی Badge
-             */
             await loadNotifications();
 
         }
     );
 
 
-    /* =========================================================
+    /* =====================================================
+       ESC CLOSE
+    ====================================================== */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key !==
+                "Escape"
+            ) {
+
+                return;
+
+            }
+
+
+            panel.classList.remove(
+                "open"
+            );
+
+
+            details.classList.remove(
+                "open"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
        INITIAL LOAD
-    ========================================================= */
+    ====================================================== */
 
     loadNotifications();
 
 
-    /* =========================================================
+    /* =====================================================
        AUTO REFRESH
-    ========================================================= */
+    ====================================================== */
 
     setInterval(
         loadNotifications,
@@ -3235,415 +3256,36 @@ function initializeNotificationWidget() {
     );
 
 }
+
+
 /* =========================================================
-   NOTIFICATION DETAILS
-   ---------------------------------------------------------
-   خبر / نظرسنجی / پاسخ مدیریت
+   MAIN INITIALIZATION
 ========================================================= */
 
-async function loadNotificationDetails(
-    type,
-    referenceId,
-    fallbackTitle,
-    fallbackMessage
-) {
+function initializePGame() {
 
-    const titleElement =
-        document.getElementById(
-            "pgame-notification-details-title"
-        );
+    checkFullBan();
 
+    initializeNavigation();
 
-    const bodyElement =
-        document.getElementById(
-            "pgame-notification-details-body"
-        );
+    initializeButtonPress();
 
+    initializeParallax();
 
-    const metaElement =
-        document.getElementById(
-            "pgame-notification-details-meta"
-        );
+    initializeAuthHeader();
 
+    initializeSupportWidget();
 
-    const details =
-        document.getElementById(
-            "pgame-notification-details"
-        );
+    initializeNotificationWidget();
 
 
     if (
-        !titleElement ||
-        !bodyElement ||
-        !metaElement ||
-        !details
+        app
     ) {
 
-        return;
+        initializeScrollReveal();
 
-    }
-
-
-    /*
-     * حالت اولیه
-     */
-    titleElement.textContent =
-        fallbackTitle ||
-        "اعلان";
-
-
-    bodyElement.textContent =
-        fallbackMessage ||
-        "";
-
-
-    metaElement.textContent =
-        "🔔 اعلان PGame";
-
-
-    details.classList.add(
-        "open"
-    );
-
-
-    /*
-     * اگر Reference ID وجود نداشت،
-     * همان متن اعلان را نشان می‌دهیم.
-     */
-    if (
-        !referenceId
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-
-        /* =====================================================
-           NEWS
-        ====================================================== */
-
-        if (
-            type ===
-            "news"
-        ) {
-
-            const response =
-                await fetch(
-                    `/api/news/${referenceId}`,
-                    {
-                        method:
-                            "GET",
-
-                        credentials:
-                            "same-origin",
-
-                        cache:
-                            "no-store"
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (
-                response.ok &&
-                data.success &&
-                data.news
-            ) {
-
-                const news =
-                    data.news;
-
-
-                titleElement.textContent =
-                    "📰 " +
-                    (
-                        news.title ||
-                        fallbackTitle ||
-                        "خبر جدید"
-                    );
-
-
-                bodyElement.textContent =
-                    news.content ||
-                    fallbackMessage ||
-                    "";
-
-
-                metaElement.textContent =
-                    [
-                        "📰 خبر PGame",
-
-                        news.category
-                            ? `دسته‌بندی: ${news.category}`
-                            : "",
-
-                        news.author_username
-                            ? `نویسنده: ${news.author_username}`
-                            : "",
-
-                        news.published_at
-                            ? formatNotificationDate(
-                                news.published_at
-                            )
-                            : ""
-                    ]
-                    .filter(Boolean)
-                    .join(" • ");
-
-
-                return;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           POLL
-        ====================================================== */
-
-        if (
-            type ===
-            "poll"
-        ) {
-
-            const response =
-                await fetch(
-                    "/api/polls",
-                    {
-                        method:
-                            "GET",
-
-                        credentials:
-                            "same-origin",
-
-                        cache:
-                            "no-store"
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (
-                response.ok &&
-                data.success &&
-                Array.isArray(
-                    data.polls
-                )
-            ) {
-
-                const poll =
-                    data.polls.find(
-                        item =>
-                            Number(
-                                item.id
-                            ) ===
-                            Number(
-                                referenceId
-                            )
-                    );
-
-
-                if (
-                    poll
-                ) {
-
-                    titleElement.textContent =
-                        "📊 " +
-                        (
-                            poll.question ||
-                            fallbackTitle ||
-                            "نظرسنجی جدید"
-                        );
-
-
-                    let optionText =
-                        "";
-
-
-                    if (
-                        Array.isArray(
-                            poll.options
-                        )
-                    ) {
-
-                        optionText =
-                            poll.options
-                                .map(
-                                    option => {
-
-                                        const votes =
-                                            Number(
-                                                option.votes ||
-                                                0
-                                            );
-
-
-                                        return (
-                                            `• ${option.option_text}` +
-                                            ` — ${votes} رأی`
-                                        );
-
-                                    }
-                                )
-                                .join("\n");
-
-                    }
-
-
-                    bodyElement.textContent =
-                        [
-                            poll.question,
-
-                            "",
-
-                            optionText
-                        ]
-                        .filter(
-                            part =>
-                                part !==
-                                ""
-                        )
-                        .join("\n");
-
-
-                    metaElement.textContent =
-                        [
-                            "📊 نظرسنجی PGame",
-
-                            `مجموع رأی‌ها: ${
-                                Number(
-                                    poll.total_votes ||
-                                    0
-                                )
-                            }`,
-
-                            poll.published_at
-                                ? formatNotificationDate(
-                                    poll.published_at
-                                )
-                                : ""
-                        ]
-                        .filter(Boolean)
-                        .join(" • ");
-
-
-                    return;
-
-                }
-
-            }
-
-        }
-
-
-        /* =====================================================
-           SUPPORT
-        ====================================================== */
-
-        if (
-            type ===
-            "support"
-        ) {
-
-            /*
-             * پاسخ مدیریت را از API موجود می‌گیریم.
-             */
-            const response =
-                await fetch(
-                    "/api/support/my",
-                    {
-                        method:
-                            "GET",
-
-                        credentials:
-                            "same-origin",
-
-                        cache:
-                            "no-store"
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (
-                response.ok &&
-                data.success &&
-                Array.isArray(
-                    data.messages
-                )
-            ) {
-
-                /*
-                 * referenceId برای support
-                 * شناسه پیام پشتیبانی است.
-                 */
-                const supportMessage =
-                    data.messages.find(
-                        item =>
-                            Number(
-                                item.id
-                            ) ===
-                            Number(
-                                referenceId
-                            )
-                    );
-
-
-                if (
-                    supportMessage
-                ) {
-
-                    titleElement.textContent =
-                        "💬 پاسخ مدیریت";
-
-
-                    bodyElement.textContent =
-                        supportMessage.reply ||
-                        "پاسخی ثبت نشده است.";
-
-
-                    metaElement.textContent =
-                        supportMessage.replied_at
-                            ? (
-                                "پاسخ داده شده در " +
-                                formatNotificationDate(
-                                    supportMessage.replied_at
-                                )
-                            )
-                            : "پاسخ مدیریت";
-
-
-                    return;
-
-                }
-
-            }
-
-        }
-
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            "PGAME_NOTIFICATION_DETAILS_ERROR",
-            error
-        );
+        initializeSmoothNavigation();
 
     }
 
@@ -3651,215 +3293,7 @@ async function loadNotificationDetails(
 
 
 /* =========================================================
-   REPLACE NOTIFICATION CLICK HANDLER
-   ---------------------------------------------------------
-   این بخش را داخل initializeNotificationWidget
-   جای Click Handler قبلی قرار بده.
-========================================================= */
-
-list.addEventListener(
-    "click",
-    async event => {
-
-        const action =
-            event.target.closest(
-                "[data-notification-id]"
-            );
-
-
-        if (
-            !action
-        ) {
-
-            return;
-
-        }
-
-
-        const notificationId =
-            Number(
-                action.dataset
-                    .notificationId
-            );
-
-
-        if (
-            !Number.isInteger(
-                notificationId
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        const notificationItem =
-            action.closest(
-                ".pgame-notification-item"
-            );
-
-
-        if (
-            !notificationItem
-        ) {
-
-            return;
-
-        }
-
-
-        const title =
-            notificationItem
-                .querySelector(
-                    ".pgame-notification-title"
-                )
-                ?.textContent
-                ?.trim()
-                ||
-                "اعلان";
-
-
-        const message =
-            notificationItem
-                .querySelector(
-                    ".pgame-notification-text"
-                )
-                ?.textContent
-                ?.trim()
-                ||
-                "";
-
-
-        const type =
-            notificationItem
-                .dataset
-                .type
-                ||
-                "general";
-
-
-        const referenceId =
-            Number(
-                notificationItem
-                    .dataset
-                    .referenceId
-                ||
-                0
-            );
-
-
-        /*
-         * اعلان را خوانده‌شده می‌کنیم.
-         */
-        try {
-
-            await fetch(
-                `/api/notifications/${notificationId}/read`,
-                {
-                    method:
-                        "POST",
-
-                    credentials:
-                        "same-origin",
-
-                    cache:
-                        "no-store"
-                }
-            );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "PGAME_NOTIFICATION_READ_ERROR",
-                error
-            );
-
-        }
-
-
-        /*
-         * پنل لیست بسته می‌شود.
-         */
-        panel.classList.remove(
-            "open"
-        );
-
-
-        /*
-         * پنجره جزئیات باز می‌شود.
-         */
-        await loadNotificationDetails(
-            type,
-            referenceId,
-            title,
-            message
-        );
-
-
-        /*
-         * Badge دوباره بررسی می‌شود.
-         */
-        await loadNotifications();
-
-    }
-);
-
-
-/* =========================================================
-   CLOSE DETAILS WITH ESC
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            const details =
-                document.getElementById(
-                    "pgame-notification-details"
-                );
-
-
-            const panel =
-                document.getElementById(
-                    "vexon-notification-panel"
-                );
-
-
-            if (
-                details
-            ) {
-
-                details.classList.remove(
-                    "open"
-                );
-
-            }
-
-
-            if (
-                panel
-            ) {
-
-                panel.classList.remove(
-                    "open"
-                );
-
-            }
-
-        }
-
-    }
-);
-/* =========================================================
-   FINAL PGAME INITIALIZATION
+   DOM READY
 ========================================================= */
 
 document.addEventListener(
@@ -3868,68 +3302,7 @@ document.addEventListener(
 
         try {
 
-            /*
-             * بررسی بن کامل
-             */
-            checkFullBan();
-
-
-            /*
-             * مشخصات کاربر در Header
-             */
-            initializeAuthHeader();
-
-
-            /*
-             * منوی اصلی
-             */
-            initializeNavigation();
-
-
-            /*
-             * افکت دکمه‌ها
-             */
-            initializeButtonPress();
-
-
-            /*
-             * Parallax
-             */
-            initializeParallax();
-
-
-            /*
-             * Scroll Reveal
-             */
-            initializeScrollReveal();
-
-
-            /*
-             * Smooth Navigation
-             */
-            initializeSmoothNavigation();
-
-
-            /*
-             * پیام به مدیریت
-             *
-             * در Messenger خودش تشخیص می‌دهد
-             * و اجرا نمی‌شود.
-             */
-            if (
-                !location.pathname.includes("/messenger") &&
-                !location.pathname.includes("messenger.html")
-            ) {
-                initializeSupportWidget();
-            }
-
-
-            /*
-             * اعلان‌ها
-             *
-             * در همه صفحات فعال است.
-             */
-            initializeNotificationWidget();
+            initializePGame();
 
         } catch (
             error
