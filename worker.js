@@ -1226,7 +1226,6 @@ async function ensureNotifications(
 }
 
 
-
 /* =========================================================
    FRIEND REQUESTS TABLE
 ========================================================= */
@@ -1280,6 +1279,7 @@ async function ensureFriendRequests(
         `)
         .run();
 
+
     await env.DB
         .prepare(`
             CREATE INDEX IF NOT EXISTS
@@ -1291,6 +1291,7 @@ async function ensureFriendRequests(
             )
         `)
         .run();
+
 
     await env.DB
         .prepare(`
@@ -1397,20 +1398,6 @@ async function notifyUser(
 }
 
 
-/* =========================================================
-   END OF PART 1
-========================================================= */
-
-/*
-   ادامه در بخش ۲:
-   - ensureMessenger
-   - clean / ban / leaderboard helpers
-   - fetch
-   - register
-   - login
-   - /api/me
-   - /api/admin/me
-*/
 /* =========================================================
    MESSENGER TABLES
 ========================================================= */
@@ -2507,4640 +2494,5310 @@ export default {
                 });
 
             }
+                        /* =========================================================
+               FRIENDS — SEARCH USERS
+            ========================================================= */
 
-            /* =========================================================
-   FRIENDS — SEARCH USERS
-========================================================= */
+            if (
+                path ===
+                    "/api/friends/search" &&
+                method ===
+                    "GET"
+            ) {
 
-if (
-    url.pathname ===
-        "/api/friends/search" &&
-    request.method === "GET"
-) {
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
 
-    const accessResult =
-        await access(
-            request,
-            env
-        );
 
-    if (!accessResult.ok) {
+                if (
+                    !accessResult.ok
+                ) {
 
-        return json(
-            {
-                success: false,
-                message: "ابتدا وارد حساب شوید."
-            },
-            accessResult.status
-        );
+                    return json(
+                        {
+                            success:
+                                false,
 
-    }
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
 
-    const query =
-        (url.searchParams.get("q") || "")
-            .trim()
-            .toLowerCase();
+                }
 
-    if (!query) {
 
-        return json({
-            success: true,
-            users: []
-        });
+                await ensureFriendRequests(
+                    env
+                );
 
-    }
 
-    const users =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    username
-                FROM users
-                WHERE
-                    id != ?1
-                    AND LOWER(username)
-                        LIKE ?2
-                ORDER BY
-                    username ASC
-                LIMIT 20
-            `)
-            .bind(
-                accessResult.user.id,
-                `%${query}%`
-            )
-            .all();
-
-    return json({
-        success: true,
-        users:
-            users.results || []
-    });
-
-}
-
-/* =========================================================
-   FRIENDS — SEND REQUEST
-========================================================= */
-
-if (
-    path ===
-        "/api/friends/request" &&
-    method ===
-        "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-    if (!accessResult.ok) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب شوید."
-            },
-            accessResult.status
-        );
-
-    }
-
-    await ensureFriendRequests(
-        env
-    );
-
-    let body =
-        {};
-
-    try {
-
-        body =
-            await request.json();
-
-    } catch {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "داده درخواست نامعتبر است."
-            },
-            400
-        );
-
-    }
-
-    const targetUserId =
-        Number(
-            body.user_id
-        );
-
-    if (
-        !Number.isInteger(
-            targetUserId
-        ) ||
-        targetUserId <= 0
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کاربر نامعتبر است."
-            },
-            400
-        );
-
-    }
-
-    if (
-        targetUserId ===
-        accessResult.user.id
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "نمی‌توانی خودت را به دوستانت اضافه کنی."
-            },
-            400
-        );
-
-    }
-
-    const targetUser =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    username
-                FROM users
-                WHERE id = ?1
-                LIMIT 1
-            `)
-            .bind(
-                targetUserId
-            )
-            .first();
-
-    if (!targetUser) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این کاربر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-    const existing =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    requester_id,
-                    receiver_id,
-                    status
-                FROM friend_requests
-                WHERE
-                    (
-                        requester_id = ?1
-                        AND receiver_id = ?2
-                    )
-                    OR
-                    (
-                        requester_id = ?2
-                        AND receiver_id = ?1
-                    )
-                ORDER BY
-                    id DESC
-                LIMIT 1
-            `)
-            .bind(
-                accessResult.user.id,
-                targetUserId
-            )
-            .first();
-
-    if (
-        existing?.status ===
-        "accepted"
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این کاربر از قبل دوستت است."
-            },
-            409
-        );
-
-    }
-
-    if (
-        existing?.status ===
-        "pending"
-    ) {
-
-        if (
-            Number(
-                existing.requester_id
-            ) ===
-            Number(
-                accessResult.user.id
-            )
-        ) {
-
-            return json(
-                {
-                    success:
-                        false,
-
-                    message:
-                        "درخواست دوستی قبلاً ارسال شده."
-                },
-                409
-            );
-
-        }
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این کاربر قبلاً برای تو درخواست فرستاده است."
-            },
-            409
-        );
-
-    }
-
-    const inserted =
-        await env.DB
-            .prepare(`
-                INSERT INTO friend_requests(
-                    requester_id,
-                    receiver_id,
-                    status,
-                    created_at,
-                    updated_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    'pending',
-                    CURRENT_TIMESTAMP,
-                    CURRENT_TIMESTAMP
-                )
-            `)
-            .bind(
-                accessResult.user.id,
-                targetUserId
-            )
-            .run();
-
-    const requestId =
-        inserted.meta?.last_row_id ??
-        null;
-
-    await notifyUser(
-        env,
-        targetUserId,
-        "friend_request",
-        "👥 درخواست دوستی جدید",
-        `${accessResult.user.username} برایت درخواست دوستی فرستاد.`,
-        requestId
-    );
-
-    return json({
-        success:
-            true,
-
-        message:
-            "✅ درخواست دوستی ارسال شد.",
-
-        request_id:
-            requestId,
-
-        user: {
-            id:
-                targetUser.id,
-
-            username:
-                targetUser.username
-        }
-    });
-
-}
-
-
-            /* =================================================
-               END OF PART 2
-            ================================================== */
-
-            /*
-                بخش ۳ شامل:
-
-                - News
-                - Reactions
-                - Polls
-                - Notifications
-                - Support
-                - Admin APIs
-            */
-/* =========================================================
-   NEWS
-========================================================= */
-
-if (
-    path === "/api/news" &&
-    method === "GET"
-) {
-
-    await ensureNews(env);
-
-    const limit =
-        limitParam(
-            url.searchParams.get("limit"),
-            50,
-            20
-        );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    title,
-                    content,
-                    image_url,
-                    category,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-
-                FROM news
-
-                WHERE status = 'published'
-
-                ORDER BY
-                    published_at DESC,
-                    id DESC
-
-                LIMIT ?1
-            `)
-            .bind(
-                limit
-            )
-            .all();
-
-
-    return json({
-        success:
-            true,
-
-        news:
-            result.results ??
-            []
-    });
-
-}
-
-
-/* =========================================================
-   SINGLE NEWS
-========================================================= */
-
-const singleNews =
-    path.match(
-        /^\/api\/news\/(\d+)$/
-    );
-
-
-if (
-    singleNews &&
-    method === "GET"
-) {
-
-    await ensureNews(env);
-
-
-    const news =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    title,
-                    content,
-                    image_url,
-                    category,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-
-                FROM news
-
-                WHERE
-                    id = ?1
-                    AND status = 'published'
-
-                LIMIT 1
-            `)
-            .bind(
-                Number(
-                    singleNews[1]
-                )
-            )
-            .first();
-
-
-    if (
-        !news
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این خبر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    return json({
-        success:
-            true,
-
-        news
-    });
-
-}
-
-
-/* =========================================================
-   NEWS REACTIONS
-========================================================= */
-
-const reactionMatch =
-    path.match(
-        /^\/api\/news\/(\d+)\/reaction$/
-    );
-
-
-if (
-    reactionMatch &&
-    method === "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب PGame شو."
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    if (
-        accessResult.ban &&
-        (
-            accessResult.ban.ban_type ===
-                "full" ||
-
-            accessResult.ban.ban_type ===
-                "reactions"
-        )
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    accessResult.ban.ban_type ===
-                        "full"
-
-                        ? "🚫 دسترسی این حساب به PGame محدود شده است."
-
-                        : "❤️ این حساب از واکنش به اخبار محروم شده است.",
-
-                banned:
-                    true,
-
-                ban_type:
-                    accessResult.ban.ban_type
-            },
-            403
-        );
-
-    }
-
-
-    await ensureNewsReactions(
-        env
-    );
-
-
-    const body =
-        await request.json();
-
-
-    const newsId =
-        Number(
-            reactionMatch[1]
-        );
-
-
-    const reaction =
-        typeof body.reaction ===
-            "string"
-
-            ? body.reaction.trim()
-
-            : "";
-
-
-    if (
-        !Number.isInteger(
-            newsId
-        ) ||
-        newsId < 1 ||
-        !ALLOWED_REACTIONS.has(
-            reaction
-        )
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "نوع واکنش یا شناسه خبر نامعتبر است."
-            },
-            400
-        );
-
-    }
-
-
-    const news =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id
-                FROM news
-                WHERE
-                    id = ?1
-                    AND status = 'published'
-                LIMIT 1
-            `)
-            .bind(
-                newsId
-            )
-            .first();
-
-
-    if (
-        !news
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این خبر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    const existing =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    reaction
-                FROM news_reactions
-                WHERE
-                    news_id = ?1
-                    AND user_id = ?2
-                LIMIT 1
-            `)
-            .bind(
-                newsId,
-                accessResult.user.id
-            )
-            .first();
-
-
-    if (
-        existing &&
-        existing.reaction ===
-            reaction
-    ) {
-
-        await env.DB
-            .prepare(`
-                DELETE FROM news_reactions
-                WHERE id = ?1
-            `)
-            .bind(
-                existing.id
-            )
-            .run();
-
-    } else if (
-        existing
-    ) {
-
-        await env.DB
-            .prepare(`
-                UPDATE news_reactions
-
-                SET
-                    reaction = ?1,
-                    created_at =
-                        CURRENT_TIMESTAMP
-
-                WHERE id = ?2
-            `)
-            .bind(
-                reaction,
-                existing.id
-            )
-            .run();
-
-    } else {
-
-        await env.DB
-            .prepare(`
-                INSERT INTO news_reactions(
-                    news_id,
-                    user_id,
-                    reaction,
-                    created_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3,
-                    CURRENT_TIMESTAMP
-                )
-            `)
-            .bind(
-                newsId,
-                accessResult.user.id,
-                reaction
-            )
-            .run();
-
-    }
-
-
-    const countsResult =
-        await env.DB
-            .prepare(`
-                SELECT
-                    reaction,
-                    COUNT(*) AS count
-
-                FROM news_reactions
-
-                WHERE
-                    news_id = ?1
-
-                GROUP BY
-                    reaction
-            `)
-            .bind(
-                newsId
-            )
-            .all();
-
-
-    const counts = {};
-
-
-    for (
-        const item
-        of countsResult.results ??
-        []
-    ) {
-
-        counts[
-            item.reaction
-        ] =
-            Number(
-                item.count
-            );
-
-    }
-
-
-    const current =
-        await env.DB
-            .prepare(`
-                SELECT
-                    reaction
-
-                FROM news_reactions
-
-                WHERE
-                    news_id = ?1
-                    AND user_id = ?2
-
-                LIMIT 1
-            `)
-            .bind(
-                newsId,
-                accessResult.user.id
-            )
-            .first();
-
-
-    return json({
-
-        success:
-            true,
-
-        reactions:
-            counts,
-
-        my_reaction:
-            current?.reaction ??
-            null
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN NEWS LIST
-========================================================= */
-
-if (
-    path === "/api/admin/news" &&
-    method === "GET"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    admin.status ===
-                        401
-
-                        ? "ابتدا وارد حساب شو."
-
-                        : "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await ensureNews(
-        env
-    );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT *
-                FROM news
-                ORDER BY
-                    created_at DESC,
-                    id DESC
-            `)
-            .all();
-
-
-    return json({
-        success:
-            true,
-
-        news:
-            result.results ??
-            []
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN CREATE NEWS
-========================================================= */
-
-if (
-    path === "/api/admin/news" &&
-    method === "POST"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    admin.status ===
-                        401
-
-                        ? "ابتدا وارد حساب شو."
-
-                        : "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await ensureNews(
-        env
-    );
-
-
-    const body =
-        await request.json();
-
-
-    const title =
-        clean(
-            body.title,
-            200
-        );
-
-
-    const content =
-        clean(
-            body.content,
-            20000
-        );
-
-
-    const imageUrl =
-        clean(
-            body.image_url,
-            1000
-        );
-
-
-    const category =
-        clean(
-            body.category ||
-                "general",
-            50
-        ) ||
-        "general";
-
-
-    const status =
-        body.status ===
-            "published"
-
-            ? "published"
-
-            : "draft";
-
-
-    if (
-        title.length < 3 ||
-        content.length < 3
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "عنوان و متن خبر را کامل وارد کن."
-            },
-            400
-        );
-
-    }
-
-
-    const publishedAt =
-        status ===
-            "published"
-
-            ? new Date()
-                .toISOString()
-
-            : null;
-
-
-    const inserted =
-        await env.DB
-            .prepare(`
-                INSERT INTO news(
-                    title,
-                    content,
-                    image_url,
-                    category,
-                    status,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    CURRENT_TIMESTAMP,
-                    CURRENT_TIMESTAMP,
-                    ?7
-                )
-            `)
-            .bind(
-                title,
-                content,
-                imageUrl ||
-                    null,
-                category,
-                status,
-                admin.user.username,
-                publishedAt
-            )
-            .run();
-
-
-    const newsId =
-        inserted.meta
-            ?.last_row_id;
-
-
-    /*
-     * خبر منتشرشده → اعلان برای همه
-     */
-    if (
-        status ===
-            "published"
-    ) {
-
-        await notifyAllUsers(
-            env,
-
-            "news",
-
-            "📰 خبر جدید PGame",
-
-            title,
-
-            newsId ??
-                null
-        );
-
-    }
-
-
-    return json(
-        {
-            success:
-                true,
-
-            message:
-                status ===
-                    "published"
-
-                    ? "خبر منتشر شد."
-
-                    : "خبر به‌عنوان پیش‌نویس ذخیره شد.",
-
-            id:
-                newsId ??
-                null
-        },
-        201
-    );
-
-}
-
-
-/* =========================================================
-   ADMIN UPDATE / DELETE NEWS
-========================================================= */
-
-const adminNewsMatch =
-    path.match(
-        /^\/api\/admin\/news\/(\d+)$/
-    );
-
-
-if (
-    adminNewsMatch &&
-    (
-        method === "PUT" ||
-        method === "DELETE"
-    )
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await ensureNews(
-        env
-    );
-
-
-    const id =
-        Number(
-            adminNewsMatch[1]
-        );
-
-
-    const existing =
-        await env.DB
-            .prepare(`
-                SELECT *
-                FROM news
-                WHERE id = ?1
-                LIMIT 1
-            `)
-            .bind(
-                id
-            )
-            .first();
-
-
-    if (
-        !existing
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "خبر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    if (
-        method ===
-            "DELETE"
-    ) {
-
-        await env.DB
-            .prepare(`
-                DELETE FROM news
-                WHERE id = ?1
-            `)
-            .bind(
-                id
-            )
-            .run();
-
-
-        return json({
-            success:
-                true,
-
-            message:
-                "خبر حذف شد."
-        });
-
-    }
-
-
-    const body =
-        await request.json();
-
-
-    const title =
-        clean(
-            body.title ??
-                existing.title,
-            200
-        );
-
-
-    const content =
-        clean(
-            body.content ??
-                existing.content,
-            20000
-        );
-
-
-    const imageUrl =
-        clean(
-            body.image_url ??
-                existing.image_url ??
-                "",
-            1000
-        );
-
-
-    const category =
-        clean(
-            body.category ??
-                existing.category ??
-                "general",
-            50
-        ) ||
-        "general";
-
-
-    const status =
-        body.status ===
-            "published"
-
-            ? "published"
-
-            : "draft";
-
-
-    let publishedAt =
-        existing.published_at;
-
-
-    const wasPublished =
-        existing.status ===
-            "published";
-
-
-    if (
-        status ===
-            "published" &&
-        !publishedAt
-    ) {
-
-        publishedAt =
-            new Date()
-                .toISOString();
-
-    }
-
-
-    if (
-        status ===
-            "draft"
-    ) {
-
-        publishedAt =
-            null;
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            UPDATE news
-
-            SET
-                title = ?1,
-                content = ?2,
-                image_url = ?3,
-                category = ?4,
-                status = ?5,
-                updated_at =
-                    CURRENT_TIMESTAMP,
-                published_at = ?6
-
-            WHERE id = ?7
-        `)
-        .bind(
-            title,
-            content,
-            imageUrl ||
-                null,
-            category,
-            status,
-            publishedAt,
-            id
-        )
-        .run();
-
-
-    /*
-     * اگر خبر تازه منتشر شده باشد،
-     * اعلان ارسال می‌شود.
-     */
-    if (
-        status ===
-            "published" &&
-        !wasPublished
-    ) {
-
-        await notifyAllUsers(
-            env,
-
-            "news",
-
-            "📰 خبر جدید PGame",
-
-            title,
-
-            id
-        );
-
-    }
-
-
-    return json({
-        success:
-            true,
-
-        message:
-            "خبر با موفقیت ویرایش شد."
-    });
-
-}
-
-
-/* =========================================================
-   PUBLIC POLLS
-========================================================= */
-
-if (
-    path === "/api/polls" &&
-    method === "GET"
-) {
-
-    await ensurePolls(
-        env
-    );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    question,
-                    status,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-
-                FROM polls
-
-                WHERE status =
-                    'published'
-
-                ORDER BY
-                    published_at DESC,
-                    id DESC
-
-                LIMIT 50
-            `)
-            .all();
-
-
-    const polls = [];
-
-
-    for (
-        const poll
-        of result.results ??
-        []
-    ) {
-
-        const options =
-            await env.DB
-                .prepare(`
-                    SELECT
-                        id,
-                        option_text,
-                        sort_order,
-                        (
-                            SELECT COUNT(*)
-                            FROM poll_votes
-                            WHERE
-                                poll_votes.option_id =
-                                    poll_options.id
-                        ) AS votes
-
-                    FROM poll_options
-
-                    WHERE poll_id = ?1
-
-                    ORDER BY
-                        sort_order ASC,
-                        id ASC
-                `)
-                .bind(
-                    poll.id
-                )
-                .all();
-
-
-        const optionList =
-            options.results ??
-            [];
-
-
-        const totalVotes =
-            optionList.reduce(
-                (
-                    total,
-                    option
-                ) =>
-                    total +
-                    Number(
-                        option.votes ??
-                        0
-                    ),
-                0
-            );
-
-
-        polls.push({
-
-            ...poll,
-
-            options:
-                optionList,
-
-            total_votes:
-                totalVotes
-
-        });
-
-    }
-
-
-    return json({
-        success:
-            true,
-
-        polls
-
-    });
-
-}
-
-
-/* =========================================================
-   END OF PART 3
-========================================================= */
-
-/*
-   بخش ۴ شامل:
-
-   - ساخت Poll توسط Admin
-   - رأی دادن به Poll
-   - API Notifications
-   - Support + اعلان پاسخ مدیریت
-   - Rubika
-   - Messenger
-   - return env.ASSETS.fetch(request)
-   - catch
-*/
-/* =========================================================
-   ADMIN POLLS
-========================================================= */
-
-if (
-    path === "/api/admin/polls" &&
-    method === "GET"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await ensurePolls(
-        env
-    );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    question,
-                    status,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-
-                FROM polls
-
-                ORDER BY
-                    created_at DESC,
-                    id DESC
-            `)
-            .all();
-
-
-    const polls = [];
-
-
-    for (
-        const poll
-        of result.results ??
-        []
-    ) {
-
-        const options =
-            await env.DB
-                .prepare(`
-                    SELECT
-                        id,
-                        option_text,
-                        sort_order
-
-                    FROM poll_options
-
-                    WHERE poll_id = ?1
-
-                    ORDER BY
-                        sort_order ASC,
-                        id ASC
-                `)
-                .bind(
-                    poll.id
-                )
-                .all();
-
-
-        polls.push({
-            ...poll,
-
-            options:
-                options.results ??
-                []
-        });
-
-    }
-
-
-    return json({
-        success:
-            true,
-
-        polls
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN CREATE POLL
-========================================================= */
-
-if (
-    path === "/api/admin/polls" &&
-    method === "POST"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    admin.status === 401
-                        ? "ابتدا وارد حساب شو."
-                        : "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await ensurePolls(
-        env
-    );
-
-
-    const body =
-        await request.json();
-
-
-    const question =
-        clean(
-            body.question,
-            500
-        );
-
-
-    const status =
-        body.status ===
-            "published"
-
-            ? "published"
-
-            : "draft";
-
-
-    let options =
-        Array.isArray(
-            body.options
-        )
-            ? body.options
-            : [];
-
-
-    options =
-        options
-            .map(
-                option =>
+                const query =
                     clean(
-                        typeof option ===
-                            "string"
-                            ? option
-                            : option?.option_text,
-                        250
+                        url.searchParams.get(
+                            "q"
+                        ) ||
+                        "",
+                        40
                     )
-            )
-            .filter(Boolean)
-            .slice(
-                0,
-                10
-            );
-
-
-    if (
-        question.length < 3
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "سؤال نظرسنجی را کامل وارد کن."
-            },
-            400
-        );
-
-    }
-
-
-    if (
-        options.length < 2
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "حداقل دو گزینه برای نظرسنجی لازم است."
-            },
-            400
-        );
-
-    }
-
-
-    const publishedAt =
-        status ===
-            "published"
-
-            ? new Date()
-                .toISOString()
-
-            : null;
-
-
-    const inserted =
-        await env.DB
-            .prepare(`
-                INSERT INTO polls(
-                    question,
-                    status,
-                    author_username,
-                    created_at,
-                    updated_at,
-                    published_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3,
-                    CURRENT_TIMESTAMP,
-                    CURRENT_TIMESTAMP,
-                    ?4
-                )
-            `)
-            .bind(
-                question,
-                status,
-                admin.user.username,
-                publishedAt
-            )
-            .run();
-
-
-    const pollId =
-        inserted.meta
-            ?.last_row_id;
-
-
-    if (
-        !pollId
-    ) {
-
-        throw new Error(
-            "poll id was not created"
-        );
-
-    }
-
-
-    for (
-        let i = 0;
-        i < options.length;
-        i++
-    ) {
-
-        await env.DB
-            .prepare(`
-                INSERT INTO poll_options(
-                    poll_id,
-                    option_text,
-                    sort_order
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3
-                )
-            `)
-            .bind(
-                pollId,
-                options[i],
-                i
-            )
-            .run();
-
-    }
-
-
-    /*
-     * نظرسنجی منتشرشده → اعلان برای همه
-     */
-
-    if (
-        status ===
-            "published"
-    ) {
-
-        await notifyAllUsers(
-            env,
-
-            "poll",
-
-            "📊 نظرسنجی جدید PGame",
-
-            question,
-
-            pollId
-        );
-
-    }
-
-
-    return json(
-        {
-            success:
-                true,
-
-            message:
-                status ===
-                    "published"
-
-                    ? "نظرسنجی منتشر شد."
-
-                    : "نظرسنجی به‌عنوان پیش‌نویس ذخیره شد.",
-
-            id:
-                pollId
-        },
-        201
-    );
-
-}
-
-
-/* =========================================================
-   VOTE POLL
-========================================================= */
-
-const votePollMatch =
-    path.match(
-        /^\/api\/polls\/(\d+)\/vote$/
-    );
-
-
-if (
-    votePollMatch &&
-    method === "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب PGame شو."
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    await ensurePolls(
-        env
-    );
-
-
-    const pollId =
-        Number(
-            votePollMatch[1]
-        );
-
-
-    const body =
-        await request.json();
-
-
-    const optionId =
-        Number(
-            body.option_id
-        );
-
-
-    if (
-        !Number.isInteger(
-            pollId
-        ) ||
-        !Number.isInteger(
-            optionId
-        )
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "شناسه نظرسنجی یا گزینه نامعتبر است."
-            },
-            400
-        );
-
-    }
-
-
-    const poll =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    question
-
-                FROM polls
-
-                WHERE
-                    id = ?1
-                    AND status = 'published'
-
-                LIMIT 1
-            `)
-            .bind(
-                pollId
-            )
-            .first();
-
-
-    if (
-        !poll
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "نظرسنجی پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    const option =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    option_text
-
-                FROM poll_options
-
-                WHERE
-                    id = ?1
-                    AND poll_id = ?2
-
-                LIMIT 1
-            `)
-            .bind(
-                optionId,
-                pollId
-            )
-            .first();
-
-
-    if (
-        !option
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "گزینه انتخاب‌شده معتبر نیست."
-            },
-            400
-        );
-
-    }
-
-
-    const existingVote =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    option_id
-
-                FROM poll_votes
-
-                WHERE
-                    poll_id = ?1
-                    AND user_id = ?2
-
-                LIMIT 1
-            `)
-            .bind(
-                pollId,
-                accessResult.user.id
-            )
-            .first();
-
-
-    /*
-     * اگر قبلاً رأی داده، رأی قبلی
-     * را به گزینه جدید منتقل می‌کنیم.
-     */
-
-    if (
-        existingVote
-    ) {
-
-        await env.DB
-            .prepare(`
-                UPDATE poll_votes
-
-                SET
-                    option_id = ?1,
-                    created_at =
-                        CURRENT_TIMESTAMP
-
-                WHERE id = ?2
-            `)
-            .bind(
-                optionId,
-                existingVote.id
-            )
-            .run();
-
-    } else {
-
-        await env.DB
-            .prepare(`
-                INSERT INTO poll_votes(
-                    poll_id,
-                    option_id,
-                    user_id,
-                    created_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3,
-                    CURRENT_TIMESTAMP
-                )
-            `)
-            .bind(
-                pollId,
-                optionId,
-                accessResult.user.id
-            )
-            .run();
-
-    }
-
-
-    const options =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    option_text,
-                    (
-                        SELECT COUNT(*)
-                        FROM poll_votes
-                        WHERE
-                            poll_votes.option_id =
-                                poll_options.id
-                    ) AS votes
-
-                FROM poll_options
-
-                WHERE
-                    poll_id = ?1
-
-                ORDER BY
-                    sort_order ASC,
-                    id ASC
-            `)
-            .bind(
-                pollId
-            )
-            .all();
-
-
-    const optionList =
-        options.results ??
-        [];
-
-
-    const totalVotes =
-        optionList.reduce(
-            (
-                total,
-                item
-            ) =>
-                total +
-                Number(
-                    item.votes ??
-                    0
-                ),
-            0
-        );
-
-
-    return json({
-
-        success:
-            true,
-
-        poll: {
-            id:
-                poll.id,
-
-            question:
-                poll.question,
-
-            options:
-                optionList,
-
-            total_votes:
-                totalVotes,
-
-            my_option_id:
-                optionId
-
-        }
-
-    });
-
-}
-
-
-/* =========================================================
-   GET NOTIFICATIONS
-========================================================= */
-
-if (
-    path === "/api/notifications" &&
-    method === "GET"
-) {
-
-    const user =
-        await getCurrentUser(
-            request,
-            env
-        );
-
-
-    if (
-        !user
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                notifications:
-                    [],
-
-                unread_count:
-                    0
-            },
-            401
-        );
-
-    }
-
-
-    await ensureNotifications(
-        env
-    );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    type,
-                    title,
-                    message,
-                    reference_id,
-                    created_at,
-                    read_at
-
-                FROM notifications
-
-                WHERE
-                    user_id = ?1
-
-                ORDER BY
-                    id DESC
-
-                LIMIT 50
-            `)
-            .bind(
-                user.id
-            )
-            .all();
-
-
-    const unread =
-        await env.DB
-            .prepare(`
-                SELECT
-                    COUNT(*) AS count
-
-                FROM notifications
-
-                WHERE
-                    user_id = ?1
-                    AND read_at IS NULL
-            `)
-            .bind(
-                user.id
-            )
-            .first();
-
-
-    return json({
-
-        success:
-            true,
-
-        notifications:
-            result.results ??
-            [],
-
-        unread_count:
-            Number(
-                unread?.count ??
-                0
-            )
-
-    });
-
-}
-
-
-/* =========================================================
-   READ NOTIFICATION
-========================================================= */
-
-const notificationRead =
-    path.match(
-        /^\/api\/notifications\/(\d+)\/read$/
-    );
-
-
-if (
-    notificationRead &&
-    method === "POST"
-) {
-
-    const user =
-        await getCurrentUser(
-            request,
-            env
-        );
-
-
-    if (
-        !user
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب شو."
-            },
-            401
-        );
-
-    }
-
-
-    await ensureNotifications(
-        env
-    );
-
-
-    await env.DB
-        .prepare(`
-            UPDATE notifications
-
-            SET
-                read_at =
-                    CURRENT_TIMESTAMP
-
-            WHERE
-                id = ?1
-                AND user_id = ?2
-        `)
-        .bind(
-            Number(
-                notificationRead[1]
-            ),
-            user.id
-        )
-        .run();
-
-
-    return json({
-        success:
-            true
-    });
-
-}
-
-
-/* =========================================================
-   SUPPORT
-========================================================= */
-
-if (
-    path === "/api/support/send" &&
-    method === "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی این حساب به PGame محدود شده است."
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    if (
-        accessResult.ban &&
-        (
-            accessResult.ban.ban_type ===
-                "full" ||
-
-            accessResult.ban.ban_type ===
-                "messages"
-        )
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "💬 این حساب از ارسال پیام محروم شده است.",
-
-                banned:
-                    true,
-
-                ban_type:
-                    accessResult.ban.ban_type
-            },
-            403
-        );
-
-    }
-
-
-    const body =
-        await request.json();
-
-
-    const message =
-        clean(
-            body.message,
-            5000
-        );
-
-
-    if (
-        message.length < 2
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "پیام خیلی کوتاه است."
-            },
-            400
-        );
-
-    }
-
-
-    const inserted =
-        await env.DB
-            .prepare(`
-                INSERT INTO support_messages(
-                    user_id,
-                    username,
-                    message,
-                    reply,
-                    status,
-                    created_at,
-                    replied_at
-                )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3,
-                    NULL,
-                    'new',
-                    CURRENT_TIMESTAMP,
-                    NULL
-                )
-            `)
-            .bind(
-                accessResult.user.id,
-                accessResult.user.username,
-                message
-            )
-            .run();
-
-
-    return json(
-        {
-            success:
-                true,
-
-            message:
-                "پیامت با موفقیت برای مدیریت ارسال شد. 💚",
-
-            id:
-                inserted.meta
-                    ?.last_row_id ??
-                null
-        },
-        201
-    );
-
-}
-
-
-/* =========================================================
-   MY SUPPORT MESSAGES
-========================================================= */
-
-if (
-    path === "/api/support/my" &&
-    method === "GET"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                messages:
-                    []
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    message,
-                    reply,
-                    status,
-                    created_at,
-                    replied_at
-
-                FROM support_messages
-
-                WHERE
-                    user_id = ?1
-
-                ORDER BY
-                    created_at DESC,
-                    id DESC
-
-                LIMIT 50
-            `)
-            .bind(
-                accessResult.user.id
-            )
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        messages:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN SUPPORT LIST
-========================================================= */
-
-if (
-    path === "/api/admin/support" &&
-    method === "GET"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    user_id,
-                    username,
-                    message,
-                    reply,
-                    status,
-                    created_at,
-                    replied_at
-
-                FROM support_messages
-
-                ORDER BY
-                    CASE
-                        WHEN status = 'new'
-                        THEN 0
-                        ELSE 1
-                    END,
-
-                    created_at DESC,
-                    id DESC
-
-                LIMIT 200
-            `)
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        messages:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN REPLY
-========================================================= */
-
-const supportReply =
-    path.match(
-        /^\/api\/admin\/support\/(\d+)\/reply$/
-    );
-
-
-if (
-    supportReply &&
-    method === "POST"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    const supportId =
-        Number(
-            supportReply[1]
-        );
-
-
-    const body =
-        await request.json();
-
-
-    const reply =
-        clean(
-            body.reply,
-            5000
-        );
-
-
-    if (
-        !reply
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "متن پاسخ خالی است."
-            },
-            400
-        );
-
-    }
-
-
-    const supportMessage =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    user_id
-
-                FROM support_messages
-
-                WHERE id = ?1
-
-                LIMIT 1
-            `)
-            .bind(
-                supportId
-            )
-            .first();
-
-
-    if (
-        !supportMessage
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "پیام پشتیبانی پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            UPDATE support_messages
-
-            SET
-                reply = ?1,
-                status = 'replied',
-                replied_at =
-                    CURRENT_TIMESTAMP
-
-            WHERE id = ?2
-        `)
-        .bind(
-            reply,
-            supportId
-        )
-        .run();
-
-
-    /*
-     * پاسخ مدیریت → اعلان برای همان کاربر
-     */
-
-    await notifyUser(
-        env,
-
-        supportMessage.user_id,
-
-        "support",
-
-        "💬 پاسخ مدیریت",
-
-        "مدیریت به پیام شما پاسخ داده است.",
-
-        supportId
-    );
-
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "پاسخ با موفقیت ارسال شد."
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN USERS
-========================================================= */
-
-if (
-    path === "/api/admin/users" &&
-    method === "GET"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false
-            },
-            admin.status
-        );
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    u.id,
-                    u.username,
-
-                    ps.xp,
-                    ps.level,
-                    ps.coins,
-
-                    ub.id AS ban_id,
-                    ub.reason AS ban_reason,
-                    ub.ban_type,
-                    ub.banned_until,
-                    ub.active AS ban_active
-
-                FROM users u
-
-                LEFT JOIN player_stats ps
-                    ON ps.user_id = u.id
-
-                LEFT JOIN user_bans ub
-                    ON ub.user_id = u.id
-
-                    AND ub.active = 1
-
-                    AND (
-                        ub.banned_until IS NULL
-                        OR ub.banned_until = ''
-                        OR ub.banned_until >
-                            CURRENT_TIMESTAMP
-                    )
-
-                ORDER BY
-                    u.id DESC
-            `)
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        users:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   ADMIN BANS
-========================================================= */
-
-if (
-    path === "/api/admin/bans" &&
-    method === "GET"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false
-            },
-            admin.status
-        );
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    ub.id,
-                    ub.user_id,
-                    u.username,
-                    ub.reason,
-                    ub.ban_type,
-                    ub.banned_until,
-                    ub.created_at,
-                    ub.active
-
-                FROM user_bans ub
-
-                INNER JOIN users u
-                    ON u.id =
-                       ub.user_id
-
-                WHERE
-                    ub.active = 1
-
-                    AND (
-                        ub.banned_until IS NULL
-                        OR ub.banned_until = ''
-                        OR ub.banned_until >
-                            CURRENT_TIMESTAMP
-                    )
-
-                ORDER BY
-                    ub.created_at DESC
-            `)
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        bans:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   BAN USER
-========================================================= */
-
-const banMatch =
-    path.match(
-        /^\/api\/admin\/users\/(\d+)\/ban$/
-    );
-
-
-if (
-    banMatch &&
-    method === "POST"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    const userId =
-        Number(
-            banMatch[1]
-        );
-
-
-    if (
-        userId ===
-        admin.user.id
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ادمین نمی‌تواند خودش را بن کند."
-            },
-            400
-        );
-
-    }
-
-
-    const body =
-        await request.json();
-
-
-    const reason =
-        clean(
-            body.reason,
-            500
-        )
-        ||
-        "نقض قوانین PGame";
-
-
-    const ban_type =
-        banType(
-            body.ban_type
-        );
-
-
-    let bannedUntil =
-        null;
-
-
-    if (
-        typeof body.banned_until ===
-            "string" &&
-        body.banned_until
-    ) {
-
-        const date =
-            new Date(
-                body.banned_until
-            );
-
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            ) ||
-            date.getTime() <=
-                Date.now()
-        ) {
-
-            return json(
-                {
-                    success:
-                        false,
-
-                    message:
-                        "زمان پایان بن نامعتبر است."
-                },
-                400
-            );
-
-        }
-
-
-        bannedUntil =
-            date.toISOString();
-
-    }
-
-
-    const target =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    username
-
-                FROM users
-
-                WHERE id = ?1
-
-                LIMIT 1
-            `)
-            .bind(
-                userId
-            )
-            .first();
-
-
-    if (
-        !target
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کاربر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            UPDATE user_bans
-            SET active = 0
-            WHERE
-                user_id = ?1
-                AND active = 1
-        `)
-        .bind(
-            userId
-        )
-        .run();
-
-
-    await env.DB
-        .prepare(`
-            INSERT INTO user_bans(
-                user_id,
-                reason,
-                ban_type,
-                banned_until,
-                created_at,
-                active
-            )
-            VALUES(
-                ?1,
-                ?2,
-                ?3,
-                ?4,
-                CURRENT_TIMESTAMP,
-                1
-            )
-        `)
-        .bind(
-            userId,
-            reason,
-            ban_type,
-            bannedUntil
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "محدودیت کاربر اعمال شد.",
-
-        username:
-            target.username,
-
-        ban_type,
-
-        ban_label:
-            banLabel(
-                ban_type
-            ),
-
-        banned_until:
-            bannedUntil
-
-    });
-
-}
-
-
-/* =========================================================
-   UNBAN USER
-========================================================= */
-
-const unbanMatch =
-    path.match(
-        /^\/api\/admin\/users\/(\d+)\/unban$/
-    );
-
-
-if (
-    unbanMatch &&
-    method === "POST"
-) {
-
-    const admin =
-        await requireAdmin(
-            request,
-            env
-        );
-
-
-    if (
-        !admin.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی ادمین ندارید."
-            },
-            admin.status
-        );
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            UPDATE user_bans
-
-            SET active = 0
-
-            WHERE
-                user_id = ?1
-                AND active = 1
-        `)
-        .bind(
-            Number(
-                unbanMatch[1]
-            )
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "محدودیت کاربر برداشته شد."
-
-    });
-
-}
-
-
-/* =========================================================
-   RUBIKA CREATE CODE
-========================================================= */
-
-if (
-    path === "/api/rubika/create-code" &&
-    method === "POST"
-) {
-
-    const user =
-        await getCurrentUser(
-            request,
-            env
-        );
-
-
-    if (
-        !user
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب PGame شو."
-            },
-            401
-        );
-
-    }
-
-
-    const code =
-        String(
-            100000 +
-            (
-                crypto.getRandomValues(
-                    new Uint32Array(1)
-                )[0]
-                %
-                900000
-            )
-        );
-
-
-    const expires =
-        new Date(
-            Date.now() +
-            RUBIKA_CODE_MINUTES *
-            60000
-        )
-        .toISOString();
-
-
-    await env.DB
-        .prepare(`
-            INSERT INTO rubika_link_codes(
-                user_id,
-                code,
-                expires_at
-            )
-            VALUES(
-                ?1,
-                ?2,
-                ?3
-            )
-
-            ON CONFLICT(user_id)
-            DO UPDATE SET
-                code = excluded.code,
-                expires_at =
-                    excluded.expires_at
-        `)
-        .bind(
-            user.id,
-            code,
-            expires
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        code,
-
-        expires_at:
-            expires
-
-    });
-
-}
-
-
-/* =========================================================
-   RUBIKA LINK
-========================================================= */
-
-if (
-    path === "/api/rubika/link" &&
-    method === "POST"
-) {
-
-    const key =
-        (
-            request.headers.get(
-                "X-VEXON-API-KEY"
-            ) ||
-            ""
-        ).trim();
-
-
-    if (
-        !env.VEXON_RUBIKA_API_KEY ||
-        key !==
-            String(
-                env.VEXON_RUBIKA_API_KEY
-            ).trim()
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "Unauthorized"
-            },
-            401
-        );
-
-    }
-
-
-    const body =
-        await request.json();
-
-
-    const code =
-        clean(
-            body.code,
-            6
-        );
-
-
-    const rubikaId =
-        body.rubika_user_id !==
-            undefined
-
-            ? String(
-                body.rubika_user_id
-            ).trim()
-
-            : "";
-
-
-    if (
-        !/^\d{6}$/.test(
-            code
-        ) ||
-        !rubikaId
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "Invalid data"
-            },
-            400
-        );
-
-    }
-
-
-    const linkCode =
-        await env.DB
-            .prepare(`
-                SELECT
-                    user_id,
-                    code,
-                    expires_at
-
-                FROM rubika_link_codes
-
-                WHERE code = ?1
-
-                LIMIT 1
-            `)
-            .bind(
-                code
-            )
-            .first();
-
-
-    if (
-        !linkCode
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کد اتصال معتبر نیست."
-            },
-            404
-        );
-
-    }
-
-
-    if (
-        new Date(
-            linkCode.expires_at
-        ).getTime() <=
-        Date.now()
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کد اتصال منقضی شده است."
-            },
-            410
-        );
-
-    }
-
-
-    const existing =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id
-
-                FROM rubika_links
-
-                WHERE
-                    user_id = ?1
-                    OR rubika_sender_id = ?2
-
-                LIMIT 1
-            `)
-            .bind(
-                linkCode.user_id,
-                rubikaId
-            )
-            .first();
-
-
-    if (
-        existing
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "این حساب PGame یا حساب روبیکا قبلاً متصل شده است."
-            },
-            409
-        );
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            INSERT INTO rubika_links(
-                user_id,
-                rubika_sender_id,
-                rubika_chat_id
-            )
-            VALUES(
-                ?1,
-                ?2,
-                ?3
-            )
-        `)
-        .bind(
-            linkCode.user_id,
-            rubikaId,
-            rubikaId
-        )
-        .run();
-
-
-    await env.DB
-        .prepare(`
-            DELETE FROM rubika_link_codes
-            WHERE user_id = ?1
-        `)
-        .bind(
-            linkCode.user_id
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "حساب روبیکا با موفقیت متصل شد."
-
-    });
-
-}
-
-
-/* =========================================================
-   RUBIKA UNLINK
-========================================================= */
-
-if (
-    path === "/api/rubika/unlink" &&
-    method === "POST"
-) {
-
-    const user =
-        await getCurrentUser(
-            request,
-            env
-        );
-
-
-    if (
-        !user
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "ابتدا وارد حساب PGame شو."
-            },
-            401
-        );
-
-    }
-
-
-    const linked =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    rubika_sender_id
-
-                FROM rubika_links
-
-                WHERE
-                    user_id = ?1
-
-                LIMIT 1
-            `)
-            .bind(
-                user.id
-            )
-            .first();
-
-
-    if (
-        !linked
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "هیچ حساب روبیکایی به این حساب متصل نیست."
-            },
-            404
-        );
-
-    }
-
-
-    await env.DB
-        .prepare(`
-            DELETE FROM rubika_links
-
-            WHERE
-                user_id = ?1
-        `)
-        .bind(
-            user.id
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "اتصال روبیکا با موفقیت لغو شد."
-
-    });
-
-}
-
-
-/* =========================================================
-   API TEST
-========================================================= */
-
-if (
-    path === "/api/test" &&
-    method === "GET"
-) {
-
-    return json({
-
-        success:
-            true,
-
-        message:
-            "PGame API is online!"
-
-    });
-
-}
-
-
-/* =========================================================
-   MESSENGER - CONVERSATIONS GET
-========================================================= */
-
-if (
-    path === "/api/messenger/conversations" &&
-    method === "GET"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی به پیام‌رسان محدود شده است."
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    await ensureMessenger(
-        env
-    );
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    c.id,
-                    c.updated_at,
-
-                    other.id
-                        AS other_user_id,
-
-                    other.username
-                        AS other_username,
-
-                    lm.content
-                        AS last_message,
-
-                    lm.created_at
-                        AS last_message_at,
-
-                    (
-                        SELECT COUNT(*)
-
-                        FROM messages um
-
-                        WHERE
-                            um.conversation_id =
-                                c.id
-
-                            AND um.sender_id !=
-                                ?1
-
-                            AND um.deleted_at IS NULL
-
-                            AND (
-                                cm.last_read_at IS NULL
-                                OR um.created_at >
-                                   cm.last_read_at
-                            )
-
-                    ) AS unread_count
-
-                FROM conversations c
-
-                INNER JOIN conversation_members cm
-                    ON cm.conversation_id =
-                       c.id
-
-                    AND cm.user_id =
-                        ?1
-
-                INNER JOIN conversation_members ocm
-                    ON ocm.conversation_id =
-                       c.id
-
-                    AND ocm.user_id !=
-                        ?1
-
-                INNER JOIN users other
-                    ON other.id =
-                       ocm.user_id
-
-                LEFT JOIN messages lm
-                    ON lm.id = (
-                        SELECT
-                            MAX(m2.id)
-
-                        FROM messages m2
-
-                        WHERE
-                            m2.conversation_id =
-                                c.id
-
-                            AND m2.deleted_at IS NULL
-                    )
-
-                ORDER BY
-                    COALESCE(
-                        lm.created_at,
-                        c.created_at
-                    ) DESC,
-
-                    c.id DESC
-            `)
-            .bind(
-                accessResult.user.id
-            )
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        conversations:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   MESSENGER - SEARCH USERS
-========================================================= */
-
-if (
-    path === "/api/messenger/users/search" &&
-    method === "GET"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    const query =
-        clean(
-            url.searchParams.get(
-                "q"
-            ) ||
-            "",
-            40
-        );
-
-
-    if (
-        query.length < 2
-    ) {
-
-        return json({
-
-            success:
-                true,
-
-            users:
-                []
-
-        });
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    username
-
-                FROM users
-
-                WHERE
-                    id != ?1
-
-                    AND username LIKE ?2
-
-                ORDER BY
-                    username ASC
-
-                LIMIT 30
-            `)
-            .bind(
-                accessResult.user.id,
-
-                `%${query}%`
-            )
-            .all();
-
-
-    return json({
-
-        success:
-            true,
-
-        users:
-            result.results ??
-            []
-
-    });
-
-}
-
-
-/* =========================================================
-   MESSENGER - CREATE CONVERSATION
-========================================================= */
-
-if (
-    path === "/api/messenger/conversations" &&
-    method === "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "دسترسی به پیام‌رسان محدود شده است."
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    if (
-        accessResult.ban?.ban_type ===
-            "messages"
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "💬 این حساب از ارسال پیام محروم شده است."
-            },
-            403
-        );
-
-    }
-
-
-    await ensureMessenger(
-        env
-    );
-
-
-    const body =
-        await request.json();
-
-
-    const targetUserId =
-        Number(
-            body.user_id
-        );
-
-
-    if (
-        !Number.isInteger(
-            targetUserId
-        ) ||
-        targetUserId < 1 ||
-        targetUserId ===
-            accessResult.user.id
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کاربر مقصد نامعتبر است."
-            },
-            400
-        );
-
-    }
-
-
-    const target =
-        await env.DB
-            .prepare(`
-                SELECT
-                    id,
-                    username
-
-                FROM users
-
-                WHERE
-                    id = ?1
-
-                LIMIT 1
-            `)
-            .bind(
-                targetUserId
-            )
-            .first();
-
-
-    if (
-        !target
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "کاربر پیدا نشد."
-            },
-            404
-        );
-
-    }
-
-
-    const existing =
-        await env.DB
-            .prepare(`
-                SELECT
-                    c.id
-
-                FROM conversations c
-
-                INNER JOIN conversation_members x
-                    ON x.conversation_id =
-                       c.id
-
-                    AND x.user_id =
-                        ?1
-
-                INNER JOIN conversation_members y
-                    ON y.conversation_id =
-                       c.id
-
-                    AND y.user_id =
-                        ?2
-
-                WHERE NOT EXISTS (
-                    SELECT 1
-
-                    FROM conversation_members z
-
-                    WHERE
-                        z.conversation_id =
-                            c.id
-
-                        AND z.user_id NOT IN(
-                            ?1,
-                            ?2
+                    .toLowerCase();
+
+
+                if (
+                    query.length < 2
+                ) {
+
+                    return json({
+
+                        success:
+                            true,
+
+                        users:
+                            []
+
+                    });
+
+                }
+
+
+                const users =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                u.id,
+                                u.username,
+
+                                CASE
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM friend_requests fr
+                                        WHERE
+                                            (
+                                                fr.requester_id = ?1
+                                                AND fr.receiver_id = u.id
+                                            )
+                                            OR
+                                            (
+                                                fr.requester_id = u.id
+                                                AND fr.receiver_id = ?1
+                                            )
+                                            AND fr.status = 'accepted'
+                                    )
+                                    THEN 'friend'
+
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM friend_requests fr
+                                        WHERE
+                                            fr.requester_id = ?1
+                                            AND fr.receiver_id = u.id
+                                            AND fr.status = 'pending'
+                                    )
+                                    THEN 'outgoing'
+
+                                    WHEN EXISTS (
+                                        SELECT 1
+                                        FROM friend_requests fr
+                                        WHERE
+                                            fr.requester_id = u.id
+                                            AND fr.receiver_id = ?1
+                                            AND fr.status = 'pending'
+                                    )
+                                    THEN 'incoming'
+
+                                    ELSE 'none'
+                                END AS relation
+
+                            FROM users u
+
+                            WHERE
+                                u.id != ?1
+
+                                AND LOWER(
+                                    u.username
+                                ) LIKE ?2
+
+                            ORDER BY
+                                u.username ASC
+
+                            LIMIT 30
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            `%${query}%`
                         )
-                )
-
-                LIMIT 1
-            `)
-            .bind(
-                accessResult.user.id,
-                targetUserId
-            )
-            .first();
+                        .all();
 
 
-    let conversationId =
-        existing?.id;
+                return json({
 
+                    success:
+                        true,
 
-    if (
-        !conversationId
-    ) {
+                    users:
+                        users.results ??
+                        []
 
-        const inserted =
-            await env.DB
-                .prepare(`
-                    INSERT INTO conversations
-                    DEFAULT VALUES
-                `)
-                .run();
-
-
-        conversationId =
-            inserted.meta
-                ?.last_row_id;
-
-
-        await env.DB
-            .prepare(`
-                INSERT INTO conversation_members(
-                    conversation_id,
-                    user_id
-                )
-                VALUES(
-                    ?1,
-                    ?2
-                ),
-                (
-                    ?1,
-                    ?3
-                )
-            `)
-            .bind(
-                conversationId,
-                accessResult.user.id,
-                targetUserId
-            )
-            .run();
-
-    }
-
-
-    return json(
-        {
-            success:
-                true,
-
-            conversation: {
-
-                id:
-                    conversationId,
-
-                other_user_id:
-                    target.id,
-
-                other_username:
-                    target.username
+                });
 
             }
 
-        },
-        201
-    );
 
-}
+            /* =========================================================
+               FRIENDS — SEND REQUEST
+            ========================================================= */
 
+            if (
+                path ===
+                    "/api/friends/request" &&
+                method ===
+                    "POST"
+            ) {
 
-/* =========================================================
-   MESSENGER - MESSAGES
-========================================================= */
-
-const messagesMatch =
-    path.match(
-        /^\/api\/messenger\/conversations\/(\d+)\/messages$/
-    );
-
-
-if (
-    messagesMatch &&
-    (
-        method === "GET" ||
-        method === "POST"
-    )
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
 
 
-    if (
-        !accessResult.ok
-    ) {
+                if (
+                    !accessResult.ok
+                ) {
 
-        return json(
-            {
-                success:
-                    false,
+                    return json(
+                        {
+                            success:
+                                false,
 
-                message:
-                    "دسترسی به پیام‌رسان محدود شده است."
-            },
-            accessResult.status
-        );
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
 
-    }
-
-
-    if (
-        method === "POST" &&
-        accessResult.ban?.ban_type ===
-            "messages"
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "💬 این حساب از ارسال پیام محروم شده است."
-            },
-            403
-        );
-
-    }
+                }
 
 
-    await ensureMessenger(
-        env
-    );
+                await ensureFriendRequests(
+                    env
+                );
 
 
-    const conversationId =
-        Number(
-            messagesMatch[1]
-        );
+                let body =
+                    {};
+
+                try {
+
+                    body =
+                        await request.json();
+
+                } catch {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "داده درخواست نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
 
 
-    const member =
-        await env.DB
-            .prepare(`
-                SELECT 1
-
-                FROM conversation_members
-
-                WHERE
-                    conversation_id = ?1
-
-                    AND user_id = ?2
-
-                LIMIT 1
-            `)
-            .bind(
-                conversationId,
-                accessResult.user.id
-            )
-            .first();
+                const targetUserId =
+                    Number(
+                        body.user_id
+                    );
 
 
-    if (
-        !member
-    ) {
+                if (
+                    !Number.isInteger(
+                        targetUserId
+                    ) ||
+                    targetUserId <= 0
+                ) {
 
-        return json(
-            {
-                success:
-                    false,
+                    return json(
+                        {
+                            success:
+                                false,
 
-                message:
-                    "دسترسی به این گفتگو ندارید."
-            },
-            403
-        );
+                            message:
+                                "کاربر نامعتبر است."
+                        },
+                        400
+                    );
 
-    }
+                }
 
 
-    if (
-        method === "GET"
-    ) {
+                if (
+                    targetUserId ===
+                    accessResult.user.id
+                ) {
 
-        const result =
-            await env.DB
-                .prepare(`
-                    SELECT
-                        m.id,
-                        m.sender_id,
-                        u.username
-                            AS sender_username,
-                        m.content,
-                        m.created_at
+                    return json(
+                        {
+                            success:
+                                false,
 
-                    FROM messages m
+                            message:
+                                "نمی‌توانی خودت را به دوستانت اضافه کنی."
+                        },
+                        400
+                    );
 
-                    INNER JOIN users u
-                        ON u.id =
-                           m.sender_id
+                }
 
-                    WHERE
-                        m.conversation_id =
-                            ?1
 
-                        AND m.deleted_at IS NULL
+                const targetUser =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                username
+                            FROM users
+                            WHERE
+                                id = ?1
+                            LIMIT 1
+                        `)
+                        .bind(
+                            targetUserId
+                        )
+                        .first();
 
-                    ORDER BY
-                        m.id ASC
 
-                    LIMIT 500
-                `)
-                .bind(
-                    conversationId
+                if (
+                    !targetUser
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این کاربر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                const existing =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                requester_id,
+                                receiver_id,
+                                status
+
+                            FROM friend_requests
+
+                            WHERE
+                                (
+                                    requester_id = ?1
+                                    AND receiver_id = ?2
+                                )
+
+                                OR
+
+                                (
+                                    requester_id = ?2
+                                    AND receiver_id = ?1
+                                )
+
+                            ORDER BY
+                                id DESC
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            targetUserId
+                        )
+                        .first();
+
+
+                if (
+                    existing?.status ===
+                    "accepted"
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این کاربر از قبل دوستت است."
+                        },
+                        409
+                    );
+
+                }
+
+
+                if (
+                    existing?.status ===
+                    "pending"
+                ) {
+
+                    if (
+                        Number(
+                            existing.requester_id
+                        ) ===
+                        Number(
+                            accessResult.user.id
+                        )
+                    ) {
+
+                        return json(
+                            {
+                                success:
+                                    false,
+
+                                message:
+                                    "درخواست دوستی قبلاً ارسال شده."
+                            },
+                            409
+                        );
+
+                    }
+
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این کاربر قبلاً برای تو درخواست فرستاده است."
+                        },
+                        409
+                    );
+
+                }
+
+
+                const inserted =
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO friend_requests(
+                                requester_id,
+                                receiver_id,
+                                status,
+                                created_at,
+                                updated_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                'pending',
+                                CURRENT_TIMESTAMP,
+                                CURRENT_TIMESTAMP
+                            )
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            targetUserId
+                        )
+                        .run();
+
+
+                const requestId =
+                    inserted.meta?.last_row_id ??
+                    null;
+
+
+                await notifyUser(
+                    env,
+
+                    targetUserId,
+
+                    "friend_request",
+
+                    "👥 درخواست دوستی جدید",
+
+                    `${accessResult.user.username} برایت درخواست دوستی فرستاد.`,
+
+                    requestId
+                );
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "✅ درخواست دوستی ارسال شد.",
+
+                    request_id:
+                        requestId,
+
+                    user: {
+
+                        id:
+                            targetUser.id,
+
+                        username:
+                            targetUser.username
+
+                    }
+
+                });
+
+            }
+
+
+            /* =========================================================
+               FRIENDS — GET STATUS
+            ========================================================= */
+
+            if (
+                path ===
+                    "/api/friends/status" &&
+                method ===
+                    "GET"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                await ensureFriendRequests(
+                    env
+                );
+
+
+                const userId =
+                    accessResult.user.id;
+
+
+                /* =====================================================
+                   FRIENDS
+                ===================================================== */
+
+                const friendsResult =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                u.id,
+                                u.username,
+                                fr.updated_at
+
+                            FROM friend_requests fr
+
+                            INNER JOIN users u
+                                ON u.id =
+                                    CASE
+                                        WHEN fr.requester_id = ?1
+                                            THEN fr.receiver_id
+                                        ELSE fr.requester_id
+                                    END
+
+                            WHERE
+                                (
+                                    fr.requester_id = ?1
+                                    OR fr.receiver_id = ?1
+                                )
+
+                                AND fr.status =
+                                    'accepted'
+
+                            ORDER BY
+                                u.username COLLATE NOCASE ASC
+                        `)
+                        .bind(
+                            userId
+                        )
+                        .all();
+
+
+                /* =====================================================
+                   INCOMING
+                ===================================================== */
+
+                const incomingResult =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                fr.id,
+                                fr.created_at,
+
+                                u.id AS user_id,
+                                u.username
+
+                            FROM friend_requests fr
+
+                            INNER JOIN users u
+                                ON u.id =
+                                    fr.requester_id
+
+                            WHERE
+                                fr.receiver_id = ?1
+
+                                AND fr.status =
+                                    'pending'
+
+                            ORDER BY
+                                fr.id DESC
+                        `)
+                        .bind(
+                            userId
+                        )
+                        .all();
+
+
+                /* =====================================================
+                   OUTGOING
+                ===================================================== */
+
+                const outgoingResult =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                fr.id,
+                                fr.created_at,
+
+                                u.id AS user_id,
+                                u.username
+
+                            FROM friend_requests fr
+
+                            INNER JOIN users u
+                                ON u.id =
+                                    fr.receiver_id
+
+                            WHERE
+                                fr.requester_id = ?1
+
+                                AND fr.status =
+                                    'pending'
+
+                            ORDER BY
+                                fr.id DESC
+                        `)
+                        .bind(
+                            userId
+                        )
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    friends:
+                        friendsResult.results ??
+                        [],
+
+                    incoming:
+                        incomingResult.results ??
+                        [],
+
+                    outgoing:
+                        outgoingResult.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =========================================================
+               FRIENDS — ACCEPT / REJECT
+            ========================================================= */
+
+            if (
+                path ===
+                    "/api/friends/respond" &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب شوید."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                await ensureFriendRequests(
+                    env
+                );
+
+
+                let body =
+                    {};
+
+                try {
+
+                    body =
+                        await request.json();
+
+                } catch {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "داده درخواست نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const requestId =
+                    Number(
+                        body.request_id
+                    );
+
+
+                const action =
+                    typeof body.action ===
+                        "string"
+
+                        ? body.action
+                            .trim()
+                            .toLowerCase()
+
+                        : "";
+
+
+                if (
+                    !Number.isInteger(
+                        requestId
+                    ) ||
+                    requestId <= 0
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "شناسه درخواست نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                if (
+                    action !==
+                        "accept" &&
+                    action !==
+                        "reject"
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "عملیات نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const friendRequest =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                fr.id,
+                                fr.requester_id,
+                                fr.receiver_id,
+                                fr.status,
+
+                                u.username
+                                    AS requester_username
+
+                            FROM friend_requests fr
+
+                            INNER JOIN users u
+                                ON u.id =
+                                    fr.requester_id
+
+                            WHERE
+                                fr.id = ?1
+
+                                AND fr.receiver_id =
+                                    ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            requestId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+
+                if (
+                    !friendRequest
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "درخواست دوستی پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                if (
+                    friendRequest.status !==
+                    "pending"
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این درخواست قبلاً تعیین تکلیف شده است."
+                        },
+                        409
+                    );
+
+                }
+
+
+                const newStatus =
+                    action ===
+                        "accept"
+
+                        ? "accepted"
+
+                        : "rejected";
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE friend_requests
+
+                        SET
+                            status = ?1,
+
+                            updated_at =
+                                CURRENT_TIMESTAMP
+
+                        WHERE
+                            id = ?2
+                    `)
+                    .bind(
+                        newStatus,
+                        requestId
+                    )
+                    .run();
+
+
+                if (
+                    action ===
+                    "accept"
+                ) {
+
+                    await notifyUser(
+                        env,
+
+                        friendRequest.requester_id,
+
+                        "friend_accepted",
+
+                        "✅ درخواست دوستی پذیرفته شد",
+
+                        `${accessResult.user.username} درخواست دوستی‌ات را پذیرفت.`,
+
+                        requestId
+                    );
+
+
+                    return json({
+
+                        success:
+                            true,
+
+                        message:
+                            "✅ درخواست دوستی پذیرفته شد."
+
+                    });
+
+                }
+
+
+                await notifyUser(
+                    env,
+
+                    friendRequest.requester_id,
+
+                    "friend_rejected",
+
+                    "👥 درخواست دوستی رد شد",
+
+                    `${accessResult.user.username} درخواست دوستی‌ات را رد کرد.`,
+
+                    requestId
+                );
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "درخواست دوستی رد شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               NEWS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/news" &&
+                method ===
+                    "GET"
+            ) {
+
+                await ensureNews(
+                    env
+                );
+
+
+                const limit =
+                    limitParam(
+                        url.searchParams.get(
+                            "limit"
+                        ),
+                        50,
+                        20
+                    );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                title,
+                                content,
+                                image_url,
+                                category,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+
+                            FROM news
+
+                            WHERE status = 'published'
+
+                            ORDER BY
+                                published_at DESC,
+                                id DESC
+
+                            LIMIT ?1
+                        `)
+                        .bind(
+                            limit
+                        )
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    news:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               SINGLE NEWS
+            ================================================== */
+
+            const singleNews =
+                path.match(
+                    /^\/api\/news\/(\d+)$/
+                );
+
+
+            if (
+                singleNews &&
+                method ===
+                    "GET"
+            ) {
+
+                await ensureNews(
+                    env
+                );
+
+
+                const news =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                title,
+                                content,
+                                image_url,
+                                category,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+
+                            FROM news
+
+                            WHERE
+                                id = ?1
+                                AND status = 'published'
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            Number(
+                                singleNews[1]
+                            )
+                        )
+                        .first();
+
+
+                if (
+                    !news
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این خبر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    news
+
+                });
+
+            }
+
+
+            /* =================================================
+               NEWS REACTIONS
+            ================================================== */
+
+            const reactionMatch =
+                path.match(
+                    /^\/api\/news\/(\d+)\/reaction$/
+                );
+
+
+            if (
+                reactionMatch &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب PGame شو."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                if (
+                    accessResult.ban &&
+                    (
+                        accessResult.ban.ban_type ===
+                            "full" ||
+
+                        accessResult.ban.ban_type ===
+                            "reactions"
+                    )
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                accessResult.ban.ban_type ===
+                                    "full"
+
+                                    ? "🚫 دسترسی این حساب به PGame محدود شده است."
+
+                                    : "❤️ این حساب از واکنش به اخبار محروم شده است.",
+
+                            banned:
+                                true,
+
+                            ban_type:
+                                accessResult.ban.ban_type
+
+                        },
+                        403
+                    );
+
+                }
+
+
+                await ensureNewsReactions(
+                    env
+                );
+
+
+                const body =
+                    await request.json();
+
+
+                const newsId =
+                    Number(
+                        reactionMatch[1]
+                    );
+
+
+                const reaction =
+                    typeof body.reaction ===
+                        "string"
+
+                        ? body.reaction.trim()
+
+                        : "";
+
+
+                if (
+                    !Number.isInteger(
+                        newsId
+                    ) ||
+                    newsId < 1 ||
+                    !ALLOWED_REACTIONS.has(
+                        reaction
+                    )
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "نوع واکنش یا شناسه خبر نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const news =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id
+
+                            FROM news
+
+                            WHERE
+                                id = ?1
+                                AND status = 'published'
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            newsId
+                        )
+                        .first();
+
+
+                if (
+                    !news
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این خبر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                const existing =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                reaction
+
+                            FROM news_reactions
+
+                            WHERE
+                                news_id = ?1
+                                AND user_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            newsId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+
+                if (
+                    existing &&
+                    existing.reaction ===
+                        reaction
+                ) {
+
+                    await env.DB
+                        .prepare(`
+                            DELETE FROM news_reactions
+
+                            WHERE id = ?1
+                        `)
+                        .bind(
+                            existing.id
+                        )
+                        .run();
+
+                } else if (
+                    existing
+                ) {
+
+                    await env.DB
+                        .prepare(`
+                            UPDATE news_reactions
+
+                            SET
+                                reaction = ?1,
+
+                                created_at =
+                                    CURRENT_TIMESTAMP
+
+                            WHERE
+                                id = ?2
+                        `)
+                        .bind(
+                            reaction,
+                            existing.id
+                        )
+                        .run();
+
+                } else {
+
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO news_reactions(
+                                news_id,
+                                user_id,
+                                reaction,
+                                created_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3,
+                                CURRENT_TIMESTAMP
+                            )
+                        `)
+                        .bind(
+                            newsId,
+                            accessResult.user.id,
+                            reaction
+                        )
+                        .run();
+
+                }
+
+
+                const countsResult =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                reaction,
+                                COUNT(*) AS count
+
+                            FROM news_reactions
+
+                            WHERE
+                                news_id = ?1
+
+                            GROUP BY
+                                reaction
+                        `)
+                        .bind(
+                            newsId
+                        )
+                        .all();
+
+
+                const counts =
+                    {};
+
+
+                for (
+                    const item
+                    of countsResult.results ??
+                    []
+                ) {
+
+                    counts[
+                        item.reaction
+                    ] =
+                        Number(
+                            item.count
+                        );
+
+                }
+
+
+                const current =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                reaction
+
+                            FROM news_reactions
+
+                            WHERE
+                                news_id = ?1
+                                AND user_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            newsId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    reactions:
+                        counts,
+
+                    my_reaction:
+                        current?.reaction ??
+                        null
+
+                });
+
+            }
+                        /* =================================================
+               ADMIN NEWS LIST
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/news" &&
+                method ===
+                    "GET"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                admin.status ===
+                                    401
+
+                                    ? "ابتدا وارد حساب شو."
+
+                                    : "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                await ensureNews(
+                    env
+                );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT *
+                            FROM news
+                            ORDER BY
+                                created_at DESC,
+                                id DESC
+                        `)
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    news:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN CREATE NEWS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/news" &&
+                method ===
+                    "POST"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                admin.status ===
+                                    401
+
+                                    ? "ابتدا وارد حساب شو."
+
+                                    : "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                await ensureNews(
+                    env
+                );
+
+
+                const body =
+                    await request.json();
+
+
+                const title =
+                    clean(
+                        body.title,
+                        200
+                    );
+
+
+                const content =
+                    clean(
+                        body.content,
+                        20000
+                    );
+
+
+                const imageUrl =
+                    clean(
+                        body.image_url,
+                        1000
+                    );
+
+
+                const category =
+                    clean(
+                        body.category ||
+                            "general",
+                        50
+                    ) ||
+                    "general";
+
+
+                const status =
+                    body.status ===
+                        "published"
+
+                        ? "published"
+
+                        : "draft";
+
+
+                if (
+                    title.length < 3 ||
+                    content.length < 3
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "عنوان و متن خبر را کامل وارد کن."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const publishedAt =
+                    status ===
+                        "published"
+
+                        ? new Date()
+                            .toISOString()
+
+                        : null;
+
+
+                const inserted =
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO news(
+                                title,
+                                content,
+                                image_url,
+                                category,
+                                status,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3,
+                                ?4,
+                                ?5,
+                                ?6,
+                                CURRENT_TIMESTAMP,
+                                CURRENT_TIMESTAMP,
+                                ?7
+                            )
+                        `)
+                        .bind(
+                            title,
+                            content,
+                            imageUrl ||
+                                null,
+                            category,
+                            status,
+                            admin.user.username,
+                            publishedAt
+                        )
+                        .run();
+
+
+                const newsId =
+                    inserted.meta
+                        ?.last_row_id;
+
+
+                if (
+                    status ===
+                    "published"
+                ) {
+
+                    await notifyAllUsers(
+                        env,
+
+                        "news",
+
+                        "📰 خبر جدید PGame",
+
+                        title,
+
+                        newsId ??
+                            null
+                    );
+
+                }
+
+
+                return json(
+                    {
+                        success:
+                            true,
+
+                        message:
+                            status ===
+                                "published"
+
+                                ? "خبر منتشر شد."
+
+                                : "خبر به‌عنوان پیش‌نویس ذخیره شد.",
+
+                        id:
+                            newsId ??
+                            null
+                    },
+                    201
+                );
+
+            }
+
+
+            /* =================================================
+               ADMIN UPDATE / DELETE NEWS
+            ================================================== */
+
+            const adminNewsMatch =
+                path.match(
+                    /^\/api\/admin\/news\/(\d+)$/
+                );
+
+
+            if (
+                adminNewsMatch &&
+                (
+                    method ===
+                        "PUT" ||
+
+                    method ===
+                        "DELETE"
                 )
-                .all();
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
 
 
-        return json({
+                if (
+                    !admin.ok
+                ) {
 
-            success:
-                true,
+                    return json(
+                        {
+                            success:
+                                false,
 
-            messages:
-                result.results ??
-                []
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
 
-        });
-
-    }
-
-
-    const body =
-        await request.json();
-
-
-    const content =
-        clean(
-            body.content,
-            4000
-        );
+                }
 
 
-    if (
-        !content
-    ) {
-
-        return json(
-            {
-                success:
-                    false,
-
-                message:
-                    "پیام خالی است."
-            },
-            400
-        );
-
-    }
+                await ensureNews(
+                    env
+                );
 
 
-    const inserted =
-        await env.DB
-            .prepare(`
-                INSERT INTO messages(
-                    conversation_id,
-                    sender_id,
-                    content
+                const id =
+                    Number(
+                        adminNewsMatch[1]
+                    );
+
+
+                const existing =
+                    await env.DB
+                        .prepare(`
+                            SELECT *
+
+                            FROM news
+
+                            WHERE
+                                id = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            id
+                        )
+                        .first();
+
+
+                if (
+                    !existing
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "خبر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                if (
+                    method ===
+                    "DELETE"
+                ) {
+
+                    await env.DB
+                        .prepare(`
+                            DELETE FROM news
+
+                            WHERE
+                                id = ?1
+                        `)
+                        .bind(
+                            id
+                        )
+                        .run();
+
+
+                    return json({
+
+                        success:
+                            true,
+
+                        message:
+                            "خبر حذف شد."
+
+                    });
+
+                }
+
+
+                const body =
+                    await request.json();
+
+
+                const title =
+                    clean(
+                        body.title ??
+                            existing.title,
+                        200
+                    );
+
+
+                const content =
+                    clean(
+                        body.content ??
+                            existing.content,
+                        20000
+                    );
+
+
+                const imageUrl =
+                    clean(
+                        body.image_url ??
+                            existing.image_url ??
+                            "",
+                        1000
+                    );
+
+
+                const category =
+                    clean(
+                        body.category ??
+                            existing.category ??
+                            "general",
+                        50
+                    ) ||
+                    "general";
+
+
+                const status =
+                    body.status ===
+                        "published"
+
+                        ? "published"
+
+                        : "draft";
+
+
+                let publishedAt =
+                    existing.published_at;
+
+
+                const wasPublished =
+                    existing.status ===
+                    "published";
+
+
+                if (
+                    status ===
+                        "published" &&
+                    !publishedAt
+                ) {
+
+                    publishedAt =
+                        new Date()
+                            .toISOString();
+
+                }
+
+
+                if (
+                    status ===
+                        "draft"
+                ) {
+
+                    publishedAt =
+                        null;
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE news
+
+                        SET
+                            title = ?1,
+
+                            content = ?2,
+
+                            image_url = ?3,
+
+                            category = ?4,
+
+                            status = ?5,
+
+                            updated_at =
+                                CURRENT_TIMESTAMP,
+
+                            published_at = ?6
+
+                        WHERE
+                            id = ?7
+                    `)
+                    .bind(
+                        title,
+                        content,
+                        imageUrl ||
+                            null,
+                        category,
+                        status,
+                        publishedAt,
+                        id
+                    )
+                    .run();
+
+
+                if (
+                    status ===
+                        "published" &&
+                    !wasPublished
+                ) {
+
+                    await notifyAllUsers(
+                        env,
+
+                        "news",
+
+                        "📰 خبر جدید PGame",
+
+                        title,
+
+                        id
+                    );
+
+                }
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "خبر با موفقیت ویرایش شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               PUBLIC POLLS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/polls" &&
+                method ===
+                    "GET"
+            ) {
+
+                await ensurePolls(
+                    env
+                );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                question,
+                                status,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+
+                            FROM polls
+
+                            WHERE status =
+                                'published'
+
+                            ORDER BY
+                                published_at DESC,
+                                id DESC
+
+                            LIMIT 50
+                        `)
+                        .all();
+
+
+                const polls =
+                    [];
+
+
+                for (
+                    const poll
+                    of result.results ??
+                    []
+                ) {
+
+                    const options =
+                        await env.DB
+                            .prepare(`
+                                SELECT
+                                    id,
+                                    option_text,
+                                    sort_order,
+                                    (
+                                        SELECT COUNT(*)
+                                        FROM poll_votes
+                                        WHERE
+                                            poll_votes.option_id =
+                                                poll_options.id
+                                    ) AS votes
+
+                                FROM poll_options
+
+                                WHERE
+                                    poll_id = ?1
+
+                                ORDER BY
+                                    sort_order ASC,
+                                    id ASC
+                            `)
+                            .bind(
+                                poll.id
+                            )
+                            .all();
+
+
+                    const optionList =
+                        options.results ??
+                        [];
+
+
+                    const totalVotes =
+                        optionList.reduce(
+                            (
+                                total,
+                                option
+                            ) =>
+                                total +
+                                Number(
+                                    option.votes ??
+                                    0
+                                ),
+                            0
+                        );
+
+
+                    polls.push({
+
+                        ...poll,
+
+                        options:
+                            optionList,
+
+                        total_votes:
+                            totalVotes
+
+                    });
+
+                }
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    polls
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN POLLS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/polls" &&
+                method ===
+                    "GET"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                await ensurePolls(
+                    env
+                );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                question,
+                                status,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+
+                            FROM polls
+
+                            ORDER BY
+                                created_at DESC,
+                                id DESC
+                        `)
+                        .all();
+
+
+                const polls =
+                    [];
+
+
+                for (
+                    const poll
+                    of result.results ??
+                    []
+                ) {
+
+                    const options =
+                        await env.DB
+                            .prepare(`
+                                SELECT
+                                    id,
+                                    option_text,
+                                    sort_order
+
+                                FROM poll_options
+
+                                WHERE
+                                    poll_id = ?1
+
+                                ORDER BY
+                                    sort_order ASC,
+                                    id ASC
+                            `)
+                            .bind(
+                                poll.id
+                            )
+                            .all();
+
+
+                    polls.push({
+
+                        ...poll,
+
+                        options:
+                            options.results ??
+                            []
+
+                    });
+
+                }
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    polls
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN CREATE POLL
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/polls" &&
+                method ===
+                    "POST"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                admin.status ===
+                                    401
+
+                                    ? "ابتدا وارد حساب شو."
+
+                                    : "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                await ensurePolls(
+                    env
+                );
+
+
+                const body =
+                    await request.json();
+
+
+                const question =
+                    clean(
+                        body.question,
+                        500
+                    );
+
+
+                const status =
+                    body.status ===
+                        "published"
+
+                        ? "published"
+
+                        : "draft";
+
+
+                let options =
+                    Array.isArray(
+                        body.options
+                    )
+                        ? body.options
+                        : [];
+
+
+                options =
+                    options
+                        .map(
+                            option =>
+                                clean(
+                                    typeof option ===
+                                        "string"
+
+                                        ? option
+
+                                        : option?.option_text,
+
+                                    250
+                                )
+                        )
+                        .filter(Boolean)
+                        .slice(
+                            0,
+                            10
+                        );
+
+
+                if (
+                    question.length <
+                    3
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "سؤال نظرسنجی را کامل وارد کن."
+                        },
+                        400
+                    );
+
+                }
+
+
+                if (
+                    options.length <
+                    2
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "حداقل دو گزینه برای نظرسنجی لازم است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const publishedAt =
+                    status ===
+                        "published"
+
+                        ? new Date()
+                            .toISOString()
+
+                        : null;
+
+
+                const inserted =
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO polls(
+                                question,
+                                status,
+                                author_username,
+                                created_at,
+                                updated_at,
+                                published_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3,
+                                CURRENT_TIMESTAMP,
+                                CURRENT_TIMESTAMP,
+                                ?4
+                            )
+                        `)
+                        .bind(
+                            question,
+                            status,
+                            admin.user.username,
+                            publishedAt
+                        )
+                        .run();
+
+
+                const pollId =
+                    inserted.meta
+                        ?.last_row_id;
+
+
+                if (
+                    !pollId
+                ) {
+
+                    throw new Error(
+                        "poll id was not created"
+                    );
+
+                }
+
+
+                for (
+                    let i = 0;
+                    i < options.length;
+                    i++
+                ) {
+
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO poll_options(
+                                poll_id,
+                                option_text,
+                                sort_order
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3
+                            )
+                        `)
+                        .bind(
+                            pollId,
+                            options[i],
+                            i
+                        )
+                        .run();
+
+                }
+
+
+                if (
+                    status ===
+                        "published"
+                ) {
+
+                    await notifyAllUsers(
+                        env,
+
+                        "poll",
+
+                        "📊 نظرسنجی جدید PGame",
+
+                        question,
+
+                        pollId
+                    );
+
+                }
+
+
+                return json(
+                    {
+                        success:
+                            true,
+
+                        message:
+                            status ===
+                                "published"
+
+                                ? "نظرسنجی منتشر شد."
+
+                                : "نظرسنجی به‌عنوان پیش‌نویس ذخیره شد.",
+
+                        id:
+                            pollId
+
+                    },
+                    201
+                );
+
+            }
+
+
+            /* =================================================
+               VOTE POLL
+            ================================================== */
+
+            const votePollMatch =
+                path.match(
+                    /^\/api\/polls\/(\d+)\/vote$/
+                );
+
+
+            if (
+                votePollMatch &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب PGame شو."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                await ensurePolls(
+                    env
+                );
+
+
+                const pollId =
+                    Number(
+                        votePollMatch[1]
+                    );
+
+
+                const body =
+                    await request.json();
+
+
+                const optionId =
+                    Number(
+                        body.option_id
+                    );
+
+
+                if (
+                    !Number.isInteger(
+                        pollId
+                    ) ||
+                    !Number.isInteger(
+                        optionId
+                    )
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "شناسه نظرسنجی یا گزینه نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const poll =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                question
+
+                            FROM polls
+
+                            WHERE
+                                id = ?1
+                                AND status = 'published'
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            pollId
+                        )
+                        .first();
+
+
+                if (
+                    !poll
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "نظرسنجی پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                const option =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                option_text
+
+                            FROM poll_options
+
+                            WHERE
+                                id = ?1
+                                AND poll_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            optionId,
+                            pollId
+                        )
+                        .first();
+
+
+                if (
+                    !option
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "گزینه انتخاب‌شده معتبر نیست."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const existingVote =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                option_id
+
+                            FROM poll_votes
+
+                            WHERE
+                                poll_id = ?1
+                                AND user_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            pollId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+
+                if (
+                    existingVote
+                ) {
+
+                    await env.DB
+                        .prepare(`
+                            UPDATE poll_votes
+
+                            SET
+                                option_id = ?1,
+
+                                created_at =
+                                    CURRENT_TIMESTAMP
+
+                            WHERE
+                                id = ?2
+                        `)
+                        .bind(
+                            optionId,
+                            existingVote.id
+                        )
+                        .run();
+
+                } else {
+
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO poll_votes(
+                                poll_id,
+                                option_id,
+                                user_id,
+                                created_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3,
+                                CURRENT_TIMESTAMP
+                            )
+                        `)
+                        .bind(
+                            pollId,
+                            optionId,
+                            accessResult.user.id
+                        )
+                        .run();
+
+                }
+
+
+                const options =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                option_text,
+                                (
+                                    SELECT COUNT(*)
+                                    FROM poll_votes
+                                    WHERE
+                                        poll_votes.option_id =
+                                            poll_options.id
+                                ) AS votes
+
+                            FROM poll_options
+
+                            WHERE
+                                poll_id = ?1
+
+                            ORDER BY
+                                sort_order ASC,
+                                id ASC
+                        `)
+                        .bind(
+                            pollId
+                        )
+                        .all();
+
+
+                const optionList =
+                    options.results ??
+                    [];
+
+
+                const totalVotes =
+                    optionList.reduce(
+                        (
+                            total,
+                            item
+                        ) =>
+                            total +
+                            Number(
+                                item.votes ??
+                                0
+                            ),
+                        0
+                    );
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    poll: {
+
+                        id:
+                            poll.id,
+
+                        question:
+                            poll.question,
+
+                        options:
+                            optionList,
+
+                        total_votes:
+                            totalVotes,
+
+                        my_option_id:
+                            optionId
+
+                    }
+
+                });
+
+            }
+                        /* =================================================
+               GET NOTIFICATIONS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/notifications" &&
+                method ===
+                    "GET"
+            ) {
+
+                const user =
+                    await getCurrentUser(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !user
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            notifications:
+                                [],
+
+                            unread_count:
+                                0
+                        },
+                        401
+                    );
+
+                }
+
+
+                await ensureNotifications(
+                    env
+                );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                type,
+                                title,
+                                message,
+                                reference_id,
+                                created_at,
+                                read_at
+
+                            FROM notifications
+
+                            WHERE
+                                user_id = ?1
+
+                            ORDER BY
+                                id DESC
+
+                            LIMIT 50
+                        `)
+                        .bind(
+                            user.id
+                        )
+                        .all();
+
+
+                const unread =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                COUNT(*) AS count
+
+                            FROM notifications
+
+                            WHERE
+                                user_id = ?1
+                                AND read_at IS NULL
+                        `)
+                        .bind(
+                            user.id
+                        )
+                        .first();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    notifications:
+                        result.results ??
+                        [],
+
+                    unread_count:
+                        Number(
+                            unread?.count ??
+                            0
+                        )
+
+                });
+
+            }
+
+
+            /* =================================================
+               READ NOTIFICATION
+            ================================================== */
+
+            const notificationRead =
+                path.match(
+                    /^\/api\/notifications\/(\d+)\/read$/
+                );
+
+
+            if (
+                notificationRead &&
+                method ===
+                    "POST"
+            ) {
+
+                const user =
+                    await getCurrentUser(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !user
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب شو."
+                        },
+                        401
+                    );
+
+                }
+
+
+                await ensureNotifications(
+                    env
+                );
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE notifications
+
+                        SET
+                            read_at =
+                                CURRENT_TIMESTAMP
+
+                        WHERE
+                            id = ?1
+                            AND user_id = ?2
+                    `)
+                    .bind(
+                        Number(
+                            notificationRead[1]
+                        ),
+                        user.id
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true
+
+                });
+
+            }
+
+
+            /* =================================================
+               SUPPORT
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/support/send" &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی این حساب به PGame محدود شده است."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                if (
+                    accessResult.ban &&
+                    (
+                        accessResult.ban.ban_type ===
+                            "full" ||
+
+                        accessResult.ban.ban_type ===
+                            "messages"
+                    )
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "💬 این حساب از ارسال پیام محروم شده است.",
+
+                            banned:
+                                true,
+
+                            ban_type:
+                                accessResult.ban.ban_type
+                        },
+                        403
+                    );
+
+                }
+
+
+                const body =
+                    await request.json();
+
+
+                const message =
+                    clean(
+                        body.message,
+                        5000
+                    );
+
+
+                if (
+                    message.length <
+                    2
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "پیام خیلی کوتاه است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const inserted =
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO support_messages(
+                                user_id,
+                                username,
+                                message,
+                                reply,
+                                status,
+                                created_at,
+                                replied_at
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3,
+                                NULL,
+                                'new',
+                                CURRENT_TIMESTAMP,
+                                NULL
+                            )
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            accessResult.user.username,
+                            message
+                        )
+                        .run();
+
+
+                return json(
+                    {
+                        success:
+                            true,
+
+                        message:
+                            "پیامت با موفقیت برای مدیریت ارسال شد. 💚",
+
+                        id:
+                            inserted.meta
+                                ?.last_row_id ??
+                            null
+                    },
+                    201
+                );
+
+            }
+
+
+            /* =================================================
+               MY SUPPORT MESSAGES
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/support/my" &&
+                method ===
+                    "GET"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            messages:
+                                []
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                message,
+                                reply,
+                                status,
+                                created_at,
+                                replied_at
+
+                            FROM support_messages
+
+                            WHERE
+                                user_id = ?1
+
+                            ORDER BY
+                                created_at DESC,
+                                id DESC
+
+                            LIMIT 50
+                        `)
+                        .bind(
+                            accessResult.user.id
+                        )
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    messages:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN SUPPORT LIST
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/support" &&
+                method ===
+                    "GET"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                user_id,
+                                username,
+                                message,
+                                reply,
+                                status,
+                                created_at,
+                                replied_at
+
+                            FROM support_messages
+
+                            ORDER BY
+                                CASE
+                                    WHEN status = 'new'
+                                    THEN 0
+                                    ELSE 1
+                                END,
+
+                                created_at DESC,
+                                id DESC
+
+                            LIMIT 200
+                        `)
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    messages:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN REPLY
+            ================================================== */
+
+            const supportReply =
+                path.match(
+                    /^\/api\/admin\/support\/(\d+)\/reply$/
+                );
+
+
+            if (
+                supportReply &&
+                method ===
+                    "POST"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                const supportId =
+                    Number(
+                        supportReply[1]
+                    );
+
+
+                const body =
+                    await request.json();
+
+
+                const reply =
+                    clean(
+                        body.reply,
+                        5000
+                    );
+
+
+                if (
+                    !reply
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "متن پاسخ خالی است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const supportMessage =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                user_id
+
+                            FROM support_messages
+
+                            WHERE
+                                id = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            supportId
+                        )
+                        .first();
+
+
+                if (
+                    !supportMessage
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "پیام پشتیبانی پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE support_messages
+
+                        SET
+                            reply = ?1,
+
+                            status =
+                                'replied',
+
+                            replied_at =
+                                CURRENT_TIMESTAMP
+
+                        WHERE
+                            id = ?2
+                    `)
+                    .bind(
+                        reply,
+                        supportId
+                    )
+                    .run();
+
+
+                await notifyUser(
+                    env,
+
+                    supportMessage.user_id,
+
+                    "support",
+
+                    "💬 پاسخ مدیریت",
+
+                    "مدیریت به پیام شما پاسخ داده است.",
+
+                    supportId
+                );
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "پاسخ با موفقیت ارسال شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN USERS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/users" &&
+                method ===
+                    "GET"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                u.id,
+                                u.username,
+
+                                ps.xp,
+                                ps.level,
+                                ps.coins,
+
+                                ub.id AS ban_id,
+                                ub.reason AS ban_reason,
+                                ub.ban_type,
+                                ub.banned_until,
+                                ub.active AS ban_active
+
+                            FROM users u
+
+                            LEFT JOIN player_stats ps
+                                ON ps.user_id = u.id
+
+                            LEFT JOIN user_bans ub
+                                ON ub.user_id = u.id
+
+                                AND ub.active = 1
+
+                                AND (
+                                    ub.banned_until IS NULL
+                                    OR ub.banned_until = ''
+                                    OR ub.banned_until >
+                                        CURRENT_TIMESTAMP
+                                )
+
+                            ORDER BY
+                                u.id DESC
+                        `)
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    users:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADMIN BANS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/admin/bans" &&
+                method ===
+                    "GET"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                ub.id,
+                                ub.user_id,
+                                u.username,
+                                ub.reason,
+                                ub.ban_type,
+                                ub.banned_until,
+                                ub.created_at,
+                                ub.active
+
+                            FROM user_bans ub
+
+                            INNER JOIN users u
+                                ON u.id =
+                                   ub.user_id
+
+                            WHERE
+                                ub.active = 1
+
+                                AND (
+                                    ub.banned_until IS NULL
+                                    OR ub.banned_until = ''
+                                    OR ub.banned_until >
+                                        CURRENT_TIMESTAMP
+                                )
+
+                            ORDER BY
+                                ub.created_at DESC
+                        `)
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    bans:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               BAN USER
+            ================================================== */
+
+            const banMatch =
+                path.match(
+                    /^\/api\/admin\/users\/(\d+)\/ban$/
+                );
+
+
+            if (
+                banMatch &&
+                method ===
+                    "POST"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                const userId =
+                    Number(
+                        banMatch[1]
+                    );
+
+
+                if (
+                    userId ===
+                    admin.user.id
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ادمین نمی‌تواند خودش را بن کند."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const body =
+                    await request.json();
+
+
+                const reason =
+                    clean(
+                        body.reason,
+                        500
+                    )
+                    ||
+                    "نقض قوانین PGame";
+
+
+                const ban_type =
+                    banType(
+                        body.ban_type
+                    );
+
+
+                let bannedUntil =
+                    null;
+
+
+                if (
+                    typeof body.banned_until ===
+                        "string" &&
+                    body.banned_until
+                ) {
+
+                    const date =
+                        new Date(
+                            body.banned_until
+                        );
+
+
+                    if (
+                        Number.isNaN(
+                            date.getTime()
+                        ) ||
+                        date.getTime() <=
+                            Date.now()
+                    ) {
+
+                        return json(
+                            {
+                                success:
+                                    false,
+
+                                message:
+                                    "زمان پایان بن نامعتبر است."
+                            },
+                            400
+                        );
+
+                    }
+
+
+                    bannedUntil =
+                        date.toISOString();
+
+                }
+
+
+                const target =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                username
+
+                            FROM users
+
+                            WHERE
+                                id = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            userId
+                        )
+                        .first();
+
+
+                if (
+                    !target
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "کاربر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE user_bans
+
+                        SET
+                            active = 0
+
+                        WHERE
+                            user_id = ?1
+                            AND active = 1
+                    `)
+                    .bind(
+                        userId
+                    )
+                    .run();
+
+
+                await env.DB
+                    .prepare(`
+                        INSERT INTO user_bans(
+                            user_id,
+                            reason,
+                            ban_type,
+                            banned_until,
+                            created_at,
+                            active
+                        )
+                        VALUES(
+                            ?1,
+                            ?2,
+                            ?3,
+                            ?4,
+                            CURRENT_TIMESTAMP,
+                            1
+                        )
+                    `)
+                    .bind(
+                        userId,
+                        reason,
+                        ban_type,
+                        bannedUntil
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "محدودیت کاربر اعمال شد.",
+
+                    username:
+                        target.username,
+
+                    ban_type,
+
+                    ban_label:
+                        banLabel(
+                            ban_type
+                        ),
+
+                    banned_until:
+                        bannedUntil
+
+                });
+
+            }
+
+
+            /* =================================================
+               UNBAN USER
+            ================================================== */
+
+            const unbanMatch =
+                path.match(
+                    /^\/api\/admin\/users\/(\d+)\/unban$/
+                );
+
+
+            if (
+                unbanMatch &&
+                method ===
+                    "POST"
+            ) {
+
+                const admin =
+                    await requireAdmin(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !admin.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی ادمین ندارید."
+                        },
+                        admin.status
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE user_bans
+
+                        SET
+                            active = 0
+
+                        WHERE
+                            user_id = ?1
+                            AND active = 1
+                    `)
+                    .bind(
+                        Number(
+                            unbanMatch[1]
+                        )
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "محدودیت کاربر برداشته شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               RUBIKA CREATE CODE
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/rubika/create-code" &&
+                method ===
+                    "POST"
+            ) {
+
+                const user =
+                    await getCurrentUser(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !user
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب PGame شو."
+                        },
+                        401
+                    );
+
+                }
+
+
+                const code =
+                    String(
+                        100000 +
+                        (
+                            crypto.getRandomValues(
+                                new Uint32Array(1)
+                            )[0]
+                            %
+                            900000
+                        )
+                    );
+
+
+                const expires =
+                    new Date(
+                        Date.now() +
+                        RUBIKA_CODE_MINUTES *
+                        60000
+                    )
+                    .toISOString();
+
+
+                await env.DB
+                    .prepare(`
+                        INSERT INTO rubika_link_codes(
+                            user_id,
+                            code,
+                            expires_at
+                        )
+                        VALUES(
+                            ?1,
+                            ?2,
+                            ?3
+                        )
+
+                        ON CONFLICT(user_id)
+
+                        DO UPDATE SET
+                            code =
+                                excluded.code,
+
+                            expires_at =
+                                excluded.expires_at
+                    `)
+                    .bind(
+                        user.id,
+                        code,
+                        expires
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    code,
+
+                    expires_at:
+                        expires
+
+                });
+
+            }
+
+
+            /* =================================================
+               RUBIKA LINK
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/rubika/link" &&
+                method ===
+                    "POST"
+            ) {
+
+                const key =
+                    (
+                        request.headers.get(
+                            "X-VEXON-API-KEY"
+                        ) ||
+                        ""
+                    )
+                    .trim();
+
+
+                if (
+                    !env.VEXON_RUBIKA_API_KEY ||
+                    key !==
+                        String(
+                            env.VEXON_RUBIKA_API_KEY
+                        ).trim()
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "Unauthorized"
+                        },
+                        401
+                    );
+
+                }
+
+
+                const body =
+                    await request.json();
+
+
+                const code =
+                    clean(
+                        body.code,
+                        6
+                    );
+
+
+                const rubikaId =
+                    body.rubika_user_id !==
+                        undefined
+
+                        ? String(
+                            body.rubika_user_id
+                        ).trim()
+
+                        : "";
+
+
+                if (
+                    !/^\d{6}$/.test(
+                        code
+                    ) ||
+                    !rubikaId
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "Invalid data"
+                        },
+                        400
+                    );
+
+                }
+
+
+                const linkCode =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                user_id,
+                                code,
+                                expires_at
+
+                            FROM rubika_link_codes
+
+                            WHERE
+                                code = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            code
+                        )
+                        .first();
+
+
+                if (
+                    !linkCode
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "کد اتصال معتبر نیست."
+                        },
+                        404
+                    );
+
+                }
+
+
+                if (
+                    new Date(
+                        linkCode.expires_at
+                    ).getTime() <=
+                    Date.now()
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "کد اتصال منقضی شده است."
+                        },
+                        410
+                    );
+
+                }
+
+
+                const existing =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id
+
+                            FROM rubika_links
+
+                            WHERE
+                                user_id = ?1
+                                OR rubika_sender_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            linkCode.user_id,
+                            rubikaId
+                        )
+                        .first();
+
+
+                if (
+                    existing
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "این حساب PGame یا حساب روبیکا قبلاً متصل شده است."
+                        },
+                        409
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        INSERT INTO rubika_links(
+                            user_id,
+                            rubika_sender_id,
+                            rubika_chat_id
+                        )
+                        VALUES(
+                            ?1,
+                            ?2,
+                            ?3
+                        )
+                    `)
+                    .bind(
+                        linkCode.user_id,
+                        rubikaId,
+                        rubikaId
+                    )
+                    .run();
+
+
+                await env.DB
+                    .prepare(`
+                        DELETE FROM rubika_link_codes
+
+                        WHERE
+                            user_id = ?1
+                    `)
+                    .bind(
+                        linkCode.user_id
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "حساب روبیکا با موفقیت متصل شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               RUBIKA UNLINK
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/rubika/unlink" &&
+                method ===
+                    "POST"
+            ) {
+
+                const user =
+                    await getCurrentUser(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !user
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "ابتدا وارد حساب PGame شو."
+                        },
+                        401
+                    );
+
+                }
+
+
+                const linked =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                rubika_sender_id
+
+                            FROM rubika_links
+
+                            WHERE
+                                user_id = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            user.id
+                        )
+                        .first();
+
+
+                if (
+                    !linked
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "هیچ حساب روبیکایی به این حساب متصل نیست."
+                        },
+                        404
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        DELETE FROM rubika_links
+
+                        WHERE
+                            user_id = ?1
+                    `)
+                    .bind(
+                        user.id
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "اتصال روبیکا با موفقیت لغو شد."
+
+                });
+
+            }
+
+
+            /* =================================================
+               API TEST
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/test" &&
+                method ===
+                    "GET"
+            ) {
+
+                return json({
+
+                    success:
+                        true,
+
+                    message:
+                        "PGame API is online!"
+
+                });
+
+            }
+
+
+            /* =================================================
+               MESSENGER - CONVERSATIONS GET
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/messenger/conversations" &&
+                method ===
+                    "GET"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی به پیام‌رسان محدود شده است."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                await ensureMessenger(
+                    env
+                );
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                c.id,
+                                c.updated_at,
+
+                                other.id
+                                    AS other_user_id,
+
+                                other.username
+                                    AS other_username,
+
+                                lm.content
+                                    AS last_message,
+
+                                lm.created_at
+                                    AS last_message_at,
+
+                                (
+                                    SELECT COUNT(*)
+
+                                    FROM messages um
+
+                                    WHERE
+                                        um.conversation_id =
+                                            c.id
+
+                                        AND um.sender_id !=
+                                            ?1
+
+                                        AND um.deleted_at IS NULL
+
+                                        AND (
+                                            cm.last_read_at IS NULL
+                                            OR um.created_at >
+                                               cm.last_read_at
+                                        )
+
+                                ) AS unread_count
+
+                            FROM conversations c
+
+                            INNER JOIN conversation_members cm
+                                ON cm.conversation_id =
+                                   c.id
+
+                                AND cm.user_id =
+                                    ?1
+
+                            INNER JOIN conversation_members ocm
+                                ON ocm.conversation_id =
+                                   c.id
+
+                                AND ocm.user_id !=
+                                    ?1
+
+                            INNER JOIN users other
+                                ON other.id =
+                                   ocm.user_id
+
+                            LEFT JOIN messages lm
+                                ON lm.id = (
+                                    SELECT
+                                        MAX(m2.id)
+
+                                    FROM messages m2
+
+                                    WHERE
+                                        m2.conversation_id =
+                                            c.id
+
+                                        AND m2.deleted_at IS NULL
+                                )
+
+                            ORDER BY
+                                COALESCE(
+                                    lm.created_at,
+                                    c.created_at
+                                ) DESC,
+
+                                c.id DESC
+                        `)
+                        .bind(
+                            accessResult.user.id
+                        )
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    conversations:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               MESSENGER - SEARCH USERS
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/messenger/users/search" &&
+                method ===
+                    "GET"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                const query =
+                    clean(
+                        url.searchParams.get(
+                            "q"
+                        ) ||
+                        "",
+                        40
+                    );
+
+
+                if (
+                    query.length <
+                    2
+                ) {
+
+                    return json({
+
+                        success:
+                            true,
+
+                        users:
+                            []
+
+                    });
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                username
+
+                            FROM users
+
+                            WHERE
+                                id != ?1
+
+                                AND username LIKE ?2
+
+                            ORDER BY
+                                username ASC
+
+                            LIMIT 30
+                        `)
+                        .bind(
+                            accessResult.user.id,
+
+                            `%${query}%`
+                        )
+                        .all();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    users:
+                        result.results ??
+                        []
+
+                });
+
+            }
+
+
+            /* =================================================
+               MESSENGER - CREATE CONVERSATION
+            ================================================== */
+
+            if (
+                path ===
+                    "/api/messenger/conversations" &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی به پیام‌رسان محدود شده است."
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                if (
+                    accessResult.ban?.ban_type ===
+                        "messages"
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "💬 این حساب از ارسال پیام محروم شده است."
+                        },
+                        403
+                    );
+
+                }
+
+
+                await ensureMessenger(
+                    env
+                );
+
+
+                const body =
+                    await request.json();
+
+
+                const targetUserId =
+                    Number(
+                        body.user_id
+                    );
+
+
+                if (
+                    !Number.isInteger(
+                        targetUserId
+                    ) ||
+                    targetUserId < 1 ||
+                    targetUserId ===
+                        accessResult.user.id
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "کاربر مقصد نامعتبر است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const target =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                id,
+                                username
+
+                            FROM users
+
+                            WHERE
+                                id = ?1
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            targetUserId
+                        )
+                        .first();
+
+
+                if (
+                    !target
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "کاربر پیدا نشد."
+                        },
+                        404
+                    );
+
+                }
+
+
+                const existing =
+                    await env.DB
+                        .prepare(`
+                            SELECT
+                                c.id
+
+                            FROM conversations c
+
+                            INNER JOIN conversation_members x
+                                ON x.conversation_id =
+                                   c.id
+
+                                AND x.user_id =
+                                    ?1
+
+                            INNER JOIN conversation_members y
+                                ON y.conversation_id =
+                                   c.id
+
+                                AND y.user_id =
+                                    ?2
+
+                            WHERE NOT EXISTS (
+                                SELECT 1
+
+                                FROM conversation_members z
+
+                                WHERE
+                                    z.conversation_id =
+                                        c.id
+
+                                    AND z.user_id NOT IN(
+                                        ?1,
+                                        ?2
+                                    )
+                            )
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            accessResult.user.id,
+                            targetUserId
+                        )
+                        .first();
+
+
+                let conversationId =
+                    existing?.id;
+
+
+                if (
+                    !conversationId
+                ) {
+
+                    const inserted =
+                        await env.DB
+                            .prepare(`
+                                INSERT INTO conversations
+                                DEFAULT VALUES
+                            `)
+                            .run();
+
+
+                    conversationId =
+                        inserted.meta
+                            ?.last_row_id;
+
+
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO conversation_members(
+                                conversation_id,
+                                user_id
+                            )
+                            VALUES(
+                                ?1,
+                                ?2
+                            ),
+                            (
+                                ?1,
+                                ?3
+                            )
+                        `)
+                        .bind(
+                            conversationId,
+                            accessResult.user.id,
+                            targetUserId
+                        )
+                        .run();
+
+                }
+
+
+                return json(
+                    {
+                        success:
+                            true,
+
+                        conversation: {
+
+                            id:
+                                conversationId,
+
+                            other_user_id:
+                                target.id,
+
+                            other_username:
+                                target.username
+
+                        }
+
+                    },
+                    201
+                );
+
+            }
+
+
+            /* =================================================
+               MESSENGER - MESSAGES
+            ================================================== */
+
+            const messagesMatch =
+                path.match(
+                    /^\/api\/messenger\/conversations\/(\d+)\/messages$/
+                );
+
+
+            if (
+                messagesMatch &&
+                (
+                    method ===
+                        "GET" ||
+                    method ===
+                        "POST"
                 )
-                VALUES(
-                    ?1,
-                    ?2,
-                    ?3
-                )
-            `)
-            .bind(
-                conversationId,
-                accessResult.user.id,
-                content
-            )
-            .run();
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
 
 
-    await env.DB
-        .prepare(`
-            UPDATE conversations
+                if (
+                    !accessResult.ok
+                ) {
 
-            SET
-                updated_at =
-                    CURRENT_TIMESTAMP
+                    return json(
+                        {
+                            success:
+                                false,
 
-            WHERE id = ?1
-        `)
-        .bind(
-            conversationId
-        )
-        .run();
+                            message:
+                                "دسترسی به پیام‌رسان محدود شده است."
+                        },
+                        accessResult.status
+                    );
 
-
-    return json(
-        {
-            success:
-                true,
-
-            id:
-                inserted.meta
-                    ?.last_row_id ??
-                null
-        },
-        201
-    );
-
-}
+                }
 
 
-/* =========================================================
-   MESSENGER - MARK READ
-========================================================= */
+                if (
+                    method ===
+                        "POST" &&
+                    accessResult.ban?.ban_type ===
+                        "messages"
+                ) {
 
-const readConversation =
-    path.match(
-        /^\/api\/messenger\/conversations\/(\d+)\/read$/
-    );
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "💬 این حساب از ارسال پیام محروم شده است."
+                        },
+                        403
+                    );
+
+                }
 
 
-if (
-    readConversation &&
-    method === "POST"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
+                await ensureMessenger(
+                    env
+                );
 
 
-    if (
-        !accessResult.ok
-    ) {
+                const conversationId =
+                    Number(
+                        messagesMatch[1]
+                    );
 
-        return json(
-            {
-                success:
-                    false
-            },
-            accessResult.status
-        );
+
+                const member =
+                    await env.DB
+                        .prepare(`
+                            SELECT 1
+
+                            FROM conversation_members
+
+                            WHERE
+                                conversation_id = ?1
+
+                                AND user_id = ?2
+
+                            LIMIT 1
+                        `)
+                        .bind(
+                            conversationId,
+                            accessResult.user.id
+                        )
+                        .first();
+
+
+                if (
+                    !member
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "دسترسی به این گفتگو ندارید."
+                        },
+                        403
+                    );
+
+                }
+
+
+                if (
+                    method ===
+                        "GET"
+                ) {
+
+                    const result =
+                        await env.DB
+                            .prepare(`
+                                SELECT
+                                    m.id,
+                                    m.sender_id,
+                                    u.username
+                                        AS sender_username,
+                                    m.content,
+                                    m.created_at
+
+                                FROM messages m
+
+                                INNER JOIN users u
+                                    ON u.id =
+                                       m.sender_id
+
+                                WHERE
+                                    m.conversation_id =
+                                        ?1
+
+                                    AND m.deleted_at IS NULL
+
+                                ORDER BY
+                                    m.id ASC
+
+                                LIMIT 500
+                            `)
+                            .bind(
+                                conversationId
+                            )
+                            .all();
+
+
+                    return json({
+
+                        success:
+                            true,
+
+                        messages:
+                            result.results ??
+                            []
+
+                    });
+
+                }
+
+
+                const body =
+                    await request.json();
+
+
+                const content =
+                    clean(
+                        body.content,
+                        4000
+                    );
+
+
+                if (
+                    !content
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false,
+
+                            message:
+                                "پیام خالی است."
+                        },
+                        400
+                    );
+
+                }
+
+
+                const inserted =
+                    await env.DB
+                        .prepare(`
+                            INSERT INTO messages(
+                                conversation_id,
+                                sender_id,
+                                content
+                            )
+                            VALUES(
+                                ?1,
+                                ?2,
+                                ?3
+                            )
+                        `)
+                        .bind(
+                            conversationId,
+                            accessResult.user.id,
+                            content
+                        )
+                        .run();
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE conversations
+
+                        SET
+                            updated_at =
+                                CURRENT_TIMESTAMP
+
+                        WHERE
+                            id = ?1
+                    `)
+                    .bind(
+                        conversationId
+                    )
+                    .run();
+
+
+                return json(
+                    {
+                        success:
+                            true,
+
+                        id:
+                            inserted.meta
+                                ?.last_row_id ??
+                            null
+                    },
+                    201
+                );
+
+            }
+
+
+            /* =================================================
+               MESSENGER - MARK READ
+            ================================================== */
+
+            const readConversation =
+                path.match(
+                    /^\/api\/messenger\/conversations\/(\d+)\/read$/
+                );
+
+
+            if (
+                readConversation &&
+                method ===
+                    "POST"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                await env.DB
+                    .prepare(`
+                        UPDATE conversation_members
+
+                        SET
+                            last_read_at =
+                                CURRENT_TIMESTAMP
+
+                        WHERE
+                            conversation_id = ?1
+                            AND user_id = ?2
+                    `)
+                    .bind(
+                        Number(
+                            readConversation[1]
+                        ),
+                        accessResult.user.id
+                    )
+                    .run();
+
+
+                return json({
+
+                    success:
+                        true
+
+                });
+
+            }
+
+
+            /* =================================================
+               MESSENGER - DELETE MESSAGE
+            ================================================== */
+
+            const deleteMessage =
+                path.match(
+                    /^\/api\/messenger\/messages\/(\d+)$/
+                );
+
+
+            if (
+                deleteMessage &&
+                method ===
+                    "DELETE"
+            ) {
+
+                const accessResult =
+                    await access(
+                        request,
+                        env
+                    );
+
+
+                if (
+                    !accessResult.ok
+                ) {
+
+                    return json(
+                        {
+                            success:
+                                false
+                        },
+                        accessResult.status
+                    );
+
+                }
+
+
+                const result =
+                    await env.DB
+                        .prepare(`
+                            UPDATE messages
+
+                            SET
+                                deleted_at =
+                                    CURRENT_TIMESTAMP
+
+                            WHERE
+                                id = ?1
+
+                                AND sender_id = ?2
+
+                                AND deleted_at IS NULL
+                        `)
+                        .bind(
+                            Number(
+                                deleteMessage[1]
+                            ),
+                            accessResult.user.id
+                        )
+                        .run();
+
+
+                return json({
+
+                    success:
+                        true,
+
+                    changed:
+                        Number(
+                            result.meta?.changes ??
+                            0
+                        )
+
+                });
+
+            }
+
+
+            /* =================================================
+               STATIC ASSETS
+            ================================================== */
+
+            return env.ASSETS.fetch(
+                request
+            );
+
+
+        } catch (e) {
+
+            console.error(
+                "PGAME_WORKER_ERROR",
+                e
+            );
+
+
+            return json(
+                {
+                    success:
+                        false,
+
+                    message:
+                        "خطای داخلی سرور رخ داد."
+                },
+                500
+            );
+
+        }
 
     }
 
-
-    await env.DB
-        .prepare(`
-            UPDATE conversation_members
-
-            SET
-                last_read_at =
-                    CURRENT_TIMESTAMP
-
-            WHERE
-                conversation_id = ?1
-                AND user_id = ?2
-        `)
-        .bind(
-            Number(
-                readConversation[1]
-            ),
-            accessResult.user.id
-        )
-        .run();
-
-
-    return json({
-
-        success:
-            true
-
-    });
-
-}
-
-
-/* =========================================================
-   MESSENGER - DELETE MESSAGE
-========================================================= */
-
-const deleteMessage =
-    path.match(
-        /^\/api\/messenger\/messages\/(\d+)$/
-    );
-
-
-if (
-    deleteMessage &&
-    method === "DELETE"
-) {
-
-    const accessResult =
-        await access(
-            request,
-            env
-        );
-
-
-    if (
-        !accessResult.ok
-    ) {
-
-        return json(
-            {
-                success:
-                    false
-            },
-            accessResult.status
-        );
-
-    }
-
-
-    const result =
-        await env.DB
-            .prepare(`
-                UPDATE messages
-
-                SET
-                    deleted_at =
-                        CURRENT_TIMESTAMP
-
-                WHERE
-                    id = ?1
-                    AND sender_id = ?2
-                    AND deleted_at IS NULL
-            `)
-            .bind(
-                Number(
-                    deleteMessage[1]
-                ),
-                accessResult.user.id
-            )
-            .run();
-
-
-    return json({
-
-        success:
-            true,
-
-        changed:
-            Number(
-                result.meta?.changes ??
-                0
-            )
-
-    });
-
-}
-
-
-/* =========================================================
-   STATIC ASSETS
-========================================================= */
-
-return env.ASSETS.fetch(
-    request
-);
-  } catch (e) {
-
-    console.error(
-        "PGAME_WORKER_ERROR",
-        e
-    );
-
-    return json(
-        {
-            success: false,
-            message: "خطای داخلی سرور رخ داد."
-        },
-        500
-    );
-
-  }
-
-}};
+};
