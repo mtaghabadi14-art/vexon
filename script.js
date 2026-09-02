@@ -3274,7 +3274,11 @@ function initializePGame() {
 
     initializeAuthHeader();
 
-    initializeSupportWidget();
+    if (
+        !isMessengerPage()
+    ) {
+       initializeSupportWidget();
+    }
 
     initializeNotificationWidget();
 
