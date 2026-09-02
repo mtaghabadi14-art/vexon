@@ -1454,6 +1454,64 @@
 
     </script>
 
+<script>
+    (async function () {
+
+        const adminButton =
+            document.getElementById("admin-profile-button");
+
+        if (!adminButton) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/me",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                response.ok &&
+                data?.success === true &&
+                data?.isAdmin === true
+            ) {
+
+                adminButton.style.setProperty(
+                    "display",
+                    "block",
+                    "important"
+                );
+
+            } else {
+
+                adminButton.style.setProperty(
+                    "display",
+                    "none",
+                    "important"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "ADMIN BUTTON ERROR:",
+                error
+            );
+
+        }
+
+    })();
+</script>
 
     <script src="../script.js"></script>
 
