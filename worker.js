@@ -275,7 +275,7 @@ async function renderPlayer(env, rubikaId) {
         const timeout =
             setTimeout(
                 () => controller.abort(),
-                10000
+                5000
             );
 
         const response =
