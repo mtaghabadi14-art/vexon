@@ -5381,6 +5381,181 @@ if (
             }
 
             /* =================================================
+   RUBIKA UNLINK FROM BOT
+================================================= */
+
+if (
+    path === "/api/rubika/unlink-bot" &&
+    method === "POST"
+) {
+    const apiKey =
+        request.headers.get("X-VEXON-API-KEY") || "";
+
+    if (
+        !env.VEXON_RUBIKA_API_KEY ||
+        apiKey !== env.VEXON_RUBIKA_API_KEY
+    ) {
+        return json(
+            {
+                success: false,
+                message: "Unauthorized"
+            },
+            401
+        );
+    }
+
+    try {
+        const body =
+            await request.json();
+
+        const rubikaUserId =
+            typeof body.rubika_user_id === "string"
+                ? body.rubika_user_id.trim()
+                : "";
+
+        if (!rubikaUserId) {
+            return json(
+                {
+                    success: false,
+                    message:
+                        "شناسه روبیکا ارسال نشده است."
+                },
+                400
+            );
+        }
+
+        const linked =
+            await env.DB
+                .prepare(`
+                    SELECT
+                        id,
+                        user_id
+                    FROM rubika_links
+                    WHERE rubika_sender_id = ?1
+                    LIMIT 1
+                `)
+                .bind(rubikaUserId)
+                .first();
+
+        if (!linked) {
+            return json({
+                success: true,
+                already_unlinked: true,
+                message:
+                    "این حساب روبیکا به PGame متصل نیست."
+            });
+        }
+
+        await env.DB
+            .prepare(`
+                DELETE FROM rubika_links
+                WHERE rubika_sender_id = ?1
+            `)
+            .bind(rubikaUserId)
+            .run();
+
+        return json({
+            success: true,
+            message:
+                "اتصال Rubika و PGame با موفقیت قطع شد."
+        });
+
+    } catch (error) {
+
+        console.error(
+            "RUBIKA_BOT_UNLINK_ERROR",
+            error
+        );
+
+        return json(
+            {
+                success: false,
+                message:
+                    "قطع ارتباط انجام نشد."
+            },
+            500
+        );
+    }
+}
+
+
+/* =================================================
+   RUBIKA CONNECTION STATUS FROM BOT
+================================================= */
+
+if (
+    path === "/api/rubika/status-bot" &&
+    method === "GET"
+) {
+    const apiKey =
+        request.headers.get("X-VEXON-API-KEY") || "";
+
+    if (
+        !env.VEXON_RUBIKA_API_KEY ||
+        apiKey !== env.VEXON_RUBIKA_API_KEY
+    ) {
+        return json(
+            {
+                success: false,
+                message: "Unauthorized"
+            },
+            401
+        );
+    }
+
+    try {
+        const rubikaUserId =
+            url.searchParams.get(
+                "rubika_user_id"
+            )?.trim() || "";
+
+        if (!rubikaUserId) {
+            return json(
+                {
+                    success: false,
+                    message:
+                        "شناسه روبیکا ارسال نشده است."
+                },
+                400
+            );
+        }
+
+        const linked =
+            await env.DB
+                .prepare(`
+                    SELECT
+                        id
+                    FROM rubika_links
+                    WHERE rubika_sender_id = ?1
+                    LIMIT 1
+                `)
+                .bind(rubikaUserId)
+                .first();
+
+        return json({
+            success: true,
+            connected: !!linked
+        });
+
+    } catch (error) {
+
+        console.error(
+            "RUBIKA_BOT_STATUS_ERROR",
+            error
+        );
+
+        return json(
+            {
+                success: false,
+                message:
+                    "بررسی وضعیت اتصال انجام نشد."
+            },
+            500
+        );
+    }
+}
+
+            /* =================================================
                API TEST
             ================================================= */
 
