@@ -260,6 +260,10 @@ function isAdmin(user, env) {
 async function renderPlayer(env, rubikaId) {
 
     if (!env.VEXON_RUBIKA_API_KEY) {
+        console.error(
+            "RUBIKA PLAYER: API KEY IS MISSING"
+        );
+
         return null;
     }
 
@@ -271,9 +275,8 @@ async function renderPlayer(env, rubikaId) {
         const timeout =
             setTimeout(
                 () => controller.abort(),
-                1500
+                10000
             );
-
 
         const response =
             await fetch(
@@ -291,30 +294,41 @@ async function renderPlayer(env, rubikaId) {
                 }
             );
 
-
-        clearTimeout(
-            timeout
-        );
-
+        clearTimeout(timeout);
 
         if (!response.ok) {
+
+            console.error(
+                "RUBIKA PLAYER HTTP ERROR:",
+                response.status
+            );
+
             return null;
         }
-
 
         const data =
             await response.json();
 
+        if (!data?.success) {
 
-        return data?.success
-            ? data.player
-            : null;
+            console.error(
+                "RUBIKA PLAYER API ERROR:",
+                data?.message || "Unknown error"
+            );
 
+            return null;
+        }
 
-    } catch {
+        return data.player ?? null;
+
+    } catch (error) {
+
+        console.error(
+            "RUBIKA PLAYER FETCH ERROR:",
+            error?.name || error
+        );
 
         return null;
-
     }
 }
 
