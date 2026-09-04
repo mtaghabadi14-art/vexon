@@ -381,7 +381,9 @@ async function getCurrentUser(request, env) {
     let typingBestTime = 0;
     let typingBestWpm = 0;
 
-    let rubikaUserId =
+    let rubikaUserId = null;
+
+    const rubikaLinkedUserId =
         rubikaLink?.rubika_sender_id
             ? String(rubikaLink.rubika_sender_id)
             : null;
@@ -479,8 +481,8 @@ async function getCurrentUser(request, env) {
         username: session.username,
 
         rubika_user_id:
-            rubikaUserId,
-
+            rubikaUserId ??
+            rubikaLinkedUserId,
         nickname,
         title,
 
