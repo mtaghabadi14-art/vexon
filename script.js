@@ -2978,6 +2978,67 @@ function initializeSupportWidget() {
 
 }
 
+/* =========================================================
+   ONLINE PRESENCE
+========================================================= */
+
+let presenceTimer = null;
+
+async function sendPresenceHeartbeat() {
+    try {
+        await fetch(
+            "/api/heartbeat",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+    } catch (error) {
+        console.debug(
+            "PRESENCE_HEARTBEAT_ERROR",
+            error
+        );
+    }
+}
+
+function initializePresence() {
+
+    // اولین heartbeat
+    sendPresenceHeartbeat();
+
+    // هر 30 ثانیه
+    if (presenceTimer) {
+        clearInterval(presenceTimer);
+    }
+
+    presenceTimer =
+        setInterval(
+            sendPresenceHeartbeat,
+            30000
+        );
+
+    // هنگام خروج از صفحه تایمر را متوقف کن
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (presenceTimer) {
+                clearInterval(
+                    presenceTimer
+                );
+            }
+
+        },
+        {
+            once: true
+        }
+    );
+}
+
 
 /* =========================================================
    START VEXON
@@ -2985,17 +3046,10 @@ function initializeSupportWidget() {
 
 (async function startVexon() {
 
-    /*
-     * صفحه را اول نمایش بده؛
-     * بررسی Full Ban نباید جلوی لود شدن UI را بگیرد.
-     */
+    await checkFullBan();
 
     await loadVexon();
 
-    /*
-     * بعد از شروع صفحه، بررسی بن را در پس‌زمینه انجام بده.
-     */
-
-    checkFullBan();
+    initializePresence();
 
 })();
