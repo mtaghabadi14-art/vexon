@@ -32,6 +32,297 @@
     <style>
 
         /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .profile-settings-page {
+            position: relative;
+            z-index: 2;
+            width: min(900px, 94%);
+            margin: 0 auto;
+            padding: 40px 0 80px;
+        }
+
+
+        .profile-settings-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+
+        .profile-settings-header .section-label {
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+
+        .profile-settings-header h1 {
+            margin: 0;
+            font-size: clamp(28px, 5vw, 44px);
+            line-height: 1.4;
+        }
+
+
+        .profile-settings-header h1 span {
+            display: block;
+            color: var(--green);
+        }
+
+
+        .profile-settings-header p {
+            max-width: 700px;
+            margin: 12px auto 0;
+            color: #9696aa;
+            font-size: 12px;
+            line-height: 2;
+        }
+
+
+        /* =========================================================
+           MAIN CARD
+        ========================================================= */
+
+        .profile-settings-card {
+            padding: 25px;
+            border-radius: 24px;
+            background:
+                rgba(7, 10, 18, .82);
+            border:
+                1px solid
+                rgba(255, 255, 255, .07);
+            backdrop-filter: blur(18px);
+            box-shadow:
+                0 25px 80px
+                rgba(0, 0, 0, .25);
+        }
+
+
+        /* =========================================================
+           ACCOUNT HERO
+        ========================================================= */
+
+        .settings-account-head {
+            text-align: center;
+        }
+
+
+        .settings-avatar {
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 26px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0, 255, 157, .12),
+                    rgba(116, 77, 255, .15)
+                );
+
+            border:
+                1px solid
+                rgba(0, 255, 157, .12);
+
+            box-shadow:
+                0 0 30px
+                rgba(0, 255, 157, .05);
+
+            font-size: 40px;
+        }
+
+
+        .settings-account-head strong {
+            display: block;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+
+        .settings-account-head > span {
+            display: block;
+            margin-top: 4px;
+            color: #85869b;
+            font-size: 10px;
+        }
+
+
+        /* =========================================================
+           GENERIC BOX
+        ========================================================= */
+
+        .settings-box {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 17px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, .07);
+
+            background:
+                rgba(255, 255, 255, .025);
+        }
+
+
+        .settings-box-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+
+        .settings-box-description {
+            margin: 7px 0 0;
+
+            color: #8b8b9f;
+            font-size: 10px;
+            line-height: 1.9;
+        }
+
+
+        /* =========================================================
+           ACCOUNT INFO
+        ========================================================= */
+
+        .account-info-box {
+            border-color:
+                rgba(0, 255, 157, .15);
+
+            background:
+                rgba(0, 255, 157, .035);
+        }
+
+
+        .account-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+        }
+
+
+        .account-info-row + .account-info-row {
+            margin-top: 10px;
+        }
+
+
+        .account-info-label {
+            color: #8b8b9f;
+            font-size: 10px;
+        }
+
+
+        .account-info-value {
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+
+        .account-info-value.active {
+            color: var(--green);
+        }
+
+
+        /* =========================================================
+           CHANGE PASSWORD
+        ========================================================= */
+
+        .change-password-box {
+            border-color:
+                rgba(116, 77, 255, .20);
+
+            background:
+                rgba(116, 77, 255, .035);
+        }
+
+
+        .change-password-form {
+            display: grid;
+            gap: 9px;
+            margin-top: 14px;
+        }
+
+
+        .change-password-form label {
+            font-size: 10px;
+            color: #c6c6d8;
+            opacity: .85;
+        }
+
+
+        .change-password-input {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border-radius: 13px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, .08);
+
+            background:
+                rgba(255, 255, 255, .035);
+
+            color: #fff;
+
+            outline: none;
+
+            font-size: 12px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+
+        .change-password-input:focus {
+            border-color:
+                rgba(116, 77, 255, .42);
+
+            background:
+                rgba(116, 77, 255, .05);
+
+            box-shadow:
+                0 0 18px
+                rgba(116, 77, 255, .08);
+        }
+
+
+        .change-password-input::placeholder {
+            color: #66667b;
+        }
+
+
+        .change-password-button {
+            width: 100%;
+            margin-top: 5px;
+            justify-content: center;
+        }
+
+
+        .change-password-message {
+            min-height: 20px;
+            margin-top: 2px;
+
+            font-size: 10px;
+            line-height: 1.8;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
            RUBIKA
         ========================================================= */
 
@@ -63,7 +354,6 @@
                     255,
                     .07
                 );
-
         }
 
 
@@ -84,7 +374,6 @@
                     157,
                     .035
                 );
-
         }
 
 
@@ -105,7 +394,6 @@
                     90,
                     .025
                 );
-
         }
 
 
@@ -119,7 +407,6 @@
 
             margin-top:
                 10px;
-
         }
 
 
@@ -127,7 +414,6 @@
 
             flex:
                 1;
-
         }
 
 
@@ -135,7 +421,6 @@
 
             display:
                 none;
-
         }
 
 
@@ -172,7 +457,6 @@
                     157,
                     .12
                 );
-
         }
 
 
@@ -186,7 +470,6 @@
 
             color:
                 #00ff9d;
-
         }
 
 
@@ -200,7 +483,6 @@
 
             font-size:
                 10px;
-
         }
 
 
@@ -214,12 +496,11 @@
 
             font-size:
                 10px;
-
         }
 
 
         /* =========================================================
-           ADMIN BUTTON
+           ADMIN
         ========================================================= */
 
         .admin-profile-button {
@@ -276,22 +557,10 @@
                 );
 
             transition:
-                transform
-                .2s
-                ease,
-
-                background
-                .2s
-                ease,
-
-                border-color
-                .2s
-                ease,
-
-                box-shadow
-                .2s
-                ease;
-
+                transform .2s ease,
+                background .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
         }
 
 
@@ -326,7 +595,6 @@
                     90,
                     .10
                 );
-
         }
 
 
@@ -354,7 +622,6 @@
 
             color:
                 #ff7183 !important;
-
         }
 
 
@@ -375,19 +642,69 @@
                     90,
                     .40
                 ) !important;
-
         }
 
 
+        /* =========================================================
+           LOGOUT
+        ========================================================= */
+
+        .logout-button {
+
+            width: 100%;
+            margin-top: 16px;
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
         @media (max-width: 600px) {
 
-            .rubika-actions {
-
-                flex-direction:
-                    column;
-
+            .profile-settings-page {
+                width: 94%;
+                padding:
+                    25px
+                    0
+                    60px;
             }
 
+
+            .profile-settings-card {
+                padding: 17px;
+            }
+
+
+            .settings-avatar {
+                width: 84px;
+                height: 84px;
+                border-radius: 23px;
+                font-size: 36px;
+            }
+
+
+            .settings-account-head strong {
+                font-size: 19px;
+            }
+
+
+            .rubika-actions {
+                flex-direction:
+                    column;
+            }
+
+
+            .account-info-row {
+                align-items:
+                    flex-start;
+            }
+
+
+            .account-info-value {
+                text-align:
+                    left;
+            }
         }
 
     </style>
@@ -492,17 +809,18 @@
 
     <main>
 
+        <section class="profile-settings-page">
 
-        <section class="profile-section">
 
+            <!-- =====================================================
+                 PAGE HEADER
+            ====================================================== -->
 
-            <div class="profile-page-content">
-
+            <div class="profile-settings-header">
 
                 <span class="section-label">
                     ⚙️ PGAME ACCOUNT
                 </span>
-
 
                 <h1>
 
@@ -514,100 +832,200 @@
 
                 </h1>
 
-
                 <p>
 
-                    اینجا می‌توانی تنظیمات حساب و
-                    اتصال‌های PGame را مدیریت کنی.
+                    اینجا می‌توانی اطلاعات حساب،
+                    رمز عبور و اتصال‌های PGame را مدیریت کنی.
 
                 </p>
-
 
             </div>
 
 
-            <div class="profile-big-card">
+            <!-- =====================================================
+                 MAIN CARD
+            ====================================================== -->
+
+            <div class="profile-settings-card">
 
 
                 <!-- =================================================
-                     AVATAR
+                     ACCOUNT HEAD
                 ================================================== -->
 
-                <div class="profile-big-avatar">
-                    ⚙️
+                <div class="settings-account-head">
+
+                    <div class="settings-avatar">
+                        👤
+                    </div>
+
+
+                    <strong id="settings-username">
+                        در حال بارگذاری...
+                    </strong>
+
+
+                    <span id="settings-status">
+                        حساب PGame
+                    </span>
+
                 </div>
-
-
-                <strong id="settings-username">
-                    در حال بارگذاری...
-                </strong>
-
-
-                <span id="settings-status">
-                    حساب PGame
-                </span>
 
 
                 <!-- =================================================
                      ACCOUNT INFO
                 ================================================== -->
 
-                <div
-                    style="
-                        width:100%;
-                        margin-top:22px;
-                        padding:16px;
-                        border-radius:16px;
-                        border:1px solid rgba(0,255,157,.15);
-                        background:rgba(0,255,157,.035);
-                        text-align:right;
-                    "
-                >
+                <div class="settings-box account-info-box">
 
-
-                    <div
-                        style="
-                            display:flex;
-                            justify-content:space-between;
-                            gap:12px;
-                        "
-                    >
-
-                        <span>
-                            👤 نام کاربری
-                        </span>
-
-
-                        <strong id="account-username">
-                            &mdash;
-                        </strong>
-
+                    <div class="settings-box-title">
+                        👤 اطلاعات حساب
                     </div>
 
 
-                    <div
-                        style="
-                            display:flex;
-                            justify-content:space-between;
-                            gap:12px;
-                            margin-top:10px;
-                        "
+                    <p class="settings-box-description">
+                        اطلاعات اصلی حساب PGame تو.
+                    </p>
+
+
+                    <div style="margin-top:14px">
+
+
+                        <div class="account-info-row">
+
+                            <span class="account-info-label">
+                                نام کاربری
+                            </span>
+
+                            <strong
+                                id="account-username"
+                                class="account-info-value"
+                            >
+                                &mdash;
+                            </strong>
+
+                        </div>
+
+
+                        <div class="account-info-row">
+
+                            <span class="account-info-label">
+                                وضعیت حساب
+                            </span>
+
+                            <strong
+                                id="account-status"
+                                class="account-info-value active"
+                            >
+                                فعال
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CHANGE PASSWORD
+                ================================================== -->
+
+                <div class="settings-box change-password-box">
+
+                    <div class="settings-box-title">
+                        🔐 تغییر رمز عبور
+                    </div>
+
+
+                    <p class="settings-box-description">
+
+                        برای تغییر رمز، ابتدا رمز فعلی خودت را
+                        وارد کن و سپس رمز جدید را ثبت کن.
+
+                    </p>
+
+
+                    <form
+                        id="change-password-form"
+                        class="change-password-form"
                     >
 
-                        <span>
-                            🔐 وضعیت
-                        </span>
 
-
-                        <strong
-                            id="account-status"
-                            style="color:#00ff9d"
+                        <label
+                            for="current-password"
                         >
-                            فعال
-                        </strong>
+                            رمز فعلی
+                        </label>
 
-                    </div>
 
+                        <input
+                            id="current-password"
+                            class="change-password-input"
+                            type="password"
+                            autocomplete="current-password"
+                            minlength="8"
+                            required
+                            placeholder="رمز فعلی"
+                        >
+
+
+                        <label
+                            for="new-password"
+                            style="margin-top:4px"
+                        >
+                            رمز جدید
+                        </label>
+
+
+                        <input
+                            id="new-password"
+                            class="change-password-input"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                            placeholder="حداقل ۸ کاراکتر"
+                        >
+
+
+                        <label
+                            for="confirm-password"
+                            style="margin-top:4px"
+                        >
+                            تکرار رمز جدید
+                        </label>
+
+
+                        <input
+                            id="confirm-password"
+                            class="change-password-input"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                            placeholder="رمز جدید را دوباره وارد کن"
+                        >
+
+
+                        <button
+                            id="change-password-button"
+                            class="auth-button change-password-button"
+                            type="submit"
+                        >
+
+                            🔐 تغییر رمز
+
+                        </button>
+
+
+                        <div
+                            id="change-password-message"
+                            class="change-password-message"
+                        ></div>
+
+
+                    </form>
 
                 </div>
 
@@ -616,38 +1034,20 @@
                      RUBIKA CONNECTION
                 ================================================== -->
 
-                <div
-                    style="
-                        margin-top:16px;
-                        padding:16px;
-                        border-radius:16px;
-                        border:1px solid rgba(0,255,157,.15);
-                        background:rgba(0,255,157,.035);
-                        text-align:right;
-                    "
-                >
+                <div class="settings-box">
 
 
-                    <strong>
+                    <div class="settings-box-title">
                         🤖 اتصال روبیکا
-                    </strong>
+                    </div>
 
 
-                    <p
-                        style="
-                            font-size:11px;
-                            line-height:1.8;
-                            color:#8b8b9f;
-                            margin:8px 0 0;
-                        "
-                    >
+                    <p class="settings-box-description">
 
                         حساب PGame خودت را به
-
                         <b>
                             @bangame56bot
                         </b>
-
                         وصل کن.
 
                     </p>
@@ -768,12 +1168,8 @@
                 ================================================== -->
 
                 <button
-                    class="auth-secondary-button"
+                    class="auth-secondary-button logout-button"
                     id="logout-button"
-                    style="
-                        width:100%;
-                        margin-top:16px;
-                    "
                     type="button"
                 >
 
@@ -786,7 +1182,6 @@
 
 
         </section>
-
 
     </main>
 
@@ -857,6 +1252,10 @@
 
             "use strict";
 
+
+            /* =====================================================
+               ELEMENTS
+            ====================================================== */
 
             const settingsUsername =
                 document.getElementById(
@@ -942,11 +1341,47 @@
                 );
 
 
+            const changePasswordForm =
+                document.getElementById(
+                    "change-password-form"
+                );
+
+
+            const currentPasswordInput =
+                document.getElementById(
+                    "current-password"
+                );
+
+
+            const newPasswordInput =
+                document.getElementById(
+                    "new-password"
+                );
+
+
+            const confirmPasswordInput =
+                document.getElementById(
+                    "confirm-password"
+                );
+
+
+            const changePasswordButton =
+                document.getElementById(
+                    "change-password-button"
+                );
+
+
+            const changePasswordMessage =
+                document.getElementById(
+                    "change-password-message"
+                );
+
+
             /* =====================================================
-               MESSAGE
+               RUBIKA MESSAGE
             ====================================================== */
 
-            function setMessage(
+            function setRubikaMessage(
                 text,
                 success = false
             ) {
@@ -958,7 +1393,6 @@
                     success
                         ? "#00ff9d"
                         : "#ff7183";
-
             }
 
 
@@ -1028,11 +1462,29 @@
 
 
             /* =====================================================
-               LOAD CURRENT USER
+               CHANGE PASSWORD MESSAGE
+            ====================================================== */
+
+            function setPasswordMessage(
+                text,
+                success = false
+            ) {
+
+                changePasswordMessage.textContent =
+                    text;
+
+                changePasswordMessage.style.color =
+                    success
+                        ? "#00ff9d"
+                        : "#ff7183";
+            }
+
+
+            /* =====================================================
+               LOAD USER
             ====================================================== */
 
             try {
-
 
                 const response =
                     await fetch(
@@ -1056,7 +1508,8 @@
 
                 if (
                     !response.ok ||
-                    !data.loggedIn
+                    !data.loggedIn ||
+                    !data.user
                 ) {
 
                     location.href =
@@ -1072,7 +1525,7 @@
 
 
                 const username =
-                    user?.username ??
+                    user.username ??
                     "کاربر";
 
 
@@ -1105,48 +1558,12 @@
 
 
                 /* =================================================
-                   RUBIKA STATUS
+                   RUBIKA
                 ================================================== */
 
                 renderRubikaStatus(
-                    user?.rubika_user_id
+                    user.rubika_user_id
                 );
-
-
-                /* =================================================
-                   ADMIN CHECK
-                ================================================== */
-
-                try {
-
-
-                    const adminResponse =
-                        await fetch(
-                            "/api/admin/me",
-                            {
-                                method:
-                                    "GET",
-
-                                credentials:
-                                    "same-origin",
-
-                                cache:
-                                    "no-store"
-                            }
-                        );
-
-
-                    const adminData =
-                        await adminResponse.json();
-
-                } catch (error) {
-
-                    console.error(
-                        "ADMIN_PROFILE_BUTTON_ERROR",
-                        error
-                    );
-
-                }
 
 
                 /* =================================================
@@ -1156,7 +1573,6 @@
                 connectButton.addEventListener(
                     "click",
                     async function () {
-
 
                         connectButton.disabled =
                             true;
@@ -1170,11 +1586,12 @@
                             "none";
 
 
-                        setMessage("");
+                        setRubikaMessage(
+                            ""
+                        );
 
 
                         try {
-
 
                             const response =
                                 await fetch(
@@ -1217,7 +1634,7 @@
                                 "block";
 
 
-                            setMessage(
+                            setRubikaMessage(
                                 "✅ کد ساخته شد؛ آن را برای @bangame56bot ارسال کن.",
                                 true
                             );
@@ -1225,14 +1642,13 @@
 
                         } catch (error) {
 
-
                             console.error(
                                 "RUBIKA_CREATE_CODE_ERROR",
                                 error
                             );
 
 
-                            setMessage(
+                            setRubikaMessage(
                                 "❌ " +
                                 (
                                     error.message ||
@@ -1242,7 +1658,6 @@
 
 
                         } finally {
-
 
                             connectButton.disabled =
                                 false;
@@ -1285,11 +1700,12 @@
                             "⏳ در حال لغو اتصال...";
 
 
-                        setMessage("");
+                        setRubikaMessage(
+                            ""
+                        );
 
 
                         try {
-
 
                             const response =
                                 await fetch(
@@ -1333,7 +1749,7 @@
                                 "none";
 
 
-                            setMessage(
+                            setRubikaMessage(
                                 "✅ اتصال روبیکا با موفقیت لغو شد.",
                                 true
                             );
@@ -1341,14 +1757,13 @@
 
                         } catch (error) {
 
-
                             console.error(
                                 "RUBIKA_UNLINK_ERROR",
                                 error
                             );
 
 
-                            setMessage(
+                            setRubikaMessage(
                                 "❌ " +
                                 (
                                     error.message ||
@@ -1359,13 +1774,190 @@
 
                         } finally {
 
-
                             unlinkButton.disabled =
                                 false;
 
 
                             unlinkButton.textContent =
                                 "🔌 لغو اتصال";
+
+                        }
+
+                    }
+                );
+
+
+                /* =================================================
+                   CHANGE PASSWORD
+                ================================================== */
+
+                changePasswordForm.addEventListener(
+                    "submit",
+                    async function (event) {
+
+                        event.preventDefault();
+
+
+                        const currentPassword =
+                            currentPasswordInput.value;
+
+
+                        const newPassword =
+                            newPasswordInput.value;
+
+
+                        const confirmPassword =
+                            confirmPasswordInput.value;
+
+
+                        setPasswordMessage(
+                            ""
+                        );
+
+
+                        if (
+                            newPassword.length < 8
+                        ) {
+
+                            setPasswordMessage(
+                                "رمز جدید باید حداقل ۸ کاراکتر باشد."
+                            );
+
+                            return;
+
+                        }
+
+
+                        if (
+                            newPassword !==
+                            confirmPassword
+                        ) {
+
+                            setPasswordMessage(
+                                "تکرار رمز جدید با رمز جدید یکسان نیست."
+                            );
+
+                            return;
+
+                        }
+
+
+                        if (
+                            currentPassword ===
+                            newPassword
+                        ) {
+
+                            setPasswordMessage(
+                                "رمز جدید باید با رمز فعلی متفاوت باشد."
+                            );
+
+                            return;
+
+                        }
+
+
+                        changePasswordButton.disabled =
+                            true;
+
+
+                        changePasswordButton.textContent =
+                            "⏳ در حال تغییر...";
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    "/api/change-password",
+                                    {
+                                        method:
+                                            "POST",
+
+                                        credentials:
+                                            "same-origin",
+
+                                        headers: {
+                                            "Content-Type":
+                                                "application/json"
+                                        },
+
+                                        cache:
+                                            "no-store",
+
+                                        body:
+                                            JSON.stringify({
+                                                current_password:
+                                                    currentPassword,
+
+                                                new_password:
+                                                    newPassword
+                                            })
+                                    }
+                                );
+
+
+                            let result = {};
+
+
+                            try {
+
+                                result =
+                                    await response.json();
+
+                            } catch {
+
+                                result = {};
+
+                            }
+
+
+                            if (
+                                !response.ok ||
+                                !result.success
+                            ) {
+
+                                throw new Error(
+                                    result.message ||
+                                    "تغییر رمز عبور انجام نشد."
+                                );
+
+                            }
+
+
+                            setPasswordMessage(
+                                "✅ رمز عبور با موفقیت تغییر کرد.",
+                                true
+                            );
+
+
+                            changePasswordForm.reset();
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "CHANGE_PASSWORD_ERROR",
+                                error
+                            );
+
+
+                            setPasswordMessage(
+                                "❌ " +
+                                (
+                                    error.message ||
+                                    "تغییر رمز عبور انجام نشد."
+                                )
+                            );
+
+
+                        } finally {
+
+                            changePasswordButton.disabled =
+                                false;
+
+
+                            changePasswordButton.textContent =
+                                "🔐 تغییر رمز";
 
                         }
 
@@ -1425,7 +2017,6 @@
 
             } catch (error) {
 
-
                 console.error(
                     "PROFILE_PAGE_ERROR",
                     error
@@ -1441,64 +2032,84 @@
 
     </script>
 
-<script>
-    (async function () {
 
-        const adminButton =
-            document.getElementById("admin-profile-button");
+    <!-- =========================================================
+         ADMIN BUTTON
+    ========================================================== -->
 
-        if (!adminButton) {
-            return;
-        }
+    <script>
 
-        try {
+        (async function () {
 
-            const response =
-                await fetch(
-                    "/api/admin/me",
-                    {
-                        method: "GET",
-                        credentials: "same-origin",
-                        cache: "no-store"
-                    }
+            const adminButton =
+                document.getElementById(
+                    "admin-profile-button"
                 );
 
-            const data =
-                await response.json();
 
-            if (
-                response.ok &&
-                data?.success === true &&
-                data?.isAdmin === true
-            ) {
+            if (!adminButton) {
+                return;
+            }
 
-                adminButton.style.setProperty(
-                    "display",
-                    "block",
-                    "important"
-                );
 
-            } else {
+            try {
 
-                adminButton.style.setProperty(
-                    "display",
-                    "none",
-                    "important"
+                const response =
+                    await fetch(
+                        "/api/admin/me",
+                        {
+                            method:
+                                "GET",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data?.success === true &&
+                    data?.isAdmin === true
+                ) {
+
+                    adminButton.style.setProperty(
+                        "display",
+                        "block",
+                        "important"
+                    );
+
+                } else {
+
+                    adminButton.style.setProperty(
+                        "display",
+                        "none",
+                        "important"
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "ADMIN BUTTON ERROR",
+                    error
                 );
 
             }
 
-        } catch (error) {
+        })();
 
-            console.error(
-                "ADMIN BUTTON ERROR:",
-                error
-            );
+    </script>
 
-        }
-
-    })();
-</script>
 
     <script src="../script.js"></script>
 

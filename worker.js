@@ -258,11 +258,23 @@ function isAdmin(user, env) {
 ========================================================= */
 
 async function renderPlayer(env, rubikaId) {
+
     if (!env.VEXON_RUBIKA_API_KEY) {
         return null;
     }
 
     try {
+
+        const controller =
+            new AbortController();
+
+        const timeout =
+            setTimeout(
+                () => controller.abort(),
+                1500
+            );
+
+
         const response =
             await fetch(
                 `https://bangame.onrender.com/vexon/player?rubika_user_id=${encodeURIComponent(
@@ -272,23 +284,37 @@ async function renderPlayer(env, rubikaId) {
                     headers: {
                         "X-VEXON-API-KEY":
                             env.VEXON_RUBIKA_API_KEY
-                    }
+                    },
+
+                    signal:
+                        controller.signal
                 }
             );
+
+
+        clearTimeout(
+            timeout
+        );
+
 
         if (!response.ok) {
             return null;
         }
 
+
         const data =
             await response.json();
+
 
         return data?.success
             ? data.player
             : null;
 
+
     } catch {
+
         return null;
+
     }
 }
 
@@ -1459,6 +1485,210 @@ export default {
                     }
                 });
             }
+
+
+            /* =====================================================
+   CHANGE PASSWORD
+===================================================== */
+
+if (
+    url.pathname ===
+        "/api/change-password" &&
+    request.method ===
+        "POST"
+) {
+
+    try {
+
+        const user =
+            await getCurrentUser(
+                request,
+                env
+            );
+
+
+        if (!user) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "ابتدا وارد حساب PGame شو."
+                },
+                401
+            );
+
+        }
+
+
+        const body =
+            await request.json();
+
+
+        const currentPassword =
+            typeof body.current_password === "string"
+                ? body.current_password
+                : "";
+
+
+        const newPassword =
+            typeof body.new_password === "string"
+                ? body.new_password
+                : "";
+
+
+        if (
+            !currentPassword ||
+            !newPassword
+        ) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "رمز فعلی و رمز جدید را وارد کن."
+                },
+                400
+            );
+
+        }
+
+
+        if (
+            newPassword.length < 8
+        ) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "رمز جدید باید حداقل ۸ کاراکتر باشد."
+                },
+                400
+            );
+
+        }
+
+
+        if (
+            currentPassword ===
+            newPassword
+        ) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "رمز جدید باید با رمز فعلی متفاوت باشد."
+                },
+                400
+            );
+
+        }
+
+
+        const account =
+            await env.DB
+                .prepare(`
+                    SELECT
+                        id,
+                        password_hash
+                    FROM users
+                    WHERE id = ?1
+                    LIMIT 1
+                `)
+                .bind(
+                    user.id
+                )
+                .first();
+
+
+        if (
+            !account ||
+            !account.password_hash
+        ) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "اطلاعات حساب پیدا نشد."
+                },
+                404
+            );
+
+        }
+
+
+        const currentPasswordCorrect =
+            await verifyPassword(
+                currentPassword,
+                account.password_hash
+            );
+
+
+        if (
+            !currentPasswordCorrect
+        ) {
+
+            return json(
+                {
+                    success: false,
+                    message:
+                        "رمز فعلی اشتباه است."
+                },
+                401
+            );
+
+        }
+
+
+        const newPasswordHash =
+            await hashPassword(
+                newPassword
+            );
+
+
+        await env.DB
+            .prepare(`
+                UPDATE users
+                SET password_hash = ?1
+                WHERE id = ?2
+            `)
+            .bind(
+                newPasswordHash,
+                user.id
+            )
+            .run();
+
+
+        return json({
+            success: true,
+            message:
+                "رمز عبور با موفقیت تغییر کرد."
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "CHANGE_PASSWORD_ERROR",
+            error
+        );
+
+
+        return json(
+            {
+                success: false,
+                message:
+                    "تغییر رمز عبور انجام نشد."
+            },
+            500
+        );
+
+    }
+
+}
 
             /* =================================================
                LOGOUT
