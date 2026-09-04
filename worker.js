@@ -380,7 +380,11 @@ async function getCurrentUser(request, env) {
     let typingGames = 0;
     let typingBestTime = 0;
     let typingBestWpm = 0;
-    let rubikaUserId = null;
+
+    let rubikaUserId =
+        rubikaLink?.rubika_sender_id
+            ? String(rubikaLink.rubika_sender_id)
+            : null;
 
     if (rubikaLink?.rubika_sender_id) {
         const player =
