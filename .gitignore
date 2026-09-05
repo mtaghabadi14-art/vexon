@@ -3,3 +3,5 @@ node_modules/
 .dev.vars
 .env
 .git/
+pgame-release.keystore
+pgame-keystore-base64.txt

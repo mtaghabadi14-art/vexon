@@ -1,0 +1,8 @@
+{
+  "appId": "ir.pgame.app",
+  "appName": "PGame",
+  "webDir": "www",
+  "server": {
+    "url": "https://s.vexongame.workers.dev/"
+  }
+}
