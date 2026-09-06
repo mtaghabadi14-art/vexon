@@ -387,7 +387,7 @@ public class MainActivity extends BridgeActivity {
     // =========================================================
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         keepFullscreen();
@@ -404,7 +404,7 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
 
         if (connectivityManager != null
                 && networkCallbackRegistered
