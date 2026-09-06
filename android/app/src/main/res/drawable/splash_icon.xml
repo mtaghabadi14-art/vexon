@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp"
+    android:height="180dp"
+    android:viewportWidth="180"
+    android:viewportHeight="180">
+
+    <!-- =========================================================
+         OUTER NEON RING
+    ========================================================== -->
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00FF9D"
+        android:strokeWidth="3"
+        android:pathData="M90,18 A72,72 0,1 0,90,162 A72,72 0,1 0,90,18" />
+
+
+    <!-- =========================================================
+         INNER RING
+    ========================================================== -->
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#744DFF"
+        android:strokeWidth="2"
+        android:pathData="M90,30 A60,60 0,1 0,90,150 A60,60 0,1 0,90,30" />
+
+
+    <!-- =========================================================
+         PGAME P SYMBOL
+    ========================================================== -->
+
+    <path
+        android:fillColor="#00FF9D"
+        android:pathData="
+            M57,48
+            L94,48
+            C112,48 123,58 123,72
+            C123,87 112,97 94,97
+            L77,97
+            L77,132
+            L57,132
+            Z
+
+            M77,65
+            L77,81
+            L93,81
+            C100,81 104,77 104,73
+            C104,68 100,65 93,65
+            Z" />
+
+
+    <!-- =========================================================
+         CYAN CONNECTION LINES
+    ========================================================== -->
+
+    <path
+        android:fillColor="#00EAFF"
+        android:pathData="
+            M38,76
+            L24,76
+            L24,84
+            L38,84
+            Z" />
+
+    <path
+        android:fillColor="#00EAFF"
+        android:pathData="
+            M142,76
+            L156,76
+            L156,84
+            L142,84
+            Z" />
+
+
+    <!-- =========================================================
+         BOTTOM DIGITAL MARK
+    ========================================================== -->
+
+    <path
+        android:fillColor="#744DFF"
+        android:pathData="
+            M64,140
+            L74,140
+            L74,147
+            L64,147
+            Z" />
+
+    <path
+        android:fillColor="#00EAFF"
+        android:pathData="
+            M81,140
+            L99,140
+            L99,147
+            L81,147
+            Z" />
+
+    <path
+        android:fillColor="#00FF9D"
+        android:pathData="
+            M106,140
+            L116,140
+            L116,147
+            L106,147
+            Z" />
+
+</vector>

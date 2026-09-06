@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- =========================================================
+         BASE SPACE
+    ========================================================== -->
+
+    <item>
+
+        <shape android:shape="rectangle">
+
+            <gradient
+                android:type="linear"
+                android:angle="135"
+                android:startColor="#02030A"
+                android:centerColor="#0B0620"
+                android:endColor="#020711" />
+
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         PURPLE NEBULA
+    ========================================================== -->
+
+    <item
+        android:width="720dp"
+        android:height="720dp"
+        android:gravity="top|start">
+
+        <shape android:shape="oval">
+
+            <gradient
+                android:type="radial"
+                android:centerX="50%"
+                android:centerY="50%"
+                android:startColor="#50744DFF"
+                android:endColor="#00744DFF" />
+
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         BLUE NEBULA
+    ========================================================== -->
+
+    <item
+        android:width="760dp"
+        android:height="760dp"
+        android:gravity="bottom|end">
+
+        <shape android:shape="oval">
+
+            <gradient
+                android:type="radial"
+                android:centerX="50%"
+                android:centerY="50%"
+                android:startColor="#4D00EAFF"
+                android:endColor="#0000EAFF" />
+
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         GREEN NEON GLOW
+    ========================================================== -->
+
+    <item
+        android:width="520dp"
+        android:height="520dp"
+        android:gravity="center">
+
+        <shape android:shape="oval">
+
+            <gradient
+                android:type="radial"
+                android:centerX="50%"
+                android:centerY="50%"
+                android:startColor="#3500FF9D"
+                android:endColor="#0000FF9D" />
+
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         STARS
+    ========================================================== -->
+
+    <item
+        android:width="5dp"
+        android:height="5dp"
+        android:gravity="top|start"
+        android:left="34dp"
+        android:top="110dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="3dp"
+        android:height="3dp"
+        android:gravity="top|start"
+        android:left="120dp"
+        android:top="260dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#00EAFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="4dp"
+        android:height="4dp"
+        android:gravity="top|start"
+        android:left="210dp"
+        android:top="90dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="5dp"
+        android:height="5dp"
+        android:gravity="top|end"
+        android:right="90dp"
+        android:top="170dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#00FF9D" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="3dp"
+        android:height="3dp"
+        android:gravity="top|end"
+        android:right="180dp"
+        android:top="300dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="4dp"
+        android:height="4dp"
+        android:gravity="center_vertical|start"
+        android:left="55dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#744DFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="3dp"
+        android:height="3dp"
+        android:gravity="center_vertical|end"
+        android:right="70dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#00EAFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="5dp"
+        android:height="5dp"
+        android:gravity="bottom|start"
+        android:left="130dp"
+        android:bottom="180dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="4dp"
+        android:height="4dp"
+        android:gravity="bottom|end"
+        android:right="120dp"
+        android:bottom="210dp">
+
+        <shape android:shape="oval">
+            <solid android:color="#00FF9D" />
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         HORIZONTAL NEON LINES
+    ========================================================== -->
+
+    <item
+        android:width="260dp"
+        android:height="2dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:top="170dp">
+
+        <shape>
+
+            <gradient
+                android:type="linear"
+                android:startColor="#0000EAFF"
+                android:centerColor="#DD00EAFF"
+                android:endColor="#0000EAFF" />
+
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="190dp"
+        android:height="2dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:bottom="185dp">
+
+        <shape>
+
+            <gradient
+                android:type="linear"
+                android:startColor="#0000FF9D"
+                android:centerColor="#DD00FF9D"
+                android:endColor="#0000FF9D" />
+
+        </shape>
+
+    </item>
+
+
+    <!-- =========================================================
+         CENTER RING
+    ========================================================== -->
+
+    <item
+        android:width="250dp"
+        android:height="250dp"
+        android:gravity="center">
+
+        <shape android:shape="oval">
+
+            <stroke
+                android:width="2dp"
+                android:color="#6600FF9D" />
+
+        </shape>
+
+    </item>
+
+
+    <item
+        android:width="310dp"
+        android:height="310dp"
+        android:gravity="center">
+
+        <shape android:shape="oval">
+
+            <stroke
+                android:width="1dp"
+                android:color="#40744DFF" />
+
+        </shape>
+
+    </item>
+
+</layer-list>
