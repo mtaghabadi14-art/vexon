@@ -2442,8 +2442,8 @@ footer {
 @media (max-width: 520px) {
 
     .navbar .header-profile {
-        min-width: 175px;
-        max-width: 175px;
+        min-width: 230px;
+        max-width: 230px;
 
         padding: 10px 11px;
 
@@ -2531,7 +2531,7 @@ footer {
 @media (min-width: 901px) {
 
     .header-profile {
-        min-width: 280px;
+        min-width: 400px;
         padding: 9px 11px;
     }
 
@@ -2550,4 +2550,36 @@ footer {
         font-size: 8px;
     }
 
+}
+
+
+@media (max-width: 520px) {
+    .navbar .header-profile {
+        width: 250px !important;
+        min-width: 250px !important;
+        max-width: 250px !important;
+    }
+}
+
+
+@media (max-width: 520px) {
+    .navbar .header-profile {
+        width: 250px !important;
+        min-width: 250px !important;
+        max-width: 250px !important;
+
+        height: 55px !important;
+    }
+}
+
+
+.home-community-section .games-grid {
+    display: flex;
+    justify-content: center;
+    gap: 13px;
+    flex-wrap: wrap;
+}
+
+.home-community-section .game-box {
+    width: 260px;
 }

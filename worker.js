@@ -1,6 +1,10 @@
 const PASSWORD_ITERATIONS = 100000;
 const SESSION_DAYS = 7;
 const RUBIKA_CODE_MINUTES = 10;
+const RUBIKA_PLAYER_CACHE_TTL_MS = 15000;
+
+const rubikaPlayerCache =
+    new Map();
 
 const ALLOWED_BAN_TYPES = new Set([
     "full",
@@ -285,7 +289,56 @@ async function renderPlayer(
     rubikaId
 ) {
 
-    if (!env.VEXON_RUBIKA_API_KEY) {
+    if (
+        !rubikaId
+    ) {
+
+        return null;
+
+    }
+
+
+    const cacheKey =
+        String(
+            rubikaId
+        );
+
+
+    const now =
+        Date.now();
+
+
+    /* =====================================================
+       MEMORY CACHE
+    ====================================================== */
+
+    const cached =
+        rubikaPlayerCache.get(
+            cacheKey
+        );
+
+
+    if (
+        cached &&
+        (
+            now -
+            cached.savedAt
+        ) <
+        RUBIKA_PLAYER_CACHE_TTL_MS
+    ) {
+
+        return cached.player;
+
+    }
+
+
+    /* =====================================================
+       API KEY
+    ====================================================== */
+
+    if (
+        !env.VEXON_RUBIKA_API_KEY
+    ) {
 
         console.error(
             "RUBIKA PLAYER: API KEY IS MISSING"
@@ -294,10 +347,16 @@ async function renderPlayer(
         return null;
     }
 
+
+    /* =====================================================
+       FETCH
+    ====================================================== */
+
     try {
 
         const controller =
             new AbortController();
+
 
         const timeout =
             setTimeout(
@@ -306,15 +365,20 @@ async function renderPlayer(
                 5000
             );
 
+
         const response =
             await fetch(
                 `https://bangame.onrender.com/vexon/player?rubika_user_id=${encodeURIComponent(
-                    String(rubikaId)
+                    String(
+                        rubikaId
+                    )
                 )}`,
                 {
                     headers: {
+
                         "X-VEXON-API-KEY":
                             env.VEXON_RUBIKA_API_KEY
+
                     },
 
                     signal:
@@ -322,9 +386,15 @@ async function renderPlayer(
                 }
             );
 
-        clearTimeout(timeout);
 
-        if (!response.ok) {
+        clearTimeout(
+            timeout
+        );
+
+
+        if (
+            !response.ok
+        ) {
 
             console.error(
                 "RUBIKA PLAYER HTTP ERROR:",
@@ -334,31 +404,64 @@ async function renderPlayer(
             return null;
         }
 
+
         const data =
             await response.json();
 
-        if (!data?.success) {
+
+        if (
+            !data?.success
+        ) {
 
             console.error(
                 "RUBIKA PLAYER API ERROR:",
                 data?.message ||
-                    "Unknown error"
+                "Unknown error"
             );
 
             return null;
         }
 
-        return data.player ?? null;
 
-    } catch (error) {
+        const player =
+            data.player ??
+            null;
+
+
+        if (
+            player
+        ) {
+
+            rubikaPlayerCache.set(
+                cacheKey,
+                {
+                    player,
+                    savedAt:
+                        Date.now()
+                }
+            );
+
+        }
+
+
+        return player;
+
+
+    } catch (
+        error
+    ) {
 
         console.error(
             "RUBIKA PLAYER FETCH ERROR:",
-            error?.name || error
+            error?.name ||
+            error
         );
 
+
         return null;
+
     }
+
 }
 
 /* =========================================================

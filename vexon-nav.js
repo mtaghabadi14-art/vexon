@@ -48,19 +48,7 @@
                 justify-content: center;
             }
 
-            .navbar > .logo {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 20;
-                font-family: "Orbitron", sans-serif;
-                font-weight: 900;
-                letter-spacing: 0 !important;
-                text-transform: none;
-                white-space: nowrap;
-            }
-
+            
             .navbar > .header-profile {
                 position: absolute;
                 right: 18px;
@@ -101,14 +89,7 @@
                 box-shadow: 0 0 18px rgba(116,77,255,.10);
             }
 
-            .logo-p {
-                color: #9b6cff !important;
-                text-shadow: 0 0 9px rgba(155,108,255,.75), 0 0 20px rgba(116,77,255,.42);
-            }
-
-            .logo-rest {
-                color: #fff !important;
-            }
+            
 
             .navbar .nav-links {
                 display: none !important;
@@ -273,7 +254,7 @@
 
                 .navbar > .header-profile {
                     right: 10px;
-                    min-width: 118px;
+                    min-width: 180px;
                 }
 
                 .vexon-global-menu-trigger {
@@ -282,9 +263,7 @@
                     height: 42px;
                 }
 
-                .navbar > .logo {
-                    font-size: 20px;
-                }
+        
             }
 
             @media (max-width: 520px) {
@@ -303,9 +282,7 @@
                     height: 34px;
                 }
 
-                .navbar > .logo {
-                    font-size: 18px;
-                }
+            
 
                 .pgame-menu-drawer {
                     width: min(285px, 82vw);

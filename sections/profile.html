@@ -1978,6 +1978,227 @@
             }
 
 
+
+            /* =====================================================
+   ACCOUNT CACHE
+===================================================== */
+
+function getCachedProfileUser() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                "pgame_account_cache_v1"
+            );
+
+        if (!raw) {
+
+            return null;
+
+        }
+
+        const data =
+            JSON.parse(
+                raw
+            );
+
+        if (
+            !data ||
+            !data.user
+        ) {
+
+            return null;
+
+        }
+
+        return data.user;
+
+    } catch (error) {
+
+        console.debug(
+            "PROFILE_CACHE_READ_ERROR",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+function saveCachedProfileUser(
+    user
+) {
+
+    if (
+        !user ||
+        typeof user !== "object"
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const cached = {
+
+            saved_at:
+                Date.now(),
+
+            user: {
+
+                id:
+                    user.id ?? null,
+
+                username:
+                    user.username ?? "",
+
+                nickname:
+                    user.nickname ?? null,
+
+                title:
+                    user.title ?? null,
+
+                xp:
+                    Number(
+                        user.xp ?? 0
+                    ),
+
+                level:
+                    Number(
+                        user.level ?? 1
+                    ),
+
+                next_xp:
+                    Number(
+                        user.next_xp ?? 100
+                    ),
+
+                xp_progress:
+                    Number(
+                        user.xp_progress ?? 0
+                    ),
+
+                coins:
+                    Number(
+                        user.coins ?? 0
+                    ),
+
+                rubika_user_id:
+                    user.rubika_user_id ??
+                    null,
+
+                typing_games:
+                    Number(
+                        user.typing_games ?? 0
+                    ),
+
+                typing_best_time:
+                    Number(
+                        user.typing_best_time ?? 0
+                    ),
+
+                typing_best_wpm:
+                    Number(
+                        user.typing_best_wpm ?? 0
+                    )
+            }
+
+        };
+
+        localStorage.setItem(
+            "pgame_account_cache_v1",
+            JSON.stringify(cached)
+        );
+
+    } catch (error) {
+
+        console.debug(
+            "PROFILE_CACHE_WRITE_ERROR",
+            error
+        );
+
+    }
+
+}
+
+
+function renderCachedProfileUser(
+    user
+) {
+
+    if (!user) {
+
+        return;
+
+    }
+
+    const username =
+        user.username ??
+        "کاربر";
+
+
+    /* =================================================
+       ACCOUNT
+    ================================================= */
+
+    settingsUsername.textContent =
+        username;
+
+
+    accountUsername.textContent =
+        username;
+
+
+    headerUsername.textContent =
+        username;
+
+
+    changeUsernameInput.value =
+        username;
+
+
+    settingsStatus.textContent =
+        "حساب PGame فعال ✅";
+
+
+    headerStatus.textContent =
+        "حساب PGame فعال";
+
+
+    accountStatus.textContent =
+        "فعال";
+
+
+    /* =================================================
+       RUBIKA
+    ================================================= */
+
+    renderRubikaStatus(
+        user.rubika_user_id
+    );
+
+}
+
+
+const cachedUser =
+    getCachedProfileUser();
+
+
+if (
+    cachedUser
+) {
+
+    renderCachedProfileUser(
+        cachedUser
+    );
+
+}
+
+
             /* =====================================================
                LOAD USER
             ====================================================== */
@@ -2020,6 +2241,14 @@
 
                 const user =
                     data.user;
+
+/*
+ * ذخیره اطلاعات تازه سرور
+ */
+
+                saveCachedProfileUser(
+                    user
+                );
 
 
                 let username =
@@ -2202,6 +2431,11 @@
 
                             changeUsernameInput.value =
                                 username;
+
+                                saveCachedProfileUser({
+                                    ...user,
+                                    username: username
+                                });
 
 
                             setUsernameMessage(

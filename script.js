@@ -6,6 +6,274 @@ const app =
     document.querySelector("#app");
 
 
+
+/* =========================================================
+   PGAME ACCOUNT CACHE
+   نمایش سریع اطلاعات آخرین حساب + بروزرسانی از سرور
+========================================================= */
+
+const PGAME_ACCOUNT_CACHE_KEY =
+    "pgame_account_cache_v1";
+
+
+function getAccountCache() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                PGAME_ACCOUNT_CACHE_KEY
+            );
+
+        if (!raw) {
+            return null;
+        }
+
+        const data =
+            JSON.parse(raw);
+
+        if (
+            !data ||
+            typeof data !== "object" ||
+            !data.user
+        ) {
+            return null;
+        }
+
+        return data;
+
+    } catch (error) {
+
+        console.debug(
+            "PGAME_ACCOUNT_CACHE_READ_ERROR",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+function saveAccountCache(user) {
+
+    if (
+        !user ||
+        typeof user !== "object"
+    ) {
+        return;
+    }
+
+    const cache = {
+
+        saved_at:
+            Date.now(),
+
+        user: {
+
+            id:
+                user.id ?? null,
+
+            username:
+                user.username ?? "",
+
+            nickname:
+                user.nickname ?? null,
+
+            title:
+                user.title ?? null,
+
+            xp:
+                Number(user.xp ?? 0),
+
+            level:
+                Number(user.level ?? 1),
+
+            next_xp:
+                Number(user.next_xp ?? 100),
+
+            xp_progress:
+                Number(user.xp_progress ?? 0),
+
+            coins:
+                Number(user.coins ?? 0),
+
+            typing_games:
+                Number(user.typing_games ?? 0),
+
+            typing_best_time:
+                Number(user.typing_best_time ?? 0),
+
+            typing_best_wpm:
+                Number(user.typing_best_wpm ?? 0)
+        }
+
+    };
+
+    try {
+
+        localStorage.setItem(
+            PGAME_ACCOUNT_CACHE_KEY,
+            JSON.stringify(cache)
+        );
+
+    } catch (error) {
+
+        console.debug(
+            "PGAME_ACCOUNT_CACHE_WRITE_ERROR",
+            error
+        );
+
+    }
+}
+
+
+function getCachedAccount() {
+
+    const cache =
+        getAccountCache();
+
+    if (!cache?.user) {
+        return null;
+    }
+
+    return cache.user;
+}
+
+
+/* =========================================================
+   APPLY ACCOUNT TO HEADER
+========================================================= */
+
+function applyAccountToHeader(
+    headerProfiles,
+    user
+) {
+
+    if (
+        !headerProfiles?.length ||
+        !user
+    ) {
+        return;
+    }
+
+    const level =
+        Number(
+            user.level ?? 1
+        );
+
+    const xp =
+        Number(
+            user.xp ?? 0
+        );
+
+    const coins =
+        Number(
+            user.coins ?? 0
+        );
+
+    const nextXp =
+        Number(
+            user.next_xp ??
+            getNextLevelXp(level)
+        );
+
+    const progress =
+        nextXp > 0
+
+            ? Math.min(
+                100,
+                Math.max(
+                    0,
+                    (
+                        xp /
+                        nextXp
+                    ) * 100
+                )
+            )
+
+            : 0;
+
+
+    headerProfiles.forEach(
+        headerProfile => {
+
+            const isInsideSections =
+                window.location.pathname.includes(
+                    "/sections/"
+                );
+
+
+            headerProfile.href =
+                isInsideSections
+                    ? "profile.html"
+                    : "sections/profile.html";
+
+
+            const strong =
+                headerProfile.querySelector(
+                    "strong"
+                );
+
+
+            const span =
+                headerProfile.querySelector(
+                    "span"
+                );
+
+
+            const xpBar =
+                headerProfile.querySelector(
+                    ".header-xp-bar"
+                );
+
+
+            const xpFill =
+                headerProfile.querySelector(
+                    ".header-xp-fill"
+                );
+
+
+            if (strong) {
+
+                strong.textContent =
+                    user.username ||
+                    "بازیکن PGame";
+
+            }
+
+
+            if (span) {
+
+                span.textContent =
+                    `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
+
+                span.classList.add(
+                    "header-player-stats"
+                );
+
+            }
+
+
+            if (xpBar) {
+
+                xpBar.style.display =
+                    "block";
+
+            }
+
+
+            if (xpFill) {
+
+                xpFill.style.width =
+                    `${progress}%`;
+
+            }
+
+        }
+    );
+}
+
+
 /* =========================================================
    FULL BAN CHECK
 ========================================================= */
@@ -282,8 +550,20 @@ async function initializeAuthHeader() {
     }
 
 
+    /* =====================================================
+       CACHED ACCOUNT
+    ===================================================== */
+
+    const cachedUser =
+        getCachedAccount();
+
+
     /*
-     * حالت اولیه
+     * اگر اطلاعات حساب قبلی روی دستگاه وجود داشته باشد،
+     * همان ابتدا نمایش داده می‌شود.
+     *
+     * اگر کش نداشته باشیم،
+     * حالت Loading نمایش داده می‌شود.
      */
 
     headerProfiles.forEach(
@@ -308,37 +588,114 @@ async function initializeAuthHeader() {
 
 
             if (
-                strong
+                cachedUser
             ) {
 
-                strong.textContent =
-                    "...";
-
-            }
-
-
-            if (
-                span
-            ) {
-
-                span.textContent =
-                    "در حال بررسی حساب...";
-
-            }
+                const level =
+                    Number(
+                        cachedUser.level ??
+                        1
+                    );
 
 
-            if (
-                xpBar
-            ) {
+                const xp =
+                    Number(
+                        cachedUser.xp ??
+                        0
+                    );
 
-                xpBar.style.display =
-                    "none";
+
+                const coins =
+                    Number(
+                        cachedUser.coins ??
+                        0
+                    );
+
+
+                const nextXp =
+                    Number(
+                        cachedUser.next_xp ??
+                        getNextLevelXp(
+                            level
+                        )
+                    );
+
+
+                if (
+                    strong
+                ) {
+
+                    strong.textContent =
+                        cachedUser.username ||
+                        "بازیکن PGame";
+
+                }
+
+
+                if (
+                    span
+                ) {
+
+                    span.textContent =
+                        `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
+
+
+                    span.classList.add(
+                        "header-player-stats"
+                    );
+
+                }
+
+
+                if (
+                    xpBar
+                ) {
+
+                    xpBar.style.display =
+                        "block";
+
+                }
+
+            } else {
+
+                if (
+                    strong
+                ) {
+
+                    strong.textContent =
+                        "...";
+
+                }
+
+
+                if (
+                    span
+                ) {
+
+                    span.textContent =
+                        "در حال بررسی حساب...";
+
+                }
+
+
+                if (
+                    xpBar
+                ) {
+
+                    xpBar.style.display =
+                        "none";
+
+                }
 
             }
 
         }
     );
 
+
+    /* =====================================================
+       SERVER REQUEST
+    ===================================================== */
 
     try {
 
@@ -357,6 +714,10 @@ async function initializeAuthHeader() {
                 }
             );
 
+
+        /* =================================================
+           NOT LOGGED IN
+        ================================================= */
 
         if (
             !response.ok
@@ -390,9 +751,9 @@ async function initializeAuthHeader() {
         }
 
 
-        /*
-         * Full Ban
-         */
+        /* =================================================
+           FULL BAN
+        ================================================= */
 
         if (
             data.user.banned === true &&
@@ -419,164 +780,31 @@ async function initializeAuthHeader() {
         }
 
 
+        /* =================================================
+           REAL SERVER ACCOUNT
+        ================================================= */
+
         const user =
             data.user;
 
 
-        const level =
-            Number(
-                user.level ??
-                1
-            );
+        /*
+         * ذخیره اطلاعات واقعی روی دستگاه
+         * برای ورودهای بعدی
+         */
+
+        saveAccountCache(
+            user
+        );
 
 
-        const xp =
-            Number(
-                user.xp ??
-                0
-            );
+        /*
+         * نمایش اطلاعات تازه‌ی سرور
+         */
 
-
-        const coins =
-            Number(
-                user.coins ??
-                0
-            );
-
-
-        const nextXp =
-            Number(
-                user.next_xp ??
-                getNextLevelXp(
-                    level
-                )
-            );
-
-
-        const progress =
-            nextXp > 0
-
-                ? Math.min(
-                    100,
-
-                    Math.max(
-                        0,
-
-                        (
-                            xp /
-                            nextXp
-                        ) * 100
-                    )
-                )
-
-                : 0;
-
-
-        headerProfiles.forEach(
-            headerProfile => {
-
-                /*
-                 * صفحه حساب
-                 */
-
-                const isInsideSections =
-                    window.location.pathname.includes(
-                        "/sections/"
-                    );
-
-
-                headerProfile.href =
-                    isInsideSections
-                        ? "profile.html"
-                        : "sections/profile.html";
-
-
-                const strong =
-                    headerProfile.querySelector(
-                        "strong"
-                    );
-
-
-                const span =
-                    headerProfile.querySelector(
-                        "span"
-                    );
-
-
-                const xpBar =
-                    headerProfile.querySelector(
-                        ".header-xp-bar"
-                    );
-
-
-                const xpFill =
-                    headerProfile.querySelector(
-                        ".header-xp-fill"
-                    );
-
-
-                if (
-                    strong
-                ) {
-
-                    strong.textContent =
-                        user.username ||
-                        "بازیکن VEXON";
-
-                }
-
-
-                if (
-                    span
-                ) {
-
-                    span.textContent =
-                        `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
-
-
-                    span.classList.add(
-                        "header-player-stats"
-                    );
-
-                }
-
-
-                if (
-                    xpBar
-                ) {
-
-                    xpBar.style.display =
-                        "block";
-
-                }
-
-
-                if (
-                    xpFill
-                ) {
-
-                    xpFill.style.width =
-                        "0%";
-
-
-                    requestAnimationFrame(
-                        () => {
-
-                            requestAnimationFrame(
-                                () => {
-
-                                    xpFill.style.width =
-                                        `${progress}%`;
-
-                                }
-                            );
-
-                        }
-                    );
-
-                }
-
-            }
+        applyAccountToHeader(
+            headerProfiles,
+            user
         );
 
 
@@ -588,9 +816,31 @@ async function initializeAuthHeader() {
         );
 
 
-        setGuestHeader(
-            headerProfiles
-        );
+        /*
+         * اگر اینترنت یا سرور مشکل داشت،
+         * و کش قبلی داشتیم،
+         * همان اطلاعات قبلی را نگه می‌داریم.
+         *
+         * فقط وقتی کش نداشته باشیم،
+         * کاربر Guest می‌شود.
+         */
+
+        if (
+            cachedUser
+        ) {
+
+            applyAccountToHeader(
+                headerProfiles,
+                cachedUser
+            );
+
+        } else {
+
+            setGuestHeader(
+                headerProfiles
+            );
+
+        }
 
     }
 
