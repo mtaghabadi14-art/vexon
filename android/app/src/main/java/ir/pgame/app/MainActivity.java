@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,32 +34,95 @@ private ConnectivityManager connectivityManager;
 private ConnectivityManager.NetworkCallback networkCallback;
 
 private FrameLayout offlineOverlay;
+private FrameLayout launchOverlay;
+
 private WebView webView;
 
 private boolean networkCallbackRegistered = false;
 private boolean isOfflineScreenVisible = false;
 
+private final Handler launchHandler =
+        new Handler(Looper.getMainLooper());
+
+private final Runnable launchWatcher =
+        new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (launchOverlay == null) {
+                    return;
+                }
+
+                if (webView == null) {
+                    launchHandler.postDelayed(
+                            this,
+                            100
+                    );
+                    return;
+                }
+
+                // وقتی WebView صفحه را کامل لود کرد
+                if (webView.getProgress() >= 100) {
+
+                    hideLaunchOverlay();
+
+                    return;
+                }
+
+                // اگر اینترنت قطع شد، Overlay شروع را بردار
+                // تا صفحه آفلاین نمایش داده شود
+                if (!hasInternet()) {
+
+                    hideLaunchOverlay();
+
+                    return;
+                }
+
+                // همچنان منتظر آماده شدن WebView
+                launchHandler.postDelayed(
+                        this,
+                        100
+                );
+            }
+        };
+
 
 @Override
 public void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
 
     setupFullscreen();
 
-    webView = getBridge().getWebView();
+    webView =
+            getBridge().getWebView();
 
     setupWebViewPersistence();
+
+    createLaunchOverlay();
 
     createOfflineOverlay();
 
     connectivityManager =
-            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            (ConnectivityManager)
+                    getSystemService(
+                            Context.CONNECTIVITY_SERVICE
+                    );
 
     setupNetworkCallback();
 
+
     // بررسی اولیه اینترنت
     if (!hasInternet()) {
+
+        hideLaunchOverlay();
+
         showOfflineScreen();
+
+    } else {
+
+        startLaunchOverlayWatcher();
     }
 }
 
@@ -67,15 +133,18 @@ public void onCreate(Bundle savedInstanceState) {
 
 private void setupFullscreen() {
 
-    // اجازه بده WebView تمام صفحه را بگیرد
     WindowCompat.setDecorFitsSystemWindows(
             getWindow(),
             false
     );
 
-    // حذف پس‌زمینه سفید Status Bar و Navigation Bar
-    getWindow().setStatusBarColor(Color.TRANSPARENT);
-    getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    getWindow().setStatusBarColor(
+            Color.TRANSPARENT
+    );
+
+    getWindow().setNavigationBarColor(
+            Color.TRANSPARENT
+    );
 
     WindowInsetsControllerCompat controller =
             WindowCompat.getInsetsController(
@@ -85,7 +154,6 @@ private void setupFullscreen() {
 
     if (controller != null) {
 
-        // مخفی کردن کامل نوارهای سیستم
         controller.hide(
                 WindowInsetsCompat.Type.systemBars()
         );
@@ -95,17 +163,26 @@ private void setupFullscreen() {
                         .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         );
 
-        // آیکون‌های روشن روی پس‌زمینه تاریک
-        controller.setAppearanceLightStatusBars(false);
-        controller.setAppearanceLightNavigationBars(false);
+        controller.setAppearanceLightStatusBars(
+                false
+        );
+
+        controller.setAppearanceLightNavigationBars(
+                false
+        );
     }
 }
 
 
 private void keepFullscreen() {
 
-    getWindow().setStatusBarColor(Color.TRANSPARENT);
-    getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    getWindow().setStatusBarColor(
+            Color.TRANSPARENT
+    );
+
+    getWindow().setNavigationBarColor(
+            Color.TRANSPARENT
+    );
 
     WindowInsetsControllerCompat controller =
             WindowCompat.getInsetsController(
@@ -119,8 +196,13 @@ private void keepFullscreen() {
                 WindowInsetsCompat.Type.systemBars()
         );
 
-        controller.setAppearanceLightStatusBars(false);
-        controller.setAppearanceLightNavigationBars(false);
+        controller.setAppearanceLightStatusBars(
+                false
+        );
+
+        controller.setAppearanceLightNavigationBars(
+                false
+        );
     }
 }
 
@@ -138,33 +220,194 @@ private void setupWebViewPersistence() {
     WebSettings settings =
             webView.getSettings();
 
-    // Local Storage
     settings.setDomStorageEnabled(true);
 
-    // Database
     settings.setDatabaseEnabled(true);
 
-    // ذخیره اطلاعات فرم
     settings.setSaveFormData(true);
 
-    // حالت عادی کش
     settings.setCacheMode(
             WebSettings.LOAD_DEFAULT
     );
 
-    // Cookie Manager
+
+    // جلوگیری از نمایش سفید قبل از رندر سایت
+    webView.setBackgroundColor(
+            Color.rgb(3, 4, 10)
+    );
+
+
     CookieManager cookieManager =
             CookieManager.getInstance();
 
-    cookieManager.setAcceptCookie(true);
+    cookieManager.setAcceptCookie(
+            true
+    );
 
     cookieManager.setAcceptThirdPartyCookies(
             webView,
             true
     );
 
-    // ذخیره فوری Cookie ها
     cookieManager.flush();
+}
+
+
+// =========================================================
+// LAUNCH OVERLAY
+// =========================================================
+
+private void createLaunchOverlay() {
+
+    launchOverlay =
+            new FrameLayout(this);
+
+    launchOverlay.setVisibility(
+            View.VISIBLE
+    );
+
+    launchOverlay.setClickable(
+            true
+    );
+
+    launchOverlay.setFocusable(
+            true
+    );
+
+
+    // پس‌زمینه فضایی Splash
+    launchOverlay.setBackgroundResource(
+            R.drawable.splash
+    );
+
+
+    // =====================================================
+    // CENTER P ICON
+    // =====================================================
+
+    ImageView logo =
+            new ImageView(this);
+
+    logo.setImageResource(
+            R.drawable.splash_icon
+    );
+
+    logo.setScaleType(
+            ImageView.ScaleType.CENTER_INSIDE
+    );
+
+
+    int logoSize =
+            dpToPx(180);
+
+
+    FrameLayout.LayoutParams logoParams =
+            new FrameLayout.LayoutParams(
+                    logoSize,
+                    logoSize
+            );
+
+    logoParams.gravity =
+            Gravity.CENTER;
+
+
+    launchOverlay.addView(
+            logo,
+            logoParams
+    );
+
+
+    // =====================================================
+    // ROOT
+    // =====================================================
+
+    ViewGroup root =
+            findViewById(
+                    android.R.id.content
+            );
+
+
+    root.addView(
+            launchOverlay,
+            new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            )
+    );
+
+
+    launchOverlay.bringToFront();
+}
+
+
+private void startLaunchOverlayWatcher() {
+
+    if (launchOverlay == null) {
+        return;
+    }
+
+    launchOverlay.setVisibility(
+            View.VISIBLE
+    );
+
+    launchOverlay.bringToFront();
+
+    launchHandler.removeCallbacks(
+            launchWatcher
+    );
+
+    launchHandler.post(
+            launchWatcher
+    );
+
+    keepFullscreen();
+}
+
+
+private void hideLaunchOverlay() {
+
+    if (launchOverlay == null) {
+        return;
+    }
+
+    launchHandler.removeCallbacks(
+            launchWatcher
+    );
+
+    launchOverlay.animate()
+            .alpha(0f)
+            .setDuration(220)
+            .withEndAction(() -> {
+
+                if (launchOverlay != null) {
+
+                    launchOverlay.setVisibility(
+                            View.GONE
+                    );
+
+                    launchOverlay.setAlpha(
+                            1f
+                    );
+                }
+
+                keepFullscreen();
+            })
+            .start();
+}
+
+
+// =========================================================
+// DP -> PX
+// =========================================================
+
+private int dpToPx(int dp) {
+
+    return Math.round(
+            dp *
+                    getResources()
+                            .getDisplayMetrics()
+                            .density
+    );
 }
 
 
@@ -196,9 +439,11 @@ private boolean hasInternet() {
 
     return capabilities.hasCapability(
             NetworkCapabilities.NET_CAPABILITY_INTERNET
-    ) && capabilities.hasCapability(
-            NetworkCapabilities.NET_CAPABILITY_VALIDATED
-    );
+    )
+            &&
+            capabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_VALIDATED
+            );
 }
 
 
@@ -212,7 +457,9 @@ private void setupNetworkCallback() {
             new ConnectivityManager.NetworkCallback() {
 
         @Override
-        public void onAvailable(Network network) {
+        public void onAvailable(
+                Network network
+        ) {
 
             runOnUiThread(() -> {
 
@@ -221,6 +468,9 @@ private void setupNetworkCallback() {
                     hideOfflineScreen();
 
                     if (webView != null) {
+
+                        startLaunchOverlayWatcher();
+
                         webView.reload();
                     }
                 }
@@ -229,11 +479,16 @@ private void setupNetworkCallback() {
 
 
         @Override
-        public void onLost(Network network) {
+        public void onLost(
+                Network network
+        ) {
 
             runOnUiThread(() -> {
 
                 if (!hasInternet()) {
+
+                    hideLaunchOverlay();
+
                     showOfflineScreen();
                 }
             });
@@ -253,21 +508,26 @@ private void setupNetworkCallback() {
                                 NetworkCapabilities
                                         .NET_CAPABILITY_INTERNET
                         )
-                        &&
-                        capabilities.hasCapability(
-                                NetworkCapabilities
-                                        .NET_CAPABILITY_VALIDATED
-                        );
+                                &&
+                                capabilities.hasCapability(
+                                        NetworkCapabilities
+                                                .NET_CAPABILITY_VALIDATED
+                                );
+
 
                 if (online) {
 
                     hideOfflineScreen();
+
+                    startLaunchOverlayWatcher();
 
                     if (webView != null) {
                         webView.reload();
                     }
 
                 } else {
+
+                    hideLaunchOverlay();
 
                     showOfflineScreen();
                 }
@@ -278,11 +538,13 @@ private void setupNetworkCallback() {
 
     try {
 
-        connectivityManager.registerDefaultNetworkCallback(
-                networkCallback
-        );
+        connectivityManager
+                .registerDefaultNetworkCallback(
+                        networkCallback
+                );
 
-        networkCallbackRegistered = true;
+        networkCallbackRegistered =
+                true;
 
     } catch (Exception ignored) {
     }
@@ -302,14 +564,14 @@ private void createOfflineOverlay() {
             View.GONE
     );
 
-    offlineOverlay.setClickable(true);
+    offlineOverlay.setClickable(
+            true
+    );
 
-    offlineOverlay.setFocusable(true);
+    offlineOverlay.setFocusable(
+            true
+    );
 
-
-    // -----------------------------------------------------
-    // BACKGROUND
-    // -----------------------------------------------------
 
     GradientDrawable background =
             new GradientDrawable();
@@ -322,10 +584,6 @@ private void createOfflineOverlay() {
             background
     );
 
-
-    // -----------------------------------------------------
-    // CONTAINER
-    // -----------------------------------------------------
 
     LinearLayout container =
             new LinearLayout(this);
@@ -353,13 +611,17 @@ private void createOfflineOverlay() {
     TextView logo =
             new TextView(this);
 
-    logo.setText("PGAME");
+    logo.setText(
+            "PGAME"
+    );
 
     logo.setTextColor(
             Color.rgb(0, 255, 157)
     );
 
-    logo.setTextSize(34);
+    logo.setTextSize(
+            34
+    );
 
     logo.setGravity(
             Gravity.CENTER
@@ -387,7 +649,6 @@ private void createOfflineOverlay() {
     );
 
 
-    // فاصله
     SpaceView(
             container,
             25
@@ -409,7 +670,9 @@ private void createOfflineOverlay() {
             Color.WHITE
     );
 
-    title.setTextSize(21);
+    title.setTextSize(
+            21
+    );
 
     title.setGravity(
             Gravity.CENTER
@@ -430,7 +693,6 @@ private void createOfflineOverlay() {
     );
 
 
-    // فاصله
     SpaceView(
             container,
             12
@@ -445,15 +707,18 @@ private void createOfflineOverlay() {
             new TextView(this);
 
     description.setText(
-            "برای استفاده از PGame به اتصال اینترنت نیاز داری.\n" +
-            "اتصال خود را بررسی کن و دوباره تلاش کن."
+            "برای استفاده از PGame به اتصال اینترنت نیاز داری.\n"
+                    +
+                    "اتصال خود را بررسی کن و دوباره تلاش کن."
     );
 
     description.setTextColor(
             Color.rgb(160, 160, 180)
     );
 
-    description.setTextSize(15);
+    description.setTextSize(
+            15
+    );
 
     description.setGravity(
             Gravity.CENTER
@@ -474,7 +739,6 @@ private void createOfflineOverlay() {
     );
 
 
-    // فاصله
     SpaceView(
             container,
             28
@@ -496,9 +760,13 @@ private void createOfflineOverlay() {
             Color.BLACK
     );
 
-    retryButton.setTextSize(15);
+    retryButton.setTextSize(
+            15
+    );
 
-    retryButton.setAllCaps(false);
+    retryButton.setAllCaps(
+            false
+    );
 
 
     GradientDrawable buttonBackground =
@@ -527,6 +795,8 @@ private void createOfflineOverlay() {
 
             hideOfflineScreen();
 
+            startLaunchOverlayWatcher();
+
             if (webView != null) {
                 webView.reload();
             }
@@ -535,7 +805,6 @@ private void createOfflineOverlay() {
 
             showOfflineScreen();
 
-            // انیمیشن کوچک دکمه
             retryButton.animate()
                     .rotationBy(360f)
                     .setDuration(500)
@@ -574,7 +843,7 @@ private void createOfflineOverlay() {
 
 
     // =====================================================
-    // ADD OVERLAY TO ROOT
+    // ADD TO ROOT
     // =====================================================
 
     ViewGroup root =
@@ -594,7 +863,7 @@ private void createOfflineOverlay() {
 
 
 // =========================================================
-// SPACE VIEW
+// SPACE
 // =========================================================
 
 private void SpaceView(
@@ -674,11 +943,17 @@ public void onResume() {
 
     if (!hasInternet()) {
 
+        hideLaunchOverlay();
+
         showOfflineScreen();
 
-    } else if (isOfflineScreenVisible) {
+    } else if (
+            isOfflineScreenVisible
+    ) {
 
         hideOfflineScreen();
+
+        startLaunchOverlayWatcher();
 
         if (webView != null) {
             webView.reload();
@@ -690,15 +965,21 @@ public void onResume() {
 @Override
 public void onDestroy() {
 
+    launchHandler.removeCallbacks(
+            launchWatcher
+    );
+
+
     if (connectivityManager != null
             && networkCallbackRegistered
             && networkCallback != null) {
 
         try {
 
-            connectivityManager.unregisterNetworkCallback(
-                    networkCallback
-            );
+            connectivityManager
+                    .unregisterNetworkCallback(
+                            networkCallback
+                    );
 
         } catch (Exception ignored) {
         }
