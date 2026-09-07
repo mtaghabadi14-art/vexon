@@ -241,7 +241,8 @@ public class MainActivity extends BridgeActivity {
         webView =
                 getBridge()
                         .getWebView();
-                        hideFooterInApp();
+                       
+        hideFooterInApp();
 
         log(
                 "WEBVIEW",
@@ -2127,19 +2128,24 @@ private void hideFooterInApp() {
         return;
     }
 
-    launchHandler.postDelayed(
+    mainHandler.postDelayed(
             () -> {
 
                 webView.evaluateJavascript(
-                        "javascript:(function(){" +
-                                "document.querySelectorAll('footer').forEach(function(el){" +
+                        "(function() {" +
+                                "document.querySelectorAll('footer').forEach(function(el) {" +
                                 "el.style.display='none';" +
                                 "});" +
                                 "})()",
                         null
                 );
 
+                log(
+                        "APP",
+                        "Website footer hidden inside Android app"
+                );
+
             },
-            700
+            1200
     );
 }
