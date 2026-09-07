@@ -1884,28 +1884,28 @@ public class MainActivity extends BridgeActivity {
     // =========================================================
 
     @Override
-    protected void onDestroy() {
+public void onDestroy() {
 
-        handler.removeCallbacksAndMessages(
-                null
-        );
+    handler.removeCallbacksAndMessages(
+            null
+    );
 
-        if (connectivityManager != null &&
-                networkCallback != null) {
+    if (connectivityManager != null &&
+            networkCallback != null) {
 
-            try {
+        try {
 
-                connectivityManager
-                        .unregisterNetworkCallback(
-                                networkCallback
-                        );
+            connectivityManager
+                    .unregisterNetworkCallback(
+                            networkCallback
+                    );
 
-            } catch (Exception ignored) {
-            }
+        } catch (Exception ignored) {
         }
-
-        super.onDestroy();
     }
+
+    super.onDestroy();
+}
 
     // =========================================================
     // DP
