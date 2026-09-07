@@ -2148,3 +2148,5 @@ private void hideFooterInApp() {
             1200
     );
 }
+
+}
