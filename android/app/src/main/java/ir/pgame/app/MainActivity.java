@@ -2012,6 +2012,38 @@ public class MainActivity extends BridgeActivity {
     }
 
     // =========================================================
+// APP ONLY - HIDE WEBSITE FOOTER
+// =========================================================
+
+private void hideFooterInApp() {
+
+    if (webView == null) {
+        return;
+    }
+
+    mainHandler.postDelayed(
+            () -> {
+
+                webView.evaluateJavascript(
+                        "(function() {" +
+                                "document.querySelectorAll('footer').forEach(function(el) {" +
+                                "el.style.display='none';" +
+                                "});" +
+                                "})()",
+                        null
+                );
+
+                log(
+                        "APP",
+                        "Website footer hidden inside Android app"
+                );
+
+            },
+            1200
+    );
+}
+
+    // =========================================================
     // LIFECYCLE
     // =========================================================
 
@@ -2117,36 +2149,6 @@ public class MainActivity extends BridgeActivity {
         super.onDestroy();
     }
 
-// =========================================================
-// APP ONLY - HIDE WEBSITE FOOTER
-// =========================================================
 
-private void hideFooterInApp() {
-
-    if (webView == null) {
-        return;
-    }
-
-    mainHandler.postDelayed(
-            () -> {
-
-                webView.evaluateJavascript(
-                        "(function() {" +
-                                "document.querySelectorAll('footer').forEach(function(el) {" +
-                                "el.style.display='none';" +
-                                "});" +
-                                "})()",
-                        null
-                );
-
-                log(
-                        "APP",
-                        "Website footer hidden inside Android app"
-                );
-
-            },
-            1200
-    );
-}
 
 }
