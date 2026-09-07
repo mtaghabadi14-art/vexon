@@ -2116,7 +2116,6 @@ public class MainActivity extends BridgeActivity {
 
         super.onDestroy();
     }
-}
 
 // =========================================================
 // APP ONLY - HIDE WEBSITE FOOTER
