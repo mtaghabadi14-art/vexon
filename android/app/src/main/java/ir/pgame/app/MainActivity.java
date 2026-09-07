@@ -89,7 +89,10 @@ public class MainActivity extends BridgeActivity {
                 public void run() {
 
                     if (launchOverlay == null) {
-                        log("STARTUP", "Launch overlay is null");
+                        log(
+                                "STARTUP",
+                                "Launch overlay is null"
+                        );
                         return;
                     }
 
@@ -103,7 +106,10 @@ public class MainActivity extends BridgeActivity {
 
                     if (webView == null) {
 
-                        log("WEBVIEW", "WebView is null");
+                        log(
+                                "WEBVIEW",
+                                "WebView is null during startup"
+                        );
 
                         mainHandler.postDelayed(
                                 this,
@@ -121,28 +127,33 @@ public class MainActivity extends BridgeActivity {
 
                     log(
                             "WEBVIEW",
-                            "Progress=" + progress +
-                                    " | URL=" + currentUrl
+                            "Progress=" +
+                                    progress +
+                                    " | URL=" +
+                                    currentUrl
                     );
 
                     // -------------------------------------------------
-                    // WEBVIEW READY
+                    // PAGE READY
                     // -------------------------------------------------
 
                     if (progress >= 100) {
 
                         log(
                                 "STARTUP",
-                                "WebView reports 100% - waiting for visual state"
+                                "WebView reached 100%"
                         );
 
-                        waitForVisualContent();
+                        mainHandler.postDelayed(
+                                MainActivity.this::resolveStartup,
+                                SPLASH_EXTRA_DELAY_MS
+                        );
 
                         return;
                     }
 
                     // -------------------------------------------------
-                    // NO INTERNET
+                    // INTERNET LOST
                     // -------------------------------------------------
 
                     if (!hasInternet()) {
@@ -159,7 +170,7 @@ public class MainActivity extends BridgeActivity {
                     }
 
                     // -------------------------------------------------
-                    // KEEP WATCHING
+                    // CONTINUE WATCHING
                     // -------------------------------------------------
 
                     mainHandler.postDelayed(
@@ -180,17 +191,17 @@ public class MainActivity extends BridgeActivity {
                     return;
                 }
 
-                if (launchOverlay == null) {
+                if (startupErrorVisible) {
                     return;
                 }
 
-                if (startupErrorVisible) {
+                if (launchOverlay == null) {
                     return;
                 }
 
                 log(
                         "ERROR",
-                        "STARTUP TIMEOUT after " +
+                        "Startup timeout after " +
                                 STARTUP_TIMEOUT_MS +
                                 "ms"
                 );
@@ -198,17 +209,21 @@ public class MainActivity extends BridgeActivity {
                 log(
                         "ERROR",
                         "WebView progress=" +
-                                (webView != null
-                                        ? webView.getProgress()
-                                        : -1)
+                                (
+                                        webView != null
+                                                ? webView.getProgress()
+                                                : -1
+                                )
                 );
 
                 log(
                         "ERROR",
                         "WebView URL=" +
-                                (webView != null
-                                        ? webView.getUrl()
-                                        : "null")
+                                (
+                                        webView != null
+                                                ? webView.getUrl()
+                                                : "null"
+                                )
                 );
 
                 if (!hasInternet()) {
@@ -241,8 +256,6 @@ public class MainActivity extends BridgeActivity {
         webView =
                 getBridge()
                         .getWebView();
-                       
-        hideFooterInApp();
 
         log(
                 "WEBVIEW",
@@ -407,10 +420,12 @@ public class MainActivity extends BridgeActivity {
     private void setupWebViewPersistence() {
 
         if (webView == null) {
+
             log(
                     "WEBVIEW",
-                    "Persistence setup skipped because WebView is null"
+                    "Persistence setup skipped"
             );
+
             return;
         }
 
@@ -759,13 +774,24 @@ public class MainActivity extends BridgeActivity {
         // INITIAL STATES
         // -----------------------------------------------------
 
-        logo.setAlpha(0f);
-        logo.setScaleX(0.72f);
-        logo.setScaleY(0.72f);
-        logo.setRotation(-8f);
+        logo.setAlpha(
+                0f
+        );
+
+        logo.setScaleX(
+                0.72f
+        );
+
+        logo.setScaleY(
+                0.72f
+        );
+
+        logo.setRotation(
+                -8f
+        );
 
         // -----------------------------------------------------
-        // ROOT
+        // ADD TO ROOT
         // -----------------------------------------------------
 
         ViewGroup root =
@@ -897,70 +923,19 @@ public class MainActivity extends BridgeActivity {
     }
 
     // =========================================================
-    // VISUAL CONTENT CHECK
-    // =========================================================
-
-    private void waitForVisualContent() {
-
-        if (webView == null) {
-            showStartupErrorScreen();
-            return;
-        }
-
-        mainHandler.removeCallbacks(
-                startupWatcher
-        );
-
-        log(
-                "SPLASH",
-                "Waiting for WebView visual state"
-        );
-
-        webView.postVisualStateCallback(
-        System.nanoTime(),
-        new WebView.VisualStateCallback() {
-
-            @Override
-            public void onComplete(
-                    long requestId
-            ) {
-
-                runOnUiThread(
-                        () -> {
-
-                            if (
-                                    startupResolved ||
-                                    startupErrorVisible
-                            ) {
-                                return;
-                            }
-
-                            log(
-                                    "SPLASH",
-                                    "WebView visual state complete"
-                            );
-
-                            mainHandler.removeCallbacks(
-                                    startupTimeout
-                            );
-
-                            mainHandler.postDelayed(
-                                    MainActivity.this::resolveStartup,
-                                    SPLASH_EXTRA_DELAY_MS
-                            );
-                        }
-                );
-            }
-        }
-);
-
-    // =========================================================
     // RESOLVE STARTUP
     // =========================================================
 
     private void resolveStartup() {
 
         if (startupResolved) {
+            return;
+        }
+
+        if (webView == null) {
+
+            showStartupErrorScreen();
+
             return;
         }
 
@@ -978,6 +953,8 @@ public class MainActivity extends BridgeActivity {
                 "STARTUP",
                 "Startup resolved successfully"
         );
+
+        hideFooterInApp();
 
         hideLaunchOverlay();
     }
@@ -1002,9 +979,7 @@ public class MainActivity extends BridgeActivity {
                 .withEndAction(
                         () -> {
 
-                            if (
-                                    launchOverlay != null
-                            ) {
+                            if (launchOverlay != null) {
 
                                 launchOverlay.setVisibility(
                                         View.GONE
@@ -1081,10 +1056,12 @@ public class MainActivity extends BridgeActivity {
     private void setupNetworkCallback() {
 
         if (connectivityManager == null) {
+
             log(
                     "NETWORK",
-                    "Cannot register callback: ConnectivityManager is null"
+                    "Cannot register callback"
             );
+
             return;
         }
 
@@ -1209,7 +1186,8 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
-        lastNetworkState = online;
+        lastNetworkState =
+                online;
 
         if (!online) {
 
@@ -1252,12 +1230,8 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
-        lastNetworkReloadTime = now;
-
-        log(
-                "WEBVIEW",
-                "Reloading WebView after network recovery"
-        );
+        lastNetworkReloadTime =
+                now;
 
         startupResolved = false;
         startupErrorVisible = false;
@@ -1268,13 +1242,18 @@ public class MainActivity extends BridgeActivity {
 
         try {
 
+            log(
+                    "WEBVIEW",
+                    "Reloading after network recovery"
+            );
+
             webView.reload();
 
         } catch (Exception e) {
 
             logError(
                     "WEBVIEW",
-                    "WebView reload failed",
+                    "Network recovery reload failed",
                     e
             );
 
@@ -1383,7 +1362,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 25
         );
@@ -1420,7 +1399,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 12
         );
@@ -1429,8 +1408,7 @@ public class MainActivity extends BridgeActivity {
                 new TextView(this);
 
         description.setText(
-                "برای استفاده از PGame به اتصال اینترنت نیاز داری.\n"
-                        +
+                "برای استفاده از PGame به اتصال اینترنت نیاز داری.\n" +
                         "اتصال خود را بررسی کن و دوباره تلاش کن."
         );
 
@@ -1463,7 +1441,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 28
         );
@@ -1513,53 +1491,48 @@ public class MainActivity extends BridgeActivity {
 
                     log(
                             "NETWORK",
-                            "Manual retry pressed"
+                            "Manual offline retry pressed"
                     );
 
-                    if (
-                            hasInternet()
-                    ) {
-
-                        hideOfflineScreen();
-
-                        startupResolved = false;
-                        startupErrorVisible = false;
-
-                        hideErrorScreen();
-
-                        startLaunchWatcher();
-
-                        if (
-                                webView != null
-                        ) {
-
-                            try {
-
-                                webView.reload();
-
-                            } catch (Exception e) {
-
-                                logError(
-                                        "WEBVIEW",
-                                        "Retry reload failed",
-                                        e
-                                );
-
-                                showStartupErrorScreen();
-                            }
-                        }
-
-                    } else {
-
-                        log(
-                                "NETWORK",
-                                "Retry failed: still offline"
-                        );
+                    if (!hasInternet()) {
 
                         retryButton.animate()
                                 .rotationBy(360f)
                                 .setDuration(500)
                                 .start();
+
+                        return;
+                    }
+
+                    hideOfflineScreen();
+
+                    startupResolved = false;
+                    startupErrorVisible = false;
+
+                    hideErrorScreen();
+
+                    startLaunchWatcher();
+
+                    if (webView == null) {
+
+                        showStartupErrorScreen();
+
+                        return;
+                    }
+
+                    try {
+
+                        webView.reload();
+
+                    } catch (Exception e) {
+
+                        logError(
+                                "WEBVIEW",
+                                "Offline retry reload failed",
+                                e
+                        );
+
+                        showStartupErrorScreen();
                     }
                 }
         );
@@ -1741,7 +1714,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 25
         );
@@ -1778,7 +1751,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 12
         );
@@ -1787,8 +1760,7 @@ public class MainActivity extends BridgeActivity {
                 new TextView(this);
 
         description.setText(
-                "ارتباط با PGame کامل نشد.\n"
-                        +
+                "ارتباط با PGame کامل نشد.\n" +
                         "می‌توانی دوباره تلاش کنی."
         );
 
@@ -1821,7 +1793,7 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        SpaceView(
+        addSpace(
                 container,
                 28
         );
@@ -1999,7 +1971,7 @@ public class MainActivity extends BridgeActivity {
     // SPACE
     // =========================================================
 
-    private void SpaceView(
+    private void addSpace(
             LinearLayout parent,
             int height
     ) {
@@ -2017,36 +1989,60 @@ public class MainActivity extends BridgeActivity {
     }
 
     // =========================================================
-// APP ONLY - HIDE WEBSITE FOOTER
-// =========================================================
+    // APP ONLY - HIDE WEBSITE FOOTER
+    // =========================================================
 
-private void hideFooterInApp() {
+    private void hideFooterInApp() {
 
-    if (webView == null) {
-        return;
+        hideFooterAttempt(
+                0
+        );
     }
 
-    mainHandler.postDelayed(
-            () -> {
+    private void hideFooterAttempt(
+            int attempt
+    ) {
 
-                webView.evaluateJavascript(
-                        "(function() {" +
-                                "document.querySelectorAll('footer').forEach(function(el) {" +
-                                "el.style.display='none';" +
-                                "});" +
-                                "})()",
-                        null
-                );
+        if (webView == null) {
+            return;
+        }
 
-                log(
-                        "APP",
-                        "Website footer hidden inside Android app"
-                );
+        webView.evaluateJavascript(
+                "(function() {" +
+                        "var footers = document.querySelectorAll('footer');" +
+                        "footers.forEach(function(el) {" +
+                        "el.style.display = 'none';" +
+                        "el.style.visibility = 'hidden';" +
+                        "el.style.height = '0';" +
+                        "el.style.minHeight = '0';" +
+                        "el.style.margin = '0';" +
+                        "el.style.padding = '0';" +
+                        "});" +
+                        "return footers.length;" +
+                        "})()",
+                value -> {
 
-            },
-            1200
-    );
-}
+                    log(
+                            "APP",
+                            "Footer hide attempt " +
+                                    (attempt + 1) +
+                                    " | result=" +
+                                    value
+                    );
+
+                    if (attempt < 8) {
+
+                        mainHandler.postDelayed(
+                                () ->
+                                        hideFooterAttempt(
+                                                attempt + 1
+                                        ),
+                                500
+                        );
+                    }
+                }
+        );
+    }
 
     // =========================================================
     // LIFECYCLE
@@ -2075,6 +2071,8 @@ private void hideFooterInApp() {
 
             return;
         }
+
+        hideFooterInApp();
 
         if (isOfflineScreenVisible) {
 
@@ -2153,7 +2151,4 @@ private void hideFooterInApp() {
 
         super.onDestroy();
     }
-
-
-
 }
