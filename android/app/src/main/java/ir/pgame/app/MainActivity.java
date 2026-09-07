@@ -1,6 +1,5 @@
 package ir.pgame.app;
 
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -10,6 +9,7 @@ import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,139 +22,240 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
-
 import com.getcapacitor.BridgeActivity;
-
 
 public class MainActivity extends BridgeActivity {
 
+    // =========================================================
+    // CONSTANTS
+    // =========================================================
+
+    private static final String TAG = "PGame";
+
+    private static final long STARTUP_TIMEOUT_MS = 15000L;
+    private static final long SPLASH_EXTRA_DELAY_MS = 250L;
+    private static final long NETWORK_RELOAD_COOLDOWN_MS = 2500L;
+
+    // =========================================================
+    // ANDROID / WEBVIEW
+    // =========================================================
 
     private ConnectivityManager connectivityManager;
-
     private ConnectivityManager.NetworkCallback networkCallback;
-
-
-    private FrameLayout offlineOverlay;
-
-    private FrameLayout launchOverlay;
-
 
     private WebView webView;
 
+    // =========================================================
+    // OVERLAYS
+    // =========================================================
+
+    private FrameLayout launchOverlay;
+    private FrameLayout offlineOverlay;
+    private FrameLayout errorOverlay;
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     private boolean networkCallbackRegistered = false;
-
     private boolean isOfflineScreenVisible = false;
 
+    private boolean startupResolved = false;
+    private boolean startupErrorVisible = false;
 
-    private final Handler launchHandler =
-            new Handler(
-                    Looper.getMainLooper()
-            );
+    private Boolean lastNetworkState = null;
 
+    private long lastNetworkReloadTime = 0L;
 
     // =========================================================
-    // LAUNCH WATCHER
+    // HANDLER
     // =========================================================
 
-    private final Runnable launchWatcher =
+    private final Handler mainHandler =
+            new Handler(Looper.getMainLooper());
+
+    // =========================================================
+    // STARTUP WATCHER
+    // =========================================================
+
+    private final Runnable startupWatcher =
             new Runnable() {
 
                 @Override
                 public void run() {
 
-                    if (
-                            launchOverlay == null
-                    ) {
+                    if (launchOverlay == null) {
+                        log("STARTUP", "Launch overlay is null");
                         return;
                     }
 
+                    if (startupResolved) {
+                        return;
+                    }
 
-                    if (
-                            webView == null
-                    ) {
+                    if (startupErrorVisible) {
+                        return;
+                    }
 
-                        launchHandler.postDelayed(
+                    if (webView == null) {
+
+                        log("WEBVIEW", "WebView is null");
+
+                        mainHandler.postDelayed(
                                 this,
-                                100
+                                150
                         );
 
                         return;
                     }
 
+                    int progress =
+                            webView.getProgress();
 
-                    // وقتی WebView کامل آماده شد
-                    if (
-                            webView.getProgress() >= 100
-                    ) {
+                    String currentUrl =
+                            webView.getUrl();
 
-                        // اجازه می‌دهیم Splash
-                        // کمی بیشتر روی صفحه بماند
-                        launchHandler.postDelayed(
-                                () ->
-                                        hideLaunchOverlay(),
-                                250
+                    log(
+                            "WEBVIEW",
+                            "Progress=" + progress +
+                                    " | URL=" + currentUrl
+                    );
+
+                    // -------------------------------------------------
+                    // WEBVIEW READY
+                    // -------------------------------------------------
+
+                    if (progress >= 100) {
+
+                        log(
+                                "STARTUP",
+                                "WebView reports 100% - waiting for visual state"
                         );
+
+                        waitForVisualContent();
 
                         return;
                     }
 
+                    // -------------------------------------------------
+                    // NO INTERNET
+                    // -------------------------------------------------
 
-                    // اگر اینترنت قطع شد
-                    if (
-                            !hasInternet()
-                    ) {
+                    if (!hasInternet()) {
+
+                        log(
+                                "NETWORK",
+                                "Internet unavailable during startup"
+                        );
 
                         hideLaunchOverlay();
+                        showOfflineScreen();
 
                         return;
                     }
 
+                    // -------------------------------------------------
+                    // KEEP WATCHING
+                    // -------------------------------------------------
 
-                    // همچنان منتظر WebView
-                    launchHandler.postDelayed(
+                    mainHandler.postDelayed(
                             this,
-                            100
+                            200
                     );
                 }
             };
 
+    // =========================================================
+    // STARTUP TIMEOUT
+    // =========================================================
+
+    private final Runnable startupTimeout =
+            () -> {
+
+                if (startupResolved) {
+                    return;
+                }
+
+                if (launchOverlay == null) {
+                    return;
+                }
+
+                if (startupErrorVisible) {
+                    return;
+                }
+
+                log(
+                        "ERROR",
+                        "STARTUP TIMEOUT after " +
+                                STARTUP_TIMEOUT_MS +
+                                "ms"
+                );
+
+                log(
+                        "ERROR",
+                        "WebView progress=" +
+                                (webView != null
+                                        ? webView.getProgress()
+                                        : -1)
+                );
+
+                log(
+                        "ERROR",
+                        "WebView URL=" +
+                                (webView != null
+                                        ? webView.getUrl()
+                                        : "null")
+                );
+
+                if (!hasInternet()) {
+
+                    hideLaunchOverlay();
+                    showOfflineScreen();
+
+                } else {
+
+                    showStartupErrorScreen();
+                }
+            };
 
     // =========================================================
     // ON CREATE
     // =========================================================
 
     @Override
-    public void onCreate(
-            Bundle savedInstanceState
-    ) {
+    public void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(
-                savedInstanceState
+        super.onCreate(savedInstanceState);
+
+        log(
+                "STARTUP",
+                "MainActivity created"
         );
 
-
         setupFullscreen();
-
 
         webView =
                 getBridge()
                         .getWebView();
+                        hideFooterInApp();
 
+        log(
+                "WEBVIEW",
+                "WebView initialized: " +
+                        (webView != null)
+        );
 
         setupWebViewPersistence();
 
-
         createLaunchOverlay();
-
 
         createOfflineOverlay();
 
+        createErrorOverlay();
 
         connectivityManager =
                 (ConnectivityManager)
@@ -162,29 +263,66 @@ public class MainActivity extends BridgeActivity {
                                 Context.CONNECTIVITY_SERVICE
                         );
 
+        log(
+                "NETWORK",
+                "ConnectivityManager initialized: " +
+                        (connectivityManager != null)
+        );
 
         setupNetworkCallback();
 
+        boolean online =
+                hasInternet();
 
-        // بررسی اولیه اینترنت
-        if (
-                !hasInternet()
-        ) {
+        lastNetworkState = online;
+
+        log(
+                "NETWORK",
+                "Initial internet state = " +
+                        online
+        );
+
+        if (!online) {
 
             hideLaunchOverlay();
-
             showOfflineScreen();
 
         } else {
 
-            startLaunchOverlayWatcher();
-
+            startLaunchWatcher();
         }
     }
 
+    // =========================================================
+    // LOGGING
+    // =========================================================
+
+    private void log(
+            String section,
+            String message
+    ) {
+
+        Log.d(
+                TAG,
+                "[" + section + "] " + message
+        );
+    }
+
+    private void logError(
+            String section,
+            String message,
+            Throwable throwable
+    ) {
+
+        Log.e(
+                TAG,
+                "[" + section + "] " + message,
+                throwable
+        );
+    }
 
     // =========================================================
-    // FULL SCREEN
+    // FULLSCREEN
     // =========================================================
 
     private void setupFullscreen() {
@@ -194,16 +332,13 @@ public class MainActivity extends BridgeActivity {
                 false
         );
 
-
         getWindow().setStatusBarColor(
                 Color.TRANSPARENT
         );
 
-
         getWindow().setNavigationBarColor(
                 Color.TRANSPARENT
         );
-
 
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(
@@ -211,33 +346,26 @@ public class MainActivity extends BridgeActivity {
                         getWindow().getDecorView()
                 );
 
-
-        if (
-                controller != null
-        ) {
+        if (controller != null) {
 
             controller.hide(
                     WindowInsetsCompat.Type.systemBars()
             );
-
 
             controller.setSystemBarsBehavior(
                     WindowInsetsControllerCompat
                             .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             );
 
-
             controller.setAppearanceLightStatusBars(
                     false
             );
-
 
             controller.setAppearanceLightNavigationBars(
                     false
             );
         }
     }
-
 
     private void keepFullscreen() {
 
@@ -245,11 +373,9 @@ public class MainActivity extends BridgeActivity {
                 Color.TRANSPARENT
         );
 
-
         getWindow().setNavigationBarColor(
                 Color.TRANSPARENT
         );
-
 
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(
@@ -257,20 +383,15 @@ public class MainActivity extends BridgeActivity {
                         getWindow().getDecorView()
                 );
 
-
-        if (
-                controller != null
-        ) {
+        if (controller != null) {
 
             controller.hide(
                     WindowInsetsCompat.Type.systemBars()
             );
 
-
             controller.setAppearanceLightStatusBars(
                     false
             );
-
 
             controller.setAppearanceLightNavigationBars(
                     false
@@ -278,45 +399,39 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
-
     // =========================================================
     // WEBVIEW PERSISTENCE
     // =========================================================
 
     private void setupWebViewPersistence() {
 
-        if (
-                webView == null
-        ) {
+        if (webView == null) {
+            log(
+                    "WEBVIEW",
+                    "Persistence setup skipped because WebView is null"
+            );
             return;
         }
 
-
         WebSettings settings =
                 webView.getSettings();
-
 
         settings.setDomStorageEnabled(
                 true
         );
 
-
         settings.setDatabaseEnabled(
                 true
         );
-
 
         settings.setSaveFormData(
                 true
         );
 
-
         settings.setCacheMode(
                 WebSettings.LOAD_DEFAULT
         );
 
-
-        // جلوگیری از سفید شدن WebView
         webView.setBackgroundColor(
                 Color.rgb(
                         3,
@@ -325,25 +440,25 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         CookieManager cookieManager =
                 CookieManager.getInstance();
-
 
         cookieManager.setAcceptCookie(
                 true
         );
-
 
         cookieManager.setAcceptThirdPartyCookies(
                 webView,
                 true
         );
 
-
         cookieManager.flush();
-    }
 
+        log(
+                "WEBVIEW",
+                "Persistence settings applied"
+        );
+    }
 
     // =========================================================
     // LAUNCH OVERLAY
@@ -352,87 +467,30 @@ public class MainActivity extends BridgeActivity {
     private void createLaunchOverlay() {
 
         launchOverlay =
-                new FrameLayout(
-                        this
-                );
-
+                new FrameLayout(this);
 
         launchOverlay.setVisibility(
                 View.VISIBLE
         );
 
-
         launchOverlay.setClickable(
                 true
         );
-
 
         launchOverlay.setFocusable(
                 true
         );
 
-
-        // =====================================================
-        // SPACE BACKGROUND
-        // =====================================================
-
         launchOverlay.setBackgroundResource(
                 R.drawable.splash
         );
 
-
-        // =====================================================
-        // CENTER LOGO
-        // =====================================================
-
-        ImageView logo =
-                new ImageView(
-                        this
-                );
-
-
-        logo.setImageResource(
-                R.drawable.splash_icon
-        );
-
-
-        logo.setScaleType(
-                ImageView.ScaleType.CENTER_INSIDE
-        );
-
-
-        int logoSize =
-                dpToPx(
-                        190
-                );
-
-
-        FrameLayout.LayoutParams logoParams =
-                new FrameLayout.LayoutParams(
-                        logoSize,
-                        logoSize
-                );
-
-
-        logoParams.gravity =
-                Gravity.CENTER;
-
-
-        launchOverlay.addView(
-                logo,
-                logoParams
-        );
-
-
-        // =====================================================
-        // CENTER GLOW
-        // =====================================================
+        // -----------------------------------------------------
+        // GLOW
+        // -----------------------------------------------------
 
         View glow =
-                new View(
-                        this
-                );
-
+                new View(this);
 
         GradientDrawable glowBackground =
                 new GradientDrawable(
@@ -462,22 +520,16 @@ public class MainActivity extends BridgeActivity {
                         }
                 );
 
-
         glowBackground.setShape(
                 GradientDrawable.OVAL
         );
-
 
         glow.setBackground(
                 glowBackground
         );
 
-
         int glowSize =
-                dpToPx(
-                        330
-                );
-
+                dpToPx(330);
 
         FrameLayout.LayoutParams glowParams =
                 new FrameLayout.LayoutParams(
@@ -485,52 +537,73 @@ public class MainActivity extends BridgeActivity {
                         glowSize
                 );
 
-
         glowParams.gravity =
                 Gravity.CENTER;
-
 
         launchOverlay.addView(
                 glow,
                 glowParams
         );
 
+        // -----------------------------------------------------
+        // LOGO
+        // -----------------------------------------------------
 
-        // =====================================================
-        // PGAME TITLE
-        // =====================================================
+        ImageView logo =
+                new ImageView(this);
 
-        TextView title =
-                new TextView(
-                        this
+        logo.setImageResource(
+                R.drawable.splash_icon
+        );
+
+        logo.setScaleType(
+                ImageView.ScaleType.CENTER_INSIDE
+        );
+
+        int logoSize =
+                dpToPx(190);
+
+        FrameLayout.LayoutParams logoParams =
+                new FrameLayout.LayoutParams(
+                        logoSize,
+                        logoSize
                 );
 
+        logoParams.gravity =
+                Gravity.CENTER;
+
+        launchOverlay.addView(
+                logo,
+                logoParams
+        );
+
+        // -----------------------------------------------------
+        // TITLE
+        // -----------------------------------------------------
+
+        TextView title =
+                new TextView(this);
 
         title.setText(
                 "PGame"
         );
 
-
         title.setTextColor(
                 Color.WHITE
         );
-
 
         title.setTextSize(
                 25
         );
 
-
         title.setGravity(
                 Gravity.CENTER
         );
-
 
         title.setTypeface(
                 null,
                 android.graphics.Typeface.BOLD
         );
-
 
         title.setShadowLayer(
                 18f,
@@ -543,11 +616,9 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         title.setAlpha(
                 0f
         );
-
 
         FrameLayout.LayoutParams titleParams =
                 new FrameLayout.LayoutParams(
@@ -555,37 +626,27 @@ public class MainActivity extends BridgeActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-
         titleParams.gravity =
                 Gravity.CENTER_HORIZONTAL;
 
-
         titleParams.topMargin =
-                dpToPx(
-                        145
-                );
-
+                dpToPx(145);
 
         launchOverlay.addView(
                 title,
                 titleParams
         );
 
-
-        // =====================================================
+        // -----------------------------------------------------
         // SLOGAN
-        // =====================================================
+        // -----------------------------------------------------
 
         TextView slogan =
-                new TextView(
-                        this
-                );
-
+                new TextView(this);
 
         slogan.setText(
                 "PLAY • COMPETE • LEVEL UP."
         );
-
 
         slogan.setTextColor(
                 Color.rgb(
@@ -595,26 +656,21 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         slogan.setTextSize(
                 9
         );
-
 
         slogan.setGravity(
                 Gravity.CENTER
         );
 
-
         slogan.setLetterSpacing(
                 0.12f
         );
 
-
         slogan.setAlpha(
                 0f
         );
-
 
         FrameLayout.LayoutParams sloganParams =
                 new FrameLayout.LayoutParams(
@@ -622,32 +678,23 @@ public class MainActivity extends BridgeActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-
         sloganParams.gravity =
                 Gravity.CENTER_HORIZONTAL;
 
-
         sloganParams.topMargin =
-                dpToPx(
-                        185
-                );
-
+                dpToPx(185);
 
         launchOverlay.addView(
                 slogan,
                 sloganParams
         );
 
-
-        // =====================================================
+        // -----------------------------------------------------
         // LOADING LINE
-        // =====================================================
+        // -----------------------------------------------------
 
         View loadingLine =
-                new View(
-                        this
-                );
-
+                new View(this);
 
         GradientDrawable loadingBackground =
                 new GradientDrawable(
@@ -678,84 +725,52 @@ public class MainActivity extends BridgeActivity {
                         }
                 );
 
-
         loadingBackground.setCornerRadius(
-                dpToPx(
-                        3
-                )
+                dpToPx(3)
         );
-
 
         loadingLine.setBackground(
                 loadingBackground
         );
 
-
         loadingLine.setAlpha(
                 0f
         );
 
-
         FrameLayout.LayoutParams loadingParams =
                 new FrameLayout.LayoutParams(
-                        dpToPx(
-                                220
-                        ),
-                        dpToPx(
-                                3
-                        )
+                        dpToPx(220),
+                        dpToPx(3)
                 );
-
 
         loadingParams.gravity =
                 Gravity.CENTER_HORIZONTAL;
 
-
         loadingParams.topMargin =
-                dpToPx(
-                        225
-                );
-
+                dpToPx(225);
 
         launchOverlay.addView(
                 loadingLine,
                 loadingParams
         );
 
+        // -----------------------------------------------------
+        // INITIAL STATES
+        // -----------------------------------------------------
 
-        // =====================================================
-        // LOGO START STATE
-        // =====================================================
+        logo.setAlpha(0f);
+        logo.setScaleX(0.72f);
+        logo.setScaleY(0.72f);
+        logo.setRotation(-8f);
 
-        logo.setAlpha(
-                0f
-        );
-
-
-        logo.setScaleX(
-                0.72f
-        );
-
-
-        logo.setScaleY(
-                0.72f
-        );
-
-
-        logo.setRotation(
-                -8f
-        );
-
-
-        // =====================================================
+        // -----------------------------------------------------
         // ROOT
-        // =====================================================
+        // -----------------------------------------------------
 
         ViewGroup root =
                 findViewById(
                         android.R.id.content
                 );
-
 
         root.addView(
                 launchOverlay,
@@ -765,169 +780,201 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         launchOverlay.bringToFront();
 
-
-        // =====================================================
+        // -----------------------------------------------------
         // ANIMATIONS
-        // =====================================================
+        // -----------------------------------------------------
 
         logo.animate()
-                .alpha(
-                        1f
-                )
-                .scaleX(
-                        1f
-                )
-                .scaleY(
-                        1f
-                )
-                .rotation(
-                        0f
-                )
-                .setDuration(
-                        650
-                )
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .rotation(0f)
+                .setDuration(650)
                 .setInterpolator(
-                        new android.view.animation.OvershootInterpolator(
-                                1.15f
-                        )
+                        new android.view.animation
+                                .OvershootInterpolator(
+                                        1.15f
+                                )
                 )
                 .start();
-
 
         title.animate()
-                .alpha(
-                        1f
-                )
-                .setStartDelay(
-                        300
-                )
-                .setDuration(
-                        450
-                )
+                .alpha(1f)
+                .setStartDelay(300)
+                .setDuration(450)
                 .start();
-
 
         slogan.animate()
-                .alpha(
-                        1f
-                )
-                .setStartDelay(
-                        500
-                )
-                .setDuration(
-                        450
-                )
+                .alpha(1f)
+                .setStartDelay(500)
+                .setDuration(450)
                 .start();
-
 
         loadingLine.animate()
-                .alpha(
-                        1f
-                )
-                .setStartDelay(
-                        650
-                )
-                .setDuration(
-                        400
-                )
+                .alpha(1f)
+                .setStartDelay(650)
+                .setDuration(400)
                 .start();
 
-
-        // =====================================================
-        // PULSE
-        // =====================================================
-
         logo.animate()
-                .scaleX(
-                        1.05f
-                )
-                .scaleY(
-                        1.05f
-                )
-                .setDuration(
-                        900
-                )
-                .setStartDelay(
-                        750
-                )
+                .scaleX(1.05f)
+                .scaleY(1.05f)
+                .setDuration(900)
+                .setStartDelay(750)
                 .withEndAction(
                         () -> {
 
                             logo.animate()
-                                    .scaleX(
-                                            1f
-                                    )
-                                    .scaleY(
-                                            1f
-                                    )
-                                    .setDuration(
-                                            900
-                                    )
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(900)
                                     .start();
-
                         }
                 )
                 .start();
 
-
-        // =====================================================
-        // LAYER ORDER
-        // =====================================================
-
         glow.bringToFront();
-
         logo.bringToFront();
-
         title.bringToFront();
-
         slogan.bringToFront();
-
         loadingLine.bringToFront();
+
+        log(
+                "SPLASH",
+                "Custom launch overlay created"
+        );
     }
 
-
     // =========================================================
-    // START LAUNCH WATCHER
+    // START WATCHER
     // =========================================================
 
-    private void startLaunchOverlayWatcher() {
+    private void startLaunchWatcher() {
 
-        if (
-                launchOverlay == null
-        ) {
+        if (launchOverlay == null) {
             return;
         }
 
+        startupResolved = false;
+        startupErrorVisible = false;
 
         launchOverlay.setVisibility(
                 View.VISIBLE
         );
 
-
         launchOverlay.setAlpha(
                 1f
         );
 
-
         launchOverlay.bringToFront();
 
-
-        launchHandler.removeCallbacks(
-                launchWatcher
+        mainHandler.removeCallbacks(
+                startupWatcher
         );
 
-
-        launchHandler.post(
-                launchWatcher
+        mainHandler.removeCallbacks(
+                startupTimeout
         );
 
+        mainHandler.post(
+                startupWatcher
+        );
+
+        mainHandler.postDelayed(
+                startupTimeout,
+                STARTUP_TIMEOUT_MS
+        );
 
         keepFullscreen();
+
+        log(
+                "SPLASH",
+                "Launch watcher started"
+        );
     }
 
+    // =========================================================
+    // VISUAL CONTENT CHECK
+    // =========================================================
+
+    private void waitForVisualContent() {
+
+        if (webView == null) {
+            showStartupErrorScreen();
+            return;
+        }
+
+        mainHandler.removeCallbacks(
+                startupWatcher
+        );
+
+        log(
+                "SPLASH",
+                "Waiting for WebView visual state"
+        );
+
+        webView.postVisualStateCallback(
+                System.nanoTime(),
+                requestId -> {
+
+                    runOnUiThread(
+                            () -> {
+
+                                if (
+                                        startupResolved ||
+                                        startupErrorVisible
+                                ) {
+                                    return;
+                                }
+
+                                log(
+                                        "SPLASH",
+                                        "WebView visual state complete"
+                                );
+
+                                mainHandler.removeCallbacks(
+                                        startupTimeout
+                                );
+
+                                mainHandler.postDelayed(
+                                        this::resolveStartup,
+                                        SPLASH_EXTRA_DELAY_MS
+                                );
+                            }
+                    );
+                }
+        );
+    }
+
+    // =========================================================
+    // RESOLVE STARTUP
+    // =========================================================
+
+    private void resolveStartup() {
+
+        if (startupResolved) {
+            return;
+        }
+
+        startupResolved = true;
+
+        mainHandler.removeCallbacks(
+                startupWatcher
+        );
+
+        mainHandler.removeCallbacks(
+                startupTimeout
+        );
+
+        log(
+                "STARTUP",
+                "Startup resolved successfully"
+        );
+
+        hideLaunchOverlay();
+    }
 
     // =========================================================
     // HIDE LAUNCH
@@ -935,25 +982,17 @@ public class MainActivity extends BridgeActivity {
 
     private void hideLaunchOverlay() {
 
-        if (
-                launchOverlay == null
-        ) {
+        if (launchOverlay == null) {
             return;
         }
 
-
-        launchHandler.removeCallbacks(
-                launchWatcher
+        mainHandler.removeCallbacks(
+                startupWatcher
         );
 
-
         launchOverlay.animate()
-                .alpha(
-                        0f
-                )
-                .setDuration(
-                        220
-                )
+                .alpha(0f)
+                .setDuration(220)
                 .withEndAction(
                         () -> {
 
@@ -965,28 +1004,22 @@ public class MainActivity extends BridgeActivity {
                                         View.GONE
                                 );
 
-
                                 launchOverlay.setAlpha(
                                         1f
                                 );
                             }
 
-
                             keepFullscreen();
-
                         }
                 )
                 .start();
     }
 
-
     // =========================================================
     // DP -> PX
     // =========================================================
 
-    private int dpToPx(
-            int dp
-    ) {
+    private int dpToPx(int dp) {
 
         return Math.round(
                 dp *
@@ -996,31 +1029,23 @@ public class MainActivity extends BridgeActivity {
         );
     }
 
-
     // =========================================================
     // INTERNET CHECK
     // =========================================================
 
     private boolean hasInternet() {
 
-        if (
-                connectivityManager == null
-        ) {
+        if (connectivityManager == null) {
             return false;
         }
-
 
         Network activeNetwork =
                 connectivityManager
                         .getActiveNetwork();
 
-
-        if (
-                activeNetwork == null
-        ) {
+        if (activeNetwork == null) {
             return false;
         }
-
 
         NetworkCapabilities capabilities =
                 connectivityManager
@@ -1028,13 +1053,9 @@ public class MainActivity extends BridgeActivity {
                                 activeNetwork
                         );
 
-
-        if (
-                capabilities == null
-        ) {
+        if (capabilities == null) {
             return false;
         }
-
 
         return capabilities.hasCapability(
                 NetworkCapabilities
@@ -1047,12 +1068,19 @@ public class MainActivity extends BridgeActivity {
                 );
     }
 
-
     // =========================================================
     // NETWORK CALLBACK
     // =========================================================
 
     private void setupNetworkCallback() {
+
+        if (connectivityManager == null) {
+            log(
+                    "NETWORK",
+                    "Cannot register callback: ConnectivityManager is null"
+            );
+            return;
+        }
 
         networkCallback =
                 new ConnectivityManager.NetworkCallback() {
@@ -1065,28 +1093,17 @@ public class MainActivity extends BridgeActivity {
                         runOnUiThread(
                                 () -> {
 
-                                    if (
-                                            hasInternet()
-                                    ) {
+                                    log(
+                                            "NETWORK",
+                                            "Network available"
+                                    );
 
-                                        hideOfflineScreen();
-
-
-                                        if (
-                                                webView != null
-                                        ) {
-
-                                            startLaunchOverlayWatcher();
-
-
-                                            webView.reload();
-                                        }
-                                    }
-
+                                    handleNetworkState(
+                                            true
+                                    );
                                 }
                         );
                     }
-
 
                     @Override
                     public void onLost(
@@ -1096,19 +1113,21 @@ public class MainActivity extends BridgeActivity {
                         runOnUiThread(
                                 () -> {
 
-                                    if (
-                                            !hasInternet()
-                                    ) {
+                                    boolean online =
+                                            hasInternet();
 
-                                        hideLaunchOverlay();
+                                    log(
+                                            "NETWORK",
+                                            "Network lost | online=" +
+                                                    online
+                                    );
 
-                                        showOfflineScreen();
-                                    }
-
+                                    handleNetworkState(
+                                            online
+                                    );
                                 }
                         );
                     }
-
 
                     @Override
                     public void onCapabilitiesChanged(
@@ -1116,50 +1135,33 @@ public class MainActivity extends BridgeActivity {
                             NetworkCapabilities capabilities
                     ) {
 
+                        boolean online =
+                                capabilities.hasCapability(
+                                        NetworkCapabilities
+                                                .NET_CAPABILITY_INTERNET
+                                )
+                                        &&
+                                        capabilities.hasCapability(
+                                                NetworkCapabilities
+                                                        .NET_CAPABILITY_VALIDATED
+                                        );
+
                         runOnUiThread(
                                 () -> {
 
-                                    boolean online =
-                                            capabilities.hasCapability(
-                                                    NetworkCapabilities
-                                                            .NET_CAPABILITY_INTERNET
-                                            )
-                                                    &&
-                                                    capabilities.hasCapability(
-                                                            NetworkCapabilities
-                                                                    .NET_CAPABILITY_VALIDATED
-                                                    );
+                                    log(
+                                            "NETWORK",
+                                            "Capabilities changed | online=" +
+                                                    online
+                                    );
 
-
-                                    if (
+                                    handleNetworkState(
                                             online
-                                    ) {
-
-                                        hideOfflineScreen();
-
-
-                                        startLaunchOverlayWatcher();
-
-
-                                        if (
-                                                webView != null
-                                        ) {
-
-                                            webView.reload();
-                                        }
-
-                                    } else {
-
-                                        hideLaunchOverlay();
-
-                                        showOfflineScreen();
-                                    }
-
+                                    );
                                 }
                         );
                     }
                 };
-
 
         try {
 
@@ -1168,17 +1170,111 @@ public class MainActivity extends BridgeActivity {
                             networkCallback
                     );
 
-
             networkCallbackRegistered =
                     true;
 
-        } catch (
-                Exception ignored
-        ) {
+            log(
+                    "NETWORK",
+                    "Network callback registered"
+            );
 
+        } catch (Exception e) {
+
+            logError(
+                    "NETWORK",
+                    "Failed to register network callback",
+                    e
+            );
         }
     }
 
+    // =========================================================
+    // NETWORK STATE
+    // =========================================================
+
+    private void handleNetworkState(
+            boolean online
+    ) {
+
+        if (
+                lastNetworkState != null &&
+                lastNetworkState == online
+        ) {
+            return;
+        }
+
+        lastNetworkState = online;
+
+        if (!online) {
+
+            log(
+                    "NETWORK",
+                    "Switching to offline state"
+            );
+
+            hideLaunchOverlay();
+            showOfflineScreen();
+
+            return;
+        }
+
+        log(
+                "NETWORK",
+                "Switching to online state"
+        );
+
+        hideOfflineScreen();
+
+        if (webView == null) {
+            return;
+        }
+
+        long now =
+                System.currentTimeMillis();
+
+        if (
+                now - lastNetworkReloadTime
+                        <
+                        NETWORK_RELOAD_COOLDOWN_MS
+        ) {
+
+            log(
+                    "NETWORK",
+                    "Reload skipped because of cooldown"
+            );
+
+            return;
+        }
+
+        lastNetworkReloadTime = now;
+
+        log(
+                "WEBVIEW",
+                "Reloading WebView after network recovery"
+        );
+
+        startupResolved = false;
+        startupErrorVisible = false;
+
+        hideErrorScreen();
+
+        startLaunchWatcher();
+
+        try {
+
+            webView.reload();
+
+        } catch (Exception e) {
+
+            logError(
+                    "WEBVIEW",
+                    "WebView reload failed",
+                    e
+            );
+
+            showStartupErrorScreen();
+        }
+    }
 
     // =========================================================
     // OFFLINE SCREEN
@@ -1187,29 +1283,22 @@ public class MainActivity extends BridgeActivity {
     private void createOfflineOverlay() {
 
         offlineOverlay =
-                new FrameLayout(
-                        this
-                );
-
+                new FrameLayout(this);
 
         offlineOverlay.setVisibility(
                 View.GONE
         );
 
-
         offlineOverlay.setClickable(
                 true
         );
-
 
         offlineOverlay.setFocusable(
                 true
         );
 
-
         GradientDrawable background =
                 new GradientDrawable();
-
 
         background.setColor(
                 Color.rgb(
@@ -1219,50 +1308,34 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         offlineOverlay.setBackground(
                 background
         );
 
-
         LinearLayout container =
-                new LinearLayout(
-                        this
-                );
-
+                new LinearLayout(this);
 
         container.setOrientation(
                 LinearLayout.VERTICAL
         );
 
-
         container.setGravity(
                 Gravity.CENTER
         );
 
-
         container.setPadding(
-                48,
-                48,
-                48,
-                48
+                dpToPx(32),
+                dpToPx(32),
+                dpToPx(32),
+                dpToPx(32)
         );
 
-
-        // =====================================================
-        // LOGO
-        // =====================================================
-
         TextView logo =
-                new TextView(
-                        this
-                );
-
+                new TextView(this);
 
         logo.setText(
                 "PGAME"
         );
-
 
         logo.setTextColor(
                 Color.rgb(
@@ -1272,22 +1345,18 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         logo.setTextSize(
                 34
         );
-
 
         logo.setGravity(
                 Gravity.CENTER
         );
 
-
         logo.setTypeface(
                 null,
                 android.graphics.Typeface.BOLD
         );
-
 
         logo.setShadowLayer(
                 25f,
@@ -1300,7 +1369,6 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         container.addView(
                 logo,
                 new LinearLayout.LayoutParams(
@@ -1309,48 +1377,34 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         SpaceView(
                 container,
                 25
         );
 
-
-        // =====================================================
-        // TITLE
-        // =====================================================
-
         TextView title =
-                new TextView(
-                        this
-                );
-
+                new TextView(this);
 
         title.setText(
                 "اتصال به اینترنت برقرار نیست"
         );
 
-
         title.setTextColor(
                 Color.WHITE
         );
-
 
         title.setTextSize(
                 21
         );
 
-
         title.setGravity(
                 Gravity.CENTER
         );
-
 
         title.setTypeface(
                 null,
                 android.graphics.Typeface.BOLD
         );
-
 
         container.addView(
                 title,
@@ -1360,29 +1414,19 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         SpaceView(
                 container,
                 12
         );
 
-
-        // =====================================================
-        // DESCRIPTION
-        // =====================================================
-
         TextView description =
-                new TextView(
-                        this
-                );
-
+                new TextView(this);
 
         description.setText(
                 "برای استفاده از PGame به اتصال اینترنت نیاز داری.\n"
                         +
                         "اتصال خود را بررسی کن و دوباره تلاش کن."
         );
-
 
         description.setTextColor(
                 Color.rgb(
@@ -1392,22 +1436,18 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         description.setTextSize(
                 15
         );
-
 
         description.setGravity(
                 Gravity.CENTER
         );
 
-
         description.setLineSpacing(
                 5,
                 1.0f
         );
-
 
         container.addView(
                 description,
@@ -1417,46 +1457,32 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         SpaceView(
                 container,
                 28
         );
 
-
-        // =====================================================
-        // RETRY BUTTON
-        // =====================================================
-
         Button retryButton =
-                new Button(
-                        this
-                );
-
+                new Button(this);
 
         retryButton.setText(
                 "تلاش مجدد"
         );
 
-
         retryButton.setTextColor(
                 Color.BLACK
         );
-
 
         retryButton.setTextSize(
                 15
         );
 
-
         retryButton.setAllCaps(
                 false
         );
 
-
         GradientDrawable buttonBackground =
                 new GradientDrawable();
-
 
         buttonBackground.setColor(
                 Color.rgb(
@@ -1466,22 +1492,23 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
         buttonBackground.setCornerRadius(
-                25
+                dpToPx(25)
         );
-
 
         retryButton.setBackground(
                 buttonBackground
         );
-
 
         retryButton.setOnClickListener(
                 v -> {
 
                     keepFullscreen();
 
+                    log(
+                            "NETWORK",
+                            "Manual retry pressed"
+                    );
 
                     if (
                             hasInternet()
@@ -1489,60 +1516,61 @@ public class MainActivity extends BridgeActivity {
 
                         hideOfflineScreen();
 
+                        startupResolved = false;
+                        startupErrorVisible = false;
 
-                        startLaunchOverlayWatcher();
+                        hideErrorScreen();
 
+                        startLaunchWatcher();
 
                         if (
                                 webView != null
                         ) {
 
-                            webView.reload();
+                            try {
+
+                                webView.reload();
+
+                            } catch (Exception e) {
+
+                                logError(
+                                        "WEBVIEW",
+                                        "Retry reload failed",
+                                        e
+                                );
+
+                                showStartupErrorScreen();
+                            }
                         }
 
                     } else {
 
-                        showOfflineScreen();
-
+                        log(
+                                "NETWORK",
+                                "Retry failed: still offline"
+                        );
 
                         retryButton.animate()
-                                .rotationBy(
-                                        360f
-                                )
-                                .setDuration(
-                                        500
-                                )
+                                .rotationBy(360f)
+                                .setDuration(500)
                                 .start();
                     }
-
                 }
         );
 
-
         LinearLayout.LayoutParams buttonParams =
                 new LinearLayout.LayoutParams(
-                        dpToPx(
-                                220
-                        ),
-                        dpToPx(
-                                60
-                        )
+                        dpToPx(220),
+                        dpToPx(60)
                 );
-
 
         buttonParams.gravity =
                 Gravity.CENTER;
-
 
         container.addView(
                 retryButton,
                 buttonParams
         );
-
-
-        // =====================================================
-        // ADD CONTAINER
-        // =====================================================
 
         offlineOverlay.addView(
                 container,
@@ -1552,16 +1580,10 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-
-        // =====================================================
-        // ADD TO ROOT
-        // =====================================================
-
         ViewGroup root =
                 findViewById(
                         android.R.id.content
                 );
-
 
         root.addView(
                 offlineOverlay,
@@ -1572,6 +1594,400 @@ public class MainActivity extends BridgeActivity {
         );
     }
 
+    // =========================================================
+    // OFFLINE SCREEN STATE
+    // =========================================================
+
+    private void showOfflineScreen() {
+
+        if (offlineOverlay == null) {
+            return;
+        }
+
+        isOfflineScreenVisible =
+                true;
+
+        offlineOverlay.setVisibility(
+                View.VISIBLE
+        );
+
+        offlineOverlay.bringToFront();
+
+        hideErrorScreen();
+
+        keepFullscreen();
+    }
+
+    private void hideOfflineScreen() {
+
+        if (offlineOverlay == null) {
+            return;
+        }
+
+        isOfflineScreenVisible =
+                false;
+
+        offlineOverlay.setVisibility(
+                View.GONE
+        );
+
+        keepFullscreen();
+    }
+
+    // =========================================================
+    // ERROR SCREEN
+    // =========================================================
+
+    private void createErrorOverlay() {
+
+        errorOverlay =
+                new FrameLayout(this);
+
+        errorOverlay.setVisibility(
+                View.GONE
+        );
+
+        errorOverlay.setClickable(
+                true
+        );
+
+        errorOverlay.setFocusable(
+                true
+        );
+
+        GradientDrawable background =
+                new GradientDrawable();
+
+        background.setColor(
+                Color.rgb(
+                        3,
+                        4,
+                        10
+                )
+        );
+
+        errorOverlay.setBackground(
+                background
+        );
+
+        LinearLayout container =
+                new LinearLayout(this);
+
+        container.setOrientation(
+                LinearLayout.VERTICAL
+        );
+
+        container.setGravity(
+                Gravity.CENTER
+        );
+
+        container.setPadding(
+                dpToPx(32),
+                dpToPx(32),
+                dpToPx(32),
+                dpToPx(32)
+        );
+
+        TextView logo =
+                new TextView(this);
+
+        logo.setText(
+                "PGAME"
+        );
+
+        logo.setTextColor(
+                Color.rgb(
+                        0,
+                        255,
+                        157
+                )
+        );
+
+        logo.setTextSize(
+                34
+        );
+
+        logo.setGravity(
+                Gravity.CENTER
+        );
+
+        logo.setTypeface(
+                null,
+                android.graphics.Typeface.BOLD
+        );
+
+        logo.setShadowLayer(
+                25f,
+                0f,
+                0f,
+                Color.rgb(
+                        0,
+                        255,
+                        157
+                )
+        );
+
+        container.addView(
+                logo,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+        );
+
+        SpaceView(
+                container,
+                25
+        );
+
+        TextView title =
+                new TextView(this);
+
+        title.setText(
+                "بارگذاری PGame طول کشید"
+        );
+
+        title.setTextColor(
+                Color.WHITE
+        );
+
+        title.setTextSize(
+                21
+        );
+
+        title.setGravity(
+                Gravity.CENTER
+        );
+
+        title.setTypeface(
+                null,
+                android.graphics.Typeface.BOLD
+        );
+
+        container.addView(
+                title,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+        );
+
+        SpaceView(
+                container,
+                12
+        );
+
+        TextView description =
+                new TextView(this);
+
+        description.setText(
+                "ارتباط با PGame کامل نشد.\n"
+                        +
+                        "می‌توانی دوباره تلاش کنی."
+        );
+
+        description.setTextColor(
+                Color.rgb(
+                        160,
+                        160,
+                        180
+                )
+        );
+
+        description.setTextSize(
+                15
+        );
+
+        description.setGravity(
+                Gravity.CENTER
+        );
+
+        description.setLineSpacing(
+                5,
+                1.0f
+        );
+
+        container.addView(
+                description,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+        );
+
+        SpaceView(
+                container,
+                28
+        );
+
+        Button retryButton =
+                new Button(this);
+
+        retryButton.setText(
+                "تلاش دوباره"
+        );
+
+        retryButton.setTextColor(
+                Color.BLACK
+        );
+
+        retryButton.setTextSize(
+                15
+        );
+
+        retryButton.setAllCaps(
+                false
+        );
+
+        GradientDrawable buttonBackground =
+                new GradientDrawable();
+
+        buttonBackground.setColor(
+                Color.rgb(
+                        0,
+                        255,
+                        157
+                )
+        );
+
+        buttonBackground.setCornerRadius(
+                dpToPx(25)
+        );
+
+        retryButton.setBackground(
+                buttonBackground
+        );
+
+        retryButton.setOnClickListener(
+                v -> {
+
+                    log(
+                            "STARTUP",
+                            "Startup error retry pressed"
+                    );
+
+                    hideErrorScreen();
+
+                    if (!hasInternet()) {
+
+                        showOfflineScreen();
+
+                        return;
+                    }
+
+                    if (webView == null) {
+
+                        showStartupErrorScreen();
+
+                        return;
+                    }
+
+                    startupResolved = false;
+                    startupErrorVisible = false;
+
+                    startLaunchWatcher();
+
+                    try {
+
+                        webView.reload();
+
+                    } catch (Exception e) {
+
+                        logError(
+                                "WEBVIEW",
+                                "Error screen retry failed",
+                                e
+                        );
+
+                        showStartupErrorScreen();
+                    }
+                }
+        );
+
+        LinearLayout.LayoutParams buttonParams =
+                new LinearLayout.LayoutParams(
+                        dpToPx(220),
+                        dpToPx(60)
+                );
+
+        buttonParams.gravity =
+                Gravity.CENTER;
+
+        container.addView(
+                retryButton,
+                buttonParams
+        );
+
+        errorOverlay.addView(
+                container,
+                new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        );
+
+        ViewGroup root =
+                findViewById(
+                        android.R.id.content
+                );
+
+        root.addView(
+                errorOverlay,
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        );
+    }
+
+    private void showStartupErrorScreen() {
+
+        if (errorOverlay == null) {
+            return;
+        }
+
+        startupErrorVisible =
+                true;
+
+        mainHandler.removeCallbacks(
+                startupWatcher
+        );
+
+        mainHandler.removeCallbacks(
+                startupTimeout
+        );
+
+        hideLaunchOverlay();
+
+        hideOfflineScreen();
+
+        errorOverlay.setVisibility(
+                View.VISIBLE
+        );
+
+        errorOverlay.bringToFront();
+
+        keepFullscreen();
+
+        log(
+                "ERROR",
+                "Startup error screen shown"
+        );
+    }
+
+    private void hideErrorScreen() {
+
+        if (errorOverlay == null) {
+            return;
+        }
+
+        startupErrorVisible =
+                false;
+
+        errorOverlay.setVisibility(
+                View.GONE
+        );
+    }
 
     // =========================================================
     // SPACE
@@ -1583,77 +1999,16 @@ public class MainActivity extends BridgeActivity {
     ) {
 
         View space =
-                new View(
-                        this
-                );
-
+                new View(this);
 
         parent.addView(
                 space,
                 new LinearLayout.LayoutParams(
                         1,
-                        dpToPx(
-                                height
-                        )
+                        dpToPx(height)
                 )
         );
     }
-
-
-    // =========================================================
-    // SHOW OFFLINE
-    // =========================================================
-
-    private void showOfflineScreen() {
-
-        if (
-                offlineOverlay == null
-        ) {
-            return;
-        }
-
-
-        isOfflineScreenVisible =
-                true;
-
-
-        offlineOverlay.setVisibility(
-                View.VISIBLE
-        );
-
-
-        offlineOverlay.bringToFront();
-
-
-        keepFullscreen();
-    }
-
-
-    // =========================================================
-    // HIDE OFFLINE
-    // =========================================================
-
-    private void hideOfflineScreen() {
-
-        if (
-                offlineOverlay == null
-        ) {
-            return;
-        }
-
-
-        isOfflineScreenVisible =
-                false;
-
-
-        offlineOverlay.setVisibility(
-                View.GONE
-        );
-
-
-        keepFullscreen();
-    }
-
 
     // =========================================================
     // LIFECYCLE
@@ -1664,52 +2019,76 @@ public class MainActivity extends BridgeActivity {
 
         super.onResume();
 
-
         keepFullscreen();
 
+        boolean online =
+                hasInternet();
 
-        if (
-                !hasInternet()
-        ) {
+        log(
+                "STARTUP",
+                "onResume | online=" +
+                        online
+        );
+
+        if (!online) {
 
             hideLaunchOverlay();
-
             showOfflineScreen();
 
-        } else if (
-                isOfflineScreenVisible
-        ) {
+            return;
+        }
+
+        if (isOfflineScreenVisible) {
 
             hideOfflineScreen();
 
+            if (webView != null) {
 
-            startLaunchOverlayWatcher();
+                startupResolved = false;
+                startupErrorVisible = false;
 
+                hideErrorScreen();
 
-            if (
-                    webView != null
-            ) {
+                startLaunchWatcher();
 
-                webView.reload();
+                try {
+
+                    webView.reload();
+
+                } catch (Exception e) {
+
+                    logError(
+                            "WEBVIEW",
+                            "onResume reload failed",
+                            e
+                    );
+
+                    showStartupErrorScreen();
+                }
             }
         }
     }
 
-
     @Override
     public void onDestroy() {
 
-        launchHandler.removeCallbacks(
-                launchWatcher
+        log(
+                "STARTUP",
+                "MainActivity destroying"
         );
 
+        mainHandler.removeCallbacks(
+                startupWatcher
+        );
+
+        mainHandler.removeCallbacks(
+                startupTimeout
+        );
 
         if (
-                connectivityManager != null
-                        &&
-                        networkCallbackRegistered
-                        &&
-                        networkCallback != null
+                connectivityManager != null &&
+                networkCallbackRegistered &&
+                networkCallback != null
         ) {
 
             try {
@@ -1719,16 +2098,48 @@ public class MainActivity extends BridgeActivity {
                                 networkCallback
                         );
 
-            } catch (
-                    Exception ignored
-            ) {
+                log(
+                        "NETWORK",
+                        "Network callback unregistered"
+                );
 
+            } catch (Exception e) {
+
+                logError(
+                        "NETWORK",
+                        "Failed to unregister network callback",
+                        e
+                );
             }
         }
 
-
         super.onDestroy();
     }
+}
 
+// =========================================================
+// APP ONLY - HIDE WEBSITE FOOTER
+// =========================================================
 
+private void hideFooterInApp() {
+
+    if (webView == null) {
+        return;
+    }
+
+    launchHandler.postDelayed(
+            () -> {
+
+                webView.evaluateJavascript(
+                        "javascript:(function(){" +
+                                "document.querySelectorAll('footer').forEach(function(el){" +
+                                "el.style.display='none';" +
+                                "});" +
+                                "})()",
+                        null
+                );
+
+            },
+            700
+    );
 }
