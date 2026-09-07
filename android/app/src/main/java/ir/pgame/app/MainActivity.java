@@ -917,37 +917,42 @@ public class MainActivity extends BridgeActivity {
         );
 
         webView.postVisualStateCallback(
-                System.nanoTime(),
-                requestId -> {
+        System.nanoTime(),
+        new WebView.VisualStateCallback() {
 
-                    runOnUiThread(
-                            () -> {
+            @Override
+            public void onComplete(
+                    long requestId
+            ) {
 
-                                if (
-                                        startupResolved ||
-                                        startupErrorVisible
-                                ) {
-                                    return;
-                                }
+                runOnUiThread(
+                        () -> {
 
-                                log(
-                                        "SPLASH",
-                                        "WebView visual state complete"
-                                );
-
-                                mainHandler.removeCallbacks(
-                                        startupTimeout
-                                );
-
-                                mainHandler.postDelayed(
-                                        this::resolveStartup,
-                                        SPLASH_EXTRA_DELAY_MS
-                                );
+                            if (
+                                    startupResolved ||
+                                    startupErrorVisible
+                            ) {
+                                return;
                             }
-                    );
-                }
-        );
-    }
+
+                            log(
+                                    "SPLASH",
+                                    "WebView visual state complete"
+                            );
+
+                            mainHandler.removeCallbacks(
+                                    startupTimeout
+                            );
+
+                            mainHandler.postDelayed(
+                                    MainActivity.this::resolveStartup,
+                                    SPLASH_EXTRA_DELAY_MS
+                            );
+                        }
+                );
+            }
+        }
+);
 
     // =========================================================
     // RESOLVE STARTUP
