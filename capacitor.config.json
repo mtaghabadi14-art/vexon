@@ -3,6 +3,7 @@
   "appName": "PGame",
   "webDir": "www",
   "server": {
-    "url": "https://s.vexongame.workers.dev/"
+    "hostname": "localhost",
+    "androidScheme": "https"
   }
 }

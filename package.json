@@ -1,12 +1,18 @@
 {
-    "name": "PGAME_SITE",
-    "private": true,
-    "devDependencies": {
-        "wrangler": "^4.125.0"
-    },
-    "dependencies": {
-        "@capacitor/android": "^8.5.1",
-        "@capacitor/cli": "^8.5.1",
-        "@capacitor/core": "^8.5.1"
-    }
+  "name": "PGAME_SITE",
+  "private": true,
+  "scripts": {
+    "app:prepare": "node scripts/build-app-web.mjs",
+    "build": "npm run app:prepare",
+    "deploy": "wrangler deploy",
+    "prepare": "node scripts/build-app-web.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.125.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1"
+  }
 }

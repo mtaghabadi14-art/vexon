@@ -2583,3 +2583,170 @@ footer {
 .home-community-section .game-box {
     width: 260px;
 }
+
+/* =========================================================
+   PGAME ANDROID APP MODE
+========================================================= */
+
+html.pgame-app,
+body.pgame-app {
+
+    background:
+        #03040a !important;
+
+    overscroll-behavior-x:
+        none;
+
+}
+
+
+body.pgame-app {
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+/* بدون اسکرول افقی */
+
+body.pgame-app,
+body.pgame-app main {
+
+    overflow-x:
+        hidden;
+
+}
+
+
+/* افکت‌های سنگین فقط در App کاهش پیدا می‌کنند */
+
+body.pgame-app .nebula {
+
+    filter:
+        none !important;
+
+    opacity:
+        .12 !important;
+
+}
+
+
+body.pgame-app .planet {
+
+    filter:
+        none !important;
+
+    box-shadow:
+        none !important;
+
+}
+
+
+body.pgame-app .navbar,
+body.pgame-app .pgame-feature-node,
+body.pgame-app .featured-games,
+body.pgame-app .auth-card {
+
+    -webkit-backdrop-filter:
+        none !important;
+
+    backdrop-filter:
+        none !important;
+
+}
+
+
+/* Roadmap سنگین روی WebView اجرا نشود */
+
+body.pgame-app
+.pgame-road-line {
+
+    animation:
+        none !important;
+
+    filter:
+        none !important;
+
+}
+
+
+body.pgame-app
+.pgame-road-point,
+body.pgame-app
+.pgame-road-core {
+
+    animation:
+        none !important;
+
+    filter:
+        none !important;
+
+}
+
+
+/* RGB XP همچنان زیبا، ولی سبک‌تر */
+
+body.pgame-app
+.header-xp-fill {
+
+    animation:
+        none !important;
+
+}
+
+
+/* دکمه همبرگر حذف */
+
+body.pgame-app
+.vexon-global-menu-trigger {
+
+    display:
+        none !important;
+
+}
+
+
+/* Footer در App حذف */
+
+body.pgame-app footer {
+
+    display:
+        none !important;
+
+}
+
+
+/* انتقال صفحه */
+
+body.pgame-app {
+
+    opacity:
+        1;
+
+    transition:
+        opacity
+        .28s
+        ease,
+
+        transform
+        .28s
+        ease;
+
+}
+
+
+body.pgame-app.pgame-page-leaving {
+
+    opacity:
+        0 !important;
+
+    transform:
+        translateY(
+            5px
+        ) !important;
+
+    pointer-events:
+        none !important;
+
+}

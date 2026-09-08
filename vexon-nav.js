@@ -1,410 +1,913 @@
-(function () {
-    "use strict";
+"use strict";
 
+(function () {
     const items = [
-        ["index.html", "P", "خانه"],
-        ["sections/games.html", "🎮", "بازی‌ها"],
-        ["sections/leaderboard.html", "🏆", "لیدربورد"],
-        ["sections/cafe.html", "☕", "کافه بازی"],
-        ["sections/news.html", "📢", "اخبار"],
-        ["sections/guide.html", "❓", "راهنما"],
-        ["sections/creators.html", "👨‍💻", "سازندگان"],
-        ["sections/messenger.html", "💬", "پیام‌رسان"],
-        ["sections/friends.html", "👥", "دوستان"]
+        {
+            href: "index.html",
+            icon: "⌂",
+            label: "خانه"
+        },
+        {
+            href: "sections/games.html",
+            icon: "🎮",
+            label: "بازی‌ها"
+        },
+        {
+            href: "sections/leaderboard.html",
+            icon: "🏆",
+            label: "لیدربورد"
+        },
+        {
+            href: "sections/cafe.html",
+            icon: "☕",
+            label: "کافه بازی"
+        },
+        {
+            href: "sections/news.html",
+            icon: "📢",
+            label: "اخبار"
+        },
+        {
+            href: "sections/guide.html",
+            icon: "❓",
+            label: "راهنما"
+        },
+        {
+            href: "sections/creators.html",
+            icon: "👨‍💻",
+            label: "سازندگان"
+        },
+        {
+            href: "sections/messenger.html",
+            icon: "💬",
+            label: "پیام‌رسان"
+        },
+        {
+            href: "sections/friends.html",
+            icon: "👥",
+            label: "دوستان"
+        }
     ];
 
-    function insideSections() {
-        return location.pathname.includes("/sections/");
+    let drawer = null;
+    let overlay = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchCurrentX = 0;
+    let trackingEdgeSwipe = false;
+    let draggingDrawer = false;
+    let drawerWidth = 0;
+    let openedByGesture = false;
+
+    const APP_CLASS = "pgame-app";
+    const OPEN_CLASS = "pgame-drawer-open";
+    const DRAWER_ID = "pgame-navigation-drawer";
+    const OVERLAY_ID = "pgame-navigation-overlay";
+
+    function isAppMode() {
+        return (
+            document.documentElement.classList.contains(APP_CLASS) ||
+            document.body?.classList.contains(APP_CLASS) ||
+            window.PGameApp?.isApp === true
+        );
     }
 
-    function resolveUrl(href) {
-        if (insideSections()) {
-            return href.startsWith("sections/")
-                ? href.slice("sections/".length)
-                : `../${href}`;
+    function getCurrentPath() {
+        const path = window.location.pathname || "";
+        return path.replace(/\/+$/, "") || "/";
+    }
+
+    function normalizeHref(href) {
+        try {
+            const url = new URL(href, window.location.href);
+            return url.pathname.replace(/\/+$/, "") || "/";
+        } catch {
+            return href;
         }
-        return href;
     }
 
-    function isActive(href) {
-        const path = location.pathname.replace(/\\/g, "/");
-        if (href === "index.html") {
-            return path.endsWith("/") || path.endsWith("/index.html");
+    function isActiveLink(href) {
+        const current = getCurrentPath();
+        const target = normalizeHref(href);
+
+        if (target === "/" || target === "/index.html") {
+            return current === "/" || current.endsWith("/index.html");
         }
-        const clean = href.replace(/^sections\//, "");
-        return path.endsWith(`/${clean}`) || path.endsWith(`/${href}`);
+
+        return current === target;
     }
 
-    function addStyles() {
-        if (document.getElementById("pgame-menu-styles")) return;
+    function createDrawer() {
+        if (document.getElementById(DRAWER_ID)) {
+            drawer = document.getElementById(DRAWER_ID);
+            overlay = document.getElementById(OVERLAY_ID);
+            drawerWidth = drawer.getBoundingClientRect().width || 310;
+            return;
+        }
 
-        const style = document.createElement("style");
-        style.id = "pgame-menu-styles";
-        style.textContent = `
-            .navbar {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            
-            .navbar > .header-profile {
-                position: absolute;
-                right: 18px;
-                left: auto;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 20;
-                margin: 0;
-            }
-
-            .vexon-global-menu-trigger {
-                position: absolute !important;
-                left: 18px;
-                right: auto !important;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 25;
-                width: 44px;
-                height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                border: 1px solid rgba(255,255,255,.07);
-                border-radius: 12px;
-                background: rgba(255,255,255,.04);
-                color: #fff;
-                font: inherit;
-                font-size: 21px;
-                line-height: 1;
-                cursor: pointer;
-                transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
-            }
-
-            .vexon-global-menu-trigger:hover {
-                background: rgba(116,77,255,.10);
-                border-color: rgba(116,77,255,.30);
-                box-shadow: 0 0 18px rgba(116,77,255,.10);
-            }
-
-            
-
-            .navbar .nav-links {
-                display: none !important;
-            }
-
-            .pgame-menu-overlay {
-                position: fixed;
-                inset: 0;
-                z-index: 99999;
-                visibility: hidden;
-                opacity: 0;
-                pointer-events: none;
-                background: rgba(0,0,0,.58);
-                transition: opacity .24s ease, visibility .24s ease;
-            }
-
-            .pgame-menu-overlay.open {
-                visibility: visible;
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .pgame-menu-drawer {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                width: min(300px, 82vw);
-                display: flex;
-                flex-direction: column;
-                padding: 16px 12px 14px;
-                background: rgba(6,10,18,.99);
-                border-right: 1px solid rgba(116,77,255,.16);
-                box-shadow: 18px 0 55px rgba(0,0,0,.45);
-                transform: translateX(-100%);
-                transition: transform .28s cubic-bezier(.22,.8,.24,1);
-            }
-
-            .pgame-menu-overlay.open .pgame-menu-drawer {
-                transform: translateX(0);
-            }
-
-            .pgame-menu-head {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-                padding: 3px 5px 13px;
-                margin-bottom: 6px;
-                border-bottom: 1px solid rgba(255,255,255,.06);
-            }
-
-            .pgame-menu-brand {
-                font: 900 19px "Orbitron", sans-serif;
-                letter-spacing: 0;
-            }
-
-            .pgame-menu-brand .p {
-                color: #9b6cff;
-                text-shadow: 0 0 10px rgba(116,77,255,.55);
-            }
-
-            .pgame-menu-brand .rest {
-                color: #fff;
-            }
-
-            .pgame-menu-subtitle {
-                margin-top: 3px;
-                color: #6f7084;
-                font-size: 8px;
-            }
-
-            .pgame-menu-close {
-                width: 35px;
-                height: 35px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                border: 0;
-                border-radius: 10px;
-                background: rgba(255,255,255,.05);
-                color: #fff;
-                font-size: 19px;
-                cursor: pointer;
-            }
-
-            .pgame-menu-links {
-                display: grid;
-                gap: 4px;
-                overflow-y: auto;
-                padding: 2px 0;
-            }
-
-            .pgame-menu-links a {
-                width: 100%;
-                min-height: 38px;
-                display: flex;
-                align-items: center;
-                gap: 9px;
-                padding: 6px 8px;
-                box-sizing: border-box;
-                border: 1px solid transparent;
-                border-radius: 10px;
-                background: rgba(255,255,255,.022);
-                color: #fff;
-                text-decoration: none;
-                font-size: 10px;
-                transition: background .18s ease, border-color .18s ease, transform .18s ease;
-            }
-
-            .pgame-menu-links a:hover {
-                transform: translateX(2px);
-                background: rgba(116,77,255,.06);
-                border-color: rgba(116,77,255,.28);
-            }
-
-            .pgame-menu-links a.active {
-                background: rgba(116,77,255,.07);
-            }
-
-            .pgame-menu-icon {
-                width: 28px;
-                height: 28px;
-                flex: 0 0 28px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 8px;
-                background: rgba(255,255,255,.035);
-                font-size: 13px;
-            }
-
-            .pgame-menu-title {
-                flex: 1;
-                text-align: right;
-            }
-
-            .pgame-menu-arrow {
-                flex: 0 0 auto;
-                color: rgba(255,255,255,.45);
-                font-size: 15px;
-                line-height: 1;
-            }
-
-            .pgame-menu-footer {
-                margin-top: auto;
-                padding: 11px 5px 2px;
-                border-top: 1px solid rgba(255,255,255,.06);
-                text-align: center;
-                color: #6c6d80;
-                font-size: 8px;
-                line-height: 1.9;
-            }
-
-            @media (max-width: 900px) {
-                .navbar {
-                    min-height: 64px;
-                    padding-left: 60px !important;
-                    padding-right: 145px !important;
-                }
-
-                .navbar > .header-profile {
-                    right: 10px;
-                    min-width: 180px;
-                }
-
-                .vexon-global-menu-trigger {
-                    left: 10px;
-                    width: 42px;
-                    height: 42px;
-                }
-
-        
-            }
-
-            @media (max-width: 520px) {
-                .navbar {
-                    padding-right: 118px !important;
-                }
-
-                .navbar > .header-profile {
-                    min-width: 105px;
-                    padding: 7px 8px;
-                    gap: 6px;
-                }
-
-                .navbar > .header-profile-icon {
-                    width: 34px;
-                    height: 34px;
-                }
-
-            
-
-                .pgame-menu-drawer {
-                    width: min(285px, 82vw);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    function createTrigger() {
-        let trigger = document.getElementById("vexon-menu-trigger");
-        if (trigger) return trigger;
-
-        const navbar = document.querySelector(".navbar");
-        if (!navbar) return null;
-
-        trigger = document.createElement("button");
-        trigger.type = "button";
-        trigger.id = "vexon-menu-trigger";
-        trigger.className = "vexon-global-menu-trigger";
-        trigger.textContent = "☰";
-        trigger.setAttribute("aria-label", "باز کردن منوی PGame");
-        trigger.title = "منوی PGame";
-        navbar.insertBefore(trigger, navbar.firstChild);
-        return trigger;
-    }
-
-    function buildMenu(trigger) {
-        if (!trigger || document.getElementById("pgame-global-menu")) return;
-
-        const overlay = document.createElement("div");
-        overlay.id = "pgame-global-menu";
-        overlay.className = "pgame-menu-overlay";
+        overlay = document.createElement("div");
+        overlay.id = OVERLAY_ID;
+        overlay.className = "pgame-nav-overlay";
         overlay.setAttribute("aria-hidden", "true");
 
-        const drawer = document.createElement("aside");
-        drawer.className = "pgame-menu-drawer";
+        drawer = document.createElement("aside");
+        drawer.id = DRAWER_ID;
+        drawer.className = "pgame-navigation-drawer";
+        drawer.setAttribute("aria-label", "منوی PGame");
+        drawer.setAttribute("aria-hidden", "true");
 
-        const head = document.createElement("div");
-        head.className = "pgame-menu-head";
-        head.innerHTML = `
-            <div>
-                <div class="pgame-menu-brand">
-                    <span class="p">P</span><span class="rest">Game</span>
-                </div>
-                <div class="pgame-menu-subtitle">PLAY • COMPETE • LEVEL UP.</div>
+        const header = document.createElement("div");
+        header.className = "pgame-drawer-header";
+
+        const brand = document.createElement("div");
+        brand.className = "pgame-drawer-brand";
+        brand.innerHTML = `
+            <div class="pgame-drawer-brand-mark">P</div>
+            <div class="pgame-drawer-brand-text">
+                <strong>PGame</strong>
+                <span>Play • Compete • Level Up.</span>
             </div>
-            <button type="button" class="pgame-menu-close" aria-label="بستن منو">×</button>
         `;
 
-        const links = document.createElement("nav");
-        links.className = "pgame-menu-links";
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "pgame-drawer-close";
+        closeButton.setAttribute("aria-label", "بستن منو");
+        closeButton.innerHTML = "×";
 
-        items.forEach(([href, icon, title]) => {
+        closeButton.addEventListener("click", closeDrawer);
+
+        header.appendChild(brand);
+        header.appendChild(closeButton);
+
+        const nav = document.createElement("nav");
+        nav.className = "pgame-drawer-nav";
+        nav.setAttribute("aria-label", "ناوبری اصلی");
+
+        items.forEach((item) => {
             const link = document.createElement("a");
-            link.href = resolveUrl(href);
-            if (isActive(href)) link.classList.add("active");
 
-            const iconEl = document.createElement("span");
-            iconEl.className = "pgame-menu-icon";
-            iconEl.textContent = icon;
+            link.className = "pgame-drawer-link";
+            link.href = item.href;
+            link.dataset.href = item.href;
 
-            const titleEl = document.createElement("span");
-            titleEl.className = "pgame-menu-title";
-            titleEl.textContent = title;
+            if (isActiveLink(item.href)) {
+                link.classList.add("active");
+            }
 
-            const arrow = document.createElement("span");
-            arrow.className = "pgame-menu-arrow";
-            arrow.textContent = ">";
+            link.innerHTML = `
+                <span class="pgame-drawer-link-icon">${item.icon}</span>
+                <span class="pgame-drawer-link-label">${item.label}</span>
+                <span class="pgame-drawer-link-arrow">‹</span>
+            `;
 
-            link.append(iconEl, titleEl, arrow);
-            links.appendChild(link);
+            link.addEventListener("click", function (event) {
+                const href = item.href;
+
+                if (!href) {
+                    event.preventDefault();
+                    return;
+                }
+
+                if (
+                    isAppMode() &&
+                    window.PGameApp &&
+                    typeof window.PGameApp.navigate === "function"
+                ) {
+                    event.preventDefault();
+                    closeDrawer();
+
+                    window.PGameApp.navigate(href);
+                    return;
+                }
+
+                closeDrawer();
+            });
+
+            nav.appendChild(link);
         });
 
         const footer = document.createElement("div");
-        footer.className = "pgame-menu-footer";
-        footer.innerHTML = `PLAY • COMPETE • LEVEL UP.<br>© 2026 PGame`;
+        footer.className = "pgame-drawer-footer";
 
-        drawer.append(head, links, footer);
-        overlay.appendChild(drawer);
+        footer.innerHTML = `
+            <div class="pgame-drawer-footer-line"></div>
+            <span>PGame</span>
+            <small>Play • Compete • Level Up.</small>
+        `;
+
+        drawer.appendChild(header);
+        drawer.appendChild(nav);
+        drawer.appendChild(footer);
+
         document.body.appendChild(overlay);
+        document.body.appendChild(drawer);
 
-        const closeButton = head.querySelector(".pgame-menu-close");
+        overlay.addEventListener("click", closeDrawer);
 
-        function openMenu() {
-            overlay.classList.add("open");
-            overlay.setAttribute("aria-hidden", "false");
-            document.body.style.overflow = "hidden";
+        drawer.addEventListener("touchstart", onDrawerTouchStart, {
+            passive: true
+        });
+
+        drawer.addEventListener("touchmove", onDrawerTouchMove, {
+            passive: false
+        });
+
+        drawer.addEventListener("touchend", onDrawerTouchEnd, {
+            passive: true
+        });
+
+        drawerWidth = drawer.getBoundingClientRect().width || 310;
+    }
+
+    function setDrawerProgress(progress, fromClosed = false) {
+        if (!drawer) return;
+
+        const clamped = Math.max(0, Math.min(1, progress));
+
+        const translate = -100 + clamped * 100;
+
+        drawer.style.transform = `translateX(${translate}%)`;
+
+        if (overlay) {
+            overlay.style.opacity = String(clamped);
+            overlay.style.pointerEvents = clamped > 0.02 ? "auto" : "none";
         }
 
-        function closeMenu() {
-            overlay.classList.remove("open");
-            overlay.setAttribute("aria-hidden", "true");
-            document.body.style.overflow = "";
+        drawer.setAttribute(
+            "aria-hidden",
+            clamped > 0.5 ? "false" : "true"
+        );
+
+        if (fromClosed && clamped > 0.02) {
+            document.body.classList.add(OPEN_CLASS);
+        }
+    }
+
+    function openDrawer(animated = true) {
+        createDrawer();
+
+        drawer.classList.toggle(
+            "no-transition",
+            !animated
+        );
+
+        overlay?.classList.toggle(
+            "no-transition",
+            !animated
+        );
+
+        document.body.classList.add(OPEN_CLASS);
+
+        drawer.setAttribute("aria-hidden", "false");
+        overlay?.setAttribute("aria-hidden", "false");
+
+        requestAnimationFrame(() => {
+            drawer.classList.add("open");
+            overlay?.classList.add("visible");
+
+            drawer.style.transform = "";
+            overlay && (overlay.style.opacity = "");
+            overlay && (overlay.style.pointerEvents = "");
+
+            if (!animated) {
+                requestAnimationFrame(() => {
+                    drawer.classList.remove("no-transition");
+                    overlay?.classList.remove("no-transition");
+                });
+            }
+        });
+
+        openedByGesture = true;
+    }
+
+    function closeDrawer(animated = true) {
+        if (!drawer) return;
+
+        drawer.classList.toggle(
+            "no-transition",
+            !animated
+        );
+
+        overlay?.classList.toggle(
+            "no-transition",
+            !animated
+        );
+
+        drawer.classList.remove("open");
+        overlay?.classList.remove("visible");
+
+        drawer.setAttribute("aria-hidden", "true");
+        overlay?.setAttribute("aria-hidden", "true");
+
+        document.body.classList.remove(OPEN_CLASS);
+
+        if (!animated) {
+            drawer.style.transform = "";
+            overlay && (overlay.style.opacity = "");
+            overlay && (overlay.style.pointerEvents = "");
         }
 
-        trigger.addEventListener("click", (event) => {
+        if (!animated) {
+            requestAnimationFrame(() => {
+                drawer.classList.remove("no-transition");
+                overlay?.classList.remove("no-transition");
+            });
+        }
+
+        openedByGesture = false;
+    }
+
+    function isDrawerOpen() {
+        return !!drawer?.classList.contains("open");
+    }
+
+    function onDrawerTouchStart(event) {
+        if (!isDrawerOpen()) return;
+
+        const touch = event.touches?.[0];
+        if (!touch) return;
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchCurrentX = touch.clientX;
+        draggingDrawer = true;
+
+        drawerWidth =
+            drawer.getBoundingClientRect().width ||
+            window.innerWidth * 0.82 ||
+            310;
+
+        drawer.classList.add("dragging");
+    }
+
+    function onDrawerTouchMove(event) {
+        if (!draggingDrawer || !drawer) return;
+
+        const touch = event.touches?.[0];
+        if (!touch) return;
+
+        touchCurrentX = touch.clientX;
+
+        const dx = touchCurrentX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) {
+            draggingDrawer = false;
+            drawer.classList.remove("dragging");
+            return;
+        }
+
+        if (dx >= 0) {
             event.preventDefault();
-            event.stopPropagation();
-            openMenu();
-        });
+            return;
+        }
 
-        closeButton.addEventListener("click", closeMenu);
+        event.preventDefault();
 
-        overlay.addEventListener("click", (event) => {
-            if (event.target === overlay) closeMenu();
-        });
+        const progress = 1 - Math.min(1, Math.abs(dx) / drawerWidth);
 
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closeMenu();
+        drawer.style.transform =
+            `translateX(${(progress - 1) * 100}%)`;
+
+        if (overlay) {
+            overlay.style.opacity = String(progress);
+        }
+    }
+
+    function onDrawerTouchEnd() {
+        if (!drawer || !draggingDrawer) return;
+
+        const dx = touchCurrentX - touchStartX;
+
+        draggingDrawer = false;
+        drawer.classList.remove("dragging");
+
+        if (dx < -(drawerWidth * 0.28)) {
+            closeDrawer();
+        } else {
+            openDrawer();
+        }
+    }
+
+    function onDocumentTouchStart(event) {
+        if (!isAppMode()) return;
+
+        const touch = event.touches?.[0];
+        if (!touch) return;
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchCurrentX = touch.clientX;
+
+        if (isDrawerOpen()) {
+            trackingEdgeSwipe = false;
+            return;
+        }
+
+        const edgeSize = Math.min(
+            32,
+            Math.max(20, window.innerWidth * 0.08)
+        );
+
+        trackingEdgeSwipe =
+            touch.clientX <= edgeSize &&
+            Math.abs(touch.clientY - window.innerHeight / 2) <
+                window.innerHeight * 0.48;
+    }
+
+    function onDocumentTouchMove(event) {
+        if (!isAppMode()) return;
+
+        const touch = event.touches?.[0];
+        if (!touch) return;
+
+        touchCurrentX = touch.clientX;
+
+        if (!trackingEdgeSwipe) return;
+
+        const dx = touchCurrentX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) {
+            trackingEdgeSwipe = false;
+            return;
+        }
+
+        if (dx <= 0) return;
+
+        if (!drawer) {
+            createDrawer();
+        }
+
+        event.preventDefault();
+
+        const width =
+            drawer.getBoundingClientRect().width ||
+            drawerWidth ||
+            310;
+
+        const progress = Math.min(1, dx / width);
+
+        setDrawerProgress(progress, true);
+    }
+
+    function onDocumentTouchEnd() {
+        if (!trackingEdgeSwipe) return;
+
+        const dx = touchCurrentX - touchStartX;
+        const width =
+            drawer?.getBoundingClientRect().width ||
+            drawerWidth ||
+            310;
+
+        trackingEdgeSwipe = false;
+
+        if (dx > width * 0.22) {
+            openDrawer();
+        } else {
+            closeDrawer();
+        }
+    }
+
+    function setupKeyboard() {
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && isDrawerOpen()) {
+                closeDrawer();
+            }
         });
     }
 
-    function build() {
-        addStyles();
-        const trigger = createTrigger();
-        buildMenu(trigger);
+    function setupDesktopTrigger() {
+        const trigger = document.getElementById("vexon-menu-trigger");
+
+        if (!trigger) return;
+
+        if (isAppMode()) {
+            trigger.style.display = "none";
+            trigger.setAttribute("aria-hidden", "true");
+            return;
+        }
+
+        trigger.addEventListener("click", function () {
+            createDrawer();
+
+            if (isDrawerOpen()) {
+                closeDrawer();
+            } else {
+                openDrawer();
+            }
+        });
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", build);
+    function setupAppMode() {
+        if (!isAppMode()) return;
+
+        createDrawer();
+
+        document.addEventListener(
+            "touchstart",
+            onDocumentTouchStart,
+            { passive: true }
+        );
+
+        document.addEventListener(
+            "touchmove",
+            onDocumentTouchMove,
+            { passive: false }
+        );
+
+        document.addEventListener(
+            "touchend",
+            onDocumentTouchEnd,
+            { passive: true }
+        );
+
+        document.addEventListener(
+            "touchcancel",
+            onDocumentTouchEnd,
+            { passive: true }
+        );
+    }
+
+    function refreshActiveLink() {
+        if (!drawer) return;
+
+        const links = drawer.querySelectorAll(
+            ".pgame-drawer-link"
+        );
+
+        links.forEach((link) => {
+            const href = link.dataset.href || link.getAttribute("href");
+
+            link.classList.toggle(
+                "active",
+                isActiveLink(href)
+            );
+        });
+    }
+
+    function installNavigationStyles() {
+        if (document.getElementById("pgame-nav-runtime-style")) {
+            return;
+        }
+
+        const style = document.createElement("style");
+        style.id = "pgame-nav-runtime-style";
+
+        style.textContent = `
+            .pgame-nav-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 99996;
+                background: rgba(0,0,0,.58);
+                opacity: 0;
+                pointer-events: none;
+                transition:
+                    opacity .26s ease,
+                    backdrop-filter .26s ease;
+                backdrop-filter: blur(0);
+                -webkit-backdrop-filter: blur(0);
+            }
+
+            .pgame-nav-overlay.visible {
+                opacity: 1;
+                pointer-events: auto;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+            }
+
+            .pgame-navigation-drawer {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: min(340px, 84vw);
+                z-index: 99997;
+
+                display: flex;
+                flex-direction: column;
+
+                background:
+                    linear-gradient(
+                        180deg,
+                        rgba(8,12,22,.98),
+                        rgba(3,4,10,.99)
+                    );
+
+                border-right: 1px solid rgba(0,255,157,.20);
+
+                box-shadow:
+                    12px 0 50px rgba(0,0,0,.55),
+                    inset -1px 0 0 rgba(0,255,157,.04);
+
+                transform: translateX(-100%);
+
+                transition:
+                    transform .28s cubic-bezier(.22,.61,.36,1);
+
+                will-change: transform;
+
+                overflow:
+                    hidden auto;
+
+                overscroll-behavior:
+                    contain;
+            }
+
+            .pgame-navigation-drawer.open {
+                transform: translateX(0);
+            }
+
+            .pgame-navigation-drawer.dragging {
+                transition: none !important;
+            }
+
+            .pgame-navigation-drawer.no-transition,
+            .pgame-nav-overlay.no-transition {
+                transition: none !important;
+            }
+
+            .pgame-drawer-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                padding: 22px 18px 16px;
+
+                border-bottom:
+                    1px solid rgba(255,255,255,.07);
+            }
+
+            .pgame-drawer-brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .pgame-drawer-brand-mark {
+                width: 42px;
+                height: 42px;
+                flex: 0 0 42px;
+
+                display: grid;
+                place-items: center;
+
+                border-radius: 13px;
+
+                color: #00ff9d;
+                background:
+                    radial-gradient(
+                        circle at 50% 45%,
+                        rgba(0,255,157,.20),
+                        rgba(0,255,157,.03) 70%
+                    );
+
+                border:
+                    1px solid rgba(0,255,157,.34);
+
+                box-shadow:
+                    0 0 22px rgba(0,255,157,.15);
+
+                font-family: Orbitron, sans-serif;
+                font-size: 20px;
+                font-weight: 800;
+            }
+
+            .pgame-drawer-brand-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .pgame-drawer-brand-text strong {
+                font-family: Orbitron, sans-serif;
+                font-size: 17px;
+                letter-spacing: .5px;
+                color: #fff;
+            }
+
+            .pgame-drawer-brand-text span {
+                margin-top: 3px;
+                color: rgba(255,255,255,.48);
+                font-size: 10px;
+                white-space: nowrap;
+            }
+
+            .pgame-drawer-close {
+                width: 42px;
+                height: 42px;
+
+                border: 1px solid rgba(255,255,255,.08);
+                border-radius: 12px;
+
+                background: rgba(255,255,255,.035);
+                color: rgba(255,255,255,.76);
+
+                font-size: 28px;
+                line-height: 1;
+
+                cursor: pointer;
+
+                transition:
+                    .18s ease;
+            }
+
+            .pgame-drawer-close:hover {
+                color: #fff;
+                border-color: rgba(0,255,157,.35);
+                background: rgba(0,255,157,.07);
+                transform: scale(1.04);
+            }
+
+            .pgame-drawer-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 7px;
+
+                padding: 18px 12px;
+            }
+
+            .pgame-drawer-link {
+                position: relative;
+
+                display: flex;
+                align-items: center;
+                gap: 13px;
+
+                min-height: 54px;
+                padding: 0 14px;
+
+                color: rgba(255,255,255,.72);
+                text-decoration: none;
+
+                border: 1px solid transparent;
+                border-radius: 15px;
+
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .pgame-drawer-link:hover {
+                color: #fff;
+                background: rgba(255,255,255,.035);
+                transform: translateX(3px);
+            }
+
+            .pgame-drawer-link.active {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(0,255,157,.12),
+                        rgba(116,77,255,.07)
+                    );
+                border-color:
+                    rgba(0,255,157,.18);
+
+                box-shadow:
+                    inset 3px 0 0 #00ff9d,
+                    0 0 25px rgba(0,255,157,.05);
+            }
+
+            .pgame-drawer-link-icon {
+                width: 30px;
+                flex: 0 0 30px;
+
+                text-align: center;
+                font-size: 20px;
+            }
+
+            .pgame-drawer-link-label {
+                flex: 1;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            .pgame-drawer-link-arrow {
+                color: rgba(255,255,255,.24);
+                font-size: 20px;
+                transform: translateY(-1px);
+            }
+
+            .pgame-drawer-link.active
+            .pgame-drawer-link-arrow {
+                color: #00ff9d;
+            }
+
+            .pgame-drawer-footer {
+                margin-top: auto;
+                padding: 18px 18px 24px;
+
+                display: flex;
+                flex-direction: column;
+            }
+
+            .pgame-drawer-footer-line {
+                width: 100%;
+                height: 1px;
+                margin-bottom: 14px;
+                background:
+                    linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(0,255,157,.28),
+                        transparent
+                    );
+            }
+
+            .pgame-drawer-footer span {
+                font-family: Orbitron, sans-serif;
+                font-size: 10px;
+                color: rgba(255,255,255,.35);
+                letter-spacing: 1px;
+                text-align: center;
+            }
+
+            .pgame-drawer-footer small {
+                margin-top: 4px;
+                font-size: 9px;
+                color: rgba(255,255,255,.22);
+                text-align: center;
+            }
+
+            @media (max-width: 560px) {
+                .pgame-navigation-drawer {
+                    width: min(320px, 86vw);
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .pgame-navigation-drawer,
+                .pgame-nav-overlay,
+                .pgame-drawer-link,
+                .pgame-drawer-close {
+                    transition: none !important;
+                }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    function initialize() {
+        installNavigationStyles();
+        setupDesktopTrigger();
+        setupAppMode();
+        setupKeyboard();
+
+        if (!isAppMode()) {
+            createDrawer();
+        }
+
+        window.addEventListener(
+            "popstate",
+            refreshActiveLink
+        );
+
+        window.addEventListener(
+            "resize",
+            function () {
+                if (!drawer) return;
+
+                drawerWidth =
+                    drawer.getBoundingClientRect().width ||
+                    drawerWidth ||
+                    310;
+            }
+        );
+
+        setTimeout(refreshActiveLink, 100);
+    }
+
+    window.PGameNavigation = {
+        open: openDrawer,
+        close: closeDrawer,
+        toggle: function () {
+            if (isDrawerOpen()) {
+                closeDrawer();
+            } else {
+                openDrawer();
+            }
+        },
+        refresh: refreshActiveLink,
+        isOpen: isDrawerOpen
+    };
+
+    if (
+        document.readyState === "loading"
+    ) {
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialize,
+            { once: true }
+        );
     } else {
-        build();
+        initialize();
     }
 })();

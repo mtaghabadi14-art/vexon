@@ -1,20 +1,585 @@
 /* =========================================================
-   VEXON PAGE LOADER
+   PGAME PAGE LOADER / APP API LAYER
 ========================================================= */
+
+"use strict";
+
 
 const app =
     document.querySelector("#app");
 
 
-
 /* =========================================================
-   PGAME ACCOUNT CACHE
-   نمایش سریع اطلاعات آخرین حساب + بروزرسانی از سرور
+   PGAME CONFIG
 ========================================================= */
+
+const PGAME_API_BASE =
+    "https://s.vexongame.workers.dev";
 
 const PGAME_ACCOUNT_CACHE_KEY =
     "pgame_account_cache_v1";
 
+const PGAME_APP_SESSION_KEY =
+    "pgame_app_session";
+
+const PGAME_DATA_CACHE_PREFIX =
+    "pgame_data_cache_v1_";
+
+
+/* =========================================================
+   APP DETECTION
+========================================================= */
+
+function isPGameApp() {
+
+    return (
+        document.documentElement.classList.contains(
+            "pgame-app"
+        ) ||
+        document.body?.classList.contains(
+            "pgame-app"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   SESSION
+========================================================= */
+
+function getPGameSession() {
+
+    try {
+
+        return localStorage.getItem(
+            PGAME_APP_SESSION_KEY
+        );
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_SESSION_READ_ERROR",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+function savePGameSession(
+    token
+) {
+
+    try {
+
+        if (
+            token
+        ) {
+
+            localStorage.setItem(
+                PGAME_APP_SESSION_KEY,
+                token
+            );
+
+        } else {
+
+            localStorage.removeItem(
+                PGAME_APP_SESSION_KEY
+            );
+
+        }
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_SESSION_WRITE_ERROR",
+            error
+        );
+
+    }
+
+}
+
+
+function clearPGameSession() {
+
+    try {
+
+        localStorage.removeItem(
+            PGAME_APP_SESSION_KEY
+        );
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_SESSION_CLEAR_ERROR",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   API URL
+========================================================= */
+
+function pgameApiUrl(
+    path
+) {
+
+    if (
+        typeof path !==
+        "string"
+    ) {
+
+        return path;
+
+    }
+
+
+    if (
+        /^https?:\/\//i.test(
+            path
+        )
+    ) {
+
+        return path;
+
+    }
+
+
+    const normalized =
+        path.startsWith("/")
+            ? path
+            : `/${path}`;
+
+
+    if (
+        !isPGameApp()
+    ) {
+
+        return normalized;
+
+    }
+
+
+    return (
+        PGAME_API_BASE +
+        normalized
+    );
+
+}
+
+
+/* =========================================================
+   API FETCH
+========================================================= */
+
+function pgameApiFetch(
+    path,
+    options = {}
+) {
+
+    const headers =
+        new Headers(
+            options.headers || {}
+        );
+
+
+    const appMode =
+        isPGameApp();
+
+
+    if (
+        appMode
+    ) {
+
+        headers.set(
+            "X-PGame-App",
+            "1"
+        );
+
+
+        const session =
+            getPGameSession();
+
+
+        if (
+            session
+        ) {
+
+            headers.set(
+                "Authorization",
+                `Bearer ${session}`
+            );
+
+        }
+
+    }
+
+
+    return fetch(
+        pgameApiUrl(path),
+        {
+            ...options,
+
+            headers,
+
+            credentials:
+                appMode
+                    ? "omit"
+                    : (
+                        options.credentials ??
+                        "same-origin"
+                    )
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GENERIC DATA CACHE
+========================================================= */
+
+function getPGameDataCache(
+    key
+) {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                PGAME_DATA_CACHE_PREFIX +
+                key
+            );
+
+
+        if (
+            !raw
+        ) {
+
+            return null;
+
+        }
+
+
+        const parsed =
+            JSON.parse(
+                raw
+            );
+
+
+        if (
+            !parsed ||
+            typeof parsed !==
+                "object"
+        ) {
+
+            return null;
+
+        }
+
+
+        return parsed;
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_DATA_CACHE_READ_ERROR",
+            key,
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+function savePGameDataCache(
+    key,
+    data
+) {
+
+    try {
+
+        localStorage.setItem(
+            PGAME_DATA_CACHE_PREFIX +
+            key,
+
+            JSON.stringify({
+                saved_at:
+                    Date.now(),
+
+                data
+            })
+        );
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_DATA_CACHE_WRITE_ERROR",
+            key,
+            error
+        );
+
+    }
+
+}
+
+
+function getCachedPGameData(
+    key
+) {
+
+    const cache =
+        getPGameDataCache(
+            key
+        );
+
+
+    return (
+        cache?.data ??
+        null
+    );
+
+}
+
+
+function clearPGameDataCaches() {
+
+    try {
+
+        const keys = [];
+
+
+        for (
+            let i = 0;
+            i <
+            localStorage.length;
+            i++
+        ) {
+
+            const key =
+                localStorage.key(
+                    i
+                );
+
+
+            if (
+                key?.startsWith(
+                    PGAME_DATA_CACHE_PREFIX
+                )
+            ) {
+
+                keys.push(
+                    key
+                );
+
+            }
+
+        }
+
+
+        keys.forEach(
+            key => {
+
+                localStorage.removeItem(
+                    key
+                );
+
+            }
+        );
+
+    } catch (
+        error
+    ) {
+
+        console.debug(
+            "PGAME_DATA_CACHE_CLEAR_ERROR",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CACHE-FIRST JSON
+========================================================= */
+
+async function pgameGetJson(
+    path,
+    cacheKey = null
+) {
+
+    if (
+        cacheKey
+    ) {
+
+        const cached =
+            getCachedPGameData(
+                cacheKey
+            );
+
+
+        if (
+            cached !== null
+        ) {
+
+            pgameApiFetch(
+                path,
+                {
+                    method:
+                        "GET",
+
+                    cache:
+                        "no-store"
+                }
+            )
+                .then(
+                    async response => {
+
+                        if (
+                            !response.ok
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const fresh =
+                            await response.json();
+
+
+                        savePGameDataCache(
+                            cacheKey,
+                            fresh
+                        );
+
+                    }
+                )
+                .catch(
+                    error => {
+
+                        console.debug(
+                            "PGAME_BACKGROUND_REFRESH_ERROR",
+                            cacheKey,
+                            error
+                        );
+
+                    }
+                );
+
+
+            return cached;
+
+        }
+
+    }
+
+
+    const response =
+        await pgameApiFetch(
+            path,
+            {
+                method:
+                    "GET",
+
+                cache:
+                    "no-store"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        cacheKey &&
+        response.ok
+    ) {
+
+        savePGameDataCache(
+            cacheKey,
+            data
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   PUBLIC APP API
+========================================================= */
+
+window.PGameApp = {
+
+    apiBase:
+        PGAME_API_BASE,
+
+    isApp:
+        isPGameApp,
+
+    getSession:
+        getPGameSession,
+
+    saveSession:
+        savePGameSession,
+
+    clearSession() {
+
+        clearPGameSession();
+
+        clearPGameDataCaches();
+
+        try {
+
+            localStorage.removeItem(
+                PGAME_ACCOUNT_CACHE_KEY
+            );
+
+        } catch {}
+
+    },
+
+    apiFetch:
+        pgameApiFetch,
+
+    getJson:
+        pgameGetJson
+
+};
+
+
+/* =========================================================
+   ACCOUNT CACHE
+========================================================= */
 
 function getAccountCache() {
 
@@ -25,24 +590,39 @@ function getAccountCache() {
                 PGAME_ACCOUNT_CACHE_KEY
             );
 
-        if (!raw) {
+
+        if (
+            !raw
+        ) {
+
             return null;
+
         }
 
+
         const data =
-            JSON.parse(raw);
+            JSON.parse(
+                raw
+            );
+
 
         if (
             !data ||
-            typeof data !== "object" ||
+            typeof data !==
+                "object" ||
             !data.user
         ) {
+
             return null;
+
         }
+
 
         return data;
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         console.debug(
             "PGAME_ACCOUNT_CACHE_READ_ERROR",
@@ -50,18 +630,26 @@ function getAccountCache() {
         );
 
         return null;
+
     }
+
 }
 
 
-function saveAccountCache(user) {
+function saveAccountCache(
+    user
+) {
 
     if (
         !user ||
-        typeof user !== "object"
+        typeof user !==
+            "object"
     ) {
+
         return;
+
     }
+
 
     const cache = {
 
@@ -71,52 +659,90 @@ function saveAccountCache(user) {
         user: {
 
             id:
-                user.id ?? null,
+                user.id ??
+                null,
 
             username:
-                user.username ?? "",
+                user.username ??
+                "",
 
             nickname:
-                user.nickname ?? null,
+                user.nickname ??
+                null,
 
             title:
-                user.title ?? null,
+                user.title ??
+                null,
+
+            avatar:
+                user.avatar ??
+                "👤",
 
             xp:
-                Number(user.xp ?? 0),
+                Number(
+                    user.xp ??
+                    0
+                ),
 
             level:
-                Number(user.level ?? 1),
+                Number(
+                    user.level ??
+                    1
+                ),
 
             next_xp:
-                Number(user.next_xp ?? 100),
+                Number(
+                    user.next_xp ??
+                    100
+                ),
 
             xp_progress:
-                Number(user.xp_progress ?? 0),
+                Number(
+                    user.xp_progress ??
+                    0
+                ),
 
             coins:
-                Number(user.coins ?? 0),
+                Number(
+                    user.coins ??
+                    0
+                ),
 
             typing_games:
-                Number(user.typing_games ?? 0),
+                Number(
+                    user.typing_games ??
+                    0
+                ),
 
             typing_best_time:
-                Number(user.typing_best_time ?? 0),
+                Number(
+                    user.typing_best_time ??
+                    0
+                ),
 
             typing_best_wpm:
-                Number(user.typing_best_wpm ?? 0)
+                Number(
+                    user.typing_best_wpm ??
+                    0
+                )
+
         }
 
     };
+
 
     try {
 
         localStorage.setItem(
             PGAME_ACCOUNT_CACHE_KEY,
-            JSON.stringify(cache)
+            JSON.stringify(
+                cache
+            )
         );
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         console.debug(
             "PGAME_ACCOUNT_CACHE_WRITE_ERROR",
@@ -124,6 +750,7 @@ function saveAccountCache(user) {
         );
 
     }
+
 }
 
 
@@ -132,11 +759,18 @@ function getCachedAccount() {
     const cache =
         getAccountCache();
 
-    if (!cache?.user) {
+
+    if (
+        !cache?.user
+    ) {
+
         return null;
+
     }
 
+
     return cache.user;
+
 }
 
 
@@ -153,29 +787,41 @@ function applyAccountToHeader(
         !headerProfiles?.length ||
         !user
     ) {
+
         return;
+
     }
+
 
     const level =
         Number(
-            user.level ?? 1
+            user.level ??
+            1
         );
+
 
     const xp =
         Number(
-            user.xp ?? 0
+            user.xp ??
+            0
         );
+
 
     const coins =
         Number(
-            user.coins ?? 0
+            user.coins ??
+            0
         );
+
 
     const nextXp =
         Number(
             user.next_xp ??
-            getNextLevelXp(level)
+            getNextLevelXp(
+                level
+            )
         );
+
 
     const progress =
         nextXp > 0
@@ -187,11 +833,17 @@ function applyAccountToHeader(
                     (
                         xp /
                         nextXp
-                    ) * 100
+                    ) *
+                    100
                 )
             )
 
             : 0;
+
+
+    const avatar =
+        user.avatar ??
+        "👤";
 
 
     headerProfiles.forEach(
@@ -233,7 +885,15 @@ function applyAccountToHeader(
                 );
 
 
-            if (strong) {
+            const icon =
+                headerProfile.querySelector(
+                    ".header-profile-icon"
+                );
+
+
+            if (
+                strong
+            ) {
 
                 strong.textContent =
                     user.username ||
@@ -242,7 +902,9 @@ function applyAccountToHeader(
             }
 
 
-            if (span) {
+            if (
+                span
+            ) {
 
                 span.textContent =
                     `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
@@ -254,7 +916,19 @@ function applyAccountToHeader(
             }
 
 
-            if (xpBar) {
+            if (
+                icon
+            ) {
+
+                icon.textContent =
+                    avatar;
+
+            }
+
+
+            if (
+                xpBar
+            ) {
 
                 xpBar.style.display =
                     "block";
@@ -262,7 +936,9 @@ function applyAccountToHeader(
             }
 
 
-            if (xpFill) {
+            if (
+                xpFill
+            ) {
 
                 xpFill.style.width =
                     `${progress}%`;
@@ -271,6 +947,7 @@ function applyAccountToHeader(
 
         }
     );
+
 }
 
 
@@ -281,11 +958,6 @@ function applyAccountToHeader(
 async function checkFullBan() {
 
     try {
-
-        /*
-         * اگر همین الان banned.html هستیم،
-         * دوباره Redirect نمی‌کنیم.
-         */
 
         if (
             window.location.pathname.endsWith(
@@ -299,14 +971,11 @@ async function checkFullBan() {
 
 
         const response =
-            await fetch(
+            await pgameApiFetch(
                 "/api/me",
                 {
                     method:
                         "GET",
-
-                    credentials:
-                        "same-origin",
 
                     cache:
                         "no-store"
@@ -338,14 +1007,10 @@ async function checkFullBan() {
         }
 
 
-        /*
-         * فقط Full Ban
-         * باعث انتقال به banned.html می‌شود.
-         */
-
         if (
             data.user.banned === true &&
-            data.user.ban_type === "full"
+            data.user.ban_type ===
+                "full"
         ) {
 
             window.location.href =
@@ -357,10 +1022,12 @@ async function checkFullBan() {
 
         }
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
-        console.error(
-            "FULL_BAN_CHECK_ERROR:",
+        console.debug(
+            "FULL_BAN_CHECK_ERROR",
             error
         );
 
@@ -384,7 +1051,7 @@ async function loadSection(
                 `sections/${file}.html`,
                 {
                     cache:
-                        "no-store"
+                        "default"
                 }
             );
 
@@ -402,7 +1069,9 @@ async function loadSection(
 
         return await response.text();
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         console.error(
             error
@@ -416,7 +1085,7 @@ async function loadSection(
             >
 
                 <strong>
-                    خطا در بارگذاری VEXON
+                    خطا در بارگذاری PGame
                 </strong>
 
                 <span>
@@ -433,18 +1102,14 @@ async function loadSection(
 
 
 /* =========================================================
-   LOAD VEXON
+   LOAD PGAME
 ========================================================= */
 
 async function loadVexon() {
 
-    /*
-     * index.html اصلی #app ندارد.
-     * بنابراین اگر روی index هستیم،
-     * فقط بخش‌های Standalone را فعال می‌کنیم.
-     */
-
-    if (!app) {
+    if (
+        !app
+    ) {
 
         initializeStandaloneVexon();
 
@@ -454,6 +1119,7 @@ async function loadVexon() {
 
 
     const sections = [
+
         "home",
         "games",
         "news",
@@ -462,6 +1128,7 @@ async function loadVexon() {
         "guide",
         "creators",
         "profile"
+
     ];
 
 
@@ -550,21 +1217,9 @@ async function initializeAuthHeader() {
     }
 
 
-    /* =====================================================
-       CACHED ACCOUNT
-    ===================================================== */
-
     const cachedUser =
         getCachedAccount();
 
-
-    /*
-     * اگر اطلاعات حساب قبلی روی دستگاه وجود داشته باشد،
-     * همان ابتدا نمایش داده می‌شود.
-     *
-     * اگر کش نداشته باشیم،
-     * حالت Loading نمایش داده می‌شود.
-     */
 
     headerProfiles.forEach(
         headerProfile => {
@@ -584,6 +1239,12 @@ async function initializeAuthHeader() {
             const xpBar =
                 headerProfile.querySelector(
                     ".header-xp-bar"
+                );
+
+
+            const icon =
+                headerProfile.querySelector(
+                    ".header-profile-icon"
                 );
 
 
@@ -639,10 +1300,20 @@ async function initializeAuthHeader() {
                     span.textContent =
                         `LV ${level} • XP ${xp}/${nextXp} • 🪙 ${coins}`;
 
-
                     span.classList.add(
                         "header-player-stats"
                     );
+
+                }
+
+
+                if (
+                    icon
+                ) {
+
+                    icon.textContent =
+                        cachedUser.avatar ??
+                        "👤";
 
                 }
 
@@ -693,21 +1364,14 @@ async function initializeAuthHeader() {
     );
 
 
-    /* =====================================================
-       SERVER REQUEST
-    ===================================================== */
-
     try {
 
         const response =
-            await fetch(
+            await pgameApiFetch(
                 "/api/me",
                 {
                     method:
                         "GET",
-
-                    credentials:
-                        "same-origin",
 
                     cache:
                         "no-store"
@@ -715,17 +1379,26 @@ async function initializeAuthHeader() {
             );
 
 
-        /* =================================================
-           NOT LOGGED IN
-        ================================================= */
-
         if (
             !response.ok
         ) {
 
-            setGuestHeader(
-                headerProfiles
-            );
+            if (
+                cachedUser
+            ) {
+
+                applyAccountToHeader(
+                    headerProfiles,
+                    cachedUser
+                );
+
+            } else {
+
+                setGuestHeader(
+                    headerProfiles
+                );
+
+            }
 
             return;
 
@@ -751,13 +1424,10 @@ async function initializeAuthHeader() {
         }
 
 
-        /* =================================================
-           FULL BAN
-        ================================================= */
-
         if (
             data.user.banned === true &&
-            data.user.ban_type === "full"
+            data.user.ban_type ===
+                "full"
         ) {
 
             if (
@@ -780,27 +1450,25 @@ async function initializeAuthHeader() {
         }
 
 
-        /* =================================================
-           REAL SERVER ACCOUNT
-        ================================================= */
-
         const user =
             data.user;
 
 
-        /*
-         * ذخیره اطلاعات واقعی روی دستگاه
-         * برای ورودهای بعدی
-         */
+        if (
+            data.app_token
+        ) {
+
+            savePGameSession(
+                data.app_token
+            );
+
+        }
+
 
         saveAccountCache(
             user
         );
 
-
-        /*
-         * نمایش اطلاعات تازه‌ی سرور
-         */
 
         applyAccountToHeader(
             headerProfiles,
@@ -808,22 +1476,15 @@ async function initializeAuthHeader() {
         );
 
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
-        console.error(
-            "AUTH_HEADER_ERROR:",
+        console.debug(
+            "AUTH_HEADER_ERROR",
             error
         );
 
-
-        /*
-         * اگر اینترنت یا سرور مشکل داشت،
-         * و کش قبلی داشتیم،
-         * همان اطلاعات قبلی را نگه می‌داریم.
-         *
-         * فقط وقتی کش نداشته باشیم،
-         * کاربر Guest می‌شود.
-         */
 
         if (
             cachedUser
@@ -888,6 +1549,12 @@ function setGuestHeader(
                 );
 
 
+            const icon =
+                headerProfile.querySelector(
+                    ".header-profile-icon"
+                );
+
+
             if (
                 strong
             ) {
@@ -909,6 +1576,16 @@ function setGuestHeader(
                 span.classList.remove(
                     "header-player-stats"
                 );
+
+            }
+
+
+            if (
+                icon
+            ) {
+
+                icon.textContent =
+                    "👤";
 
             }
 
@@ -938,22 +1615,42 @@ function getNextLevelXp(
 
     const levels = {
 
-        1: 100,
-        2: 250,
-        3: 500,
-        4: 800,
-        5: 1200,
-        6: 1700,
-        7: 2500,
-        8: 3500,
-        9: 5000
+        1:
+            100,
+
+        2:
+            250,
+
+        3:
+            500,
+
+        4:
+            800,
+
+        5:
+            1200,
+
+        6:
+            1700,
+
+        7:
+            2500,
+
+        8:
+            3500,
+
+        9:
+            5000
 
     };
 
 
     return (
         levels[level] ??
-        (level * 700)
+        (
+            level *
+            700
+        )
     );
 
 }
@@ -1328,7 +2025,7 @@ function initializeButtonPress() {
             button => {
 
                 button.addEventListener(
-                    "mousedown",
+                    "pointerdown",
                     () => {
 
                         button.style.transform =
@@ -1339,7 +2036,7 @@ function initializeButtonPress() {
 
 
                 button.addEventListener(
-                    "mouseup",
+                    "pointerup",
                     () => {
 
                         button.style.transform =
@@ -1350,7 +2047,18 @@ function initializeButtonPress() {
 
 
                 button.addEventListener(
-                    "mouseleave",
+                    "pointercancel",
+                    () => {
+
+                        button.style.transform =
+                            "";
+
+                    }
+                );
+
+
+                button.addEventListener(
+                    "pointerleave",
                     () => {
 
                         button.style.transform =
@@ -1385,7 +2093,8 @@ function initializeParallax() {
 
     if (
         !heroVisual ||
-        !heroV
+        !heroV ||
+        isPGameApp()
     ) {
 
         return;
@@ -1412,7 +2121,8 @@ function initializeParallax() {
                     event.clientX /
                     window.innerWidth -
                     0.5
-                ) * 10;
+                ) *
+                10;
 
 
             const y =
@@ -1420,7 +2130,8 @@ function initializeParallax() {
                     event.clientY /
                     window.innerHeight -
                     0.5
-                ) * 10;
+                ) *
+                10;
 
 
             heroV.style.transform =
@@ -1467,10 +2178,6 @@ function initializeSupportWidget() {
     }
 
 
-    /*
-     * Admin Widget لازم ندارد.
-     */
-
     if (
         window.location.pathname.includes(
             "admin.html"
@@ -1481,10 +2188,6 @@ function initializeSupportWidget() {
 
     }
 
-
-    /*
-     * banned.html هم Widget لازم ندارد.
-     */
 
     if (
         window.location.pathname.endsWith(
@@ -1598,7 +2301,8 @@ function initializeSupportWidget() {
 
                 backdrop-filter:
                     blur(15px);
-                                    transition:
+
+                transition:
                     transform 0.2s ease,
                     box-shadow 0.2s ease;
 
@@ -2213,7 +2917,7 @@ function initializeSupportWidget() {
                 <div>
 
                     <strong>
-                        💬 پیام به VEXON
+                        💬 پیام به PGame
                     </strong>
 
                     <span>
@@ -2262,7 +2966,7 @@ function initializeSupportWidget() {
                 <textarea
                     id="vexon-support-input"
                     maxlength="5000"
-                    placeholder="پیامت را برای مدیریت VEXON بنویس..."
+                    placeholder="پیامت را برای مدیریت PGame بنویس..."
                 ></textarea>
 
 
@@ -2281,8 +2985,8 @@ function initializeSupportWidget() {
         <button
             type="button"
             id="vexon-support-button"
-            aria-label="پیام به VEXON"
-            title="پیام به VEXON"
+            aria-label="پیام به PGame"
+            title="پیام به PGame"
         >
             💬
         </button>
@@ -2294,10 +2998,6 @@ function initializeSupportWidget() {
         widget
     );
 
-
-    /* =====================================================
-       SUPPORT ELEMENTS
-    ===================================================== */
 
     const button =
         document.getElementById(
@@ -2363,10 +3063,6 @@ function initializeSupportWidget() {
         [];
 
 
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
     function escapeHtml(
         value
     ) {
@@ -2398,10 +3094,6 @@ function initializeSupportWidget() {
 
     }
 
-
-    /* =====================================================
-       DATE
-    ===================================================== */
 
     function formatSupportDate(
         value
@@ -2442,10 +3134,6 @@ function initializeSupportWidget() {
     }
 
 
-    /* =====================================================
-       STATUS
-    ===================================================== */
-
     function showSupportStatus(
         text,
         isError = false
@@ -2467,34 +3155,26 @@ function initializeSupportWidget() {
     }
 
 
-    /* =====================================================
-       OPEN / CLOSE
-    ===================================================== */
-
     button.addEventListener(
         "click",
         () => {
 
-            panel.classList.toggle(
-                "open"
-            );
+            const opened =
+                panel.classList.toggle(
+                    "open"
+                );
 
 
             panel.setAttribute(
                 "aria-hidden",
-
-                panel.classList.contains(
-                    "open"
-                )
+                opened
                     ? "false"
                     : "true"
             );
 
 
             if (
-                panel.classList.contains(
-                    "open"
-                ) &&
+                opened &&
                 isLoggedIn &&
                 !(
                     isBanned &&
@@ -2529,23 +3209,16 @@ function initializeSupportWidget() {
     );
 
 
-    /* =====================================================
-       CHECK LOGIN
-    ===================================================== */
-
     async function checkSupportAuth() {
 
         try {
 
             const response =
-                await fetch(
+                await pgameApiFetch(
                     "/api/me",
                     {
                         method:
                             "GET",
-
-                        credentials:
-                            "same-origin",
 
                         cache:
                             "no-store"
@@ -2596,12 +3269,6 @@ function initializeSupportWidget() {
                 null;
 
 
-            /*
-             * Full Ban:
-             * این حالت توسط checkFullBan
-             * Redirect می‌شود.
-             */
-
             if (
                 isBanned &&
                 banType ===
@@ -2615,9 +3282,11 @@ function initializeSupportWidget() {
 
             renderLoggedInSupport();
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
-            console.error(
+            console.debug(
                 "SUPPORT_AUTH_ERROR",
                 error
             );
@@ -2629,10 +3298,6 @@ function initializeSupportWidget() {
 
     }
 
-
-    /* =====================================================
-       GUEST
-    ===================================================== */
 
     function renderGuestSupport() {
 
@@ -2651,7 +3316,7 @@ function initializeSupportWidget() {
             >
 
                 🔐 برای ارسال پیام به مدیریت
-                ابتدا وارد حساب VEXON شو.
+                ابتدا وارد حساب PGame شو.
 
                 <br>
 
@@ -2660,9 +3325,7 @@ function initializeSupportWidget() {
                         window.location.pathname.includes(
                             "/sections/"
                         )
-
                             ? "login.html"
-
                             : "sections/login.html"
                     }"
                 >
@@ -2676,15 +3339,7 @@ function initializeSupportWidget() {
     }
 
 
-    /* =====================================================
-       LOGGED IN
-    ===================================================== */
-
     function renderLoggedInSupport() {
-
-        /*
-         * محرومیت از پیام
-         */
 
         if (
             isBanned &&
@@ -2733,10 +3388,6 @@ function initializeSupportWidget() {
     }
 
 
-    /* =====================================================
-       ERROR
-    ===================================================== */
-
     function renderSupportError() {
 
         body.innerHTML = `
@@ -2744,7 +3395,7 @@ function initializeSupportWidget() {
             <div
                 class="vexon-support-login"
             >
-                ❌ ارتباط با حساب VEXON برقرار نشد.
+                ❌ ارتباط با حساب PGame برقرار نشد.
             </div>
 
         `;
@@ -2755,10 +3406,6 @@ function initializeSupportWidget() {
 
     }
 
-
-    /* =====================================================
-       LOAD USER MESSAGES
-    ===================================================== */
 
     async function loadSupportMessages() {
 
@@ -2774,14 +3421,11 @@ function initializeSupportWidget() {
         try {
 
             const response =
-                await fetch(
+                await pgameApiFetch(
                     "/api/support/my",
                     {
                         method:
                             "GET",
-
-                        credentials:
-                            "same-origin",
 
                         cache:
                             "no-store"
@@ -2815,9 +3459,11 @@ function initializeSupportWidget() {
 
             renderSupportMessages();
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
-            console.error(
+            console.debug(
                 "SUPPORT_MESSAGES_ERROR",
                 error
             );
@@ -2837,10 +3483,6 @@ function initializeSupportWidget() {
 
     }
 
-
-    /* =====================================================
-       RENDER USER MESSAGES
-    ===================================================== */
 
     function renderSupportMessages() {
 
@@ -2893,7 +3535,6 @@ function initializeSupportWidget() {
 
                                 ${
                                     item.reply
-
                                         ? `
 
                                             <div
@@ -2913,7 +3554,6 @@ function initializeSupportWidget() {
                                             </div>
 
                                           `
-
                                         : ""
                                 }
 
@@ -2931,9 +3571,7 @@ function initializeSupportWidget() {
                                     ${
                                         item.status ===
                                         "replied"
-
                                             ? " • ✅ پاسخ داده شد"
-
                                             : " • ⏳ در انتظار پاسخ"
                                     }
 
@@ -2947,13 +3585,8 @@ function initializeSupportWidget() {
                 )
                 .join("");
 
-
     }
 
-
-    /* =====================================================
-       SEND MESSAGE
-    ===================================================== */
 
     sendButton.addEventListener(
         "click",
@@ -3012,14 +3645,10 @@ function initializeSupportWidget() {
             showSupportStatus(
                 banType ===
                     "full"
-
                     ? "🚫 این حساب محدود شده است."
-
                     : "💬 این حساب از ارسال پیام محروم شده است.",
-
                 true
             );
-
 
             return;
 
@@ -3040,7 +3669,6 @@ function initializeSupportWidget() {
                 true
             );
 
-
             return;
 
         }
@@ -3057,14 +3685,11 @@ function initializeSupportWidget() {
         try {
 
             const response =
-                await fetch(
+                await pgameApiFetch(
                     "/api/support/send",
                     {
                         method:
                             "POST",
-
-                        credentials:
-                            "same-origin",
 
                         headers: {
                             "Content-Type":
@@ -3135,10 +3760,11 @@ function initializeSupportWidget() {
 
             await loadSupportMessages();
 
+        } catch (
+            error
+        ) {
 
-        } catch (error) {
-
-            console.error(
+            console.debug(
                 "SUPPORT_SEND_ERROR",
                 error
             );
@@ -3177,17 +3803,8 @@ function initializeSupportWidget() {
     }
 
 
-    /* =====================================================
-       SUPPORT START
-    ===================================================== */
-
     checkSupportAuth();
 
-
-    /*
-     * وقتی کاربر از Login برمی‌گردد،
-     * وضعیت حساب را دوباره بررسی می‌کنیم.
-     */
 
     window.addEventListener(
         "focus",
@@ -3199,11 +3816,7 @@ function initializeSupportWidget() {
     );
 
 
-    /*
-     * پاسخ Admin بدون Refresh
-     */
-
-    setInterval(
+    window.setInterval(
         () => {
 
             if (
@@ -3228,42 +3841,64 @@ function initializeSupportWidget() {
 
 }
 
+
 /* =========================================================
    ONLINE PRESENCE
 ========================================================= */
 
-let presenceTimer = null;
+let presenceTimer =
+    null;
+
 
 async function sendPresenceHeartbeat() {
+
     try {
-        await fetch(
+
+        await pgameApiFetch(
             "/api/heartbeat",
             {
-                method: "POST",
-                credentials: "same-origin",
-                cache: "no-store",
+                method:
+                    "POST",
+
+                cache:
+                    "no-store",
+
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
                 }
             }
         );
-    } catch (error) {
+
+    } catch (
+        error
+    ) {
+
         console.debug(
             "PRESENCE_HEARTBEAT_ERROR",
             error
         );
+
     }
+
 }
+
 
 function initializePresence() {
 
-    // اولین heartbeat
     sendPresenceHeartbeat();
 
-    // هر 30 ثانیه
-    if (presenceTimer) {
-        clearInterval(presenceTimer);
+
+    if (
+        presenceTimer
+    ) {
+
+        clearInterval(
+            presenceTimer
+        );
+
     }
+
 
     presenceTimer =
         setInterval(
@@ -3271,27 +3906,194 @@ function initializePresence() {
             30000
         );
 
-    // هنگام خروج از صفحه تایمر را متوقف کن
+
     window.addEventListener(
         "beforeunload",
         () => {
 
-            if (presenceTimer) {
+            if (
+                presenceTimer
+            ) {
+
                 clearInterval(
                     presenceTimer
                 );
+
             }
 
         },
         {
-            once: true
+            once:
+                true
         }
     );
+
 }
 
 
 /* =========================================================
-   START VEXON
+   CACHE REFRESH HELPERS
+========================================================= */
+
+async function refreshCachedPublicData() {
+
+    if (
+        !isPGameApp()
+    ) {
+
+        return;
+
+    }
+
+
+    const requests = [
+
+        {
+            path:
+                "/api/news?limit=20",
+
+            key:
+                "news_20"
+        },
+
+        {
+            path:
+                "/api/leaderboard?type=level&limit=50",
+
+            key:
+                "leaderboard_level_50"
+        },
+
+        {
+            path:
+                "/api/leaderboard?type=coins&limit=50",
+
+            key:
+                "leaderboard_coins_50"
+        },
+
+        {
+            path:
+                "/api/community/stats",
+
+            key:
+                "community_stats"
+        }
+
+    ];
+
+
+    await Promise.allSettled(
+        requests.map(
+            async request => {
+
+                try {
+
+                    const response =
+                        await pgameApiFetch(
+                            request.path,
+                            {
+                                method:
+                                    "GET",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    if (
+                        !response.ok
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    savePGameDataCache(
+                        request.key,
+                        data
+                    );
+
+                } catch {}
+
+            }
+        )
+    );
+
+}
+
+
+/* =========================================================
+   LOGOUT HELPER
+========================================================= */
+
+function clearLocalPGameSession() {
+
+    clearPGameSession();
+
+    clearPGameDataCaches();
+
+
+    try {
+
+        localStorage.removeItem(
+            PGAME_ACCOUNT_CACHE_KEY
+        );
+
+    } catch {}
+
+}
+
+
+/* =========================================================
+   EXPOSE HELPERS
+========================================================= */
+
+window.PGameAccount = {
+
+    get:
+        getCachedAccount,
+
+    save:
+        saveAccountCache,
+
+    clear() {
+
+        try {
+
+            localStorage.removeItem(
+                PGAME_ACCOUNT_CACHE_KEY
+            );
+
+        } catch {}
+
+    }
+
+};
+
+
+window.PGameAuth = {
+
+    getToken:
+        getPGameSession,
+
+    setToken:
+        savePGameSession,
+
+    logoutLocal:
+        clearLocalPGameSession
+
+};
+
+
+/* =========================================================
+   START PGAME
 ========================================================= */
 
 (async function startVexon() {
@@ -3301,5 +4103,18 @@ function initializePresence() {
     await loadVexon();
 
     initializePresence();
+
+    /*
+     * در اپ، داده‌های عمومی را در پس‌زمینه
+     * برای باز شدن‌های بعدی تازه می‌کنیم.
+     */
+
+    if (
+        isPGameApp()
+    ) {
+
+        refreshCachedPublicData();
+
+    }
 
 })();

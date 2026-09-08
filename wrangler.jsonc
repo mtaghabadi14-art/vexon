@@ -1,15 +1,19 @@
 {
-    "name": "pgame-site",
-    "main": "worker.js",
-    "compatibility_date": "2026-08-29",
-    "assets": {
-        "directory": "."
-    },
-    "d1_databases": [
-        {
-            "binding": "DB",
-            "database_name": "vexon-db",
-            "database_id": "31a9c12b-c3c9-42d4-8671-ae8342c2b212"
-        }
-    ]
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "pgame-site",
+  "main": "worker.js",
+  "compatibility_date": "2026-08-29",
+  "build": {
+    "command": "node scripts/prepare-worker.mjs"
+  },
+  "assets": {
+    "directory": "."
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vexon-db",
+      "database_id": "31a9c12b-c3c9-42d4-8671-ae8342c2b212"
+    }
+  ]
 }
