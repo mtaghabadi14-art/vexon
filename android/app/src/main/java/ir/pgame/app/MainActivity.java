@@ -12,13 +12,11 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.webkit.CookieManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -26,14 +24,14 @@ import androidx.annotation.Nullable;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.getcapacitor.BridgeActivity;
-import com.getcapacitor.BridgeWebChromeClient;
 import com.getcapacitor.BridgeWebViewClient;
 
 public class MainActivity extends BridgeActivity {
 
 
 private static final long STARTUP_TIMEOUT = 15000L;
-private static final long STARTUP_FINISH_DELAY = 150L;
+private static final long STARTUP_FINISH_DELAY = 180L;
+private static final long APP_MODE_DELAY = 250L;
 
 private WebView webView;
 private ViewGroup rootLayout;
@@ -52,28 +50,36 @@ private boolean startupTimeoutTriggered = false;
 private Runnable startupTimeoutRunnable;
 
 @Override
-protected void onCreate(@Nullable Bundle savedInstanceState) {
+protected void onCreate(
+        @Nullable Bundle savedInstanceState
+) {
     SplashScreen.installSplashScreen(this);
 
     /*
-     * Capacitor must initialize first.
-     * Do not call setContentView() ourselves.
+     * Capacitor must initialize its own layout and WebView.
      */
     super.onCreate(savedInstanceState);
 
     enableFullscreen();
 
     /*
-     * Capacitor owns this WebView and its parent.
-     * We only keep a reference to it.
+     * IMPORTANT:
+     *
+     * We do NOT call setContentView().
+     * We do NOT detach the WebView.
+     * We do NOT create a second WebView container.
+     *
+     * Capacitor owns the WebView.
      */
     webView = getBridge().getWebView();
 
     /*
-     * Use the Android content root only for overlay views.
-     * The WebView itself is NOT removed/reparented.
+     * android.R.id.content is used only as the parent
+     * for the temporary native overlays.
      */
-    rootLayout = findViewById(android.R.id.content);
+    rootLayout = findViewById(
+            android.R.id.content
+    );
 
     if (webView != null) {
         setupWebView();
@@ -84,6 +90,15 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         showSplash();
         startStartupTimeout();
+
+        /*
+         * The main PGame page is initialized by Capacitor.
+         * App-mode navigation is attached shortly afterward.
+         */
+        handler.postDelayed(
+                this::initializePGameAppMode,
+                APP_MODE_DELAY
+        );
     }
 }
 
@@ -93,34 +108,61 @@ private void setupWebView() {
         return;
     }
 
-    WebSettings settings = webView.getSettings();
+    WebSettings settings =
+            webView.getSettings();
 
     settings.setJavaScriptEnabled(true);
     settings.setDomStorageEnabled(true);
     settings.setDatabaseEnabled(true);
 
-    settings.setJavaScriptCanOpenWindowsAutomatically(true);
-    settings.setLoadsImagesAutomatically(true);
+    settings.setJavaScriptCanOpenWindowsAutomatically(
+            true
+    );
 
-    settings.setAllowFileAccess(true);
-    settings.setAllowContentAccess(true);
+    settings.setLoadsImagesAutomatically(
+            true
+    );
 
-    settings.setSupportZoom(false);
-    settings.setBuiltInZoomControls(false);
-    settings.setDisplayZoomControls(false);
+    settings.setAllowFileAccess(
+            true
+    );
 
-    settings.setLoadWithOverviewMode(false);
-    settings.setUseWideViewPort(false);
+    settings.setAllowContentAccess(
+            true
+    );
+
+    settings.setSupportZoom(
+            false
+    );
+
+    settings.setBuiltInZoomControls(
+            false
+    );
+
+    settings.setDisplayZoomControls(
+            false
+    );
+
+    settings.setLoadWithOverviewMode(
+            false
+    );
+
+    settings.setUseWideViewPort(
+            false
+    );
 
     settings.setCacheMode(
             WebSettings.LOAD_DEFAULT
     );
 
-    settings.setMediaPlaybackRequiresUserGesture(false);
+    settings.setMediaPlaybackRequiresUserGesture(
+            false
+    );
 
     try {
         settings.setMixedContentMode(
-                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                WebSettings
+                        .MIXED_CONTENT_COMPATIBILITY_MODE
         );
     } catch (Exception ignored) {
     }
@@ -133,14 +175,24 @@ private void setupWebView() {
             View.OVER_SCROLL_NEVER
     );
 
-    webView.setVerticalScrollBarEnabled(false);
-    webView.setHorizontalScrollBarEnabled(false);
-    webView.setHapticFeedbackEnabled(false);
+    webView.setVerticalScrollBarEnabled(
+            false
+    );
+
+    webView.setHorizontalScrollBarEnabled(
+            false
+    );
+
+    webView.setHapticFeedbackEnabled(
+            false
+    );
 
     CookieManager cookieManager =
             CookieManager.getInstance();
 
-    cookieManager.setAcceptCookie(true);
+    cookieManager.setAcceptCookie(
+            true
+    );
 
     try {
         cookieManager.setAcceptThirdPartyCookies(
@@ -151,25 +203,16 @@ private void setupWebView() {
     }
 
     /*
-     * VERY IMPORTANT:
+     * DO NOT replace Capacitor's WebChromeClient.
      *
-     * Capacitor installs:
-     *   BridgeWebChromeClient
-     *   BridgeWebViewClient
+     * Capacitor installs its own BridgeWebChromeClient
+     * during Bridge initialization.
      *
-     * These are responsible for Capacitor's native bridge,
-     * local asset loading and navigation handling.
+     * We leave it untouched.
      *
-     * We must not replace them with normal WebViewClient /
-     * WebChromeClient implementations.
+     * For WebViewClient we subclass BridgeWebViewClient
+     * so local asset interception remains intact.
      */
-
-    webView.setWebChromeClient(
-            new BridgeWebChromeClient(
-                    getBridge()
-            )
-    );
-
     webView.setWebViewClient(
             new BridgeWebViewClient(
                     getBridge()
@@ -200,8 +243,7 @@ private void setupWebView() {
                         String url
                 ) {
                     /*
-                     * IMPORTANT:
-                     * Call Capacitor's implementation first.
+                     * Preserve Capacitor behavior first.
                      */
                     super.onPageFinished(
                             view,
@@ -213,13 +255,13 @@ private void setupWebView() {
                     enableFullscreen();
 
                     /*
-                     * Native app enhancements are applied
-                     * only AFTER the local Capacitor page
-                     * has finished loading.
+                     * Initialize native PGame mode after
+                     * the real local page is loaded.
                      */
-                    handler.post(() -> {
-                        injectPGameAppMode();
-                    });
+                    handler.post(
+                            MainActivity.this
+                                    ::initializePGameAppMode
+                    );
 
                     handler.postDelayed(
                             MainActivity.this
@@ -235,7 +277,7 @@ private void setupWebView() {
                         WebResourceError error
                 ) {
                     /*
-                     * Let Capacitor handle its own error behavior.
+                     * Preserve Capacitor error handling.
                      */
                     super.onReceivedError(
                             view,
@@ -243,10 +285,6 @@ private void setupWebView() {
                             error
                     );
 
-                    /*
-                     * Only show our overlay for a main-frame
-                     * failure.
-                     */
                     if (
                             request != null &&
                             request.isForMainFrame()
@@ -262,24 +300,24 @@ private void setupWebView() {
                 public void onReceivedHttpError(
                         WebView view,
                         WebResourceRequest request,
-                        WebResourceResponse errorResponse
+                        WebResourceResponse response
                 ) {
                     /*
-                     * Preserve Capacitor handling first.
+                     * Preserve Capacitor error handling.
                      */
                     super.onReceivedHttpError(
                             view,
                             request,
-                            errorResponse
+                            response
                     );
 
                     if (
                             request != null &&
                             request.isForMainFrame() &&
-                            errorResponse != null
+                            response != null
                     ) {
                         int statusCode =
-                                errorResponse.getStatusCode();
+                                response.getStatusCode();
 
                         if (statusCode >= 500) {
                             handler.post(
@@ -293,30 +331,306 @@ private void setupWebView() {
     );
 }
 
-private void enableFullscreen() {
-    Window window = getWindow();
-
-    if (window == null) {
+private void initializePGameAppMode() {
+    if (webView == null) {
         return;
     }
 
-    try {
-        WindowInsetsController controller =
-                window.getInsetsController();
+    String js =
+            "(function(){" +
+                    "try{" +
 
-        if (controller != null) {
-            controller.hide(
-                    WindowInsets.Type.statusBars()
-                            | WindowInsets.Type.navigationBars()
-            );
+                    /*
+                     * Mark the page as the Android app.
+                     */
+                    "document.documentElement.classList.add(" +
+                    "'pgame-app'" +
+                    ");" +
 
-            controller.setSystemBarsBehavior(
-                    WindowInsetsController
-                            .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            );
-        }
-    } catch (Exception ignored) {
-    }
+                    "if(document.body){" +
+                    "document.body.classList.add(" +
+                    "'pgame-app'" +
+                    ");" +
+                    "}" +
+
+                    /*
+                     * Make sure normal vertical page scrolling
+                     * remains available.
+                     */
+                    "document.documentElement.style.overflowX=" +
+                    "'hidden';" +
+
+                    "document.documentElement.style.overflowY=" +
+                    "'auto';" +
+
+                    "document.documentElement.style.touchAction=" +
+                    "'pan-y';" +
+
+                    "if(document.body){" +
+                    "document.body.style.overflowX='hidden';" +
+                    "document.body.style.overflowY='auto';" +
+                    "document.body.style.touchAction='pan-y';" +
+                    "}" +
+
+                    /*
+                     * Website-only footer.
+                     */
+                    "document.querySelectorAll('footer')" +
+                    ".forEach(function(el){" +
+                    "el.style.display='none';" +
+                    "});" +
+
+                    /*
+                     * Website hamburger is not needed in app mode.
+                     */
+                    "var trigger=" +
+                    "document.getElementById(" +
+                    "'vexon-menu-trigger'" +
+                    ");" +
+
+                    "if(trigger){" +
+                    "trigger.style.display='none';" +
+                    "trigger.setAttribute(" +
+                    "'aria-hidden','true'" +
+                    ");" +
+                    "}" +
+
+                    /*
+                     * Website mobile bottom navigation.
+                     */
+                    "document.querySelectorAll(" +
+                    "'.mobile-bottom-nav'" +
+                    ").forEach(function(el){" +
+                    "el.style.display='none';" +
+                    "});" +
+
+                    /*
+                     * Native runtime style.
+                     */
+                    "var style=" +
+                    "document.getElementById(" +
+                    "'pgame-native-runtime-style'" +
+                    ");" +
+
+                    "if(!style){" +
+
+                    "style=document.createElement('style');" +
+
+                    "style.id=" +
+                    "'pgame-native-runtime-style';" +
+
+                    "style.textContent=" +
+
+                    "\"html.pgame-app,html.pgame-app body{" +
+                    "overscroll-behavior-y:none!important;" +
+                    "overscroll-behavior-x:none!important;" +
+                    "touch-action:pan-y!important;" +
+                    "}\" +" +
+
+                    "\"html.pgame-app footer{" +
+                    "display:none!important;" +
+                    "}\" +" +
+
+                    "\"html.pgame-app img{" +
+                    "-webkit-user-drag:none;" +
+                    "}\" +" +
+
+                    "\"html.pgame-app .mobile-bottom-nav{" +
+                    "display:none!important;" +
+                    "}\";" +
+
+                    "document.head.appendChild(style);" +
+
+                    "}" +
+
+                    /*
+                     * Native app bridge.
+                     */
+                    "window.PGameNativeApp=" +
+                    "window.PGameNativeApp||{};" +
+
+                    "window.PGameNativeApp.isNative=true;" +
+
+                    /*
+                     * Account cache.
+                     */
+                    "window.PGameNativeApp.getCachedAccount=" +
+                    "function(){" +
+                    "try{" +
+                    "var raw=localStorage.getItem(" +
+                    "'pgame_account_cache_v1'" +
+                    ");" +
+
+                    "return raw?" +
+                    "JSON.parse(raw):null;" +
+
+                    "}catch(e){" +
+                    "return null;" +
+                    "}" +
+                    "};" +
+
+                    "window.PGameNativeApp.setCachedAccount=" +
+                    "function(account){" +
+                    "try{" +
+
+                    "if(!account){" +
+                    "localStorage.removeItem(" +
+                    "'pgame_account_cache_v1'" +
+                    ");" +
+
+                    "}else{" +
+                    "localStorage.setItem(" +
+                    "'pgame_account_cache_v1'," +
+                    "JSON.stringify(account)" +
+                    ");" +
+                    "}" +
+
+                    "}catch(e){}" +
+                    "};" +
+
+                    /*
+                     * Persistent app session.
+                     */
+                    "window.PGameNativeApp.getSession=" +
+                    "function(){" +
+                    "try{" +
+                    "return localStorage.getItem(" +
+                    "'pgame_app_session'" +
+                    ")||'';" +
+                    "}catch(e){" +
+                    "return '';" +
+                    "}" +
+                    "};" +
+
+                    "window.PGameNativeApp.setSession=" +
+                    "function(value){" +
+                    "try{" +
+
+                    "if(value){" +
+                    "localStorage.setItem(" +
+                    "'pgame_app_session'," +
+                    "value" +
+                    ");" +
+
+                    "}else{" +
+
+                    "localStorage.removeItem(" +
+                    "'pgame_app_session'" +
+                    ");" +
+
+                    "}" +
+
+                    "}catch(e){}" +
+                    "};" +
+
+                    /*
+                     * Navigation bridge.
+                     *
+                     * Prefer normal browser navigation so
+                     * Capacitor's local server continues to
+                     * control the page.
+                     */
+                    "window.PGameApp=" +
+                    "window.PGameApp||{};" +
+
+                    "window.PGameApp.isApp=true;" +
+
+                    "window.PGameApp.navigate=" +
+                    "function(url){" +
+
+                    "try{" +
+
+                    "if(!url)return;" +
+
+                    "window.location.href=url;" +
+
+                    "}catch(e){" +
+
+                    "window.location.href=url;" +
+
+                    "}" +
+
+                    "};" +
+
+                    /*
+                     * Explicitly initialize the navigation module
+                     * because pgame-app is added after vexon-nav.js
+                     * may already have executed.
+                     */
+                    "if(window.PGameNavigation&&" +
+                    "typeof window.PGameNavigation." +
+                    "initializeAppMode==='function'){" +
+
+                    "window.PGameNavigation." +
+                    "initializeAppMode();" +
+
+                    "}" +
+
+                    /*
+                     * Small click feedback.
+                     */
+                    "if(!window.__pgameNativeTouchFX){" +
+
+                    "window.__pgameNativeTouchFX=true;" +
+
+                    "document.addEventListener(" +
+                    "'click'," +
+                    "function(ev){" +
+
+                    "var el=null;" +
+
+                    "if(ev.target&&ev.target.closest){" +
+
+                    "el=ev.target.closest(" +
+                    "'button,a,.nav-item,.card,.game-card'" +
+                    ");" +
+
+                    "}" +
+
+                    "if(!el)return;" +
+
+                    "el.classList.add(" +
+                    "'pgame-pressing'" +
+                    ");" +
+
+                    "setTimeout(function(){" +
+
+                    "el.classList.remove(" +
+                    "'pgame-pressing'" +
+                    ");" +
+
+                    "},120);" +
+
+                    "}," +
+                    "{passive:true}" +
+                    ");" +
+
+                    "}" +
+
+                    /*
+                     * Footer may be added dynamically,
+                     * therefore perform one additional pass.
+                     */
+                    "document.querySelectorAll('footer')" +
+                    ".forEach(function(el){" +
+                    "el.style.display='none';" +
+                    "});" +
+
+                    "}catch(e){" +
+
+                    "console.log(" +
+                    "'PGame native mode error'," +
+                    "e" +
+                    ");" +
+
+                    "}" +
+                    "})();";
+
+    webView.evaluateJavascript(
+            js,
+            value -> {
+            }
+    );
 }
 
 private void startStartupTimeout() {
@@ -352,7 +666,10 @@ private void finishStartupIfNeeded() {
         return;
     }
 
-    if (!pageLoaded && !startupTimeoutTriggered) {
+    if (
+            !pageLoaded &&
+            !startupTimeoutTriggered
+    ) {
         return;
     }
 
@@ -367,26 +684,7 @@ private void finishStartupIfNeeded() {
     hideOffline();
     hideError();
 
-    if (splashOverlay != null) {
-        splashOverlay.animate()
-                .alpha(0f)
-                .setDuration(220L)
-                .withEndAction(() -> {
-                    if (splashOverlay != null) {
-                        splashOverlay.setVisibility(
-                                View.GONE
-                        );
-                    }
-                })
-                .start();
-    }
-}
-
-private FrameLayout.LayoutParams fullScreenParams() {
-    return new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-    );
+    hideSplash();
 }
 
 private void createSplashOverlay() {
@@ -398,7 +696,10 @@ private void createSplashOverlay() {
             new FrameLayout(this);
 
     splash.setLayoutParams(
-            fullScreenParams()
+            new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            )
     );
 
     splash.setBackgroundColor(
@@ -409,13 +710,10 @@ private void createSplashOverlay() {
             new TextView(this);
 
     glow.setText("P");
-
     glow.setTextColor(
             Color.rgb(0, 255, 157)
     );
-
     glow.setTextSize(86f);
-
     glow.setGravity(
             Gravity.CENTER
     );
@@ -445,18 +743,16 @@ private void createSplashOverlay() {
             new TextView(this);
 
     title.setText("PGAME");
-
     title.setTextColor(
             Color.WHITE
     );
-
     title.setTextSize(24f);
-
     title.setGravity(
             Gravity.CENTER
     );
-
-    title.setLetterSpacing(.22f);
+    title.setLetterSpacing(
+            .22f
+    );
 
     title.setTypeface(
             android.graphics.Typeface.create(
@@ -494,12 +790,12 @@ private void createSplashOverlay() {
     );
 
     subtitle.setTextSize(10f);
-
     subtitle.setGravity(
             Gravity.CENTER
     );
-
-    subtitle.setLetterSpacing(.12f);
+    subtitle.setLetterSpacing(
+            .12f
+    );
 
     FrameLayout.LayoutParams subtitleParams =
             new FrameLayout.LayoutParams(
@@ -541,7 +837,10 @@ private void createOfflineOverlay() {
             new FrameLayout(this);
 
     overlay.setLayoutParams(
-            fullScreenParams()
+            new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            )
     );
 
     overlay.setBackgroundColor(
@@ -571,24 +870,24 @@ private void createOfflineOverlay() {
             1f
     );
 
-    FrameLayout.LayoutParams textParams =
+    FrameLayout.LayoutParams params =
             new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
 
-    textParams.gravity =
+    params.gravity =
             Gravity.CENTER;
 
-    textParams.leftMargin =
+    params.leftMargin =
             35;
 
-    textParams.rightMargin =
+    params.rightMargin =
             35;
 
     overlay.addView(
             text,
-            textParams
+            params
     );
 
     rootLayout.addView(
@@ -612,7 +911,10 @@ private void createErrorOverlay() {
             new FrameLayout(this);
 
     overlay.setLayoutParams(
-            fullScreenParams()
+            new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            )
     );
 
     overlay.setBackgroundColor(
@@ -642,24 +944,24 @@ private void createErrorOverlay() {
             1f
     );
 
-    FrameLayout.LayoutParams textParams =
+    FrameLayout.LayoutParams params =
             new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
 
-    textParams.gravity =
+    params.gravity =
             Gravity.CENTER;
 
-    textParams.leftMargin =
+    params.leftMargin =
             35;
 
-    textParams.rightMargin =
+    params.rightMargin =
             35;
 
     overlay.addView(
             text,
-            textParams
+            params
     );
 
     rootLayout.addView(
@@ -686,6 +988,26 @@ private void showSplash() {
     splashOverlay.setAlpha(
             1f
     );
+}
+
+private void hideSplash() {
+    if (splashOverlay == null) {
+        return;
+    }
+
+    splashOverlay.animate()
+            .alpha(0f)
+            .setDuration(180L)
+            .withEndAction(() -> {
+
+                if (splashOverlay != null) {
+                    splashOverlay.setVisibility(
+                            View.GONE
+                    );
+                }
+
+            })
+            .start();
 }
 
 private void showOfflineOrError() {
@@ -780,24 +1102,6 @@ private void showError() {
     hideSplash();
 }
 
-private void hideSplash() {
-    if (splashOverlay != null) {
-        splashOverlay.animate()
-                .alpha(0f)
-                .setDuration(160L)
-                .withEndAction(() -> {
-
-                    if (splashOverlay != null) {
-                        splashOverlay.setVisibility(
-                                View.GONE
-                        );
-                    }
-
-                })
-                .start();
-    }
-}
-
 private void hideOffline() {
     if (offlineOverlay != null) {
         offlineOverlay.animate()
@@ -832,252 +1136,6 @@ private void hideError() {
                 })
                 .start();
     }
-}
-
-/**
- * Adds only native-app behavior to the already loaded
- * PGame page.
- *
- * No page reload.
- * No WebView replacement.
- * No Capacitor client replacement.
- */
-private void injectPGameAppMode() {
-    if (webView == null) {
-        return;
-    }
-
-    String js =
-            "(function(){" +
-                    "try{" +
-
-                    "document.documentElement" +
-                    ".classList.add('pgame-app');" +
-
-                    "if(document.body){" +
-                    "document.body.classList" +
-                    ".add('pgame-app');" +
-                    "}" +
-
-                    /*
-                     * Hide website-only footer.
-                     */
-                    "var hideFooter=function(){" +
-                    "document.querySelectorAll('footer')" +
-                    ".forEach(function(el){" +
-                    "el.style.display='none';" +
-                    "});" +
-                    "};" +
-
-                    "hideFooter();" +
-
-                    /*
-                     * Runtime native styles.
-                     */
-                    "var style=document.getElementById(" +
-                    "'pgame-native-runtime-style'" +
-                    ");" +
-
-                    "if(!style){" +
-
-                    "style=document.createElement('style');" +
-
-                    "style.id=" +
-                    "'pgame-native-runtime-style';" +
-
-                    "style.textContent=" +
-
-                    "\"html.pgame-app,html.pgame-app body{\" +" +
-
-                    "\"overscroll-behavior:none!important;\" +" +
-
-                    "\"-webkit-tap-highlight-color:" +
-                    "transparent!important;\" +" +
-
-                    "\"}\" +" +
-
-                    "\"html.pgame-app footer{" +
-                    "display:none!important;}\" +" +
-
-                    "\"html.pgame-app img{" +
-                    "-webkit-user-drag:none;}\" +" +
-
-                    "\"html.pgame-app " +
-                    ".mobile-bottom-nav{" +
-                    "display:none!important;}\" +" +
-
-                    "\"html.pgame-app " +
-                    ".vexon-global-menu-trigger{" +
-                    "display:none!important;}\";" +
-
-                    "document.head.appendChild(style);" +
-
-                    "}" +
-
-                    /*
-                     * Native bridge.
-                     */
-                    "window.PGameNativeApp=" +
-                    "window.PGameNativeApp||{};" +
-
-                    "window.PGameNativeApp.isNative=true;" +
-
-                    /*
-                     * Account cache.
-                     */
-                    "window.PGameNativeApp.getCachedAccount=" +
-                    "function(){" +
-
-                    "try{" +
-
-                    "var raw=localStorage.getItem(" +
-                    "'pgame_account_cache_v1'" +
-                    ");" +
-
-                    "return raw?JSON.parse(raw):null;" +
-
-                    "}catch(e){" +
-                    "return null;" +
-                    "}" +
-
-                    "};" +
-
-                    "window.PGameNativeApp.setCachedAccount=" +
-                    "function(account){" +
-
-                    "try{" +
-
-                    "if(!account){" +
-
-                    "localStorage.removeItem(" +
-                    "'pgame_account_cache_v1'" +
-                    ");" +
-
-                    "}else{" +
-
-                    "localStorage.setItem(" +
-                    "'pgame_account_cache_v1'," +
-                    "JSON.stringify(account)" +
-                    ");" +
-
-                    "}" +
-
-                    "}catch(e){}" +
-
-                    "};" +
-
-                    /*
-                     * Session bridge.
-                     */
-                    "window.PGameNativeApp.getSession=" +
-                    "function(){" +
-
-                    "try{" +
-
-                    "return localStorage.getItem(" +
-                    "'pgame_app_session'" +
-                    ")||'';" +
-
-                    "}catch(e){" +
-
-                    "return '';" +
-
-                    "}" +
-
-                    "};" +
-
-                    "window.PGameNativeApp.setSession=" +
-                    "function(value){" +
-
-                    "try{" +
-
-                    "if(value){" +
-
-                    "localStorage.setItem(" +
-                    "'pgame_app_session'," +
-                    "value" +
-                    ");" +
-
-                    "}else{" +
-
-                    "localStorage.removeItem(" +
-                    "'pgame_app_session'" +
-                    ");" +
-
-                    "}" +
-
-                    "}catch(e){}" +
-
-                    "};" +
-
-                    /*
-                     * Prevent horizontal overflow.
-                     */
-                    "document.documentElement" +
-                    ".style.overflowX='hidden';" +
-
-                    "if(document.body){" +
-                    "document.body.style" +
-                    ".overflowX='hidden';" +
-                    "}" +
-
-                    /*
-                     * Touch feedback.
-                     */
-                    "if(!window.__pgameNativeTouchFX){" +
-
-                    "window.__pgameNativeTouchFX=true;" +
-
-                    "document.addEventListener(" +
-                    "'click'," +
-                    "function(ev){" +
-
-                    "var el=null;" +
-
-                    "if(ev.target&&ev.target.closest){" +
-
-                    "el=ev.target.closest(" +
-
-                    "'button,a,.nav-item,.card,.game-card'" +
-
-                    ");" +
-
-                    "}" +
-
-                    "if(!el)return;" +
-
-                    "el.classList.add('pgame-pressing');" +
-
-                    "setTimeout(function(){" +
-
-                    "el.classList.remove(" +
-                    "'pgame-pressing'" +
-                    ");" +
-
-                    "},120);" +
-
-                    "},{passive:true});" +
-
-                    "}" +
-
-                    "hideFooter();" +
-
-                    "}catch(e){" +
-
-                    "console.log(" +
-                    "'PGame native mode error'," +
-                    "e" +
-                    ");" +
-
-                    "}" +
-
-                    "})();";
-
-    webView.evaluateJavascript(
-            js,
-            value -> {
-            }
-    );
 }
 
 @Override
@@ -1115,9 +1173,7 @@ public void onBackPressed() {
             js,
             result -> {
 
-                if ("\"drawer\"".equals(
-                        result
-                )) {
+                if ("\"drawer\"".equals(result)) {
                     return;
                 }
 
@@ -1152,7 +1208,7 @@ public void onDestroy() {
     }
 
     /*
-     * Capacitor owns the WebView lifecycle.
+     * Capacitor owns WebView lifecycle.
      * Do not call webView.destroy().
      */
     webView = null;
