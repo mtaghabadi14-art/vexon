@@ -732,7 +732,7 @@ public void onPause() {
 }
 
 @Override
-protected void onDestroy() {
+public void onDestroy() {
     if (startupTimeoutRunnable != null) {
         handler.removeCallbacks(startupTimeoutRunnable);
     }
