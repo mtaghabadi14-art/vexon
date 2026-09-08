@@ -418,7 +418,7 @@ private void initializePGameAppMode() {
 
                     "\"html.pgame-app,html.pgame-app body{" +
                     "overflow-x:hidden!important;" +
-                    "}\" +" +
+                    س"}\" +" +
 
                     "\"html.pgame-app footer{" +
                     "display:none!important;" +
