@@ -25,6 +25,24 @@ jobs:
       - name: Prepare local-first web bundle
         run: npm run app:prepare
 
+      - name: Verify local web bundle
+        shell: bash
+        run: |
+          echo "=== www ==="
+          find www -maxdepth 2 -type f | sort | head -200
+
+          echo ""
+          echo "=== Required files ==="
+
+          test -f www/index.html
+          test -f www/style.css
+          test -f www/script.js
+          test -f www/vexon-nav.js
+          test -d www/assets
+          test -d www/sections
+
+          echo "Local PGame web bundle is ready."
+
       - name: Sync Capacitor Android project
         run: npx cap sync android
 
@@ -41,7 +59,13 @@ jobs:
         shell: bash
         run: |
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+          echo ""
+          echo "=== Android platforms ==="
           ls -la "$ANDROID_SDK_ROOT/platforms" | head -50 || true
+
+          echo ""
+          echo "=== Android build tools ==="
           ls -la "$ANDROID_SDK_ROOT/build-tools" | head -50 || true
 
       - name: Build debug APK
