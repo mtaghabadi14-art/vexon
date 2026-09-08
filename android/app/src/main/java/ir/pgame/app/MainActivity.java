@@ -360,16 +360,11 @@ private void initializePGameAppMode() {
                     "document.documentElement.style.overflowX=" +
                     "'hidden';" +
 
-                    "document.documentElement.style.overflowY=" +
-                    "'auto';" +
-
-                    "document.documentElement.style.touchAction=" +
-                    "'pan-y';" +
+                    "document.documentElement.style.overflowX=" +
+                    "'hidden';" +
 
                     "if(document.body){" +
                     "document.body.style.overflowX='hidden';" +
-                    "document.body.style.overflowY='auto';" +
-                    "document.body.style.touchAction='pan-y';" +
                     "}" +
 
                     /*
@@ -422,9 +417,7 @@ private void initializePGameAppMode() {
                     "style.textContent=" +
 
                     "\"html.pgame-app,html.pgame-app body{" +
-                    "overscroll-behavior-y:none!important;" +
-                    "overscroll-behavior-x:none!important;" +
-                    "touch-action:pan-y!important;" +
+                    "overflow-x:hidden!important;" +
                     "}\" +" +
 
                     "\"html.pgame-app footer{" +
