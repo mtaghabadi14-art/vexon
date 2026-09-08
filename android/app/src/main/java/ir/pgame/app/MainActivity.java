@@ -633,6 +633,33 @@ private void initializePGameAppMode() {
     );
 }
 
+
+private void enableFullscreen() {
+    Window window = getWindow();
+
+    if (window == null) {
+        return;
+    }
+
+    try {
+        WindowInsetsController controller =
+                window.getInsetsController();
+
+        if (controller != null) {
+            controller.hide(
+                    WindowInsets.Type.statusBars()
+                            | WindowInsets.Type.navigationBars()
+            );
+
+            controller.setSystemBarsBehavior(
+                    WindowInsetsController
+                            .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
+    } catch (Exception ignored) {
+    }
+}
+
 private void startStartupTimeout() {
     if (startupTimeoutRunnable != null) {
         handler.removeCallbacks(
