@@ -33,6 +33,7 @@ const PGAME_DATA_CACHE_PREFIX =
 function isPGameApp() {
 
     return (
+        window.location.hostname === "localhost" ||
         document.documentElement.classList.contains(
             "pgame-app"
         ) ||
