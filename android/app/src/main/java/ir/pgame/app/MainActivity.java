@@ -1764,7 +1764,7 @@ public class MainActivity extends BridgeActivity {
      */
 
     @Override
-    protected void onResume() {
+    public void onResume() {
 
         super.onResume();
 
@@ -1809,7 +1809,7 @@ public class MainActivity extends BridgeActivity {
      */
 
     @Override
-    protected void onStop() {
+    public void onStop() {
 
         handler.removeCallbacks(
                 networkMonitor
@@ -1914,7 +1914,7 @@ public class MainActivity extends BridgeActivity {
      */
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
 
         handler.removeCallbacksAndMessages(
                 null
