@@ -2,7 +2,7 @@
   "name": "PGAME_SITE",
   "private": true,
   "scripts": {
-     "app:prepare": "mkdir -p www && rm -rf www/* && cp -f index.html style.css script.js vexon-nav.js pgame-api-bridge.js www/ && cp -rf assets sections www/",
+    "app:prepare": "mkdir -p www && rm -rf www/* && cp -f index.html style.css script.js vexon-nav.js pgame-api-bridge.js www/ && cp -rf assets sections www/",
     "build": "npm run app:prepare",
     "deploy": "wrangler deploy"
   },
@@ -12,6 +12,8 @@
   "dependencies": {
     "@capacitor/android": "^8.5.1",
     "@capacitor/cli": "^8.5.1",
-    "@capacitor/core": "^8.5.1"
+    "@capacitor/core": "^8.5.1",
+    "pushy-cordova": "^1.0.61",
+    "pushy-cordova-receiver": "file:node_modules/pushy-cordova/receiver"
   }
 }

@@ -1,6 +1,8 @@
 package ir.pgame.app;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -22,10 +24,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebViewClient;
+
+import me.pushy.sdk.Pushy;
 
 
 /*
@@ -45,6 +51,7 @@ import com.getcapacitor.BridgeWebViewClient;
  * - Persistent music between pages
  * - Drawer/navigation support
  * - Native touch feedback
+ * - Pushy push notifications
  * =========================================================
  */
 
@@ -163,7 +170,28 @@ public class MainActivity extends BridgeActivity {
                 savedInstanceState
         );
 
+
+        /*
+         * Push Notifications.
+         */
+        requestNotificationPermission();
+
+        try {
+
+            Pushy.listen(
+                    this
+            );
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+        }
+
+        registerPushyDevice();
+
+
         enableFullscreen();
+
 
         webView =
                 getBridge().getWebView();
@@ -233,6 +261,69 @@ public class MainActivity extends BridgeActivity {
         handler.post(
                 networkMonitor
         );
+    }
+
+
+    /*
+     * =========================================================
+     * PUSHY
+     * =========================================================
+     */
+
+    private void requestNotificationPermission() {
+
+        if (
+                android.os.Build.VERSION.SDK_INT >= 33
+        ) {
+
+            if (
+                    ContextCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.POST_NOTIFICATIONS
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+            ) {
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS
+                        },
+                        9001
+                );
+            }
+        }
+    }
+
+
+    private void registerPushyDevice() {
+
+        new Thread(
+                () -> {
+
+                    try {
+
+                        String deviceToken =
+                                Pushy.register(
+                                        this
+                                );
+
+                        android.util.Log.d(
+                                "PGAME_PUSHY",
+                                "DEVICE TOKEN: " +
+                                        deviceToken
+                        );
+
+                    } catch (Exception error) {
+
+                        android.util.Log.e(
+                                "PGAME_PUSHY",
+                                "REGISTRATION ERROR",
+                                error
+                        );
+                    }
+                }
+        ).start();
     }
 
 
@@ -478,6 +569,7 @@ public class MainActivity extends BridgeActivity {
                                 error
                         );
 
+
                         /*
                          * Only main-frame errors should
                          * affect startup UI.
@@ -508,9 +600,9 @@ public class MainActivity extends BridgeActivity {
                                 response
                         );
 
+
                         /*
-                         * The bundled local page should never
-                         * normally give us a 5xx main-frame error.
+                         * Main-frame server errors.
                          */
                         if (
                                 request != null &&
@@ -582,7 +674,9 @@ public class MainActivity extends BridgeActivity {
                         "document.documentElement.style.overflowX='hidden';" +
 
                         "if(document.body){" +
+
                         "document.body.style.overflowX='hidden';" +
+
                         "}" +
 
 
@@ -1512,9 +1606,8 @@ public class MainActivity extends BridgeActivity {
                         startupTimeoutTriggered =
                                 true;
 
+
                         /*
-                         * IMPORTANT:
-                         *
                          * The PGame bundle is local.
                          *
                          * A startup timeout therefore means
@@ -1799,6 +1892,22 @@ public class MainActivity extends BridgeActivity {
         handler.post(
                 this::initializePGameAppMode
         );
+
+
+        /*
+         * Restart Pushy listener after returning
+         * to foreground.
+         */
+        try {
+
+            Pushy.listen(
+                    this
+            );
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+        }
     }
 
 
