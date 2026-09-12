@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="دوستان PGame"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>PGame | دوستان</title>
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+    <style>
+
+        /* =========================================================
+           FRIENDS PAGE
+        ========================================================= */
+
+        .friends-page {
+
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(
+                    1100px,
+                    92%
+                );
+
+            margin:
+                0 auto;
+
+            padding:
+                45px 0 100px;
+
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .friends-hero {
+
+            text-align:
+                center;
+
+            margin-bottom:
+                28px;
+
+        }
+
+
+        .friends-hero .section-label {
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .friends-hero h1 {
+
+            margin:
+                7px 0;
+
+            font-size:
+                clamp(
+                    28px,
+                    5vw,
+                    46px
+                );
+
+        }
+
+
+        .friends-hero h1 span {
+
+            color:
+                #00ff9d;
+
+            text-shadow:
+                0 0 15px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .25
+                );
+
+        }
+
+
+        .friends-hero p {
+
+            margin:
+                0 auto;
+
+            max-width:
+                680px;
+
+            color:
+                #8f90a5;
+
+            font-size:
+                12px;
+
+            line-height:
+                2;
+
+        }
+
+
+        /* =========================================================
+           GRID
+        ========================================================= */
+
+        .friends-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                14px;
+
+        }
+
+
+        /* =========================================================
+           PANELS
+        ========================================================= */
+
+        .friends-panel {
+
+            padding:
+                20px;
+
+            border-radius:
+                20px;
+
+            background:
+                rgba(
+                    7,
+                    10,
+                    18,
+                    .74
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            backdrop-filter:
+                blur(14px);
+
+            box-shadow:
+                0 12px 40px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .14
+                );
+
+        }
+
+
+        .friends-panel-wide {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+
+        .friends-panel-head {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                12px;
+
+            margin-bottom:
+                15px;
+
+        }
+
+
+        .friends-panel-head h2 {
+
+            margin:
+                0;
+
+            font-size:
+                16px;
+
+        }
+
+
+        .friends-panel-head span {
+
+            color:
+                #75768a;
+
+            font-size:
+                10px;
+
+        }
+
+
+        /* =========================================================
+           SEARCH
+        ========================================================= */
+
+        .friends-search {
+
+            display:
+                flex;
+
+            gap:
+                8px;
+
+        }
+
+
+        .friends-search input {
+
+            flex:
+                1;
+
+            min-width:
+                0;
+
+            padding:
+                12px 13px;
+
+            border-radius:
+                13px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+
+            outline:
+                none;
+
+            font-family:
+                inherit;
+
+        }
+
+
+        .friends-search input::placeholder {
+
+            color:
+                #6f7084;
+
+        }
+
+
+        .friends-search input:focus {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .35
+                );
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .05
+                );
+
+        }
+
+
+        .friends-search button {
+
+            border:
+                0;
+
+            border-radius:
+                13px;
+
+            padding:
+                0 18px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #00ff9d,
+                    #00eaff
+                );
+
+            color:
+                #03110c;
+
+            font-family:
+                inherit;
+
+            font-weight:
+                900;
+
+            cursor:
+                pointer;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .friends-search button:hover {
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+            filter:
+                brightness(
+                    1.05
+                );
+
+        }
+
+
+        .friends-search button:disabled {
+
+            opacity:
+                .55;
+
+            cursor:
+                wait;
+
+            transform:
+                none;
+
+        }
+
+
+        /* =========================================================
+           LIST
+        ========================================================= */
+
+        .friend-list {
+
+            display:
+                grid;
+
+            gap:
+                9px;
+
+        }
+
+
+        .friend-item {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                11px;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .friend-item:hover {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+        }
+
+
+        .friend-avatar {
+
+            width:
+                42px;
+
+            height:
+                42px;
+
+            flex:
+                0 0 42px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .10
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .13
+                    )
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
+            font-size:
+                18px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .friend-info {
+
+            min-width:
+                0;
+
+            flex:
+                1;
+
+        }
+
+
+        .friend-info strong {
+
+            display:
+                block;
+
+            font-size:
+                12px;
+
+            white-space:
+                nowrap;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+
+        }
+
+
+        .friend-info span {
+
+            display:
+                block;
+
+            margin-top:
+                4px;
+
+            color:
+                #7f8093;
+
+            font-size:
+                9px;
+
+        }
+
+
+        .friend-actions {
+
+            display:
+                flex;
+
+            gap:
+                6px;
+
+        }
+
+
+        /* =========================================================
+           ACTION BUTTON
+        ========================================================= */
+
+        .friend-action {
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                10px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+
+            cursor:
+                pointer;
+
+            font-family:
+                inherit;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .friend-action:hover {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .25
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .06
+                );
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+        }
+
+
+        .friend-action.sent {
+
+            color:
+                #00ff9d;
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .30
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .08
+                );
+
+            cursor:
+                default;
+
+        }
+
+
+        .friend-action.sent:hover {
+
+            transform:
+                none;
+
+        }
+
+
+        .friend-action.danger:hover {
+
+            color:
+                #ff7183;
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .25
+                );
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .06
+                );
+
+        }
+
+
+        /* =========================================================
+           REQUEST ITEM
+        ========================================================= */
+
+        .request-item {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                11px;
+
+            border-radius:
+                14px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .05
+                );
+
+        }
+
+
+        .request-buttons {
+
+            display:
+                flex;
+
+            gap:
+                6px;
+
+        }
+
+
+        .request-button {
+
+            border:
+                0;
+
+            border-radius:
+                10px;
+
+            padding:
+                8px 10px;
+
+            font-family:
+                inherit;
+
+            font-size:
+                10px;
+
+            cursor:
+                pointer;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .request-button:hover {
+
+            transform:
+                translateY(
+                    -1px
+                );
+
+        }
+
+
+        .request-button:disabled {
+
+            opacity:
+                .55;
+
+            cursor:
+                wait;
+
+            transform:
+                none;
+
+        }
+
+
+        .request-accept {
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .10
+                );
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .request-reject {
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                );
+
+            color:
+                #ff7183;
+
+        }
+
+
+        /* =========================================================
+           EMPTY
+        ========================================================= */
+
+        .friends-empty {
+
+            padding:
+                25px 10px;
+
+            text-align:
+                center;
+
+            color:
+                #77788b;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.8;
+
+        }
+
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
+
+        .friends-status {
+
+            min-height:
+                18px;
+
+            margin-top:
+                10px;
+
+            color:
+                #8a8ba0;
+
+            font-size:
+                10px;
+
+        }
+
+
+        .friends-status.success {
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .friends-status.error {
+
+            color:
+                #ff7183;
+
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (
+            max-width: 900px
+        ) {
+
+            .friends-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+
+            .friends-panel-wide {
+
+                grid-column:
+                    1 / -1;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 650px
+        ) {
+
+            .friends-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .friends-panel-wide {
+
+                grid-column:
+                    auto;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 520px
+        ) {
+
+            .friends-page {
+
+                width:
+                    94%;
+
+                padding-top:
+                    30px;
+
+            }
+
+
+            .friends-search {
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .friends-search button {
+
+                min-height:
+                    42px;
+
+            }
+
+
+            .friend-item {
+
+                align-items:
+                    flex-start;
+
+            }
+
+
+            .friend-actions {
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .request-item {
+
+                align-items:
+                    flex-start;
+
+                flex-wrap:
+                    wrap;
+
+            }
+
+
+            .request-buttons {
+
+                width:
+                    100%;
+
+            }
+
+
+            .request-buttons button {
+
+                flex:
+                    1;
+
+            }
+
+        }
+
+    </style>
+
+    <script src="../pgame-api-bridge.js"></script>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================= -->
+
+    <div
+        aria-hidden="true"
+        class="background-effects"
+    >
+
+        <div class="nebula nebula-purple"></div>
+
+        <div class="nebula nebula-green"></div>
+
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+
+        <div class="stars stars-two"></div>
+
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+
+        <div class="planet planet-blue"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
+
+    <header class="navbar">
+
+        <a
+            class="logo"
+            href="../index.html"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </a>
+
+
+        <nav
+            class="nav-links"
+        ></nav>
+
+
+        <a
+            class="header-profile"
+            href="profile.html"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+            <div
+                class="header-player-info"
+            >
+
+                <strong>
+                    ...
+                </strong>
+
+                <span>
+                    حساب PGame
+                </span>
+
+            </div>
+
+            <b>
+                &lsaquo;
+            </b>
+
+        </a>
+
+    </header>
+
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
+    <main class="friends-page">
+
+
+        <!-- HERO -->
+
+        <section class="friends-hero">
+
+            <span
+                class="section-label"
+            >
+                👥 PGAME FRIENDS
+            </span>
+
+            <h1>
+
+                دوستان
+
+                <span>
+                    PGame
+                </span>
+
+            </h1>
+
+            <p>
+                دوستانت را پیدا کن، درخواست دوستی بفرست،
+                درخواست‌هایت را مدیریت کن و با گیمرهای PGame
+                در ارتباط باش.
+            </p>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             GRID
+        ===================================================== -->
+
+        <section class="friends-grid">
+
+
+            <!-- =================================================
+                 SEARCH
+            ================================================= -->
+
+            <div
+                class="
+                    friends-panel
+                    friends-panel-wide
+                "
+            >
+
+                <div
+                    class="friends-panel-head"
+                >
+
+                    <h2>
+                        🔎 پیدا کردن دوست
+                    </h2>
+
+                    <span>
+                        Username
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="friends-search"
+                >
+
+                    <input
+                        id="friend-search-input"
+                        type="text"
+                        autocomplete="off"
+                        maxlength="30"
+                        placeholder="نام کاربری را جستجو کن..."
+                    >
+
+
+                    <button
+                        id="friend-search-button"
+                        type="button"
+                    >
+                        جستجو
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="friend-search-status"
+                    class="friends-status"
+                ></div>
+
+
+                <div
+                    id="friend-search-results"
+                    class="friend-list"
+                    style="
+                        margin-top:12px;
+                    "
+                >
+
+                    <div
+                        class="friends-empty"
+                    >
+                        برای پیدا کردن کاربر، جستجو کن.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MY FRIENDS
+            ================================================= -->
+
+            <div
+                class="friends-panel"
+            >
+
+                <div
+                    class="friends-panel-head"
+                >
+
+                    <h2>
+                        🧑‍🤝‍🧑 دوستان من
+                    </h2>
+
+                    <span
+                        id="friends-count"
+                    >
+                        0 نفر
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="friends-list"
+                    class="friend-list"
+                >
+
+                    <div
+                        class="friends-empty"
+                    >
+                        در حال بارگذاری...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 INCOMING
+            ================================================= -->
+
+            <div
+                class="friends-panel"
+            >
+
+                <div
+                    class="friends-panel-head"
+                >
+
+                    <h2>
+                        📨 درخواست‌های دریافتی
+                    </h2>
+
+                    <span
+                        id="incoming-count"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="incoming-list"
+                    class="friend-list"
+                >
+
+                    <div
+                        class="friends-empty"
+                    >
+                        در حال بارگذاری...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 OUTGOING
+            ================================================= -->
+
+            <div
+                class="friends-panel friends-panel-wide"
+            >
+
+                <div
+                    class="friends-panel-head"
+                >
+
+                    <h2>
+                        📤 درخواست‌های ارسالی
+                    </h2>
+
+                    <span
+                        id="outgoing-count"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="outgoing-list"
+                    class="friend-list"
+                >
+
+                    <div
+                        class="friends-empty"
+                    >
+                        در حال بارگذاری...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         PGAME GLOBAL SCRIPT
+    ========================================================= -->
+
+    <script src="../script.js"></script>
+
+    <script src="../vexon-nav.js"></script>
+
+
+
+    <!-- =========================================================
+         FRIENDS SCRIPT
+    ========================================================= -->
+
+    <script>
+
+        /* =====================================================
+           HELPERS
+        ===================================================== */
+
+        const $ = (
+            id
+        ) => document.getElementById(id);
+
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replaceAll(
+                    "&",
+                    "&amp;"
+                )
+                .replaceAll(
+                    "<",
+                    "&lt;"
+                )
+                .replaceAll(
+                    ">",
+                    "&gt;"
+                )
+                .replaceAll(
+                    '"',
+                    "&quot;"
+                )
+                .replaceAll(
+                    "'",
+                    "&#039;"
+                );
+
+        }
+
+
+        function userAvatar(
+            username
+        ) {
+
+            const value =
+                String(
+                    username || "P"
+                )
+                    .trim();
+
+            return (
+                value.charAt(0)
+                .toUpperCase()
+            ) || "P";
+
+        }
+
+
+        function onlineLabel(
+            online
+        ) {
+
+            return Number(
+                online
+            ) === 1
+
+                ? `
+                    <span
+                        style="
+                            color:#00ff9d;
+                        "
+                    >
+                        ● آنلاین
+                    </span>
+                `
+
+                : `
+                    <span>
+                        ● آفلاین
+                    </span>
+                `;
+
+        }
+
+
+        function empty(
+            text
+        ) {
+
+            return `
+                <div class="friends-empty">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+
+        }
+
+
+        async function api(
+            url,
+            options = {}
+        ) {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        ...options,
+
+                        headers: {
+                            ...(options.body
+                                ? {
+                                    "Content-Type":
+                                        "application/json"
+                                }
+                                : {}),
+
+                            ...(options.headers || {})
+                        }
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    data.error ||
+                    "REQUEST_FAILED"
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+
+        /* =====================================================
+           ELEMENTS
+        ===================================================== */
+
+        const searchInput =
+            $("friend-search-input");
+
+        const searchButton =
+            $("friend-search-button");
+
+        const searchResults =
+            $("friend-search-results");
+
+        const searchStatus =
+            $("friend-search-status");
+
+        const friendsList =
+            $("friends-list");
+
+        const incomingList =
+            $("incoming-list");
+
+        const outgoingList =
+            $("outgoing-list");
+
+        const friendsCount =
+            $("friends-count");
+
+        const incomingCount =
+            $("incoming-count");
+
+        const outgoingCount =
+            $("outgoing-count");
+
+
+
+        /* =====================================================
+           RENDER FRIENDS
+        ===================================================== */
+
+        function renderFriends(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
+
+
+            friendsCount.textContent =
+                `${users.length} نفر`;
+
+
+            if (
+                !users.length
+            ) {
+
+                friendsList.innerHTML =
+                    empty(
+                        "هنوز دوستی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            friendsList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="friend-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="friend-actions"
+                                >
+
+                                    <button
+                                        class="friend-action"
+                                        title="پروفایل"
+                                        data-profile-friend="${user.id}"
+                                    >
+                                        👤
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            friend-action
+                                            danger
+                                        "
+                                        title="حذف دوست"
+                                        data-remove-friend="${user.id}"
+                                    >
+                                        🗑️
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           RENDER INCOMING
+        ===================================================== */
+
+        function renderIncoming(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
+
+
+            incomingCount.textContent =
+                users.length;
+
+
+            if (
+                !users.length
+            ) {
+
+                incomingList.innerHTML =
+                    empty(
+                        "درخواست دریافتی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            incomingList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="request-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="request-buttons"
+                                >
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-accept
+                                        "
+                                        data-accept="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        قبول
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-reject
+                                        "
+                                        data-reject="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        رد
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           RENDER OUTGOING
+        ===================================================== */
+
+        function renderOutgoing(
+            users
+        ) {
+
+            users =
+                Array.isArray(users)
+                    ? users
+                    : [];
+
+
+            outgoingCount.textContent =
+                users.length;
+
+
+            if (
+                !users.length
+            ) {
+
+                outgoingList.innerHTML =
+                    empty(
+                        "درخواست ارسالی نداری."
+                    );
+
+                return;
+
+            }
+
+
+            outgoingList.innerHTML =
+                users
+                    .map(
+                        user => `
+
+                            <div
+                                class="request-item"
+                            >
+
+                                <div
+                                    class="friend-avatar"
+                                >
+                                    ${escapeHtml(
+                                        userAvatar(
+                                            user.username
+                                        )
+                                    )}
+                                </div>
+
+
+                                <div
+                                    class="friend-info"
+                                >
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            user.username
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${onlineLabel(
+                                            user.online
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="request-buttons"
+                                >
+
+                                    <button
+                                        class="
+                                            request-button
+                                            request-reject
+                                        "
+                                        data-cancel="${user.id}"
+                                        data-request-id="${user.id}"
+                                    >
+                                        لغو درخواست
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+        }
+
+
+
+        /* =====================================================
+           LOAD FRIEND STATUS
+        ===================================================== */
+
+        async function loadFriends() {
+
+            try {
+
+                const data =
+                    await api(
+                        "/api/friends/status"
+                    );
+
+
+                renderFriends(
+                    data.friends || []
+                );
+
+
+                renderIncoming(
+                    data.incoming || []
+                );
+
+
+                renderOutgoing(
+                    data.outgoing || []
+                );
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Friends load error:",
+                    error
+                );
+
+
+                friendsList.innerHTML =
+                    empty(
+                        "خطا در دریافت لیست دوستان."
+                    );
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        async function searchFriends() {
+
+            const q =
+                searchInput.value
+                    .trim();
+
+
+            if (!q) {
+
+                searchResults.innerHTML =
+                    empty(
+                        "نام کاربری را وارد کن."
+                    );
+
+                searchStatus.textContent =
+                    "";
+
+                return;
+
+            }
+
+
+            searchButton.disabled =
+                true;
+
+
+            searchStatus.textContent =
+                "در حال جستجو...";
+
+
+            searchStatus.className =
+                "friends-status";
+
+
+            try {
+
+                const data =
+                    await api(
+                        `/api/friends/search?q=${encodeURIComponent(q)}`
+                    );
+
+
+                const users =
+                    Array.isArray(
+                        data.users
+                    )
+                        ? data.users
+                        : [];
+
+
+                if (
+                    !users.length
+                ) {
+
+                    searchResults.innerHTML =
+                        empty(
+                            "کاربری پیدا نشد."
+                        );
+
+                    searchStatus.textContent =
+                        "";
+
+                    return;
+
+                }
+
+
+                searchResults.innerHTML =
+                    users
+                        .map(
+                            user => {
+
+                                let action =
+                                    "";
+
+
+                                if (
+                                    user.relation ===
+                                    "friend"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="
+                                                friend-action
+                                                sent
+                                            "
+                                            disabled
+                                            title="دوست شما"
+                                        >
+                                            ✓
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else if (
+                                    user.relation ===
+                                    "outgoing"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="
+                                                friend-action
+                                                sent
+                                            "
+                                            disabled
+                                            title="درخواست ارسال شده"
+                                        >
+                                            ⏳
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else if (
+                                    user.relation ===
+                                    "incoming"
+                                ) {
+
+                                    action = `
+                                        <button
+                                            class="friend-action"
+                                            title="درخواست دریافتی"
+                                            data-refresh-friends="1"
+                                        >
+                                            👥
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                else {
+
+                                    action = `
+                                        <button
+                                            class="friend-action"
+                                            title="ارسال درخواست دوستی"
+                                            data-send-friend="${user.id}"
+                                        >
+                                            ➕
+                                        </button>
+                                    `;
+
+                                }
+
+
+                                const relationText =
+
+                                    user.relation === "friend"
+
+                                        ? "دوست شما"
+
+                                        : user.relation === "outgoing"
+
+                                            ? "درخواست ارسال شده"
+
+                                            : user.relation === "incoming"
+
+                                                ? "برای شما درخواست فرستاده"
+
+                                                : "کاربر PGame";
+
+
+                                return `
+
+                                    <div
+                                        class="friend-item"
+                                    >
+
+                                        <div
+                                            class="friend-avatar"
+                                        >
+                                            ${escapeHtml(
+                                                userAvatar(
+                                                    user.username
+                                                )
+                                            )}
+                                        </div>
+
+
+                                        <div
+                                            class="friend-info"
+                                        >
+
+                                            <strong>
+                                                ${escapeHtml(
+                                                    user.username
+                                                )}
+                                            </strong>
+
+                                            <span>
+                                                ${escapeHtml(
+                                                    relationText
+                                                )}
+                                            </span>
+
+                                        </div>
+
+
+                                        <div
+                                            class="friend-actions"
+                                        >
+
+                                            ${action}
+
+                                        </div>
+
+                                    </div>
+
+                                `;
+
+                            }
+                        )
+                        .join("");
+
+
+                searchStatus.textContent =
+                    `${users.length} نتیجه پیدا شد.`;
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Friend search error:",
+                    error
+                );
+
+
+                searchStatus.textContent =
+                    "خطا در جستجو.";
+
+
+                searchStatus.className =
+                    "friends-status error";
+
+            }
+
+            finally {
+
+                searchButton.disabled =
+                    false;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           SEND FRIEND REQUEST
+        ===================================================== */
+
+        async function sendFriend(
+            userId,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/request",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                user_id:
+                                    Number(
+                                        userId
+                                    )
+                            })
+                    }
+                );
+
+
+                searchStatus.textContent =
+                    "درخواست دوستی ارسال شد ✅";
+
+
+                searchStatus.className =
+                    "friends-status success";
+
+
+                await loadFriends();
+
+                await searchFriends();
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Send friend error:",
+                    error
+                );
+
+
+                const messages = {
+
+                    ALREADY_SENT:
+                        "درخواست قبلاً ارسال شده.",
+
+                    ALREADY_FRIENDS:
+                        "این کاربر دوست شماست.",
+
+                    INCOMING_PENDING:
+                        "این کاربر قبلاً برای شما درخواست فرستاده.",
+
+                    USER_NOT_FOUND:
+                        "کاربر پیدا نشد.",
+
+                    CANNOT_ADD_SELF:
+                        "نمی‌توانی خودت را اضافه کنی."
+
+                };
+
+
+                searchStatus.textContent =
+                    messages[
+                        error.message
+                    ] ||
+                    "ارسال درخواست ناموفق بود.";
+
+
+                searchStatus.className =
+                    "friends-status error";
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           ACCEPT / REJECT
+        ===================================================== */
+
+        async function respondFriend(
+            requestId,
+            action,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/respond",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+
+                                request_id:
+                                    Number(
+                                        requestId
+                                    ),
+
+                                action
+
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+
+                    action === "accept"
+
+                        ? "دوستی با موفقیت اضافه شد 🎉"
+
+                        : "درخواست رد شد.";
+
+
+                searchStatus.className =
+
+                    action === "accept"
+
+                        ? "friends-status success"
+
+                        : "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Friend response error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           CANCEL OUTGOING REQUEST
+        ===================================================== */
+
+        async function cancelFriendRequest(
+            requestId,
+            button = null
+        ) {
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/cancel",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                request_id:
+                                    Number(
+                                        requestId
+                                    )
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+                    "درخواست لغو شد.";
+
+                searchStatus.className =
+                    "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Cancel friend request error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           REMOVE FRIEND
+        ===================================================== */
+
+        async function removeFriend(
+            userId,
+            button = null
+        ) {
+
+            const confirmed =
+                confirm(
+                    "این کاربر از لیست دوستانت حذف شود؟"
+                );
+
+
+            if (
+                !confirmed
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                button
+            ) {
+
+                button.disabled =
+                    true;
+
+            }
+
+
+            try {
+
+                await api(
+                    "/api/friends/remove",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+                                user_id:
+                                    Number(
+                                        userId
+                                    )
+                            })
+                    }
+                );
+
+
+                await loadFriends();
+
+
+                searchStatus.textContent =
+                    "دوست با موفقیت حذف شد.";
+
+                searchStatus.className =
+                    "friends-status";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.error(
+                    "Remove friend error:",
+                    error
+                );
+
+
+                searchStatus.textContent =
+                    "حذف دوست ناموفق بود.";
+
+                searchStatus.className =
+                    "friends-status error";
+
+            }
+
+            finally {
+
+                if (
+                    button
+                ) {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           EVENTS - SEARCH
+        ===================================================== */
+
+        searchButton.addEventListener(
+            "click",
+            searchFriends
+        );
+
+
+        searchInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    searchFriends();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - SEARCH RESULTS
+        ===================================================== */
+
+        searchResults.addEventListener(
+            "click",
+            event => {
+
+                const sendButton =
+                    event.target.closest(
+                        "[data-send-friend]"
+                    );
+
+
+                if (
+                    sendButton
+                ) {
+
+                    sendFriend(
+                        sendButton.dataset.sendFriend,
+                        sendButton
+                    );
+
+                    return;
+
+                }
+
+
+                const refresh =
+                    event.target.closest(
+                        "[data-refresh-friends]"
+                    );
+
+
+                if (
+                    refresh
+                ) {
+
+                    loadFriends();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - INCOMING
+        ===================================================== */
+
+        incomingList.addEventListener(
+            "click",
+            event => {
+
+                const accept =
+                    event.target.closest(
+                        "[data-accept]"
+                    );
+
+
+                if (
+                    accept
+                ) {
+
+                    respondFriend(
+                        accept.dataset.requestId,
+                        "accept",
+                        accept
+                    );
+
+                    return;
+
+                }
+
+
+                const reject =
+                    event.target.closest(
+                        "[data-reject]"
+                    );
+
+
+                if (
+                    reject
+                ) {
+
+                    respondFriend(
+                        reject.dataset.requestId,
+                        "reject",
+                        reject
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - OUTGOING
+        ===================================================== */
+
+        outgoingList.addEventListener(
+            "click",
+            event => {
+
+                const cancel =
+                    event.target.closest(
+                        "[data-cancel]"
+                    );
+
+
+                if (
+                    cancel
+                ) {
+
+                    cancelFriendRequest(
+                        cancel.dataset.requestId ||
+                        cancel.dataset.cancel,
+                        cancel
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           EVENTS - FRIENDS
+        ===================================================== */
+
+        friendsList.addEventListener(
+            "click",
+            event => {
+
+                const profile =
+                    event.target.closest(
+                        "[data-profile-friend]"
+                    );
+
+
+                if (
+                    profile
+                ) {
+
+                    const id =
+                        Number(
+                            profile.dataset.profileFriend
+                        );
+
+
+                    if (
+                        id > 0
+                    ) {
+
+                        location.href =
+                            `profile.html?id=${encodeURIComponent(id)}`;
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                const remove =
+                    event.target.closest(
+                        "[data-remove-friend]"
+                    );
+
+
+                if (
+                    remove
+                ) {
+
+                    removeFriend(
+                        remove.dataset.removeFriend,
+                        remove
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           INITIAL LOAD
+        ===================================================== */
+
+        loadFriends();
+
+
+        /* =====================================================
+           AUTO REFRESH
+        ===================================================== */
+
+        setInterval(
+            () => {
+
+                loadFriends();
+
+            },
+            10000
+        );
+
+    </script>
+
+</body>
+
+</html>

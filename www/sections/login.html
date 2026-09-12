@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+
+<html
+    dir="rtl"
+    lang="fa"
+>
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="ورود به حساب PGame."
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <title>
+        PGame | ورود
+    </title>
+
+    <link
+        href="../style.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        /* =========================================================
+           LOGIN PAGE
+        ========================================================= */
+
+        .pgame-login-page {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            min-height:
+                calc(100vh - 170px);
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                45px
+                20px
+                70px;
+
+            box-sizing:
+                border-box;
+
+        }
+
+
+        /* =========================================================
+           MAIN WRAPPER
+        ========================================================= */
+
+        .pgame-login-shell {
+
+            position:
+                relative;
+
+            width:
+                min(1040px, 96%);
+
+            min-height:
+                610px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1.05fr
+                .95fr;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                32px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(
+                        7,
+                        10,
+                        18,
+                        .90
+                    ),
+                    rgba(
+                        10,
+                        8,
+                        24,
+                        .82
+                    )
+                );
+
+            backdrop-filter:
+                blur(24px);
+
+            box-shadow:
+                0 35px 100px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .45
+                );
+
+        }
+
+
+        /* =========================================================
+           DECORATIVE GRID
+        ========================================================= */
+
+        .pgame-login-shell::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            pointer-events:
+                none;
+
+            background:
+                linear-gradient(
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        .025
+                    ) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        .025
+                    ) 1px,
+                    transparent 1px
+                );
+
+            background-size:
+                45px
+                45px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    rgba(
+                        0,
+                        0,
+                        0,
+                        .9
+                    ),
+                    transparent
+                );
+
+        }
+
+
+        /* =========================================================
+           NEON GLOW
+        ========================================================= */
+
+        .pgame-login-glow {
+
+            position:
+                absolute;
+
+            width:
+                320px;
+
+            height:
+                320px;
+
+            border-radius:
+                50%;
+
+            filter:
+                blur(75px);
+
+            opacity:
+                .22;
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .pgame-login-glow.green {
+
+            top:
+                -110px;
+
+            right:
+                -100px;
+
+            background:
+                #00ff9d;
+
+        }
+
+
+        .pgame-login-glow.purple {
+
+            bottom:
+                -120px;
+
+            left:
+                -90px;
+
+            background:
+                #744dff;
+
+        }
+
+
+        .pgame-login-glow.blue {
+
+            top:
+                45%;
+
+            left:
+                40%;
+
+            width:
+                200px;
+
+            height:
+                200px;
+
+            background:
+                #00eaff;
+
+            opacity:
+                .08;
+
+        }
+
+
+        /* =========================================================
+           LEFT / HERO
+        ========================================================= */
+
+        .pgame-login-hero {
+
+            position:
+                relative;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            justify-content:
+                center;
+
+            padding:
+                55px;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .pgame-login-hero::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            top:
+                0;
+
+            left:
+                0;
+
+            width:
+                1px;
+
+            height:
+                100%;
+
+            background:
+                linear-gradient(
+                    transparent,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .25
+                    ),
+                    transparent
+                );
+
+        }
+
+
+        .pgame-login-status {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            width:
+                fit-content;
+
+            gap:
+                8px;
+
+            padding:
+                8px
+                13px;
+
+            margin-bottom:
+                22px;
+
+            border-radius:
+                999px;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .06
+                );
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .16
+                );
+
+            color:
+                #b8ffe6;
+
+            font-size:
+                10px;
+
+            font-weight:
+                900;
+
+            letter-spacing:
+                .6px;
+
+        }
+
+
+        .pgame-login-status-dot {
+
+            width:
+                7px;
+
+            height:
+                7px;
+
+            border-radius:
+                50%;
+
+            background:
+                #00ff9d;
+
+            box-shadow:
+                0 0 12px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .75
+                );
+
+        }
+
+
+        /* =========================================================
+           BIG LOGO
+        ========================================================= */
+
+        .pgame-login-brand {
+
+            display:
+                flex;
+
+            align-items:
+                baseline;
+
+            gap:
+                4px;
+
+            margin:
+                0
+                0
+                18px;
+
+            font-family:
+                Orbitron,
+                sans-serif;
+
+            font-size:
+                clamp(
+                    64px,
+                    9vw,
+                    105px
+                );
+
+            line-height:
+                .95;
+
+            font-weight:
+                900;
+
+            letter-spacing:
+                -5px;
+
+            text-shadow:
+                0 0 25px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
+        }
+
+
+        .pgame-login-brand .p {
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .pgame-login-brand .game {
+
+            color:
+                #ffffff;
+
+        }
+
+
+        .pgame-login-hero h1 {
+
+            margin:
+                0;
+
+            max-width:
+                520px;
+
+            font-size:
+                clamp(
+                    28px,
+                    4vw,
+                    48px
+                );
+
+            line-height:
+                1.35;
+
+        }
+
+
+        .pgame-login-hero h1 span {
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .pgame-login-hero-description {
+
+            max-width:
+                500px;
+
+            margin:
+                18px 0 0;
+
+            color:
+                #9696aa;
+
+            font-size:
+                12px;
+
+            line-height:
+                2.2;
+
+        }
+
+
+        /* =========================================================
+           HERO STATS
+        ========================================================= */
+
+        .pgame-login-stats {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap:
+                10px;
+
+            max-width:
+                520px;
+
+            margin-top:
+                32px;
+
+        }
+
+
+        .pgame-login-stat {
+
+            padding:
+                14px;
+
+            border-radius:
+                17px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+        }
+
+
+        .pgame-login-stat strong {
+
+            display:
+                block;
+
+            margin-bottom:
+                4px;
+
+            font-size:
+                14px;
+
+            font-weight:
+                900;
+
+        }
+
+
+        .pgame-login-stat span {
+
+            color:
+                #77788e;
+
+            font-size:
+                9px;
+
+        }
+
+
+        /* =========================================================
+           SIDE HUD
+        ========================================================= */
+
+        .pgame-login-hud {
+
+            position:
+                absolute;
+
+            right:
+                50px;
+
+            bottom:
+                45px;
+
+            width:
+                160px;
+
+            height:
+                160px;
+
+            opacity:
+                .7;
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .pgame-login-hud::before,
+        .pgame-login-hud::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .16
+                );
+
+            transform:
+                rotate(
+                    45deg
+                );
+
+        }
+
+
+        .pgame-login-hud::after {
+
+            inset:
+                18px;
+
+            border-color:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .16
+                );
+
+        }
+
+
+        .pgame-login-hud-core {
+
+            position:
+                absolute;
+
+            top:
+                50%;
+
+            left:
+                50%;
+
+            width:
+                46px;
+
+            height:
+                46px;
+
+            transform:
+                translate(
+                    -50%,
+                    -50%
+                );
+
+            border-radius:
+                50%;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .55
+                );
+
+            box-shadow:
+                0 0 25px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .16
+                );
+
+        }
+
+
+        .pgame-login-hud-core::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                11px;
+
+            border-radius:
+                50%;
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+        }
+
+
+        /* =========================================================
+           RIGHT / FORM
+        ========================================================= */
+
+        .pgame-login-form-panel {
+
+            position:
+                relative;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                45px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .018
+                );
+
+        }
+
+
+        .pgame-login-form-panel::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                22px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .045
+                );
+
+            border-radius:
+                24px;
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .pgame-login-form-card {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                min(
+                    390px,
+                    100%
+                );
+
+        }
+
+
+        .pgame-login-kicker {
+
+            display:
+                inline-block;
+
+            margin-bottom:
+                10px;
+
+            color:
+                #00eaff;
+
+            font-size:
+                10px;
+
+            font-weight:
+                900;
+
+            letter-spacing:
+                1.5px;
+
+        }
+
+
+        .pgame-login-form-card h2 {
+
+            margin:
+                0;
+
+            font-size:
+                clamp(
+                    28px,
+                    4vw,
+                    38px
+                );
+
+            line-height:
+                1.4;
+
+        }
+
+
+        .pgame-login-form-card h2 span {
+
+            display:
+                block;
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        .pgame-login-form-card > p {
+
+            margin:
+                10px
+                0
+                28px;
+
+            color:
+                #8a8aa0;
+
+            font-size:
+                11px;
+
+            line-height:
+                2;
+
+        }
+
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .pgame-login-form {
+
+            display:
+                grid;
+
+            gap:
+                9px;
+
+        }
+
+
+        .pgame-login-label {
+
+            margin-top:
+                3px;
+
+            color:
+                #d6d6e6;
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+        }
+
+
+        .pgame-login-input-wrap {
+
+            position:
+                relative;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+        }
+
+
+        .pgame-login-input-icon {
+
+            position:
+                absolute;
+
+            right:
+                14px;
+
+            font-size:
+                15px;
+
+            opacity:
+                .75;
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .pgame-login-input {
+
+            width:
+                100%;
+
+            min-height:
+                52px;
+
+            box-sizing:
+                border-box;
+
+            padding:
+                0
+                45px
+                0
+                15px;
+
+            border-radius:
+                15px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .075
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #ffffff;
+
+            outline:
+                none;
+
+            font-family:
+                inherit;
+
+            font-size:
+                12px;
+
+            direction:
+                ltr;
+
+            text-align:
+                left;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .pgame-login-input::placeholder {
+
+            color:
+                #606174;
+
+        }
+
+
+        .pgame-login-input:focus {
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .40
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .035
+                );
+
+            box-shadow:
+                0 0 24px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .07
+                );
+
+        }
+
+
+        /* =========================================================
+           LOGIN BUTTON
+        ========================================================= */
+
+        .pgame-login-button {
+
+            position:
+                relative;
+
+            width:
+                100%;
+
+            min-height:
+                56px;
+
+            margin-top:
+                9px;
+
+            overflow:
+                hidden;
+
+            border:
+                none;
+
+            border-radius:
+                16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00ff9d,
+                    #00d6ff
+                );
+
+            color:
+                #020509;
+
+            font-family:
+                inherit;
+
+            font-size:
+                12px;
+
+            font-weight:
+                900;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                opacity .2s ease;
+
+            box-shadow:
+                0 14px 30px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+        }
+
+
+        .pgame-login-button::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            top:
+                0;
+
+            left:
+                -100%;
+
+            width:
+                70%;
+
+            height:
+                100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        .28
+                    ),
+                    transparent
+                );
+
+            transform:
+                skewX(
+                    -20deg
+                );
+
+            transition:
+                left .6s ease;
+
+        }
+
+
+        .pgame-login-button:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            box-shadow:
+                0 18px 35px
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
+        }
+
+
+        .pgame-login-button:hover::before {
+
+            left:
+                140%;
+
+        }
+
+
+        .pgame-login-button:disabled {
+
+            opacity:
+                .6;
+
+            cursor:
+                wait;
+
+            transform:
+                none;
+
+        }
+
+
+        /* =========================================================
+           STATUS MESSAGE
+        ========================================================= */
+
+        .pgame-login-message {
+
+            min-height:
+                22px;
+
+            margin-top:
+                9px;
+
+            font-size:
+                10px;
+
+            line-height:
+                1.8;
+
+            text-align:
+                center;
+
+        }
+
+
+        .pgame-login-message.error {
+
+            color:
+                #ff7183;
+
+        }
+
+
+        .pgame-login-message.success {
+
+            color:
+                #00ff9d;
+
+        }
+
+
+        /* =========================================================
+           DIVIDER
+        ========================================================= */
+
+        .pgame-login-divider {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            margin:
+                18px
+                0;
+
+        }
+
+
+        .pgame-login-divider span {
+
+            flex:
+                1;
+
+            height:
+                1px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+        }
+
+
+        .pgame-login-divider small {
+
+            color:
+                #68697c;
+
+            font-size:
+                9px;
+
+        }
+
+
+        /* =========================================================
+           REGISTER
+        ========================================================= */
+
+        .pgame-register-button {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            width:
+                100%;
+
+            min-height:
+                50px;
+
+            box-sizing:
+                border-box;
+
+            border-radius:
+                15px;
+
+            border:
+                1px solid
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .28
+                );
+
+            background:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .07
+                );
+
+            color:
+                #ffffff;
+
+            text-decoration:
+                none;
+
+            font-size:
+                11px;
+
+            font-weight:
+                900;
+
+            transition:
+                .2s ease;
+
+        }
+
+
+        .pgame-register-button:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .12
+                );
+
+            border-color:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .45
+                );
+
+        }
+
+
+        /* =========================================================
+           LOGIN META
+        ========================================================= */
+
+        .pgame-login-meta {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                12px;
+
+            margin-top:
+                18px;
+
+            color:
+                #6f7083;
+
+            font-size:
+                8px;
+
+        }
+
+
+        .pgame-login-meta strong {
+
+            color:
+                #a0a1b3;
+
+            font-weight:
+                700;
+
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .pgame-login-page {
+
+                min-height:
+                    auto;
+
+                padding:
+                    25px
+                    14px
+                    55px;
+
+            }
+
+
+            .pgame-login-shell {
+
+                grid-template-columns:
+                    1fr;
+
+                min-height:
+                    auto;
+
+                width:
+                    min(
+                        560px,
+                        100%
+                    );
+
+            }
+
+
+            .pgame-login-hero {
+
+                min-height:
+                    390px;
+
+                padding:
+                    35px
+                    28px;
+
+            }
+
+
+            .pgame-login-hero::after {
+
+                width:
+                    100%;
+
+                height:
+                    1px;
+
+                top:
+                    auto;
+
+                bottom:
+                    0;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(
+                            0,
+                            255,
+                            157,
+                            .25
+                        ),
+                        transparent
+                    );
+
+            }
+
+
+            .pgame-login-hud {
+
+                right:
+                    auto;
+
+                left:
+                    20px;
+
+                bottom:
+                    20px;
+
+                width:
+                    120px;
+
+                height:
+                    120px;
+
+            }
+
+
+            .pgame-login-stats {
+
+                max-width:
+                    100%;
+
+            }
+
+
+            .pgame-login-form-panel {
+
+                padding:
+                    34px
+                    28px
+                    40px;
+
+            }
+
+
+            .pgame-login-form-panel::before {
+
+                inset:
+                    14px;
+
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .pgame-login-hero {
+
+                min-height:
+                    360px;
+
+                padding:
+                    28px
+                    20px;
+
+            }
+
+
+            .pgame-login-brand {
+
+                font-size:
+                    62px;
+
+                letter-spacing:
+                    -3px;
+
+            }
+
+
+            .pgame-login-hero h1 {
+
+                font-size:
+                    27px;
+
+            }
+
+
+            .pgame-login-hero-description {
+
+                font-size:
+                    10px;
+
+            }
+
+
+            .pgame-login-stats {
+
+                grid-template-columns:
+                    1fr 1fr 1fr;
+
+                gap:
+                    7px;
+
+            }
+
+
+            .pgame-login-stat {
+
+                padding:
+                    10px;
+
+            }
+
+
+            .pgame-login-stat strong {
+
+                font-size:
+                    12px;
+
+            }
+
+
+            .pgame-login-stat span {
+
+                font-size:
+                    8px;
+
+            }
+
+
+            .pgame-login-form-panel {
+
+                padding:
+                    28px
+                    20px
+                    34px;
+
+            }
+
+
+            .pgame-login-form-card h2 {
+
+                font-size:
+                    29px;
+
+            }
+
+
+            .pgame-login-meta {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    center;
+
+            }
+
+        }
+
+    </style>
+
+    <script src="../pgame-api-bridge.js"></script>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         BACKGROUND
+    ========================================================== -->
+
+    <div
+        class="background-effects"
+        aria-hidden="true"
+    >
+
+        <div class="nebula nebula-purple"></div>
+
+        <div class="nebula nebula-green"></div>
+
+        <div class="nebula nebula-blue"></div>
+
+        <div class="stars stars-one"></div>
+
+        <div class="stars stars-two"></div>
+
+        <div class="stars stars-three"></div>
+
+        <div class="planet planet-purple"></div>
+
+        <div class="planet planet-blue"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================== -->
+
+    <header class="navbar">
+
+        <a
+            class="logo"
+            href="../index.html"
+            aria-label="PGame"
+        >
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </a>
+
+
+        <nav class="nav-links"></nav>
+
+
+        <a
+            class="header-profile"
+            href="settings.html"
+        >
+
+            <div class="header-profile-icon">
+                👤
+            </div>
+
+
+            <div class="header-player-info">
+
+                <strong>
+                    ...
+                </strong>
+
+                <span>
+                    در حال بررسی حساب...
+                </span>
+
+            </div>
+
+
+            <b>
+                &lsaquo;
+            </b>
+
+        </a>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+    <main>
+
+        <section class="pgame-login-page">
+
+            <div class="pgame-login-shell">
+
+
+                <!-- GLOWS -->
+
+                <div class="pgame-login-glow green"></div>
+
+                <div class="pgame-login-glow purple"></div>
+
+                <div class="pgame-login-glow blue"></div>
+
+
+                <!-- =================================================
+                     HERO SIDE
+                ================================================== -->
+
+                <section class="pgame-login-hero">
+
+
+                    <div class="pgame-login-status">
+
+                        <span class="pgame-login-status-dot"></span>
+
+                        PGAME NETWORK ONLINE
+
+                    </div>
+
+
+                    <div class="pgame-login-brand">
+
+                        <span class="p">
+                            P
+                        </span>
+
+                        <span class="game">
+                            Game
+                        </span>
+
+                    </div>
+
+
+                    <h1>
+
+                        آماده‌ای برای
+
+                        <span>
+                            برگشتن به بازی؟
+                        </span>
+
+                    </h1>
+
+
+                    <p class="pgame-login-hero-description">
+
+                        وارد حساب PGame شو،
+                        XP خودت را ادامه بده،
+                        سکه‌هایت را ببین و دوباره وارد دنیای
+                        Play • Compete • Level Up شو.
+
+                    </p>
+
+
+                    <div class="pgame-login-stats">
+
+
+                        <div class="pgame-login-stat">
+
+                            <strong>
+                                XP
+                            </strong>
+
+                            <span>
+                                رشد و پیشرفت
+                            </span>
+
+                        </div>
+
+
+                        <div class="pgame-login-stat">
+
+                            <strong>
+                                🪙
+                            </strong>
+
+                            <span>
+                                PCoins
+                            </span>
+
+                        </div>
+
+
+                        <div class="pgame-login-stat">
+
+                            <strong>
+                                LVL
+                            </strong>
+
+                            <span>
+                                سطح بازیکن
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="pgame-login-hud">
+
+                        <div class="pgame-login-hud-core"></div>
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================================
+                     FORM SIDE
+                ================================================== -->
+
+                <section class="pgame-login-form-panel">
+
+
+                    <div class="pgame-login-form-card">
+
+
+                        <span class="pgame-login-kicker">
+                            // PLAYER AUTHENTICATION
+                        </span>
+
+
+                        <h2>
+
+                            ورود به
+
+                            <span>
+                                حساب PGame
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            اطلاعات ورودت را وارد کن
+                            تا بازی را ادامه بدهی.
+
+                        </p>
+
+
+                        <!-- =================================================
+                             FORM
+                        ================================================== -->
+
+                        <form
+                            class="pgame-login-form"
+                            id="login-form"
+                        >
+
+
+                            <label
+                                class="pgame-login-label"
+                                for="login-username"
+                            >
+                                نام کاربری
+                            </label>
+
+
+                            <div class="pgame-login-input-wrap">
+
+                                <span
+                                    class="pgame-login-input-icon"
+                                >
+                                    👤
+                                </span>
+
+
+                                <input
+                                    class="pgame-login-input"
+                                    autocomplete="username"
+                                    id="login-username"
+                                    maxlength="20"
+                                    placeholder="نام کاربری"
+                                    required
+                                    type="text"
+                                >
+
+                            </div>
+
+
+                            <label
+                                class="pgame-login-label"
+                                for="login-password"
+                            >
+                                رمز عبور
+                            </label>
+
+
+                            <div class="pgame-login-input-wrap">
+
+                                <span
+                                    class="pgame-login-input-icon"
+                                >
+                                    🔐
+                                </span>
+
+
+                                <input
+                                    class="pgame-login-input"
+                                    autocomplete="current-password"
+                                    id="login-password"
+                                    minlength="8"
+                                    placeholder="رمز عبور"
+                                    required
+                                    type="password"
+                                >
+
+                            </div>
+
+
+                            <button
+                                class="pgame-login-button"
+                                id="login-button"
+                                type="submit"
+                            >
+
+                                🚀 ورود به PGame
+
+                            </button>
+
+
+                            <div
+                                class="pgame-login-message"
+                                id="login-message"
+                                aria-live="polite"
+                            ></div>
+
+
+                        </form>
+
+
+                        <!-- =================================================
+                             DIVIDER
+                        ================================================== -->
+
+                        <div class="pgame-login-divider">
+
+                            <span></span>
+
+                            <small>
+                                هنوز بازیکن PGame نیستی؟
+                            </small>
+
+                            <span></span>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             REGISTER
+                        ================================================== -->
+
+                        <a
+                            class="pgame-register-button"
+                            href="register.html"
+                        >
+
+                            ✨ ساخت حساب PGame
+
+                        </a>
+
+
+                        <!-- =================================================
+                             META
+                        ================================================== -->
+
+                        <div class="pgame-login-meta">
+
+                            <span>
+
+                                امنیت حساب
+
+                                <strong>
+                                    فعال
+                                </strong>
+
+                            </span>
+
+
+                            <span>
+                                PLAY • COMPETE • LEVEL UP.
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <span class="logo-p">
+                P
+            </span>
+
+            <span class="logo-rest">
+                Game
+            </span>
+
+        </div>
+
+
+        <p>
+            PLAY &bull; COMPETE &bull; LEVEL UP.
+        </p>
+
+
+        <div class="footer-socials">
+
+            <span>
+                ✈️
+            </span>
+
+            <span>
+                ◎
+            </span>
+
+            <span>
+                ▶
+            </span>
+
+        </div>
+
+
+        <span>
+
+            ساخته شده با 💚 برای گیمرها
+
+            <br>
+
+            &copy; 2026 PGame &mdash;
+            همه حقوق محفوظ است.
+
+        </span>
+
+    </footer>
+
+
+    <!-- =========================================================
+         LOGIN SCRIPT
+    ========================================================== -->
+
+    <script>
+
+        (function () {
+
+            "use strict";
+
+
+            const form =
+                document.getElementById(
+                    "login-form"
+                );
+
+
+            const usernameInput =
+                document.getElementById(
+                    "login-username"
+                );
+
+
+            const passwordInput =
+                document.getElementById(
+                    "login-password"
+                );
+
+
+            const loginButton =
+                document.getElementById(
+                    "login-button"
+                );
+
+
+            const messageElement =
+                document.getElementById(
+                    "login-message"
+                );
+
+
+            function setMessage(
+                text,
+                type = ""
+            ) {
+
+                messageElement.textContent =
+                    text;
+
+                messageElement.className =
+                    "pgame-login-message";
+
+                if (type) {
+
+                    messageElement.classList.add(
+                        type
+                    );
+
+                }
+
+            }
+
+
+            form.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    const username =
+                        usernameInput.value
+                            .trim();
+
+
+                    const password =
+                        passwordInput.value;
+
+
+                    setMessage(
+                        ""
+                    );
+
+
+                    if (
+                        !username ||
+                        !password
+                    ) {
+
+                        setMessage(
+                            "نام کاربری و رمز عبور را وارد کن.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    loginButton.disabled =
+                        true;
+
+
+                    loginButton.textContent =
+                        "⏳ در حال ورود...";
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/login",
+                                {
+
+                                    method:
+                                        "POST",
+
+                                    credentials:
+                                        "include",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json"
+
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+
+                                            username,
+
+                                            password
+
+                                        })
+
+                                }
+                            );
+
+
+                        let data = {};
+
+
+                        try {
+
+                            data =
+                                await response.json();
+
+                        } catch {
+
+                            data =
+                                {};
+
+                        }
+
+
+                        if (
+                            !response.ok
+                        ) {
+
+                            setMessage(
+                                data.message ||
+                                "ورود ناموفق بود.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * اپ PGame:
+                         * Session Token را ذخیره کن
+                         * تا درخواست‌های بعدی احراز هویت شوند.
+                         */
+                        if (data.app_token) {
+
+                            try {
+
+                                localStorage.setItem(
+                                    "pgame_app_session",
+                                    data.app_token
+                                );
+
+                            } catch (sessionError) {
+
+                                console.debug(
+                                    "LOGIN_SESSION_WRITE_ERROR",
+                                    sessionError
+                                );
+
+                            }
+
+                        }
+
+
+                        /*
+                         * اگر API اطلاعات کاربر را
+                         * همراه ورود برگرداند،
+                         * همان لحظه کش را بساز.
+                         */
+
+                        if (
+                            data.user &&
+                            typeof data.user ===
+                                "object"
+                        ) {
+
+                            try {
+
+                                localStorage.setItem(
+                                    "pgame_account_cache_v1",
+                                    JSON.stringify({
+
+                                        saved_at:
+                                            Date.now(),
+
+                                        user:
+                                            data.user
+
+                                    })
+                                );
+
+                            } catch (
+                                cacheError
+                            ) {
+
+                                console.debug(
+                                    "LOGIN_CACHE_WRITE_ERROR",
+                                    cacheError
+                                );
+
+                            }
+
+                        }
+
+
+                        setMessage(
+                            "✅ ورود موفق بود؛ در حال ورود به PGame...",
+                            "success"
+                        );
+
+
+                        setTimeout(
+                            function () {
+
+                                location.href =
+                                    "settings.html";
+
+                            },
+                            450
+                        );
+
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.error(
+                            "LOGIN_ERROR",
+                            error
+                        );
+
+
+                        setMessage(
+                            "❌ ارتباط با سرور برقرار نشد.",
+                            "error"
+                        );
+
+                    } finally {
+
+                        loginButton.disabled =
+                            false;
+
+                        loginButton.textContent =
+                            "🚀 ورود به PGame";
+
+                    }
+
+                }
+            );
+
+        })();
+
+    </script>
+
+
+    <!-- =========================================================
+         GLOBAL SCRIPTS
+    ========================================================== -->
+
+    <script src="../script.js"></script>
+
+    <script src="../vexon-nav.js"></script>
+
+
+</body>
+
+</html>
