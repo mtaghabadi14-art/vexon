@@ -4,7 +4,7 @@
   "main": "worker.js",
   "compatibility_date": "2026-08-29",
   "build": {
-    "command": "node scripts/prepare-worker.mjs"
+    "command": "npm run build"
   },
   "assets": {
     "directory": "."
