@@ -2,7 +2,7 @@
   "name": "PGAME_SITE",
   "private": true,
   "scripts": {
-    "app:prepare": "mkdir -p www && rm -rf www/* && cp -f index.html style.css script.js vexon-nav.js www/ && cp -rf assets sections www/",
+     "app:prepare": "mkdir -p www && rm -rf www/* && cp -f index.html style.css script.js vexon-nav.js pgame-api-bridge.js www/ && cp -rf assets sections www/",
     "build": "npm run app:prepare",
     "deploy": "wrangler deploy"
   },
