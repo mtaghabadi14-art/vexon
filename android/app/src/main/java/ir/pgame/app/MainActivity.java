@@ -2,6 +2,7 @@ package ir.pgame.app;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,20 +27,50 @@ import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebViewClient;
 
+
+/*
+ * =========================================================
+ * PGAME MAIN ACTIVITY
+ *
+ * Features:
+ *
+ * - Capacitor WebView
+ * - Immersive fullscreen
+ * - PGame app mode
+ * - Native HTTP compatible
+ * - Custom splash
+ * - Offline top banner
+ * - Automatic online/offline detection
+ * - Native PGame theme music
+ * - Persistent music between pages
+ * - Drawer/navigation support
+ * - Native touch feedback
+ * =========================================================
+ */
+
 public class MainActivity extends BridgeActivity {
+
 
     /*
      * =========================================================
-     * PGAME APP CONFIG
+     * CONFIG
      * =========================================================
      */
 
     private static final String PGAME_API_BASE =
             "https://s.vexongame.workers.dev";
 
-    private static final long STARTUP_TIMEOUT = 15000L;
-    private static final long STARTUP_FINISH_DELAY = 180L;
-    private static final long APP_MODE_DELAY = 250L;
+    private static final long STARTUP_TIMEOUT =
+            15000L;
+
+    private static final long STARTUP_FINISH_DELAY =
+            180L;
+
+    private static final long APP_MODE_DELAY =
+            250L;
+
+    private static final long NETWORK_CHECK_INTERVAL =
+            3000L;
 
 
     /*
@@ -49,27 +80,65 @@ public class MainActivity extends BridgeActivity {
      */
 
     private WebView webView;
+
     private ViewGroup rootLayout;
 
     private View splashOverlay;
-    private View offlineOverlay;
+
     private View errorOverlay;
+
+    private TextView offlineBanner;
 
 
     /*
      * =========================================================
-     * HANDLER / STARTUP STATE
+     * AUDIO
+     * =========================================================
+     */
+
+    private MediaPlayer pgameThemePlayer;
+
+
+    /*
+     * =========================================================
+     * HANDLER / STATE
      * =========================================================
      */
 
     private final Handler handler =
-            new Handler(Looper.getMainLooper());
+            new Handler(
+                    Looper.getMainLooper()
+            );
 
     private boolean pageLoaded = false;
+
     private boolean startupFinished = false;
+
     private boolean startupTimeoutTriggered = false;
 
     private Runnable startupTimeoutRunnable;
+
+
+    /*
+     * =========================================================
+     * NETWORK MONITOR
+     * =========================================================
+     */
+
+    private final Runnable networkMonitor =
+            new Runnable() {
+
+                @Override
+                public void run() {
+
+                    updateNetworkBanner();
+
+                    handler.postDelayed(
+                            this,
+                            NETWORK_CHECK_INTERVAL
+                    );
+                }
+            };
 
 
     /*
@@ -83,48 +152,87 @@ public class MainActivity extends BridgeActivity {
             @Nullable Bundle savedInstanceState
     ) {
 
-        SplashScreen.installSplashScreen(this);
+        SplashScreen.installSplashScreen(
+                this
+        );
 
         /*
-         * IMPORTANT:
-         *
-         * Capacitor owns its own WebView and layout.
-         *
-         * We do NOT call setContentView().
-         * We do NOT create another WebView.
-         * We do NOT detach Capacitor's WebView.
+         * Capacitor owns the WebView.
          */
-        super.onCreate(savedInstanceState);
+        super.onCreate(
+                savedInstanceState
+        );
 
         enableFullscreen();
 
-        webView = getBridge().getWebView();
+        webView =
+                getBridge().getWebView();
+
+        rootLayout =
+                findViewById(
+                        android.R.id.content
+                );
+
+        if (webView == null) {
+            return;
+        }
+
 
         /*
-         * android.R.id.content is used only for
-         * temporary native overlays.
+         * WebView.
          */
-        rootLayout = findViewById(
-                android.R.id.content
+        setupWebView();
+
+
+        /*
+         * Native UI.
+         */
+        createSplashOverlay();
+
+        createErrorOverlay();
+
+        createOfflineBanner();
+
+
+        /*
+         * Initial state.
+         */
+        showSplash();
+
+        updateNetworkBanner();
+
+
+        /*
+         * Startup timeout.
+         */
+        startStartupTimeout();
+
+
+        /*
+         * PGame native mode.
+         */
+        handler.postDelayed(
+                this::initializePGameAppMode,
+                APP_MODE_DELAY
         );
 
-        if (webView != null) {
 
-            setupWebView();
+        /*
+         * Start music.
+         */
+        startPGameTheme();
 
-            createSplashOverlay();
-            createOfflineOverlay();
-            createErrorOverlay();
 
-            showSplash();
+        /*
+         * Start network monitor.
+         */
+        handler.removeCallbacks(
+                networkMonitor
+        );
 
-            startStartupTimeout();
-
-            handler.postDelayed(
-                    this::initializePGameAppMode,
-                    APP_MODE_DELAY
-            );
-        }
+        handler.post(
+                networkMonitor
+        );
     }
 
 
@@ -141,23 +249,54 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
+
         WebSettings settings =
                 webView.getSettings();
 
-        settings.setJavaScriptEnabled(true);
 
-        settings.setDomStorageEnabled(true);
+        /*
+         * JavaScript.
+         */
+        settings.setJavaScriptEnabled(
+                true
+        );
 
-        settings.setDatabaseEnabled(true);
 
+        /*
+         * Local storage.
+         */
+        settings.setDomStorageEnabled(
+                true
+        );
+
+        settings.setDatabaseEnabled(
+                true
+        );
+
+
+        /*
+         * Windows / media.
+         */
         settings.setJavaScriptCanOpenWindowsAutomatically(
                 true
         );
 
+        settings.setMediaPlaybackRequiresUserGesture(
+                false
+        );
+
+
+        /*
+         * Images.
+         */
         settings.setLoadsImagesAutomatically(
                 true
         );
 
+
+        /*
+         * Local files.
+         */
         settings.setAllowFileAccess(
                 true
         );
@@ -166,6 +305,10 @@ public class MainActivity extends BridgeActivity {
                 true
         );
 
+
+        /*
+         * Zoom.
+         */
         settings.setSupportZoom(
                 false
         );
@@ -178,6 +321,10 @@ public class MainActivity extends BridgeActivity {
                 false
         );
 
+
+        /*
+         * Layout.
+         */
         settings.setLoadWithOverviewMode(
                 false
         );
@@ -186,16 +333,17 @@ public class MainActivity extends BridgeActivity {
                 false
         );
 
+
+        /*
+         * Cache.
+         */
         settings.setCacheMode(
                 WebSettings.LOAD_DEFAULT
         );
 
-        settings.setMediaPlaybackRequiresUserGesture(
-                false
-        );
 
         /*
-         * Keep compatibility with external API resources.
+         * Mixed content compatibility.
          */
         try {
 
@@ -209,7 +357,7 @@ public class MainActivity extends BridgeActivity {
 
 
         /*
-         * WebView appearance.
+         * Appearance.
          */
         webView.setBackgroundColor(
                 Color.TRANSPARENT
@@ -254,11 +402,7 @@ public class MainActivity extends BridgeActivity {
 
 
         /*
-         * IMPORTANT:
-         *
-         * Do NOT replace Capacitor's WebChromeClient.
-         *
-         * We only subclass BridgeWebViewClient.
+         * Keep Capacitor's bridge.
          */
         webView.setWebViewClient(
                 new BridgeWebViewClient(
@@ -278,7 +422,8 @@ public class MainActivity extends BridgeActivity {
                                 favicon
                         );
 
-                        pageLoaded = false;
+                        pageLoaded =
+                                false;
 
                         if (!startupFinished) {
                             showSplash();
@@ -292,24 +437,24 @@ public class MainActivity extends BridgeActivity {
                             String url
                     ) {
 
-                        /*
-                         * Preserve Capacitor behavior first.
-                         */
                         super.onPageFinished(
                                 view,
                                 url
                         );
 
-                        pageLoaded = true;
+                        pageLoaded =
+                                true;
 
                         enableFullscreen();
 
-                        /*
-                         * Re-apply app mode on every local page.
-                         */
                         handler.post(
                                 MainActivity.this
                                         ::initializePGameAppMode
+                        );
+
+                        handler.post(
+                                MainActivity.this
+                                        ::updateNetworkBanner
                         );
 
                         handler.postDelayed(
@@ -327,15 +472,16 @@ public class MainActivity extends BridgeActivity {
                             WebResourceError error
                     ) {
 
-                        /*
-                         * Preserve Capacitor error handling.
-                         */
                         super.onReceivedError(
                                 view,
                                 request,
                                 error
                         );
 
+                        /*
+                         * Only main-frame errors should
+                         * affect startup UI.
+                         */
                         if (
                                 request != null &&
                                 request.isForMainFrame()
@@ -356,25 +502,26 @@ public class MainActivity extends BridgeActivity {
                             WebResourceResponse response
                     ) {
 
-                        /*
-                         * Preserve Capacitor behavior.
-                         */
                         super.onReceivedHttpError(
                                 view,
                                 request,
                                 response
                         );
 
+                        /*
+                         * The bundled local page should never
+                         * normally give us a 5xx main-frame error.
+                         */
                         if (
                                 request != null &&
                                 request.isForMainFrame() &&
                                 response != null
                         ) {
 
-                            int statusCode =
+                            int status =
                                     response.getStatusCode();
 
-                            if (statusCode >= 500) {
+                            if (status >= 500) {
 
                                 handler.post(
                                         MainActivity.this
@@ -400,8 +547,10 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
+
         String js =
                 "(function(){" +
+
                         "try{" +
 
 
@@ -416,24 +565,21 @@ public class MainActivity extends BridgeActivity {
                         ");" +
 
                         "if(document.body){" +
+
                         "document.body.classList.add(" +
                         "'pgame-app'" +
                         ");" +
+
                         "}" +
 
 
                         /*
                          * -------------------------------------------------
                          * SCROLL
-                         *
-                         * IMPORTANT:
-                         * Only horizontal overflow is hidden.
-                         * Vertical scrolling remains completely normal.
                          * -------------------------------------------------
                          */
 
-                        "document.documentElement.style.overflowX=" +
-                        "'hidden';" +
+                        "document.documentElement.style.overflowX='hidden';" +
 
                         "if(document.body){" +
                         "document.body.style.overflowX='hidden';" +
@@ -442,7 +588,7 @@ public class MainActivity extends BridgeActivity {
 
                         /*
                          * -------------------------------------------------
-                         * HIDE WEBSITE FOOTER
+                         * HIDE WEB FOOTER
                          * -------------------------------------------------
                          */
 
@@ -454,7 +600,7 @@ public class MainActivity extends BridgeActivity {
 
                         /*
                          * -------------------------------------------------
-                         * HIDE WEBSITE HAMBURGER
+                         * HIDE OLD WEBSITE HAMBURGER
                          * -------------------------------------------------
                          */
 
@@ -464,29 +610,35 @@ public class MainActivity extends BridgeActivity {
                         ");" +
 
                         "if(trigger){" +
+
                         "trigger.style.display='none';" +
+
                         "trigger.setAttribute(" +
-                        "'aria-hidden','true'" +
+                        "'aria-hidden'," +
+                        "'true'" +
                         ");" +
+
                         "}" +
 
 
                         /*
                          * -------------------------------------------------
-                         * HIDE WEBSITE MOBILE BOTTOM NAV
+                         * HIDE MOBILE BOTTOM NAV
                          * -------------------------------------------------
                          */
 
                         "document.querySelectorAll(" +
                         "'.mobile-bottom-nav'" +
                         ").forEach(function(el){" +
+
                         "el.style.display='none';" +
+
                         "});" +
 
 
                         /*
                          * -------------------------------------------------
-                         * RUNTIME STYLE
+                         * NATIVE STYLE
                          * -------------------------------------------------
                          */
 
@@ -512,13 +664,13 @@ public class MainActivity extends BridgeActivity {
                         "display:none!important;" +
                         "}\" +" +
 
-                        "\"html.pgame-app img{" +
-                        "-webkit-user-drag:none;" +
-                        "}\" +" +
-
                         "\"html.pgame-app .mobile-bottom-nav{" +
                         "display:none!important;" +
-                        "}\"; " +
+                        "}\" +" +
+
+                        "\"html.pgame-app img{" +
+                        "-webkit-user-drag:none;" +
+                        "}\";" +
 
                         "document.head.appendChild(style);" +
 
@@ -526,9 +678,9 @@ public class MainActivity extends BridgeActivity {
 
 
                         /*
-                         * =================================================
+                         * -------------------------------------------------
                          * NATIVE APP OBJECT
-                         * =================================================
+                         * -------------------------------------------------
                          */
 
                         "window.PGameNativeApp=" +
@@ -539,58 +691,13 @@ public class MainActivity extends BridgeActivity {
 
                         /*
                          * -------------------------------------------------
-                         * ACCOUNT CACHE
-                         * -------------------------------------------------
-                         */
-
-                        "window.PGameNativeApp.getCachedAccount=" +
-                        "function(){" +
-                        "try{" +
-
-                        "var raw=localStorage.getItem(" +
-                        "'pgame_account_cache_v1'" +
-                        ");" +
-
-                        "return raw?" +
-                        "JSON.parse(raw):null;" +
-
-                        "}catch(e){" +
-                        "return null;" +
-                        "}" +
-                        "};" +
-
-
-                        "window.PGameNativeApp.setCachedAccount=" +
-                        "function(account){" +
-                        "try{" +
-
-                        "if(!account){" +
-
-                        "localStorage.removeItem(" +
-                        "'pgame_account_cache_v1'" +
-                        ");" +
-
-                        "}else{" +
-
-                        "localStorage.setItem(" +
-                        "'pgame_account_cache_v1'," +
-                        "JSON.stringify(account)" +
-                        ");" +
-
-                        "}" +
-
-                        "}catch(e){}" +
-                        "};" +
-
-
-                        /*
-                         * -------------------------------------------------
-                         * SESSION
+                         * SESSION HELPERS
                          * -------------------------------------------------
                          */
 
                         "window.PGameNativeApp.getSession=" +
                         "function(){" +
+
                         "try{" +
 
                         "return localStorage.getItem(" +
@@ -602,11 +709,13 @@ public class MainActivity extends BridgeActivity {
                         "return '';" +
 
                         "}" +
+
                         "};" +
 
 
                         "window.PGameNativeApp.setSession=" +
                         "function(value){" +
+
                         "try{" +
 
                         "if(value){" +
@@ -625,243 +734,67 @@ public class MainActivity extends BridgeActivity {
                         "}" +
 
                         "}catch(e){}" +
+
                         "};" +
 
 
                         /*
-                         * =================================================
-                         * GLOBAL API FETCH PATCH
-                         *
-                         * This is the important fix.
-                         *
-                         * fetch('/api/...')
-                         *      ↓
-                         * https://s.vexongame.workers.dev/api/...
-                         *
-                         * Only active inside the Android app.
-                         * =================================================
+                         * -------------------------------------------------
+                         * ACCOUNT CACHE
+                         * -------------------------------------------------
                          */
 
-                        "if(!window.__PGAME_API_FETCH_PATCHED__){" +
-
-                        "window.__PGAME_API_FETCH_PATCHED__=true;" +
-
-                        "var PGAME_NATIVE_API_BASE=" +
-                        "'" + PGAME_API_BASE + "';" +
-
-                        "var PGAME_NATIVE_ORIGINAL_FETCH=" +
-                        "window.fetch.bind(window);" +
-
-
-                        "window.fetch=function(input,init){" +
+                        "window.PGameNativeApp.getCachedAccount=" +
+                        "function(){" +
 
                         "try{" +
 
-                        "var url='';" +
-
-                        "var originalRequest=null;" +
-
-                        /*
-                         * Detect Request objects safely.
-                         */
-                        "if(typeof Request!=='undefined'&&" +
-                        "input instanceof Request){" +
-
-                        "originalRequest=input;" +
-                        "url=input.url;" +
-
-                        "}else{" +
-
-                        "url=String(input||'');" +
-
-                        "}" +
-
-
-                        /*
-                         * Only rewrite relative /api requests.
-                         *
-                         * Absolute Worker URLs are left alone.
-                         */
-                        "var isRelativeApi=" +
-                        "(url==='/api'||url.indexOf('/api/')===0);" +
-
-                        "if(!isRelativeApi){" +
-
-                        "return PGAME_NATIVE_ORIGINAL_FETCH(" +
-                        "input,init" +
-                        ");" +
-
-                        "}" +
-
-
-                        /*
-                         * Build Worker URL.
-                         */
-                        "var targetUrl=" +
-                        "PGAME_NATIVE_API_BASE+url;" +
-
-
-                        /*
-                         * Headers.
-                         */
-                        "var headers;" +
-
-                        "if(init&&init.headers){" +
-
-                        "headers=new Headers(init.headers);" +
-
-                        "}else if(originalRequest){" +
-
-                        "headers=new Headers(" +
-                        "originalRequest.headers" +
-                        ");" +
-
-                        "}else{" +
-
-                        "headers=new Headers();" +
-
-                        "}" +
-
-
-                        /*
-                         * Tell Worker that request comes from app.
-                         */
-                        "headers.set(" +
-                        "'X-PGame-App'," +
-                        "'1'" +
-                        ");" +
-
-
-                        /*
-                         * Session.
-                         */
-                        "var session='';" +
-
-                        "try{" +
-
-                        "session=" +
+                        "var raw=" +
                         "localStorage.getItem(" +
-                        "'pgame_app_session'" +
-                        ")||'';" +
-
-                        "}catch(sessionError){}" +
-
-
-                        /*
-                         * Add Bearer token if one exists.
-                         */
-                        "if(session&&" +
-                        "!headers.has('Authorization')){" +
-
-                        "headers.set(" +
-                        "'Authorization'," +
-                        "'Bearer '+session" +
+                        "'pgame_account_cache_v1'" +
                         ");" +
 
-                        "}" +
+                        "return raw?" +
+                        "JSON.parse(raw):null;" +
 
+                        "}catch(e){" +
 
-                        /*
-                         * -------------------------------------------------
-                         * NORMAL STRING FETCH
-                         * -------------------------------------------------
-                         */
-
-                        "if(!originalRequest){" +
-
-                        "var nextInit={" +
-                        "...(init||{})," +
-                        "headers:headers," +
-                        "credentials:'omit'" +
-                        "};" +
-
-                        "return PGAME_NATIVE_ORIGINAL_FETCH(" +
-                        "targetUrl," +
-                        "nextInit" +
-                        ");" +
+                        "return null;" +
 
                         "}" +
-
-
-                        /*
-                         * -------------------------------------------------
-                         * REQUEST OBJECT FETCH
-                         *
-                         * Preserve method/body/options.
-                         * -------------------------------------------------
-                         */
-
-                        "var requestInit={" +
-
-                        "method:originalRequest.method," +
-
-                        "headers:headers," +
-
-                        "credentials:'omit'," +
-
-                        "cache:originalRequest.cache," +
-
-                        "redirect:originalRequest.redirect," +
-
-                        "referrer:originalRequest.referrer," +
-
-                        "referrerPolicy:" +
-                        "originalRequest.referrerPolicy," +
-
-                        "integrity:originalRequest.integrity," +
-
-                        "keepalive:originalRequest.keepalive" +
 
                         "};" +
 
 
-                        /*
-                         * Body cannot be sent with GET/HEAD.
-                         */
-                        "if(" +
-                        "originalRequest.method!=='GET'&&" +
-                        "originalRequest.method!=='HEAD'" +
-                        "){" +
+                        "window.PGameNativeApp.setCachedAccount=" +
+                        "function(account){" +
 
                         "try{" +
-                        "requestInit.body=" +
-                        "originalRequest.clone().body;" +
-                        "}catch(bodyError){}" +
 
-                        "}" +
+                        "if(account){" +
 
-
-                        "var rewrittenRequest=" +
-                        "new Request(" +
-                        "targetUrl," +
-                        "requestInit" +
+                        "localStorage.setItem(" +
+                        "'pgame_account_cache_v1'," +
+                        "JSON.stringify(account)" +
                         ");" +
 
-                        "return PGAME_NATIVE_ORIGINAL_FETCH(" +
-                        "rewrittenRequest" +
-                        ");" +
+                        "}else{" +
 
-
-                        "}catch(fetchError){" +
-
-                        /*
-                         * Never break normal fetch behavior.
-                         */
-                        "return PGAME_NATIVE_ORIGINAL_FETCH(" +
-                        "input,init" +
+                        "localStorage.removeItem(" +
+                        "'pgame_account_cache_v1'" +
                         ");" +
 
                         "}" +
+
+                        "}catch(e){}" +
 
                         "};" +
 
-                        "}" +
-
 
                         /*
-                         * =================================================
+                         * -------------------------------------------------
                          * APP NAVIGATION
-                         * =================================================
+                         * -------------------------------------------------
                          */
 
                         "window.PGameApp=" +
@@ -878,15 +811,6 @@ public class MainActivity extends BridgeActivity {
                         "if(!url)return;" +
 
 
-                        /*
-                         * Convert section paths to root-relative paths.
-                         *
-                         * Example:
-                         * sections/news.html
-                         *
-                         * always becomes:
-                         * /sections/news.html
-                         */
                         "if(url.indexOf('sections/')===0){" +
 
                         "url='/'+url;" +
@@ -913,12 +837,13 @@ public class MainActivity extends BridgeActivity {
 
 
                         /*
-                         * =================================================
+                         * -------------------------------------------------
                          * NAVIGATION MODULE
-                         * =================================================
+                         * -------------------------------------------------
                          */
 
                         "if(window.PGameNavigation&&" +
+
                         "typeof window.PGameNavigation." +
                         "initializeAppMode==='function'){" +
 
@@ -929,9 +854,9 @@ public class MainActivity extends BridgeActivity {
 
 
                         /*
-                         * =================================================
-                         * TOUCH FEEDBACK
-                         * =================================================
+                         * -------------------------------------------------
+                         * TOUCH EFFECT
+                         * -------------------------------------------------
                          */
 
                         "if(!window.__pgameNativeTouchFX){" +
@@ -940,6 +865,7 @@ public class MainActivity extends BridgeActivity {
 
                         "document.addEventListener(" +
                         "'click'," +
+
                         "function(ev){" +
 
                         "var el=null;" +
@@ -976,11 +902,16 @@ public class MainActivity extends BridgeActivity {
 
 
                         /*
-                         * Footer can be injected dynamically.
+                         * -------------------------------------------------
+                         * HIDE FOOTER AGAIN
+                         * -------------------------------------------------
                          */
+
                         "document.querySelectorAll('footer')" +
                         ".forEach(function(el){" +
+
                         "el.style.display='none';" +
+
                         "});" +
 
 
@@ -1006,114 +937,6 @@ public class MainActivity extends BridgeActivity {
 
     /*
      * =========================================================
-     * FULLSCREEN
-     * =========================================================
-     */
-
-    private void enableFullscreen() {
-
-        Window window = getWindow();
-
-        if (window == null) {
-            return;
-        }
-
-        try {
-
-            WindowInsetsController controller =
-                    window.getInsetsController();
-
-            if (controller != null) {
-
-                controller.hide(
-                        WindowInsets.Type.statusBars()
-                                | WindowInsets.Type.navigationBars()
-                );
-
-                controller.setSystemBarsBehavior(
-                        WindowInsetsController
-                                .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                );
-            }
-
-        } catch (Exception ignored) {
-        }
-    }
-
-
-    /*
-     * =========================================================
-     * STARTUP TIMEOUT
-     * =========================================================
-     */
-
-    private void startStartupTimeout() {
-
-        if (startupTimeoutRunnable != null) {
-
-            handler.removeCallbacks(
-                    startupTimeoutRunnable
-            );
-        }
-
-
-        startupTimeoutRunnable = () -> {
-
-            if (startupFinished) {
-                return;
-            }
-
-            startupTimeoutTriggered = true;
-
-            if (pageLoaded) {
-
-                finishStartupIfNeeded();
-
-            } else {
-
-                showOfflineOrError();
-            }
-        };
-
-
-        handler.postDelayed(
-                startupTimeoutRunnable,
-                STARTUP_TIMEOUT
-        );
-    }
-
-
-    private void finishStartupIfNeeded() {
-
-        if (startupFinished) {
-            return;
-        }
-
-        if (
-                !pageLoaded &&
-                !startupTimeoutTriggered
-        ) {
-            return;
-        }
-
-        startupFinished = true;
-
-        if (startupTimeoutRunnable != null) {
-
-            handler.removeCallbacks(
-                    startupTimeoutRunnable
-            );
-        }
-
-        hideOffline();
-        hideError();
-
-        hideSplash();
-    }
-
-
-    /*
-     * =========================================================
      * SPLASH
      * =========================================================
      */
@@ -1123,6 +946,7 @@ public class MainActivity extends BridgeActivity {
         if (rootLayout == null) {
             return;
         }
+
 
         FrameLayout splash =
                 new FrameLayout(this);
@@ -1134,66 +958,36 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
-        splash.setBackgroundColor(
-                Color.rgb(3, 4, 10)
-        );
-
 
         /*
-         * P logo.
+         * Background.
          */
-        TextView glow =
-                new TextView(this);
-
-        glow.setText("P");
-
-        glow.setTextColor(
-                Color.rgb(0, 255, 157)
-        );
-
-        glow.setTextSize(86f);
-
-        glow.setGravity(
-                Gravity.CENTER
-        );
-
-        glow.setTypeface(
-                android.graphics.Typeface.create(
-                        "sans-serif",
-                        android.graphics.Typeface.BOLD
+        splash.setBackgroundColor(
+                Color.rgb(
+                        3,
+                        4,
+                        10
                 )
         );
 
 
-        FrameLayout.LayoutParams glowParams =
-                new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT
-                );
-
-        glowParams.gravity =
-                Gravity.CENTER;
-
-
-        splash.addView(
-                glow,
-                glowParams
-        );
-
-
         /*
-         * PGAME title.
+         * Main title.
          */
         TextView title =
                 new TextView(this);
 
-        title.setText("PGAME");
+        title.setText(
+                "PGAME"
+        );
 
         title.setTextColor(
                 Color.WHITE
         );
 
-        title.setTextSize(24f);
+        title.setTextSize(
+                24f
+        );
 
         title.setGravity(
                 Gravity.CENTER
@@ -1241,10 +1035,16 @@ public class MainActivity extends BridgeActivity {
         );
 
         subtitle.setTextColor(
-                Color.rgb(116, 77, 255)
+                Color.rgb(
+                        116,
+                        77,
+                        255
+                )
         );
 
-        subtitle.setTextSize(10f);
+        subtitle.setTextSize(
+                10f
+        );
 
         subtitle.setGravity(
                 Gravity.CENTER
@@ -1278,99 +1078,17 @@ public class MainActivity extends BridgeActivity {
                 splash
         );
 
+
         splashOverlay =
                 splash;
 
-        splash.setAlpha(1f);
 
         splash.setVisibility(
                 View.VISIBLE
         );
-    }
 
-
-    /*
-     * =========================================================
-     * OFFLINE OVERLAY
-     * =========================================================
-     */
-
-    private void createOfflineOverlay() {
-
-        if (rootLayout == null) {
-            return;
-        }
-
-        FrameLayout overlay =
-                new FrameLayout(this);
-
-        overlay.setLayoutParams(
-                new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                )
-        );
-
-        overlay.setBackgroundColor(
-                Color.rgb(3, 4, 10)
-        );
-
-
-        TextView text =
-                new TextView(this);
-
-        text.setText(
-                "اتصال به PGame برقرار نشد.\n" +
-                "لطفاً اینترنت را بررسی کنید."
-        );
-
-        text.setTextColor(
-                Color.WHITE
-        );
-
-        text.setTextSize(17f);
-
-        text.setGravity(
-                Gravity.CENTER
-        );
-
-        text.setLineSpacing(
-                8f,
+        splash.setAlpha(
                 1f
-        );
-
-
-        FrameLayout.LayoutParams params =
-                new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT
-                );
-
-        params.gravity =
-                Gravity.CENTER;
-
-        params.leftMargin =
-                35;
-
-        params.rightMargin =
-                35;
-
-
-        overlay.addView(
-                text,
-                params
-        );
-
-
-        rootLayout.addView(
-                overlay
-        );
-
-        offlineOverlay =
-                overlay;
-
-        overlay.setVisibility(
-                View.GONE
         );
     }
 
@@ -1387,6 +1105,7 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
+
         FrameLayout overlay =
                 new FrameLayout(this);
 
@@ -1397,8 +1116,13 @@ public class MainActivity extends BridgeActivity {
                 )
         );
 
+
         overlay.setBackgroundColor(
-                Color.rgb(3, 4, 10)
+                Color.rgb(
+                        3,
+                        4,
+                        10
+                )
         );
 
 
@@ -1406,23 +1130,19 @@ public class MainActivity extends BridgeActivity {
                 new TextView(this);
 
         text.setText(
-                "یک خطای غیرمنتظره رخ داد.\n" +
-                "لطفاً دوباره PGame را باز کنید."
+                "ارتباط با PGame برقرار نشد."
         );
 
         text.setTextColor(
                 Color.WHITE
         );
 
-        text.setTextSize(17f);
+        text.setTextSize(
+                17f
+        );
 
         text.setGravity(
                 Gravity.CENTER
-        );
-
-        text.setLineSpacing(
-                8f,
-                1f
         );
 
 
@@ -1452,10 +1172,12 @@ public class MainActivity extends BridgeActivity {
                 overlay
         );
 
+
         errorOverlay =
                 overlay;
 
-        overlay.setVisibility(
+
+        errorOverlay.setVisibility(
                 View.GONE
         );
     }
@@ -1463,7 +1185,403 @@ public class MainActivity extends BridgeActivity {
 
     /*
      * =========================================================
-     * SPLASH CONTROL
+     * OFFLINE BANNER
+     * =========================================================
+     */
+
+    private void createOfflineBanner() {
+
+        if (rootLayout == null) {
+            return;
+        }
+
+
+        TextView banner =
+                new TextView(this);
+
+
+        banner.setText(
+                "⚠️  اینترنت نداری • بعضی قابلیت‌های آنلاین در دسترس نیستند"
+        );
+
+
+        banner.setTextColor(
+                Color.WHITE
+        );
+
+
+        banner.setTextSize(
+                12f
+        );
+
+
+        banner.setGravity(
+                Gravity.CENTER
+        );
+
+
+        banner.setPadding(
+                18,
+                12,
+                18,
+                12
+        );
+
+
+        /*
+         * Semi-dark warning background.
+         */
+        banner.setBackgroundColor(
+                Color.rgb(
+                        72,
+                        26,
+                        45
+                )
+        );
+
+
+        FrameLayout.LayoutParams params =
+                new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT
+                );
+
+
+        params.gravity =
+                Gravity.TOP;
+
+
+        rootLayout.addView(
+                banner,
+                params
+        );
+
+
+        offlineBanner =
+                banner;
+
+
+        offlineBanner.setVisibility(
+                View.GONE
+        );
+    }
+
+
+    /*
+     * =========================================================
+     * NETWORK STATE
+     * =========================================================
+     */
+
+    private boolean isProbablyOffline() {
+
+        try {
+
+            android.net.ConnectivityManager
+                    connectivityManager =
+                    (android.net.ConnectivityManager)
+                            getSystemService(
+                                    CONNECTIVITY_SERVICE
+                            );
+
+
+            if (connectivityManager == null) {
+                return true;
+            }
+
+
+            android.net.Network network =
+                    connectivityManager
+                            .getActiveNetwork();
+
+
+            if (network == null) {
+                return true;
+            }
+
+
+            android.net.NetworkCapabilities
+                    capabilities =
+                    connectivityManager
+                            .getNetworkCapabilities(
+                                    network
+                            );
+
+
+            if (capabilities == null) {
+                return true;
+            }
+
+
+            return !capabilities.hasCapability(
+                    android.net.NetworkCapabilities
+                            .NET_CAPABILITY_INTERNET
+            );
+
+
+        } catch (Exception ignored) {
+
+            return false;
+        }
+    }
+
+
+    private void updateNetworkBanner() {
+
+        if (offlineBanner == null) {
+            return;
+        }
+
+
+        boolean offline =
+                isProbablyOffline();
+
+
+        if (offline) {
+
+            offlineBanner.setText(
+                    "⚠️  اینترنت نداری • بعضی قابلیت‌های آنلاین در دسترس نیستند"
+            );
+
+
+            if (
+                    offlineBanner.getVisibility() !=
+                    View.VISIBLE
+            ) {
+
+                offlineBanner.setAlpha(
+                        0f
+                );
+
+                offlineBanner.setVisibility(
+                        View.VISIBLE
+                );
+
+                offlineBanner.animate()
+                        .alpha(1f)
+                        .setDuration(180L)
+                        .start();
+            }
+
+        } else {
+
+            if (
+                    offlineBanner.getVisibility() ==
+                    View.VISIBLE
+            ) {
+
+                offlineBanner.animate()
+                        .alpha(0f)
+                        .setDuration(150L)
+                        .withEndAction(() -> {
+
+                            if (offlineBanner != null) {
+
+                                offlineBanner.setVisibility(
+                                        View.GONE
+                                );
+                            }
+
+                        })
+                        .start();
+            }
+        }
+    }
+
+
+    /*
+     * =========================================================
+     * AUDIO
+     * =========================================================
+     */
+
+    private void startPGameTheme() {
+
+        try {
+
+            /*
+             * Create only once.
+             */
+            if (pgameThemePlayer == null) {
+
+                pgameThemePlayer =
+                        MediaPlayer.create(
+                                this,
+                                R.raw.pgame_main_theme_v3
+                        );
+
+
+                if (pgameThemePlayer == null) {
+
+                    return;
+                }
+
+
+                /*
+                 * Loop forever.
+                 */
+                pgameThemePlayer.setLooping(
+                        true
+                );
+
+
+                /*
+                 * Reasonable initial volume.
+                 */
+                pgameThemePlayer.setVolume(
+                        0.75f,
+                        0.75f
+                );
+            }
+
+
+            /*
+             * Start only when needed.
+             */
+            if (
+                    !pgameThemePlayer.isPlaying()
+            ) {
+
+                pgameThemePlayer.start();
+            }
+
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+        }
+    }
+
+
+    private void pausePGameTheme() {
+
+        try {
+
+            if (
+                    pgameThemePlayer != null &&
+                    pgameThemePlayer.isPlaying()
+            ) {
+
+                pgameThemePlayer.pause();
+            }
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+        }
+    }
+
+
+    private void releasePGameTheme() {
+
+        try {
+
+            if (pgameThemePlayer != null) {
+
+                pgameThemePlayer.release();
+
+                pgameThemePlayer =
+                        null;
+            }
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+
+            pgameThemePlayer =
+                    null;
+        }
+    }
+
+
+    /*
+     * =========================================================
+     * STARTUP
+     * =========================================================
+     */
+
+    private void startStartupTimeout() {
+
+        startupTimeoutRunnable =
+                () -> {
+
+                    if (
+                            !startupFinished
+                    ) {
+
+                        startupTimeoutTriggered =
+                                true;
+
+                        /*
+                         * IMPORTANT:
+                         *
+                         * The PGame bundle is local.
+                         *
+                         * A startup timeout therefore means
+                         * something unusual happened.
+                         */
+                        if (
+                                isProbablyOffline()
+                        ) {
+
+                            hideSplash();
+
+                            /*
+                             * Do NOT cover the whole app.
+                             * Only show the small banner.
+                             */
+                            updateNetworkBanner();
+
+                        } else {
+
+                            showError();
+                        }
+                    }
+                };
+
+
+        handler.postDelayed(
+                startupTimeoutRunnable,
+                STARTUP_TIMEOUT
+        );
+    }
+
+
+    private void finishStartupIfNeeded() {
+
+        if (startupFinished) {
+            return;
+        }
+
+
+        startupFinished =
+                true;
+
+
+        pageLoaded =
+                true;
+
+
+        if (
+                startupTimeoutRunnable !=
+                null
+        ) {
+
+            handler.removeCallbacks(
+                    startupTimeoutRunnable
+            );
+        }
+
+
+        hideSplash();
+
+        updateNetworkBanner();
+    }
+
+
+    /*
+     * =========================================================
+     * SPLASH VISIBILITY
      * =========================================================
      */
 
@@ -1473,9 +1591,11 @@ public class MainActivity extends BridgeActivity {
             return;
         }
 
+
         splashOverlay.setVisibility(
                 View.VISIBLE
         );
+
 
         splashOverlay.setAlpha(
                 1f
@@ -1488,6 +1608,7 @@ public class MainActivity extends BridgeActivity {
         if (splashOverlay == null) {
             return;
         }
+
 
         splashOverlay.animate()
                 .alpha(0f)
@@ -1508,7 +1629,7 @@ public class MainActivity extends BridgeActivity {
 
     /*
      * =========================================================
-     * OFFLINE / ERROR
+     * ERROR
      * =========================================================
      */
 
@@ -1516,7 +1637,9 @@ public class MainActivity extends BridgeActivity {
 
         if (isProbablyOffline()) {
 
-            showOffline();
+            hideSplash();
+
+            updateNetworkBanner();
 
         } else {
 
@@ -1525,150 +1648,188 @@ public class MainActivity extends BridgeActivity {
     }
 
 
-    private boolean isProbablyOffline() {
-
-        try {
-
-            android.net.ConnectivityManager
-                    connectivityManager =
-                    (android.net.ConnectivityManager)
-                            getSystemService(
-                                    CONNECTIVITY_SERVICE
-                            );
-
-            if (connectivityManager == null) {
-                return true;
-            }
-
-
-            android.net.Network network =
-                    connectivityManager
-                            .getActiveNetwork();
-
-            if (network == null) {
-                return true;
-            }
-
-
-            android.net.NetworkCapabilities
-                    capabilities =
-                    connectivityManager
-                            .getNetworkCapabilities(
-                                    network
-                            );
-
-            if (capabilities == null) {
-                return true;
-            }
-
-
-            return !capabilities.hasCapability(
-                    android.net.NetworkCapabilities
-                            .NET_CAPABILITY_INTERNET
-            );
-
-        } catch (Exception ignored) {
-
-            return false;
-        }
-    }
-
-
-    private void showOffline() {
-
-        hideError();
-
-        if (offlineOverlay != null) {
-
-            offlineOverlay.setVisibility(
-                    View.VISIBLE
-            );
-
-            offlineOverlay.setAlpha(
-                    0f
-            );
-
-            offlineOverlay.animate()
-                    .alpha(1f)
-                    .setDuration(180L)
-                    .start();
-        }
-
-        hideSplash();
-    }
-
-
     private void showError() {
 
-        hideOffline();
-
-        if (errorOverlay != null) {
-
-            errorOverlay.setVisibility(
-                    View.VISIBLE
-            );
-
-            errorOverlay.setAlpha(
-                    0f
-            );
-
-            errorOverlay.animate()
-                    .alpha(1f)
-                    .setDuration(180L)
-                    .start();
-        }
-
         hideSplash();
-    }
 
-
-    private void hideOffline() {
-
-        if (offlineOverlay != null) {
-
-            offlineOverlay.animate()
-                    .alpha(0f)
-                    .setDuration(100L)
-                    .withEndAction(() -> {
-
-                        if (offlineOverlay != null) {
-
-                            offlineOverlay.setVisibility(
-                                    View.GONE
-                            );
-                        }
-
-                    })
-                    .start();
+        if (errorOverlay == null) {
+            return;
         }
+
+
+        errorOverlay.setVisibility(
+                View.VISIBLE
+        );
+
+
+        errorOverlay.setAlpha(
+                0f
+        );
+
+
+        errorOverlay.animate()
+                .alpha(1f)
+                .setDuration(180L)
+                .start();
     }
 
 
     private void hideError() {
 
-        if (errorOverlay != null) {
+        if (errorOverlay == null) {
+            return;
+        }
 
-            errorOverlay.animate()
-                    .alpha(0f)
-                    .setDuration(100L)
-                    .withEndAction(() -> {
 
-                        if (errorOverlay != null) {
+        errorOverlay.animate()
+                .alpha(0f)
+                .setDuration(120L)
+                .withEndAction(() -> {
 
-                            errorOverlay.setVisibility(
-                                    View.GONE
-                            );
-                        }
+                    if (errorOverlay != null) {
 
-                    })
-                    .start();
+                        errorOverlay.setVisibility(
+                                View.GONE
+                        );
+                    }
+
+                })
+                .start();
+    }
+
+
+    /*
+     * =========================================================
+     * FULLSCREEN
+     * =========================================================
+     */
+
+    private void enableFullscreen() {
+
+        Window window =
+                getWindow();
+
+
+        if (window == null) {
+            return;
+        }
+
+
+        if (
+                android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.R
+        ) {
+
+            WindowInsetsController controller =
+                    window.getInsetsController();
+
+
+            if (controller != null) {
+
+                controller.hide(
+                        WindowInsets.Type.statusBars() |
+                        WindowInsets.Type.navigationBars()
+                );
+
+
+                controller.setSystemBarsBehavior(
+                        WindowInsetsController
+                                .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                );
+            }
+
+        } else {
+
+            window.getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                            |
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            );
         }
     }
 
 
     /*
      * =========================================================
-     * BACK BUTTON
+     * RESUME
+     * =========================================================
+     */
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+
+        enableFullscreen();
+
+
+        updateNetworkBanner();
+
+
+        /*
+         * Resume theme.
+         */
+        startPGameTheme();
+
+
+        /*
+         * Restart network monitoring.
+         */
+        handler.removeCallbacks(
+                networkMonitor
+        );
+
+        handler.post(
+                networkMonitor
+        );
+
+
+        /*
+         * Re-apply native mode.
+         */
+        handler.post(
+                this::initializePGameAppMode
+        );
+    }
+
+
+    /*
+     * =========================================================
+     * PAUSE / STOP
+     * =========================================================
+     */
+
+    @Override
+    protected void onStop() {
+
+        handler.removeCallbacks(
+                networkMonitor
+        );
+
+
+        /*
+         * Pause music when app really leaves
+         * foreground.
+         */
+        pausePGameTheme();
+
+
+        super.onStop();
+    }
+
+
+    /*
+     * =========================================================
+     * BACK
      * =========================================================
      */
 
@@ -1683,12 +1844,18 @@ public class MainActivity extends BridgeActivity {
         }
 
 
+        /*
+         * First close PGame drawer.
+         */
         String js =
                 "(function(){" +
                         "try{" +
 
                         "if(window.PGameNavigation&&" +
-                        "window.PGameNavigation.isOpen&&" +
+
+                        "typeof window.PGameNavigation.isOpen===" +
+                        "'function'&&" +
+
                         "window.PGameNavigation.isOpen()){" +
 
                         "window.PGameNavigation.close();" +
@@ -1712,12 +1879,21 @@ public class MainActivity extends BridgeActivity {
                 js,
                 result -> {
 
-                    if ("\"drawer\"".equals(result)) {
+                    if (
+                            "\"drawer\""
+                                    .equals(result)
+                    ) {
+
                         return;
                     }
 
 
-                    if (webView.canGoBack()) {
+                    /*
+                     * Then WebView history.
+                     */
+                    if (
+                            webView.canGoBack()
+                    ) {
 
                         webView.goBack();
 
@@ -1733,68 +1909,22 @@ public class MainActivity extends BridgeActivity {
 
     /*
      * =========================================================
-     * RESUME
-     * =========================================================
-     */
-
-    @Override
-    public void onResume() {
-
-        super.onResume();
-
-        enableFullscreen();
-
-        /*
-         * Re-check app mode whenever the app
-         * comes back to foreground.
-         */
-        if (webView != null) {
-
-            handler.postDelayed(
-                    this::initializePGameAppMode,
-                    120L
-            );
-        }
-    }
-
-
-    /*
-     * =========================================================
-     * PAUSE
-     * =========================================================
-     */
-
-    @Override
-    public void onPause() {
-
-        super.onPause();
-    }
-
-
-    /*
-     * =========================================================
      * DESTROY
      * =========================================================
      */
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
 
-        if (startupTimeoutRunnable != null) {
-
-            handler.removeCallbacks(
-                    startupTimeoutRunnable
-            );
-        }
+        handler.removeCallbacksAndMessages(
+                null
+        );
 
 
-        /*
-         * Capacitor owns WebView lifecycle.
-         *
-         * DO NOT call webView.destroy().
-         */
-        webView = null;
+        releasePGameTheme();
+
 
         super.onDestroy();
     }
 }
+
