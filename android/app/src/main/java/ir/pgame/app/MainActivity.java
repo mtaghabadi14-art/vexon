@@ -314,6 +314,11 @@ public class MainActivity extends BridgeActivity {
                                         deviceToken
                         );
 
+                        Pushy.subscribe(
+                                "pgame-updates",
+                                this
+                        );
+
                     } catch (Exception error) {
 
                         android.util.Log.e(

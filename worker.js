@@ -1909,6 +1909,83 @@ async function notifyUser(
 
 }
 
+/* =========================================================
+   PUSHY UPDATE NOTIFICATION
+========================================================= */
+
+async function sendPGamePushNotification(
+    env,
+    title,
+    message,
+    version = ""
+) {
+
+    if (!env.PUSHY_SECRET_API_KEY) {
+
+        throw new Error(
+            "PUSHY_SECRET_API_KEY is missing"
+        );
+
+    }
+
+    const response =
+        await fetch(
+            `https://api.pushy.me/push?api_key=${encodeURIComponent(
+                env.PUSHY_SECRET_API_KEY
+            )}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    to:
+                        "/topics/pgame-updates",
+
+                    data: {
+
+                        title:
+                            title,
+
+                        message:
+                            message,
+
+                        type:
+                            "pgame_update",
+
+                        version:
+                            version,
+
+                        url:
+                            "/"
+
+                    }
+
+                })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (
+        !response.ok ||
+        data?.success !== true
+    ) {
+
+        throw new Error(
+            JSON.stringify(data)
+        );
+
+    }
+
+    return data;
+}
+
 
 /* =========================================================
    MESSENGER TABLES
@@ -2348,6 +2425,102 @@ export default {
                 );
 
             }
+
+            /* =================================================
+   PUSHY UPDATE TEST
+================================================= */
+
+if (
+    path === "/api/internal/push-update" &&
+    method === "POST"
+) {
+
+    const secret =
+        request.headers.get(
+            "X-PGame-Update-Secret"
+        ) || "";
+
+    if (
+        !env.PGAME_UPDATE_TRIGGER_SECRET ||
+        secret !== env.PGAME_UPDATE_TRIGGER_SECRET
+    ) {
+
+        return json(
+            {
+                success: false,
+                message: "Unauthorized"
+            },
+            401
+        );
+
+    }
+
+    let body = {};
+
+    try {
+
+        body =
+            await request.json();
+
+    } catch {
+
+        return json(
+            {
+                success: false,
+                message: "Invalid JSON"
+            },
+            400
+        );
+
+    }
+
+    const title =
+        typeof body.title === "string"
+            ? body.title.trim()
+            : "🚀 بروزرسانی جدید PGame";
+
+    const message =
+        typeof body.message === "string"
+            ? body.message.trim()
+            : "یک بروزرسانی جدید برای PGame منتشر شد.";
+
+    const version =
+        typeof body.version === "string"
+            ? body.version.trim()
+            : "";
+
+    try {
+
+        const result =
+            await sendPGamePushNotification(
+                env,
+                title,
+                message,
+                version
+            );
+
+        return json({
+            success: true,
+            result
+        });
+
+    } catch (error) {
+
+        console.error(
+            "PGAME_PUSH_ERROR",
+            error
+        );
+
+        return json(
+            {
+                success: false,
+                message: "Push notification failed."
+            },
+            500
+        );
+
+    }
+}
 
 
             /* =================================================
