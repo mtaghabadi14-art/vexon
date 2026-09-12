@@ -2328,6 +2328,32 @@
 
 
                         /*
+                         * اپ PGame:
+                         * Session Token را ذخیره کن
+                         * تا درخواست‌های بعدی احراز هویت شوند.
+                         */
+                        if (data.app_token) {
+
+                            try {
+
+                                localStorage.setItem(
+                                    "pgame_app_session",
+                                    data.app_token
+                                );
+
+                            } catch (sessionError) {
+
+                                console.debug(
+                                    "LOGIN_SESSION_WRITE_ERROR",
+                                    sessionError
+                                );
+
+                            }
+
+                        }
+
+
+                        /*
                          * اگر API اطلاعات کاربر را
                          * همراه ورود برگرداند،
                          * همان لحظه کش را بساز.
