@@ -1543,6 +1543,41 @@
 
         }
 
+
+/* =========================================================
+   PGAME HEADER STATUS
+========================================================= */
+
+.pgame-header-status-slot {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-end;
+
+    min-width:
+        0;
+
+}
+
+
+@media (max-width: 900px) {
+
+    .pgame-header-status-slot {
+
+        max-width:
+            55vw;
+
+    }
+
+}
+
+
+
     </style>
 
 </head>
@@ -1592,70 +1627,57 @@
          HEADER
     ========================================================== -->
 
-    <header class="navbar">
+    
+<header class="navbar">
+
+    <!-- =====================================================
+         MENU BUTTON
+    ====================================================== -->
+
+    <button
+        type="button"
+        id="vexon-menu-trigger"
+        class="vexon-global-menu-trigger"
+        aria-label="باز کردن منوی PGame"
+        title="منوی PGame"
+    >
+        ☰
+    </button>
 
 
-        <button
-            type="button"
-            id="vexon-menu-trigger"
-            class="vexon-global-menu-trigger"
-            aria-label="باز کردن منوی PGame"
-            title="منوی PGame"
-        >
-            ☰
-        </button>
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav class="nav-links"></nav>
 
 
+    <!-- =====================================================
+         ADMIN BUTTON
+    ====================================================== -->
+
+    <a
+        href="admin.html"
+        id="admin-header-button"
+        class="admin-header-button"
+        aria-label="پنل مدیریت PGame"
+    >
+        🛠️ پنل ادمین
+    </a>
 
 
-        <nav class="nav-links"></nav>
+    <!-- =====================================================
+         PLAYER STATUS
+    ====================================================== -->
+
+    <div
+        class="pgame-header-status-slot"
+        id="pgame-header-status-slot"
+    ></div>
+
+</header>
 
 
-        <!-- =====================================================
-             ADMIN BUTTON
-        ====================================================== -->
-
-        <a
-            href="admin.html"
-            id="admin-header-button"
-            class="admin-header-button"
-            aria-label="پنل مدیریت PGame"
-        >
-            🛠️ پنل ادمین
-        </a>
-
-
-        <a
-            href="sections/profile.html"
-            class="header-profile"
-        >
-
-            <div class="header-profile-icon">
-                👤
-            </div>
-
-
-            <div>
-
-                <strong>
-                    پروفایل
-                </strong>
-
-                <span>
-                    مشاهده پروفایل
-                </span>
-
-            </div>
-
-
-            <b>
-                ‹
-            </b>
-
-        </a>
-
-
-    </header>
 
 
     <main>

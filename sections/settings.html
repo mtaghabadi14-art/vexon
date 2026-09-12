@@ -1,0 +1,2818 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="theme-color"
+        content="#03040a"
+    >
+
+    <meta
+        name="description"
+        content="تنظیمات PGame؛ مدیریت حساب، امنیت، روبیکا و تنظیمات برنامه."
+    >
+
+    <title>PGame | تنظیمات</title>
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+    <script src="../pgame-api-bridge.js"></script>
+
+    <style>
+
+        .pg-settings-page {
+            position: relative;
+            z-index: 2;
+
+            width: min(1180px, 94%);
+
+            margin: 0 auto;
+
+            padding:
+                36px
+                0
+                80px;
+        }
+
+
+        .pg-settings-hero {
+            text-align: center;
+
+            margin-bottom:
+                24px;
+        }
+
+
+        .pg-settings-hero .section-label {
+            display: inline-block;
+
+            margin-bottom:
+                8px;
+        }
+
+
+        .pg-settings-hero h1 {
+            margin: 0;
+
+            font-size:
+                clamp(
+                    28px,
+                    5vw,
+                    44px
+                );
+
+            line-height:
+                1.35;
+        }
+
+
+        .pg-settings-hero h1 span {
+            display: block;
+
+            color:
+                var(--green);
+        }
+
+
+        .pg-settings-hero p {
+            max-width:
+                720px;
+
+            margin:
+                12px auto 0;
+
+            color:
+                #9292a8;
+
+            font-size:
+                12px;
+
+            line-height:
+                2;
+        }
+
+
+        .pg-settings-shell {
+            display:
+                grid;
+
+            grid-template-columns:
+                270px
+                minmax(
+                    0,
+                    1fr
+                );
+
+            gap:
+                18px;
+
+            align-items:
+                start;
+        }
+
+
+        .pg-settings-nav,
+        .pg-settings-panel {
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            background:
+                rgba(
+                    7,
+                    10,
+                    18,
+                    .82
+                );
+
+            backdrop-filter:
+                blur(18px);
+
+            box-shadow:
+                0 25px 80px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .25
+                );
+        }
+
+
+        .pg-settings-nav {
+            position:
+                sticky;
+
+            top:
+                22px;
+
+            padding:
+                12px;
+
+            border-radius:
+                22px;
+        }
+
+
+        .pg-settings-nav button {
+            width:
+                100%;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            padding:
+                14px;
+
+            border:
+                1px solid
+                transparent;
+
+            border-radius:
+                15px;
+
+            background:
+                transparent;
+
+            color:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .72
+                );
+
+            font:
+                inherit;
+
+            text-align:
+                right;
+
+            cursor:
+                pointer;
+
+            transition:
+                .2s ease;
+        }
+
+
+        .pg-settings-nav button:hover {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+        }
+
+
+        .pg-settings-nav button.active {
+            color:
+                #fff;
+
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .18
+                );
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .12
+                    ),
+                    rgba(
+                        116,
+                        77,
+                        255,
+                        .08
+                    )
+                );
+
+            box-shadow:
+                inset
+                -3px 0 0
+                var(--green);
+        }
+
+
+        .pg-settings-nav button .icon {
+            width:
+                28px;
+
+            font-size:
+                19px;
+
+            text-align:
+                center;
+        }
+
+
+        .pg-settings-nav .nav-sep {
+            height:
+                1px;
+
+            margin:
+                10px
+                4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(
+                        0,
+                        255,
+                        157,
+                        .22
+                    ),
+                    transparent
+                );
+        }
+
+
+        .pg-settings-panel {
+            min-width:
+                0;
+
+            padding:
+                24px;
+
+            border-radius:
+                24px;
+        }
+
+
+        .pg-settings-section {
+            display:
+                none;
+        }
+
+
+        .pg-settings-section.active {
+            display:
+                block;
+
+            animation:
+                pgFade
+                .22s
+                ease;
+        }
+
+
+        @keyframes pgFade {
+
+            from {
+                opacity:
+                    0;
+
+                transform:
+                    translateY(5px);
+            }
+
+            to {
+                opacity:
+                    1;
+
+                transform:
+                    none;
+            }
+        }
+
+
+        .pg-section-title {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            margin:
+                0;
+
+            font-size:
+                20px;
+        }
+
+
+        .pg-section-sub {
+            margin:
+                7px 0 0;
+
+            color:
+                #8b8b9f;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.9;
+        }
+
+
+        .pg-card {
+            margin-top:
+                16px;
+
+            padding:
+                18px;
+
+            border-radius:
+                18px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+        }
+
+
+        .pg-card.green {
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .16
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .03
+                );
+        }
+
+
+        .pg-card.cyan {
+            border-color:
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .16
+                );
+
+            background:
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .025
+                );
+        }
+
+
+        .pg-card.purple {
+            border-color:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .18
+                );
+
+            background:
+                rgba(
+                    116,
+                    77,
+                    255,
+                    .03
+                );
+        }
+
+
+        .pg-info-grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                10px;
+
+            margin-top:
+                14px;
+        }
+
+
+        .pg-info-item {
+            padding:
+                13px;
+
+            border-radius:
+                14px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .12
+                );
+        }
+
+
+        .pg-info-item span {
+            display:
+                block;
+
+            color:
+                #85869b;
+
+            font-size:
+                9px;
+
+            margin-bottom:
+                5px;
+        }
+
+
+        .pg-info-item strong {
+            font-size:
+                12px;
+
+            word-break:
+                break-word;
+        }
+
+
+        .pg-form {
+            display:
+                grid;
+
+            gap:
+                9px;
+
+            margin-top:
+                14px;
+        }
+
+
+        .pg-form label {
+            font-size:
+                10px;
+
+            color:
+                #c6c6d8;
+        }
+
+
+        .pg-form input {
+            width:
+                100%;
+
+            box-sizing:
+                border-box;
+
+            padding:
+                12px
+                13px;
+
+            border-radius:
+                13px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .08
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .035
+                );
+
+            color:
+                #fff;
+
+            outline:
+                none;
+
+            font-size:
+                12px;
+        }
+
+
+        .pg-form input:focus {
+            border-color:
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .42
+                );
+
+            box-shadow:
+                0 0 18px
+                rgba(
+                    0,
+                    234,
+                    255,
+                    .08
+                );
+        }
+
+
+        .pg-message {
+            min-height:
+                20px;
+
+            margin-top:
+                2px;
+
+            text-align:
+                center;
+
+            font-size:
+                10px;
+
+            line-height:
+                1.8;
+        }
+
+
+        .pg-btn {
+            width:
+                100%;
+
+            margin-top:
+                5px;
+
+            justify-content:
+                center;
+        }
+
+
+        .pg-rubika-status {
+            margin-top:
+                12px;
+
+            padding:
+                12px;
+
+            border-radius:
+                13px;
+
+            font-size:
+                11px;
+
+            line-height:
+                1.9;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .025
+                );
+        }
+
+
+        .pg-rubika-status.connected {
+            border-color:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .2
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .035
+                );
+        }
+
+
+        .pg-rubika-status.disconnected {
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .16
+                );
+
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .025
+                );
+        }
+
+
+        .pg-actions {
+            display:
+                flex;
+
+            gap:
+                8px;
+
+            margin-top:
+                10px;
+        }
+
+
+        .pg-actions > * {
+            flex:
+                1;
+        }
+
+
+        .pg-code-area {
+            display:
+                none;
+
+            margin-top:
+                14px;
+
+            padding:
+                14px;
+
+            text-align:
+                center;
+
+            border-radius:
+                14px;
+
+            border:
+                1px solid
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .12
+                );
+
+            background:
+                rgba(
+                    0,
+                    255,
+                    157,
+                    .035
+                );
+        }
+
+
+        .pg-code {
+            font:
+                900
+                28px
+                monospace;
+
+            letter-spacing:
+                6px;
+
+            color:
+                #00ff9d;
+        }
+
+
+        .pg-help {
+            margin-top:
+                6px;
+
+            color:
+                #8b8b9f;
+
+            font-size:
+                10px;
+        }
+
+
+        .pg-danger {
+            background:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .08
+                ) !important;
+
+            border-color:
+                rgba(
+                    255,
+                    63,
+                    90,
+                    .24
+                ) !important;
+
+            color:
+                #ff7183 !important;
+        }
+
+
+        .pg-about {
+            display:
+                grid;
+
+            gap:
+                10px;
+        }
+
+
+        .pg-about-row {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                12px;
+
+            padding:
+                12px 0;
+
+            border-bottom:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .06
+                );
+
+            font-size:
+                11px;
+        }
+
+
+        .pg-about-row:last-child {
+            border-bottom:
+                0;
+
+            padding-bottom:
+                0;
+        }
+
+
+        .pg-about-row span {
+            color:
+                #8b8b9f;
+        }
+
+
+        .pg-muted {
+            color:
+                #8b8b9f;
+
+            font-size:
+                10px;
+
+            line-height:
+                1.9;
+        }
+
+
+        @media (max-width: 820px) {
+
+            .pg-settings-shell {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .pg-settings-nav {
+                position:
+                    static;
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
+
+                gap:
+                    6px;
+            }
+
+            .pg-settings-nav .nav-sep {
+                display:
+                    none;
+            }
+
+            .pg-settings-panel {
+                padding:
+                    17px;
+            }
+        }
+
+
+        @media (max-width: 560px) {
+
+            .pg-settings-page {
+                padding:
+                    25px
+                    0
+                    60px;
+            }
+
+            .pg-settings-nav {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .pg-info-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .pg-actions {
+                flex-direction:
+                    column;
+            }
+
+            .pg-section-title {
+                font-size:
+                    18px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div
+    class="background-effects"
+    aria-hidden="true"
+>
+
+    <div class="nebula nebula-purple"></div>
+
+    <div class="nebula nebula-green"></div>
+
+    <div class="nebula nebula-blue"></div>
+
+    <div class="stars stars-one"></div>
+
+    <div class="stars stars-two"></div>
+
+    <div class="stars stars-three"></div>
+
+    <div class="planet planet-purple"></div>
+
+    <div class="planet planet-blue"></div>
+
+</div>
+
+
+<header class="navbar">
+
+
+    <button
+        type="button"
+        id="vexon-menu-trigger"
+        class="vexon-global-menu-trigger"
+        aria-label="باز کردن منوی PGame"
+        title="منوی PGame"
+    >
+        ☰
+    </button>
+
+
+    <nav class="nav-links"></nav>
+
+
+</header>
+
+
+<main class="pg-settings-page">
+
+
+    <div class="pg-settings-hero">
+
+        <span class="section-label">
+            ⚙️ PGAME SETTINGS
+        </span>
+
+        <h1>
+
+            تنظیمات
+
+            <span>
+                PGame
+            </span>
+
+        </h1>
+
+        <p>
+            همه چیز مربوط به حساب و تجربه PGame از اینجا مدیریت می‌شود؛
+            بدون صفحه مستقل پروفایل.
+        </p>
+
+    </div>
+
+
+    <div class="pg-settings-shell">
+
+
+        <!-- =====================================================
+             SETTINGS NAV
+        ====================================================== -->
+
+        <aside
+            class="pg-settings-nav"
+            aria-label="بخش‌های تنظیمات"
+        >
+
+
+            <button
+                class="active"
+                data-target="account"
+                type="button"
+            >
+
+                <span class="icon">
+                    👤
+                </span>
+
+                <span>
+                    حساب کاربری
+                </span>
+
+            </button>
+
+
+            <button
+                data-target="security"
+                type="button"
+            >
+
+                <span class="icon">
+                    🔐
+                </span>
+
+                <span>
+                    امنیت
+                </span>
+
+            </button>
+
+
+            <button
+                data-target="rubika"
+                type="button"
+            >
+
+                <span class="icon">
+                    🟢
+                </span>
+
+                <span>
+                    روبیکا
+                </span>
+
+            </button>
+
+
+            <button
+                data-target="notifications"
+                type="button"
+            >
+
+                <span class="icon">
+                    🔔
+                </span>
+
+                <span>
+                    اعلان‌ها
+                </span>
+
+            </button>
+
+
+            <button
+                data-target="appearance"
+                type="button"
+            >
+
+                <span class="icon">
+                    🎨
+                </span>
+
+                <span>
+                    ظاهر
+                </span>
+
+            </button>
+
+
+            <div class="nav-sep"></div>
+
+
+            <button
+                data-target="pgame"
+                type="button"
+            >
+
+                <span class="icon">
+                    🎮
+                </span>
+
+                <span>
+                    PGame
+                </span>
+
+            </button>
+
+
+            <button
+                data-target="support"
+                type="button"
+            >
+
+                <span class="icon">
+                    🛟
+                </span>
+
+                <span>
+                    پشتیبانی
+                </span>
+
+            </button>
+
+
+        </aside>
+
+
+        <!-- =====================================================
+             SETTINGS CONTENT
+        ====================================================== -->
+
+        <section class="pg-settings-panel">
+
+
+            <!-- =================================================
+                 ACCOUNT
+            ================================================== -->
+
+            <div
+                class="pg-settings-section active"
+                id="settings-account-section"
+            >
+
+                <h2 class="pg-section-title">
+                    👤 حساب کاربری
+                </h2>
+
+                <p class="pg-section-sub">
+                    اطلاعات اصلی حسابت را از همین‌جا مدیریت کن.
+                </p>
+
+
+                <div class="pg-card green">
+
+
+                    <div class="pg-info-grid">
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                نام کاربری
+                            </span>
+
+                            <strong id="account-username">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                PG-ID
+                            </span>
+
+                            <strong id="account-id">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                وضعیت حساب
+                            </span>
+
+                            <strong id="account-status">
+                                در حال بررسی...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                Level
+                            </span>
+
+                            <strong id="account-level">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                Coins
+                            </span>
+
+                            <strong id="account-coins">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-info-item">
+
+                            <span>
+                                XP
+                            </span>
+
+                            <strong id="account-xp">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="pg-card cyan">
+
+                    <strong>
+                        ✏️ تغییر نام کاربری
+                    </strong>
+
+                    <p class="pg-muted">
+                        ۳ تا ۲۰ کاراکتر؛ فقط حروف انگلیسی، عدد و _.
+                    </p>
+
+
+                    <form
+                        id="change-username-form"
+                        class="pg-form"
+                    >
+
+                        <label for="change-username-input">
+                            نام کاربری جدید
+                        </label>
+
+
+                        <input
+                            id="change-username-input"
+                            type="text"
+                            maxlength="20"
+                            minlength="3"
+                            autocomplete="off"
+                            required
+                        >
+
+
+                        <button
+                            id="change-username-button"
+                            class="auth-button pg-btn"
+                            type="submit"
+                        >
+                            ✏️ تغییر نام کاربری
+                        </button>
+
+
+                        <div
+                            id="change-username-message"
+                            class="pg-message"
+                        ></div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SECURITY
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-security-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🔐 امنیت
+                </h2>
+
+                <p class="pg-section-sub">
+                    رمز عبور و ورود به حسابت را مدیریت کن.
+                </p>
+
+
+                <div class="pg-card purple">
+
+                    <strong>
+                        🔐 تغییر رمز عبور
+                    </strong>
+
+
+                    <form
+                        id="change-password-form"
+                        class="pg-form"
+                    >
+
+
+                        <label for="current-password">
+                            رمز فعلی
+                        </label>
+
+
+                        <input
+                            id="current-password"
+                            type="password"
+                            autocomplete="current-password"
+                            minlength="8"
+                            required
+                        >
+
+
+                        <label for="new-password">
+                            رمز جدید
+                        </label>
+
+
+                        <input
+                            id="new-password"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+
+                        <label for="confirm-password">
+                            تکرار رمز جدید
+                        </label>
+
+
+                        <input
+                            id="confirm-password"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+
+                        <button
+                            id="change-password-button"
+                            class="auth-button pg-btn"
+                            type="submit"
+                        >
+                            🔐 تغییر رمز
+                        </button>
+
+
+                        <div
+                            id="change-password-message"
+                            class="pg-message"
+                        ></div>
+
+
+                    </form>
+
+                </div>
+
+
+                <div class="pg-card">
+
+                    <strong>
+                        🚪 خروج از حساب
+                    </strong>
+
+                    <p class="pg-muted">
+                        از حساب PGame روی این دستگاه خارج شو.
+                    </p>
+
+
+                    <button
+                        id="logout-button"
+                        class="
+                            auth-secondary-button
+                            pg-btn
+                            pg-danger
+                        "
+                        type="button"
+                    >
+                        🚪 خروج از حساب
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RUBIKA
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-rubika-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🟢 روبیکا
+                </h2>
+
+                <p class="pg-section-sub">
+                    اتصال حساب PGame به ربات روبیکا را مدیریت کن.
+                </p>
+
+
+                <div class="pg-card">
+
+                    <strong>
+                        🤖 اتصال روبیکا
+                    </strong>
+
+                    <p class="pg-muted">
+                        کد اتصال را بساز و برای
+                        <b>@bangame56bot</b>
+                        ارسال کن.
+                    </p>
+
+
+                    <div
+                        id="rubika-status"
+                        class="
+                            pg-rubika-status
+                            disconnected
+                        "
+                    >
+                        🔴 حساب روبیکا متصل نیست.
+                    </div>
+
+
+                    <div class="pg-actions">
+
+
+                        <button
+                            id="rubika-connect-button"
+                            class="auth-button"
+                            type="button"
+                        >
+                            🤖 ساخت کد اتصال
+                        </button>
+
+
+                        <button
+                            id="rubika-unlink-button"
+                            class="
+                                auth-secondary-button
+                                pg-danger
+                            "
+                            type="button"
+                            style="display:none"
+                        >
+                            🔌 لغو اتصال
+                        </button>
+
+
+                    </div>
+
+
+                    <div
+                        id="rubika-code-area"
+                        class="pg-code-area"
+                    >
+
+                        <div
+                            id="rubika-code"
+                            class="pg-code"
+                        >
+                            ------
+                        </div>
+
+                        <div class="pg-help">
+                            ⏱ اعتبار کد: ۱۰ دقیقه
+                        </div>
+
+                        <div class="pg-help">
+                            کد را برای @bangame56bot ارسال کن.
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="rubika-message"
+                        class="pg-message"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NOTIFICATIONS
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-notifications-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🔔 اعلان‌ها
+                </h2>
+
+                <p class="pg-section-sub">
+                    کنترل اعلان‌های PGame.
+                </p>
+
+
+                <div class="pg-card">
+
+                    <strong>
+                        🔔 اعلان‌ها
+                    </strong>
+
+                    <p class="pg-muted">
+                        این بخش برای مدیریت اعلان‌های PGame آماده شده
+                        و می‌توانیم تنظیمات جزئی‌تر را در مرحله بعد اضافه کنیم.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 APPEARANCE
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-appearance-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🎨 ظاهر
+                </h2>
+
+                <p class="pg-section-sub">
+                    ظاهر و تجربه بصری PGame.
+                </p>
+
+
+                <div class="pg-card">
+
+                    <strong>
+                        🌌 تم PGame
+                    </strong>
+
+                    <p class="pg-muted">
+                        رابط فعلی PGame با تم تاریک نئونی طراحی شده است.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PGAME
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-pgame-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🎮 PGame
+                </h2>
+
+                <p class="pg-section-sub">
+                    اطلاعات برنامه و وضعیت سرویس PGame.
+                </p>
+
+
+                <div class="pg-card">
+
+                    <div class="pg-about">
+
+
+                        <div class="pg-about-row">
+
+                            <span>
+                                نسخه
+                            </span>
+
+                            <strong>
+                                PGame V1
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-about-row">
+
+                            <span>
+                                وضعیت
+                            </span>
+
+                            <strong style="color:var(--green)">
+                                فعال ✅
+                            </strong>
+
+                        </div>
+
+
+                        <div class="pg-about-row">
+
+                            <span>
+                                شعار
+                            </span>
+
+                            <strong>
+                                Play • Compete • Level Up.
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUPPORT
+            ================================================== -->
+
+            <div
+                class="pg-settings-section"
+                id="settings-support-section"
+            >
+
+                <h2 class="pg-section-title">
+                    🛟 پشتیبانی
+                </h2>
+
+                <p class="pg-section-sub">
+                    برای مشکلات و سوالات مربوط به PGame.
+                </p>
+
+
+                <div class="pg-card">
+
+                    <strong>
+                        🛟 مرکز پشتیبانی PGame
+                    </strong>
+
+                    <p class="pg-muted">
+                        برای گزارش مشکل یا دریافت کمک از بخش پشتیبانی استفاده کن.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+
+        <span class="logo-p">
+            P
+        </span>
+
+        <span class="logo-rest">
+            Game
+        </span>
+
+    </div>
+
+
+    <p>
+        PLAY • COMPETE • LEVEL UP.
+    </p>
+
+
+    <span>
+        ساخته شده با 💚 برای گیمرها
+        <br>
+        © 2026 PGame — همه حقوق محفوظ است.
+    </span>
+
+</footer>
+
+
+<script>
+
+(async function () {
+
+    "use strict";
+
+
+    const tabs =
+        document.querySelectorAll(
+            ".pg-settings-nav button"
+        );
+
+
+    const sections = {
+        account:
+            document.getElementById(
+                "settings-account-section"
+            ),
+
+        security:
+            document.getElementById(
+                "settings-security-section"
+            ),
+
+        rubika:
+            document.getElementById(
+                "settings-rubika-section"
+            ),
+
+        notifications:
+            document.getElementById(
+                "settings-notifications-section"
+            ),
+
+        appearance:
+            document.getElementById(
+                "settings-appearance-section"
+            ),
+
+        pgame:
+            document.getElementById(
+                "settings-pgame-section"
+            ),
+
+        support:
+            document.getElementById(
+                "settings-support-section"
+            )
+    };
+
+
+    tabs.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const target =
+                        button.dataset.target;
+
+
+                    tabs.forEach(
+                        tab => {
+
+                            tab.classList.toggle(
+                                "active",
+                                tab === button
+                            );
+
+                        }
+                    );
+
+
+                    Object.entries(
+                        sections
+                    ).forEach(
+                        ([key, section]) => {
+
+                            section.classList.toggle(
+                                "active",
+                                key === target
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    const accountUsername =
+        document.getElementById(
+            "account-username"
+        );
+
+
+    const accountId =
+        document.getElementById(
+            "account-id"
+        );
+
+
+    const accountStatus =
+        document.getElementById(
+            "account-status"
+        );
+
+
+    const accountLevel =
+        document.getElementById(
+            "account-level"
+        );
+
+
+    const accountCoins =
+        document.getElementById(
+            "account-coins"
+        );
+
+
+    const accountXp =
+        document.getElementById(
+            "account-xp"
+        );
+
+
+    const usernameInput =
+        document.getElementById(
+            "change-username-input"
+        );
+
+
+    const usernameForm =
+        document.getElementById(
+            "change-username-form"
+        );
+
+
+    const usernameButton =
+        document.getElementById(
+            "change-username-button"
+        );
+
+
+    const usernameMessage =
+        document.getElementById(
+            "change-username-message"
+        );
+
+
+    const passwordForm =
+        document.getElementById(
+            "change-password-form"
+        );
+
+
+    const currentPassword =
+        document.getElementById(
+            "current-password"
+        );
+
+
+    const newPassword =
+        document.getElementById(
+            "new-password"
+        );
+
+
+    const confirmPassword =
+        document.getElementById(
+            "confirm-password"
+        );
+
+
+    const passwordButton =
+        document.getElementById(
+            "change-password-button"
+        );
+
+
+    const passwordMessage =
+        document.getElementById(
+            "change-password-message"
+        );
+
+
+    const logoutButton =
+        document.getElementById(
+            "logout-button"
+        );
+
+
+    const rubikaStatus =
+        document.getElementById(
+            "rubika-status"
+        );
+
+
+    const connectButton =
+        document.getElementById(
+            "rubika-connect-button"
+        );
+
+
+    const unlinkButton =
+        document.getElementById(
+            "rubika-unlink-button"
+        );
+
+
+    const codeArea =
+        document.getElementById(
+            "rubika-code-area"
+        );
+
+
+    const codeElement =
+        document.getElementById(
+            "rubika-code"
+        );
+
+
+    const rubikaMessage =
+        document.getElementById(
+            "rubika-message"
+        );
+
+
+    function setMessage(
+        element,
+        text,
+        success = false
+    ) {
+
+        element.textContent =
+            text;
+
+        element.style.color =
+            success
+                ? "#00ff9d"
+                : "#ff7183";
+    }
+
+
+    function renderRubika(
+        rubikaUserId
+    ) {
+
+        if (
+            rubikaUserId
+        ) {
+
+            rubikaStatus.className =
+                "pg-rubika-status connected";
+
+            rubikaStatus.innerHTML =
+                `
+                    🟢
+                    <strong>
+                        حساب روبیکا متصل است.
+                    </strong>
+                    <br>
+                    <span style="color:#8b8b9f">
+                        شناسه اتصال:
+                        ${String(rubikaUserId)}
+                    </span>
+                `;
+
+            connectButton.style.display =
+                "none";
+
+            unlinkButton.style.display =
+                "block";
+
+            return;
+        }
+
+
+        rubikaStatus.className =
+            "pg-rubika-status disconnected";
+
+        rubikaStatus.textContent =
+            "🔴 حساب روبیکا متصل نیست.";
+
+        connectButton.style.display =
+            "block";
+
+        unlinkButton.style.display =
+            "none";
+    }
+
+
+    function saveCache(
+        user
+    ) {
+
+        try {
+
+            localStorage.setItem(
+                "pgame_account_cache_v1",
+                JSON.stringify({
+                    saved_at:
+                        Date.now(),
+
+                    user:
+                        user
+                })
+            );
+
+        } catch {}
+
+    }
+
+
+    function renderUser(
+        user
+    ) {
+
+        if (!user) {
+            return;
+        }
+
+
+        accountUsername.textContent =
+            user.username ??
+            "کاربر";
+
+
+        accountId.textContent =
+            user.id
+                ? `PG-${user.id}`
+                : "—";
+
+
+        accountStatus.textContent =
+            "فعال";
+
+
+        accountLevel.textContent =
+            `LV ${Number(
+                user.level ?? 1
+            )}`;
+
+
+        accountCoins.textContent =
+            Number(
+                user.coins ?? 0
+            ).toLocaleString(
+                "fa-IR"
+            );
+
+
+        accountXp.textContent =
+            Number(
+                user.xp ?? 0
+            ).toLocaleString(
+                "fa-IR"
+            );
+
+
+        usernameInput.value =
+            user.username ??
+            "";
+
+
+        renderRubika(
+            user.rubika_user_id
+        );
+
+    }
+
+
+    try {
+
+        const cached =
+            JSON.parse(
+                localStorage.getItem(
+                    "pgame_account_cache_v1"
+                ) || "null"
+            );
+
+
+        if (
+            cached?.user
+        ) {
+
+            renderUser(
+                cached.user
+            );
+
+        }
+
+    } catch {}
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    method:
+                        "GET",
+
+                    credentials:
+                        "same-origin",
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.loggedIn ||
+            !data.user
+        ) {
+
+            location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        const user =
+            data.user;
+
+
+        renderUser(
+            user
+        );
+
+
+        saveCache(
+            user
+        );
+
+
+        let username =
+            user.username ??
+            "کاربر";
+
+
+        /* =====================================================
+           CHANGE USERNAME
+        ====================================================== */
+
+        usernameForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const newUsername =
+                    usernameInput.value.trim();
+
+
+                setMessage(
+                    usernameMessage,
+                    ""
+                );
+
+
+                if (
+                    !/^[A-Za-z0-9_]{3,20}$/.test(
+                        newUsername
+                    )
+                ) {
+
+                    setMessage(
+                        usernameMessage,
+                        "نام کاربری باید ۳ تا ۲۰ کاراکتر و فقط شامل حروف انگلیسی، عدد یا _ باشد."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    newUsername.toLowerCase() ===
+                    username.toLowerCase()
+                ) {
+
+                    setMessage(
+                        usernameMessage,
+                        "این نام کاربری همین الان هم روی حسابت قرار دارد."
+                    );
+
+                    return;
+                }
+
+
+                usernameButton.disabled =
+                    true;
+
+                usernameButton.textContent =
+                    "⏳ در حال تغییر...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/change-username",
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        username:
+                                            newUsername
+                                    })
+                            }
+                        );
+
+
+                    let result =
+                        {};
+
+
+                    try {
+
+                        result =
+                            await response.json();
+
+                    } catch {}
+
+
+                    if (
+                        !response.ok ||
+                        !result.success
+                    ) {
+
+                        throw new Error(
+                            result.message ||
+                            "تغییر نام کاربری انجام نشد."
+                        );
+                    }
+
+
+                    username =
+                        result.username ||
+                        newUsername;
+
+
+                    accountUsername.textContent =
+                        username;
+
+
+                    usernameInput.value =
+                        username;
+
+
+                    saveCache({
+                        ...user,
+                        username:
+                            username
+                    });
+
+
+                    setMessage(
+                        usernameMessage,
+                        "✅ نام کاربری با موفقیت تغییر کرد.",
+                        true
+                    );
+
+
+                } catch (error) {
+
+                    setMessage(
+                        usernameMessage,
+                        "❌ " +
+                        (
+                            error.message ||
+                            "تغییر نام کاربری انجام نشد."
+                        )
+                    );
+
+                } finally {
+
+                    usernameButton.disabled =
+                        false;
+
+                    usernameButton.textContent =
+                        "✏️ تغییر نام کاربری";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           CHANGE PASSWORD
+        ====================================================== */
+
+        passwordForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const current =
+                    currentPassword.value;
+
+
+                const next =
+                    newPassword.value;
+
+
+                const confirm =
+                    confirmPassword.value;
+
+
+                setMessage(
+                    passwordMessage,
+                    ""
+                );
+
+
+                if (
+                    next.length < 8
+                ) {
+
+                    setMessage(
+                        passwordMessage,
+                        "رمز جدید باید حداقل ۸ کاراکتر باشد."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    next !== confirm
+                ) {
+
+                    setMessage(
+                        passwordMessage,
+                        "تکرار رمز جدید با رمز جدید یکسان نیست."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    current === next
+                ) {
+
+                    setMessage(
+                        passwordMessage,
+                        "رمز جدید باید با رمز فعلی متفاوت باشد."
+                    );
+
+                    return;
+                }
+
+
+                passwordButton.disabled =
+                    true;
+
+                passwordButton.textContent =
+                    "⏳ در حال تغییر...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/change-password",
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                cache:
+                                    "no-store",
+
+                                body:
+                                    JSON.stringify({
+                                        current_password:
+                                            current,
+
+                                        new_password:
+                                            next
+                                    })
+                            }
+                        );
+
+
+                    let result =
+                        {};
+
+
+                    try {
+
+                        result =
+                            await response.json();
+
+                    } catch {}
+
+
+                    if (
+                        !response.ok ||
+                        !result.success
+                    ) {
+
+                        throw new Error(
+                            result.message ||
+                            "تغییر رمز عبور انجام نشد."
+                        );
+                    }
+
+
+                    setMessage(
+                        passwordMessage,
+                        "✅ رمز عبور با موفقیت تغییر کرد.",
+                        true
+                    );
+
+
+                    passwordForm.reset();
+
+
+                } catch (error) {
+
+                    setMessage(
+                        passwordMessage,
+                        "❌ " +
+                        (
+                            error.message ||
+                            "تغییر رمز عبور انجام نشد."
+                        )
+                    );
+
+                } finally {
+
+                    passwordButton.disabled =
+                        false;
+
+                    passwordButton.textContent =
+                        "🔐 تغییر رمز";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           RUBIKA CONNECT
+        ====================================================== */
+
+        connectButton.addEventListener(
+            "click",
+            async function () {
+
+                connectButton.disabled =
+                    true;
+
+                connectButton.textContent =
+                    "⏳ در حال ساخت...";
+
+                codeArea.style.display =
+                    "none";
+
+
+                setMessage(
+                    rubikaMessage,
+                    ""
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/rubika/create-code",
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !result.success
+                    ) {
+
+                        throw new Error(
+                            result.message ||
+                            "ساخت کد اتصال انجام نشد."
+                        );
+                    }
+
+
+                    codeElement.textContent =
+                        result.code;
+
+
+                    codeArea.style.display =
+                        "block";
+
+
+                    setMessage(
+                        rubikaMessage,
+                        "✅ کد ساخته شد؛ آن را برای @bangame56bot ارسال کن.",
+                        true
+                    );
+
+
+                } catch (error) {
+
+                    setMessage(
+                        rubikaMessage,
+                        "❌ " +
+                        (
+                            error.message ||
+                            "خطایی رخ داد."
+                        )
+                    );
+
+                } finally {
+
+                    connectButton.disabled =
+                        false;
+
+                    connectButton.textContent =
+                        "🤖 ساخت کد اتصال";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           RUBIKA UNLINK
+        ====================================================== */
+
+        unlinkButton.addEventListener(
+            "click",
+            async function () {
+
+                const confirmed =
+                    confirm(
+                        "آیا مطمئنی می‌خواهی اتصال حساب روبیکا را لغو کنی؟"
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                unlinkButton.disabled =
+                    true;
+
+                unlinkButton.textContent =
+                    "⏳ در حال لغو اتصال...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/rubika/unlink",
+                            {
+                                method:
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !result.success
+                    ) {
+
+                        throw new Error(
+                            result.message ||
+                            "لغو اتصال انجام نشد."
+                        );
+                    }
+
+
+                    renderRubika(
+                        null
+                    );
+
+
+                    codeArea.style.display =
+                        "none";
+
+
+                    setMessage(
+                        rubikaMessage,
+                        "✅ اتصال روبیکا با موفقیت لغو شد.",
+                        true
+                    );
+
+
+                } catch (error) {
+
+                    setMessage(
+                        rubikaMessage,
+                        "❌ " +
+                        (
+                            error.message ||
+                            "خطایی رخ داد."
+                        )
+                    );
+
+                } finally {
+
+                    unlinkButton.disabled =
+                        false;
+
+                    unlinkButton.textContent =
+                        "🔌 لغو اتصال";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           LOGOUT
+        ====================================================== */
+
+        logoutButton.addEventListener(
+            "click",
+            async function () {
+
+                logoutButton.disabled =
+                    true;
+
+                logoutButton.textContent =
+                    "⏳ در حال خروج...";
+
+
+                try {
+
+                    await fetch(
+                        "/api/logout",
+                        {
+                            method:
+                                "POST",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store"
+                        }
+                    );
+
+                } catch {}
+
+
+                location.href =
+                    "login.html";
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "SETTINGS_PAGE_ERROR",
+            error
+        );
+
+        location.href =
+            "login.html";
+
+    }
+
+})();
+
+</script>
+
+
+<script src="../script.js"></script>
+
+<script src="../vexon-nav.js"></script>
+
+
+</body>
+</html>
